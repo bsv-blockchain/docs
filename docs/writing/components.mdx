@@ -1,0 +1,61 @@
+---
+title: Components
+description: The built-in components you can use in any page, no imports needed.
+---
+
+## Callouts
+
+<Callout type="note">A `note` for side information.</Callout>
+<Callout type="tip">A `tip` for a shortcut or best practice.</Callout>
+<Callout type="warning">A `warning` for something that can go wrong.</Callout>
+
+```mdx
+<Callout type="warning">A `warning` for something that can go wrong.</Callout>
+```
+
+Other types: `info`, `check`, `danger`.
+
+## Cards
+
+<CardGroup cols={2}>
+  <Card title="With an icon" icon="sparkles">Any [Lucide](https://lucide.dev/icons) icon name.</Card>
+  <Card title="As a link" icon="arrow-right" href="/docs/get-started/quickstart">Add `href` to make the whole card clickable.</Card>
+</CardGroup>
+
+## Steps
+
+<Steps>
+  <Step title="First">Do this.</Step>
+  <Step title="Second">Then this.</Step>
+</Steps>
+
+## Tabs
+
+<Tabs>
+  <Tab title="macOS">`brew install acme`</Tab>
+  <Tab title="Windows">`winget install acme`</Tab>
+</Tabs>
+
+## Accordion
+
+<Accordion title="Click to expand">
+  Hidden until opened. Good for FAQs and long optional detail.
+</Accordion>
+
+## Code
+
+Fenced code blocks get highlighting and a copy button. Several blocks inside `<CodeGroup>` become tabs, labelled by the text after the language:
+
+````mdx
+<CodeGroup>
+```bash cURL
+curl https://api.example.com/v1/orders
+```
+
+```javascript Node.js
+await fetch('https://api.example.com/v1/orders');
+```
+</CodeGroup>
+````
+
+The full list of components, with every option, is in the [Writedocs docs](https://preview.writedocs.io/docs/content/components/).

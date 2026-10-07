@@ -1,0 +1,112 @@
+{
+  "$schema": "https://preview.writedocs.io/schema.json",
+  "name": "Acme Docs",
+  "domain": "docs.example.com",
+  "description": "Guides and API reference for Acme.",
+  "styles": {
+    "colors": {
+      "primary": "#0029F5",
+      "dark": {
+        "primary": "#9fb0ff"
+      }
+    },
+    "logo": {
+      "light": "/images/logo_light.svg",
+      "dark": "/images/logo_dark.svg"
+    },
+    "favicon": "/images/favicon.ico"
+  },
+  "topbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "mailto:support@example.com"
+      }
+    ]
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "icon": "book-open",
+        "pages": [
+          {
+            "group": "Get started",
+            "pages": [
+              "index",
+              "docs/get-started/quickstart",
+              "docs/get-started/authentication"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "docs/guides/first-request",
+              "docs/guides/webhooks"
+            ]
+          },
+          {
+            "group": "Writing these docs",
+            "pages": [
+              "docs/writing/pages-and-navigation",
+              "docs/writing/components",
+              "docs/writing/snippets"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "icon": "code",
+        "pages": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/introduction"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "openapi": {
+              "src": "api-reference/openapi.yaml",
+              "path": "/api-reference"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "socials": {
+    "github": "https://github.com/your-org"
+  },
+  "footer": {
+    "columns": [
+      {
+        "title": "Docs",
+        "links": [
+          {
+            "label": "Quickstart",
+            "href": "/docs/get-started/quickstart"
+          },
+          {
+            "label": "API reference",
+            "href": "/api-reference/introduction"
+          }
+        ]
+      },
+      {
+        "title": "Company",
+        "links": [
+          {
+            "label": "Website",
+            "href": "https://example.com"
+          },
+          {
+            "label": "Support",
+            "href": "mailto:support@example.com"
+          }
+        ]
+      }
+    ]
+  }
+}

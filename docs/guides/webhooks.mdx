@@ -1,0 +1,34 @@
+---
+title: Receive webhooks
+description: Get notified when an order changes status.
+---
+
+Acme sends a `POST` request to your endpoint every time an order changes status.
+
+<Steps>
+  <Step title="Expose an endpoint">
+    Any HTTPS URL that answers `200` quickly. Do the slow work after responding.
+  </Step>
+  <Step title="Register it">
+    In the dashboard, go to **Settings → Webhooks** and add the URL.
+  </Step>
+  <Step title="Verify the signature">
+    Each request carries an `Acme-Signature` header. Recompute it with your webhook secret and compare before trusting the payload.
+  </Step>
+</Steps>
+
+## Example payload
+
+```json
+{
+  "type": "order.paid",
+  "data": {
+    "id": "ord_123",
+    "status": "paid"
+  }
+}
+```
+
+<Callout type="info">
+  Webhooks can arrive more than once and out of order. Use the order `id` to make your handler idempotent.
+</Callout>
