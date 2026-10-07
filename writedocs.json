@@ -1,13 +1,13 @@
 {
   "$schema": "https://preview.writedocs.io/schema.json",
-  "name": "Acme Docs",
-  "domain": "docs.example.com",
-  "description": "Guides and API reference for Acme.",
+  "name": "BSV Docs",
+  "domain": "docs.bsvblockchain.org",
+  "description": "Developer documentation for BSV Blockchain: build apps with BRC-100 wallets and the TypeScript SDK.",
   "styles": {
     "colors": {
-      "primary": "#0029F5",
+      "primary": "#003FFF",
       "dark": {
-        "primary": "#9fb0ff"
+        "primary": "#6690FF"
       }
     },
     "logo": {
@@ -15,14 +15,6 @@
       "dark": "/images/logo_dark.svg"
     },
     "favicon": "/images/favicon.ico"
-  },
-  "topbar": {
-    "links": [
-      {
-        "label": "Support",
-        "href": "mailto:support@example.com"
-      }
-    ]
   },
   "navigation": {
     "tabs": [
@@ -33,77 +25,36 @@
           {
             "group": "Get started",
             "pages": [
-              "index",
-              "docs/get-started/quickstart",
-              "docs/get-started/authentication"
+              "index"
             ]
           },
           {
-            "group": "Guides",
+            "group": "Learn the Concepts",
             "pages": [
-              "docs/guides/first-request",
-              "docs/guides/webhooks"
+              "docs/concepts/index"
             ]
           },
           {
-            "group": "Writing these docs",
+            "group": "Code with an AI Agent",
             "pages": [
-              "docs/writing/pages-and-navigation",
-              "docs/writing/components",
-              "docs/writing/snippets"
+              "docs/ai-agent/index"
             ]
-          }
-        ]
-      },
-      {
-        "tab": "API reference",
-        "icon": "code",
-        "pages": [
-          {
-            "group": "Overview",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoints",
-            "openapi": {
-              "src": "api-reference/openapi.yaml",
-              "path": "/api-reference"
-            }
           }
         ]
       }
     ]
   },
   "socials": {
-    "github": "https://github.com/your-org"
+    "github": "https://github.com/writechoiceorg/bsv-docs"
   },
   "footer": {
     "columns": [
-      {
-        "title": "Docs",
-        "links": [
-          {
-            "label": "Quickstart",
-            "href": "/docs/get-started/quickstart"
-          },
-          {
-            "label": "API reference",
-            "href": "/api-reference/introduction"
-          }
-        ]
-      },
       {
         "title": "Company",
         "links": [
           {
             "label": "Website",
-            "href": "https://example.com"
-          },
-          {
-            "label": "Support",
-            "href": "mailto:support@example.com"
+            "href": "https://bsvblockchain.org"
           }
         ]
       }
