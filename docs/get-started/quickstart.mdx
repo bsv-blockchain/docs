@@ -1,0 +1,32 @@
+---
+title: Quickstart
+description: Get credentials and make your first request.
+---
+
+<Steps>
+  <Step title="Create an account">
+    Sign up at [example.com](https://example.com) and open the dashboard.
+  </Step>
+  <Step title="Get an API key">
+    Go to **Settings → API keys** and create a sandbox key. See [Authentication](/docs/get-started/authentication) for how keys work.
+  </Step>
+  <Step title="Make a request">
+    ```bash
+    curl https://api.example.com/v1/orders \
+      -H "Authorization: Bearer $ACME_API_KEY"
+    ```
+
+    A `200` response with an empty `data` list means you're connected.
+  </Step>
+</Steps>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Create your first order" icon="shopping-cart" href="/docs/guides/first-request">
+    A full request and response, field by field.
+  </Card>
+  <Card title="Receive webhooks" icon="webhook" href="/docs/guides/webhooks">
+    Get notified when an order changes status.
+  </Card>
+</CardGroup>

@@ -1,0 +1,58 @@
+---
+title: Pages and navigation
+description: How a file becomes a page, and how pages get into the sidebar.
+---
+
+## Pages
+
+Any `.mdx` (or `.md`) file in the project with a frontmatter block is a page (`node_modules` is skipped). Its URL is its path without the extension:
+
+| File | URL |
+| --- | --- |
+| `index.mdx` | `/` |
+| `docs/guides/webhooks.mdx` | `/docs/guides/webhooks` |
+
+Every page needs a `title`; `description` is used for search results and link previews:
+
+```mdx
+---
+title: Receive webhooks
+description: Get notified when an order changes status.
+---
+```
+
+## Navigation
+
+A page only shows in the sidebar once it's listed in `writedocs.json`, by path without the extension:
+
+```json
+{
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "pages": [
+          { "group": "Guides", "pages": ["docs/guides/first-request", "docs/guides/webhooks"] }
+        ]
+      }
+    ]
+  }
+}
+```
+
+Groups can nest, and the navigation can also be split by `versions`, `languages`, `products` or `dropdowns`.
+
+## Images
+
+Put images in `images/` and reference them from the site root: `![Dashboard](/images/dashboard.png)`.
+
+## API reference
+
+The **Endpoints** group in `writedocs.json` points at `api-reference/openapi.yaml`. One page per operation is generated from it at build time, so to change the reference, edit the spec.
+
+## Checking your work
+
+```bash
+npm run dev        # live preview at http://localhost:4321
+npm run check      # validate writedocs.json and pages, then find broken links
+```

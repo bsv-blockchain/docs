@@ -1,0 +1,17 @@
+{
+  "name": "writedocs-template",
+  "private": true,
+  "description": "Starter for a Writedocs documentation site, with the generator installed locally in this project.",
+  "scripts": {
+    "dev": "writedocs dev",
+    "validate": "writedocs validate",
+    "broken-links": "writedocs broken-links",
+    "check": "writedocs validate && writedocs broken-links"
+  },
+  "dependencies": {
+    "@writedocs/generator": "0.10.13"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

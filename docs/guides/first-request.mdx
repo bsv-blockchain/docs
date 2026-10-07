@@ -1,0 +1,68 @@
+---
+title: Create your first order
+description: A complete request and response, field by field.
+---
+
+import AmountCalculator from '/snippets/AmountCalculator.jsx';
+
+This guide creates an order with the [Create an order](/api-reference/orders/post-orders) endpoint.
+
+## Request
+
+<CodeGroup>
+```bash cURL
+curl -X POST https://sandbox.api.example.com/v1/orders \
+  -H "Authorization: Bearer $ACME_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{ "amount": 2500, "currency": "USD" }'
+```
+
+```javascript Node.js
+const res = await fetch('https://sandbox.api.example.com/v1/orders', {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${process.env.ACME_API_KEY}`,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ amount: 2500, currency: 'USD' }),
+});
+const order = await res.json();
+```
+
+```python Python
+import os, requests
+
+order = requests.post(
+    "https://sandbox.api.example.com/v1/orders",
+    headers={"Authorization": f"Bearer {os.environ['ACME_API_KEY']}"},
+    json={"amount": 2500, "currency": "USD"},
+).json()
+```
+</CodeGroup>
+
+<Parameter name="amount" type="integer" required>
+  Amount in the smallest currency unit (cents for USD).
+</Parameter>
+
+Not sure what to send? Convert a price:
+
+<AmountCalculator />
+
+<Parameter name="currency" type="string" required>
+  Three-letter ISO 4217 code, for example `USD`.
+</Parameter>
+
+## Response
+
+```json
+{
+  "id": "ord_123",
+  "amount": 2500,
+  "currency": "USD",
+  "status": "pending"
+}
+```
+
+<Accordion title="What do the statuses mean?">
+  An order starts as `pending`, becomes `paid` once the payment is captured, and `canceled` if it's canceled before that.
+</Accordion>

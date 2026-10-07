@@ -1,0 +1,72 @@
+---
+title: Snippets
+description: Reusable React components (and MDX) shared across pages from the snippets/ folder.
+---
+
+import AmountCalculator from '/snippets/AmountCalculator.jsx';
+
+A snippet is a file in `snippets/` that you write once and import into any page. It has no frontmatter, so it never becomes a page of its own.
+
+## Example: a React component
+
+`snippets/AmountCalculator.jsx` is a small React component. Try it, it runs in your browser:
+
+<AmountCalculator />
+
+### 1. Write the component
+
+A `.jsx` (or `.tsx`) file with a default export. Hooks like `useState` work as in any React app:
+
+```jsx title="snippets/AmountCalculator.jsx"
+import { useState } from 'react';
+
+export default function AmountCalculator({ currency = 'USD', initial = '25.00' }) {
+  const [value, setValue] = useState(initial);
+  // ...
+  return <div>...</div>;
+}
+```
+
+Style it with inline styles or class names, and use the theme's CSS variables (`var(--wd-border)`, `var(--wd-text)`, `var(--wd-surface)`...) so it follows light and dark mode.
+
+### 2. Import it in a page
+
+Put the import right after the frontmatter. A leading `/` resolves from the project root, so the same line works from any page:
+
+```mdx
+---
+title: Create your first order
+---
+
+import AmountCalculator from '/snippets/AmountCalculator.jsx';
+```
+
+### 3. Use it, with props
+
+```mdx
+<AmountCalculator currency="BRL" initial="99.90" />
+```
+
+<AmountCalculator currency="BRL" initial="99.90" />
+
+It's interactive as soon as the page loads. For a heavy component far down a page, add `client:visible` so it only loads when scrolled into view:
+
+```mdx
+<AmountCalculator client:visible />
+```
+
+## MDX snippets
+
+A snippet can also be an `.mdx` file, to reuse a piece of content. Props arrive as `props`, and built-in components work without imports:
+
+```mdx title="snippets/sandbox-note.mdx"
+<Callout type="note">
+  This works in the {props.env} environment.
+</Callout>
+```
+
+```mdx
+import SandboxNote from '/snippets/sandbox-note.mdx';
+
+<SandboxNote env="sandbox" />
+```
