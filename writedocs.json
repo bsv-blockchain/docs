@@ -25,7 +25,9 @@
           {
             "group": "Get started",
             "pages": [
-              "index"
+              "index",
+              "docs/get-started/what-is-bsv",
+              "docs/get-started/quick-start"
             ]
           },
           {
