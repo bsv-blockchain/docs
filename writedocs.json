@@ -5,9 +5,9 @@
   "description": "Developer documentation for BSV Blockchain: build apps with BRC-100 wallets and the TypeScript SDK.",
   "styles": {
     "colors": {
-      "primary": "#003FFF",
+      "primary": "#34259D",
       "dark": {
-        "primary": "#6690FF"
+        "primary": "#9D8FE0"
       }
     },
     "logo": {
