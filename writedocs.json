@@ -41,6 +41,31 @@
             "pages": [
               "docs/ai-agent/index"
             ]
+          },
+          {
+            "group": "Components (sample)",
+            "pages": [
+              "docs/components/index"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "icon": "code",
+        "pages": [
+          {
+            "group": "Overview",
+            "pages": [
+              "api-reference/introduction"
+            ]
+          },
+          {
+            "group": "Endpoints",
+            "openapi": {
+              "src": "api-reference/openapi.yaml",
+              "path": "/api-reference"
+            }
           }
         ]
       }
