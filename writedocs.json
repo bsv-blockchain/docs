@@ -22,12 +22,7 @@
         "tab": "Documentation",
         "icon": "book-open",
         "pages": [
-          {
-            "group": "Home",
-            "pages": [
-              "index"
-            ]
-          },
+          "index",
           {
             "group": "Get started",
             "pages": [
