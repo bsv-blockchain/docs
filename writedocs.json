@@ -23,9 +23,14 @@
         "icon": "book-open",
         "pages": [
           {
+            "group": "Home",
+            "pages": [
+              "index"
+            ]
+          },
+          {
             "group": "Get started",
             "pages": [
-              "index",
               "docs/get-started/what-is-bsv",
               "docs/get-started/quick-start"
             ]
