@@ -1,62 +1,56 @@
 ---
-title: Paymail Overview
-description: Human-readable payment handles for BSV wallets.
+title: "Paymail: Human-Readable Payment Addresses"
+description: Replace raw BSV addresses with email-style payment handles.
 ---
 
 <Badge color="orange">External, not yet reviewed</Badge>
 
-Copied as-is from the [current BSV docs](https://docs.bsvblockchain.org/paymail/overview), the one section our own site audit confirmed is "complete and self-contained" in the existing documentation. Not yet adapted to this site's style guide.
+This page is provisional content, not yet adapted to this site's style guide.
 
-**paymail** is a collection of protocols for Bitcoin SV wallets that allow for a set of simplified user experiences to be delivered across all wallets in the ecosystem.
+**Paymail** replaces a raw BSV address with a handle that looks like an email address, so people can pay each other without copying and pasting long strings of characters.
 
-❌ No more complicated `17Dx2iAnGWPJCdqVvRFr45vL9YvT86TDsn` addresses
+❌ `17Dx2iAnGWPJCdqVvRFr45vL9YvT86TDsn`
 
-✅ Simple payment handles like `<alias>@<domain>.<tld>`
+✅ `alice@walletprovider.com`
 
-The goals of the paymail protocol are:
+Anyone can implement Paymail, you can self-host it or let a wallet provider handle it for you, and it's discoverable: a sending wallet can look up a handle and automatically find out what the receiving wallet supports, without a person needing to configure anything.
 
-* User friendly payment destinations through memorable handles
-* Permissionless implementation
-* Self-hosted or delegated to a managed service
-* Automatic service discovery/location
-* PKI infrastructure
-* Cross-wallet exchange of single-use transaction output scripts of any construction
-* Request and response authentication
-* Security and policy management
-* Capability extensibility and discovery
+## How It Works, at a High Level
 
-## bsvalias
+Paymail is really a family of protocols, collectively called `bsvalias`, that build on top of each other:
 
-The family of related protocols are collectively referred to as the `bsvalias` protocols. At the time of writing, these include:
+<CardGroup cols={2}>
+  <Card title="Service Discovery" icon="magnifying-glass">
+    Given a domain, find out what Paymail capabilities it supports and where.
+  </Card>
+  <Card title="Public Key Infrastructure" icon="key">
+    Look up the public key associated with a handle.
+  </Card>
+  <Card title="Payment Addressing" icon="wallet">
+    Resolve a handle into an actual address to send a payment to.
+  </Card>
+  <Card title="BRFC Specifications" icon="file-lines">
+    The versioning scheme Paymail extensions use to declare what they implement.
+  </Card>
+</CardGroup>
 
-* [BRFC Specifications](https://docs.bsvblockchain.org/paymail/brfc-specifications)
-* [Service Discovery](https://docs.bsvblockchain.org/paymail/service-discovery)
-* [Public Key Infrastructure](https://docs.bsvblockchain.org/paymail/public-key-infrastructure)
-* [Payment Addressing](https://docs.bsvblockchain.org/paymail/payment-addressing)
+A wallet only gets to call itself "Paymail" if it implements at least three of these: Service Discovery, Public Key Infrastructure, and the basic address resolution part of Payment Addressing.
 
-## paymail
+## Beyond the Basics
 
-**paymail** is the name for the implementation of the following protocols:
+Because the protocol is open, anyone can propose an extension, and a wallet declares which ones it supports through Service Discovery. A few of the more notable extensions:
 
-* [Service Discovery](https://docs.bsvblockchain.org/paymail/service-discovery)
-* [Public Key Infrastructure](https://docs.bsvblockchain.org/paymail/public-key-infrastructure)
-* [Basic Address Resolution](https://docs.bsvblockchain.org/paymail/payment-addressing/basic-address-resolution) from the [Payment Addressing](https://docs.bsvblockchain.org/paymail/payment-addressing) protocol group
+- **Sender Validation**: lets a receiving wallet confirm who actually sent a payment.
+- **Receiver Approvals**: lets a receiving wallet require explicit approval before a payment goes through.
+- **PayTo Protocol Prefix**: a URI scheme for triggering a payment from a link.
+- Multisig authorizations, threshold signature group setup, and payment channels.
 
-The **paymail** brand is reserved for products and services that, at a minimum, implement each of the above.
-
-## Extension Protocols
-
-As defined in the [BRFC Specifications](https://docs.bsvblockchain.org/paymail/brfc-specifications), anybody can propose an extension to the `bsvalias` and paymail protocols, and as per the [Capability Discovery](https://docs.bsvblockchain.org/paymail/service-discovery/capability-discovery) section of the [Service Discovery](https://docs.bsvblockchain.org/paymail/service-discovery) protocol, implementations can declare support for extensions to allow for cross-wallet processes.
-
-Extension protocols are the collection of protocols not contained within the core paymail set defined above, but that are fully compatible with `bsvalias` protocols and paymail implementations. Notable examples presently include:
-
-* [Sender Validation](https://docs.bsvblockchain.org/paymail/payment-addressing/sender-validation)
-* [Receiver Approvals](https://docs.bsvblockchain.org/paymail/payment-addressing/receiver-approvals)
-* [PayTo Protocol Prefix](https://docs.bsvblockchain.org/paymail/payment-addressing/payto-protocol-prefix)
-* MultiSig authorisations
-* Threshold signature group secret setup and message signing
-* Payment channels
+If you're building a wallet or a payment feature, you don't need to implement all of these, just the core three, plus whichever extensions your use case actually needs.
 
 ## Source
 
 - [Paymail Overview on the current BSV docs](https://docs.bsvblockchain.org/paymail/overview)
+- [BRFC Specifications](https://docs.bsvblockchain.org/paymail/brfc-specifications)
+- [Service Discovery](https://docs.bsvblockchain.org/paymail/service-discovery)
+- [Public Key Infrastructure](https://docs.bsvblockchain.org/paymail/public-key-infrastructure)
+- [Payment Addressing](https://docs.bsvblockchain.org/paymail/payment-addressing)

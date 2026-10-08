@@ -1,42 +1,44 @@
 ---
-title: HTTP 402 Payment Gating
-description: Monetize an API with BSV micropayments, server and client.
+title: Gate an API Behind Payments
+description: Monetize an API with BSV micropayments, client and server, using HTTP 402.
 ---
 
 <Badge color="orange">External, not yet reviewed</Badge>
 
-Copied as-is from [ts-stack](https://bsv-blockchain.github.io/ts-stack/guides/http-402-payments/), the source Connor called BSV's best developer documentation. Payments is the use case Darren named first when asked which matters most for a new developer. Not yet adapted to this site's style guide, not yet fact-checked by our team.
+This page is provisional content, not yet adapted to this site's style guide or fact-checked by our team.
 
 <Callout type="warning">
-Our own testing (Heitor, BSV vs Solana onboarding report, 2026-10-06/07) found the `ServerWallet.create()` funding path used in this guide blocked on testnet: the documented `fund-metanet` tool fails, and the funding transaction is rejected for an invalid AtomicBEEF on both storage servers tested. Flag this before presenting the server side as working end to end.
+Our own testing found the `ServerWallet.create()` funding path used in this guide blocked on testnet: the documented `fund-metanet` tool fails, and the funding transaction is rejected for an invalid AtomicBEEF on both storage servers tested. Flag this before presenting the server side as working end to end.
 </Callout>
 
-> Monetize your API with Bitcoin SV micropayments. You'll set up a payment-gated Express server and build a client that auto-pays for content using HTTP 402 Payment Required.
+This guide sets up an API that charges for access using HTTP 402 Payment Required, the standard HTTP status code reserved for exactly this. You'll build a server that gates specific routes behind a price, and a client that pays automatically when it hits one.
 
 **Time:** ~25 minutes
-**Prerequisites:** Node.js ≥ 22, basic Express.js, understanding of Bitcoin transactions
+**Prerequisites:** Node.js 22+, basic Express.js, a general sense of how Bitcoin-style transactions work
 
-## What you'll build
+## What You'll Build
 
-A complete end-to-end payment system:
+<CardGroup cols={2}>
+  <Card title="Server" icon="server">
+    Express middleware that prices routes, checks incoming payments, and only forwards paid requests.
+  </Card>
+  <Card title="Client" icon="laptop-code">
+    A `fetch` wrapper that catches 402 responses, pays automatically, and retries, with no user prompt mid-request.
+  </Card>
+</CardGroup>
 
-- **Server**: Express middleware that gates endpoints by payment, validates transactions
-- **Client**: Auto-paying fetch wrapper that transparently handles 402 responses
-- **Flow**: Client requests resource → server responds 402 with payment details → client signs & pays → access granted
+The flow: the client requests a resource, the server replies 402 with the price, the client signs a payment and retries, and the server grants access.
 
-By the end, you'll have a production-ready micropayment system that doesn't require user friction.
+## Before You Begin
 
-## Prerequisites
-
-- Node.js 22+ installed
+- Node.js 22 or newer
 - npm or pnpm
-- A BRC-100 wallet (server and client)
-- Basic understanding of Bitcoin transactions and satoshis
-- A private key for the server identity
+- A BRC-100 wallet for both the server identity and the client
+- A private key for the server's identity
 
-## Step 1 — Create server and client projects
+## Step 1: Set Up the Two Projects
 
-Set up two separate projects:
+The server and client are separate projects, since in a real deployment they typically run on different machines:
 
 ```bash
 # Server
@@ -45,14 +47,14 @@ npm init -y
 npm install express body-parser @bsv/sdk @bsv/402-pay @bsv/simple dotenv
 npm install -D typescript ts-node @types/express @types/node
 
-# Client (in separate directory)
+# Client (in its own directory)
 mkdir ../payment-client && cd ../payment-client
 npm init -y
 npm install @bsv/402-pay @bsv/sdk dotenv
 npm install -D typescript ts-node @types/node
 ```
 
-Both need TypeScript config:
+Both need a minimal `tsconfig.json`:
 
 ```json
 {
@@ -65,7 +67,7 @@ Both need TypeScript config:
 }
 ```
 
-## Step 2 — Set up server wallet and payment middleware
+## Step 2: Build the Server
 
 In the server project, create `server.ts`:
 
@@ -79,25 +81,25 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 async function setupServer() {
-  // 1. Initialize wallet
+  // 1. Initialize the server's own wallet
   const wallet = await ServerWallet.create({
     privateKey: process.env.SERVER_PRIVATE_KEY!,
     network: 'main',
     storageUrl: 'https://store-us-1.bsvb.tech'
   })
 
-  // 2. Create payment middleware
+  // 2. Create the payment-gating middleware
   const paymentMiddleware = createPaymentMiddleware({
     wallet,
     calculatePrice: path => {
-      // Dynamic pricing by route
+      // Price per route
       if (path === '/api/premium') return 1000 // 1000 satoshis
       if (path === '/api/free') return 0 // Free
-      return 100 // Default 100 satoshis
+      return 100 // Default: 100 satoshis
     }
   })
 
-  // 3. Build Express app
+  // 3. Build the app
   const app = express()
   app.use(bodyParser.json())
   app.use(paymentMiddleware)
@@ -112,7 +114,7 @@ async function setupServer() {
 
   app.get('/api/premium', (req, res) => {
     res.json({
-      message: 'Premium content — paid!',
+      message: 'Premium content, paid!',
       paid: true,
       satoshisPaid: req.payment?.satoshisPaid || 0,
       sender: req.payment?.senderIdentityKey
@@ -122,7 +124,6 @@ async function setupServer() {
   return app
 }
 
-// Start server
 async function main() {
   const app = await setupServer()
   const port = process.env.PORT || 3000
@@ -137,24 +138,17 @@ async function main() {
 main().catch(console.error)
 ```
 
-The middleware chain:
+The middleware does two things in order: it checks whether the route needs payment and whether a valid payment was already provided, then it lets the route handler run only if the route is free or the payment checked out.
 
-1. **Payment middleware** checks if payment is required and validates provided payment headers
-2. **Route handler** receives the request only if payment was accepted or the route is free
+## Step 3: Understand the 402 Response
 
-## Step 3 — Understand the 402 response
+When the client requests a paid route without having paid yet, the server replies with status 402 and the payment details it needs. The middleware handles this automatically:
 
-When client requests a paid endpoint without payment, the server responds with 402 and payment details.
+- It calculates the price using `calculatePrice()`.
+- It returns a 402 status if nothing has been paid yet.
+- It includes two headers the client needs: `x-bsv-sats` (how much is owed) and `x-bsv-server` (the server's identity key, used to derive the payment address).
 
-The payment middleware automatically:
-
-- Calculates required satoshis via `calculatePrice()`
-- Returns 402 status if unpaid
-- Includes headers:
-  - `x-bsv-sats`: satoshis owed
-  - `x-bsv-server`: server identity key used by the client for payment derivation
-
-## Step 4 — Set up client wallet and create 402-pay wrapper
+## Step 4: Build the Paying Client
 
 In the client project, create `client.ts`:
 
@@ -166,10 +160,10 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 export async function setupPaymentClient() {
-  // Initialize wallet for signing payments
+  // Wallet used to sign payments
   const wallet = new WalletClient()
 
-  // Create a fetch wrapper that auto-handles 402
+  // A fetch wrapper that pays automatically on a 402
   const fetch402 = create402Fetch({
     wallet,
     cacheTimeoutMs: 30 * 60 * 1000 // Cache paid content for 30 minutes
@@ -179,16 +173,11 @@ export async function setupPaymentClient() {
 }
 ```
 
-`create402Fetch()` returns a fetch-compatible function that:
+`create402Fetch()` gives you back something you can use exactly like `fetch`, except it catches 402 responses, signs a payment, retries the request with payment attached, and caches the result so you don't pay twice for the same thing.
 
-- Catches 402 responses
-- Signs a payment transaction
-- Retries with payment headers
-- Caches successful responses to avoid re-payment
+## Step 5: Make Requests
 
-## Step 5 — Make authenticated requests with auto-payment
-
-Create `requests.ts` in client:
+Create `requests.ts` in the client project:
 
 ```typescript
 export async function accessFreeContent(fetch402: any) {
@@ -200,7 +189,7 @@ export async function accessFreeContent(fetch402: any) {
 }
 
 export async function accessPremiumContent(fetch402: any) {
-  // Automatically handles 402 and pays
+  // Pays automatically if a 402 comes back
   const response = await fetch402('http://localhost:3000/api/premium')
   const data = await response.json()
 
@@ -209,25 +198,35 @@ export async function accessPremiumContent(fetch402: any) {
 }
 
 export async function clearPaymentCache(fetch402: any) {
-  // Reset cache between sessions
+  // Reset the cache between sessions
   fetch402.clearCache()
   console.log('Payment cache cleared')
 }
 ```
 
-When client calls `fetch402('/api/premium')`:
+When `fetch402('/api/premium')` runs, here's what actually happens behind the scenes:
 
-1. Sends request (no payment)
-2. Receives 402 with `x-bsv-sats: 1000` and `x-bsv-server`
-3. Generates a fresh nonce and timestamp, then derives the payment address with BRC-29
-4. Creates and signs payment transaction
-5. Retries request with payment headers
-6. Server validates payment
-7. Access granted, response cached
+<Steps>
+  <Step title="Request sent, no payment">
+    The client calls the endpoint with no payment attached.
+  </Step>
+  <Step title="Server replies 402">
+    The response includes `x-bsv-sats: 1000` and `x-bsv-server`.
+  </Step>
+  <Step title="Client derives a payment address">
+    A fresh nonce and timestamp are generated, then used to derive the payment address with BRC-29.
+  </Step>
+  <Step title="Client signs and retries">
+    A payment transaction is created, signed, and the request is retried with payment headers attached.
+  </Step>
+  <Step title="Server validates and grants access">
+    Once the payment checks out, the response is returned and cached for next time.
+  </Step>
+</Steps>
 
-## Step 6 — Manual payment construction (advanced)
+## Step 6: Build Payment Headers Manually (Advanced)
 
-For custom workflows, construct payment headers manually:
+For a custom flow where you don't want `create402Fetch` managing everything, you can construct the headers yourself:
 
 ```typescript
 import { constructPaymentHeaders } from '@bsv/402-pay/client'
@@ -238,24 +237,24 @@ export async function manualPayment(
   satoshis: number,
   serverIdentityKey: string
 ) {
-  // Build payment headers manually
   const headers = await constructPaymentHeaders(wallet, serverUrl, satoshis, serverIdentityKey)
 
-  // Use with custom fetch
   const response = await fetch(serverUrl, { headers })
   return response
 }
 ```
 
-Manual header construction gives you:
+This gives you direct control over five headers:
 
-- `x-bsv-beef`: Base64-encoded transaction proof
-- `x-bsv-sender`: Your identity public key
-- `x-bsv-nonce`: Derivation prefix (random 8 bytes)
-- `x-bsv-time`: Unix millisecond timestamp
-- `x-bsv-vout`: Output index (usually 0)
+| Header | What it carries |
+| --- | --- |
+| `x-bsv-beef` | The payment transaction proof, base64-encoded BEEF |
+| `x-bsv-sender` | Your identity public key |
+| `x-bsv-nonce` | A random 8-byte derivation prefix |
+| `x-bsv-time` | A Unix millisecond timestamp |
+| `x-bsv-vout` | The output index, usually `0` |
 
-## Putting it all together
+## Putting It Together
 
 Server `main.ts`:
 
@@ -266,14 +265,12 @@ import { createPaymentMiddleware } from '@bsv/402-pay/server'
 import { ServerWallet } from '@bsv/simple/server'
 
 async function main() {
-  // Setup wallet
   const wallet = await ServerWallet.create({
     privateKey: process.env.SERVER_PRIVATE_KEY!,
     network: 'main',
     storageUrl: 'https://store-us-1.bsvb.tech'
   })
 
-  // Setup middleware
   const paymentMiddleware = createPaymentMiddleware({
     wallet,
     calculatePrice: path => {
@@ -283,12 +280,10 @@ async function main() {
     }
   })
 
-  // Create app
   const app = express()
   app.use(bodyParser.json())
   app.use(paymentMiddleware)
 
-  // Routes
   app.get('/api/free', (req, res) => {
     res.json({ message: 'Free content', paid: false })
   })
@@ -301,7 +296,6 @@ async function main() {
     })
   })
 
-  // Start
   app.listen(3000, () => {
     console.log('Server on http://localhost:3000')
   })
@@ -317,10 +311,8 @@ import { create402Fetch } from '@bsv/402-pay/client'
 import { WalletClient } from '@bsv/sdk'
 
 async function main() {
-  // Setup wallet
   const wallet = new WalletClient()
 
-  // Create auto-paying fetch
   const fetch402 = create402Fetch({
     wallet,
     cacheTimeoutMs: 30 * 60 * 1000
@@ -345,7 +337,7 @@ async function main() {
 main().catch(console.error)
 ```
 
-Run:
+Run both sides:
 
 ```bash
 # Terminal 1: Server
@@ -359,28 +351,33 @@ npx ts-node main.ts
 
 ## Troubleshooting
 
-**"Auth middleware must run first"**
-→ This applies to `@bsv/payment-express-middleware`, not `@bsv/402-pay`. The `@bsv/402-pay` middleware is independent and does not require BRC-31 auth.
+<AccordionGroup>
+  <Accordion title={<>"Auth middleware must run first"</>}>
+    This error belongs to `@bsv/payment-express-middleware`, not `@bsv/402-pay`. The `@bsv/402-pay` middleware is independent and does not require BRC-31 auth.
+  </Accordion>
+  <Accordion title={<>"Wallet must implement getPublicKey() and internalizeAction()"</>}>
+    The server wallet must expose an identity key and accept payment internalization. Use `ServerWallet.create()` from `@bsv/simple/server`, or another BRC-100 wallet implementation that supports both.
+  </Accordion>
+  <Accordion title="Payment keeps getting requested, even after paying">
+    The retried request must include all five headers: `x-bsv-beef`, `x-bsv-sender`, `x-bsv-nonce`, `x-bsv-time`, and `x-bsv-vout`. `create402Fetch()` adds these automatically, so check for a missing header if you built the request manually.
+  </Accordion>
+  <Accordion title={<>"Transaction format error"</>}>
+    The client must send the payment as base64-encoded BEEF in `x-bsv-beef`. Confirm the wallet actually returned `tx` from `createAction()`.
+  </Accordion>
+  <Accordion title="Timestamp must be fresh">
+    `x-bsv-time` has to land within roughly 30 seconds of the server's clock. If this keeps failing, check for clock drift between client and server.
+  </Accordion>
+  <Accordion title="Cache timeout too long">
+    A very long cache timeout risks the client reusing a stale payment for a different resource. 30 minutes is a safe default.
+  </Accordion>
+  <Accordion title="Replay protection">
+    For `@bsv/402-pay`: the timestamp bounds how long a payment can be replayed, wallet internalization validates the transfer, and a separate atomic store admits each transaction ID exactly once. Its default store is bounded but local to the process, so inject a shared, durable store if you run more than one process or node. The wallet's optional `isMerge` flag is defense in depth only, it isn't part of the public BRC-100 result shape.
 
-**"Wallet must implement getPublicKey() and internalizeAction()"**
-→ Server wallet must expose an identity key and accept wallet-payment internalization. Use `ServerWallet.create()` from `@bsv/simple/server` or another BRC-100 wallet implementation.
+    For `@bsv/payment-express-middleware`: inject a durable, atomic transaction-ID replay store yourself in any multi-process deployment. Its derivation prefix is not a replay database on its own.
 
-**"Payment keeps getting requested"**
-→ The retried request must include `x-bsv-beef`, `x-bsv-sender`, `x-bsv-nonce`, `x-bsv-time`, and `x-bsv-vout`. `create402Fetch()` adds those automatically.
-
-**"Transaction format error"**
-→ Client sends the payment transaction as base64 BEEF in `x-bsv-beef`. Ensure the wallet returned `tx` from `createAction()`.
-
-**"Timestamp must be fresh"**
-→ `x-bsv-time` must be within ~30 seconds of server time. Check system clocks if repeatedly failing
-
-**"Cache timeout too long"**
-→ If cache timeout is very long, client may use stale payments for different resources. Use moderate timeout (30 min is safe)
-
-**"Replay protection"**
-→ For `@bsv/402-pay`, freshness bounds the replay window, wallet internalization validates the remittance, and an independent atomic replay store admits a transaction ID once. Its default store is bounded but process-local; inject one shared durable store in every process or node. The wallet's optional `isMerge` detail is only defense in depth because it is not part of the public BRC-100 result shape. For `@bsv/payment-express-middleware`, inject a durable atomic transaction-ID replay store in multi-process deployments; its derivation prefix is not a single-use replay database.
-
-If payment processing fails after wallet work begins, the middleware returns `503` without a new challenge. Treat that result as ambiguous and reconcile the transaction before asking the client to pay again.
+    If payment processing fails after the wallet has already started work, the middleware returns `503` without issuing a new challenge. Treat that as ambiguous, reconcile the transaction before asking the client to pay again, rather than assuming the payment never happened.
+  </Accordion>
+</AccordionGroup>
 
 ## Source
 

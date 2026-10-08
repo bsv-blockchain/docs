@@ -1,86 +1,116 @@
 ---
 title: BRC-100 Wallet Interface
-description: The standard boundary between application code and wallet code.
+description: The standard interface that lets any app talk to any wallet, without touching a private key.
 ---
 
 <Badge color="orange">External, not yet reviewed</Badge>
 
-Copied as-is from [ts-stack](https://bsv-blockchain.github.io/ts-stack/architecture/brc-100/), the source Connor called BSV's best developer documentation. Not yet adapted to this site's style guide, not yet fact-checked by our team.
+This page is provisional content, not yet adapted to this site's style guide or fact-checked by our team.
 
-BRC-100 is the boundary between application code and wallet code. Apps describe what they want; wallets decide how to select outputs, apply permissions, derive keys, sign, broadcast, and track state.
+**BRC-100** is the line between your app's code and wallet code. Your app says what it wants done, in plain method calls; the wallet decides how to do it, including which coins to use, which permissions apply, and how to sign. If you've used <Hint tip="A standard that lets any app connect to any compatible wallet">WalletConnect</Hint> on another chain, this plays a similar role: one interface, many wallets.
 
-![BRC-100 desktop and mobile request flows](https://bsv-blockchain.github.io/ts-stack/assets/diagrams/brc100-wallet-flows.svg)
+<Frame caption="How a desktop and mobile request flow through BRC-100">
+  <img src="https://bsv-blockchain.github.io/ts-stack/assets/diagrams/brc100-wallet-flows.svg" alt="BRC-100 desktop and mobile request flows" />
+</Frame>
 
 ## Why This Boundary Exists
 
-Without BRC-100, every app would need custom wallet integrations and every wallet would need custom app adapters. BRC-100 gives both sides one stable contract:
+Without a shared standard, every app would need its own integration for every wallet, and every wallet would need to support every app's way of asking for things. BRC-100 gives both sides one contract instead:
 
-- Apps can call `wallet.createAction`, `wallet.getPublicKey`, `wallet.encrypt`, and other methods without learning a specific wallet product.
-- Wallets can implement one interface and expose it over localhost, postMessage, JSON APIs, native bridges, or in-process objects.
-- Other language implementations can target the same method shapes and test against the same conformance vectors.
+- Your app calls methods like `createAction`, `getPublicKey`, or `encrypt` without knowing which wallet product is on the other end.
+- A wallet implements that same interface once and can expose it over localhost, `postMessage`, a JSON API, a native bridge, or in-process, whichever fits how it runs.
+- Wallets written in other languages can target the same methods and test against the same conformance suite.
 
-## Recovery boundary
+In practice, this is what lets `WalletClient` from `@bsv/sdk` connect to any compliant wallet on a user's machine, without your app knowing in advance which one it will find.
 
-BRC-100 standardizes the application/wallet interface; implementing it does not supply a complete disaster-recovery product. The wallet must preserve both recoverable keys and its records/derivation metadata. A chain rescan, an OTP or a key-manager snapshot is not a replacement for wallet-data recovery.
+## What BRC-100 Does Not Cover
 
-See ts-stack's [Wallet backup and recovery](https://bsv-blockchain.github.io/ts-stack/guides/wallet-backup-recovery/) and [BRC-38/39 guide](https://bsv-blockchain.github.io/ts-stack/guides/wallet-data-portability/) for the full guidance. Applications should link to their wallet's recovery controls without collecting wallet secrets.
+BRC-100 standardizes how an app talks to a wallet. It does not define how a wallet recovers if something goes wrong, keys get lost, a device dies. That part is the wallet's own responsibility: it has to preserve both the recoverable keys and the records that go with them (derivation metadata, output history).
 
-## Desktop Flow
+If you're building an app, link out to your wallet's own recovery flow rather than trying to back up wallet data yourself, and never collect wallet secrets on your side.
 
-On desktop, a web app uses `@bsv/simple/browser` or `WalletClient` from `@bsv/sdk`.
+## How a Request Flows: Desktop
 
-1. The app calls a BRC-100 method such as [`createAction`](https://bsv-blockchain.github.io/ts-stack/specs/brc-100-wallet/#createaction).
-2. `WalletClient` finds the available wallet substrate.
-3. BSV Desktop receives the request over a localhost wallet server.
-4. The wallet may call Wallet Infra, for example `https://store-us-1.bsvb.tech`, to read and update wallet state.
-5. Keys remain in the desktop wallet process.
-6. The wallet returns the action result, such as `txid`, `tx`, `noSendChange`, `sendWithResults`, or `signableTransaction`.
+On desktop, a web app typically uses `@bsv/simple/browser` or `WalletClient` from `@bsv/sdk` directly:
 
-## Mobile Flow
+<Steps>
+  <Step title="Call a BRC-100 method">
+    Your app calls something like `createAction`.
+  </Step>
+  <Step title="Find the wallet">
+    `WalletClient` checks the available channels (localhost ports, in-browser messaging) for a running wallet.
+  </Step>
+  <Step title="Reach the wallet">
+    <Hint tip="Such as BSV Desktop">The wallet</Hint> receives the request over a local wallet server running on the user's machine.
+  </Step>
+  <Step title="Read and update state">
+    The wallet may call shared infrastructure (for proofs, broadcast, and so on) to carry out the request.
+  </Step>
+  <Step title="Sign locally">
+    The private key never leaves the wallet process.
+  </Step>
+  <Step title="Return the result">
+    The wallet sends back a result, such as a `txid`, the transaction itself, or a `signableTransaction` if your app needs to add its own signature.
+  </Step>
+</Steps>
 
-On mobile, BSV Browser embeds the web app and exposes the same method surface through a bridge.
+## How a Request Flows: Mobile
 
-1. The app calls the same BRC-100 method.
-2. The browser WebView sends the request to native code over `postMessage`.
-3. The native wallet selects outputs from its local database and signs on the device.
-4. The wallet may still use network services such as ARC or Chaintracks for broadcast, headers, and proofs.
-5. The result returns to the web app through the bridge.
+On mobile, the pattern is the same from the app's point of view, a wallet app just embeds the web app and exposes the same methods through a bridge instead of localhost:
 
-The application does not need separate business logic for desktop and mobile if it stays on the BRC-100 interface.
+<Steps>
+  <Step title="Call the same method">
+    Your app calls the same BRC-100 method it would on desktop, unchanged.
+  </Step>
+  <Step title="Bridge to native code">
+    The WebView passes the request to native wallet code.
+  </Step>
+  <Step title="Sign on the device">
+    The native wallet picks its own coins and signs locally.
+  </Step>
+  <Step title="Broadcast and prove">
+    The wallet may still reach out to network services for broadcasting and proofs.
+  </Step>
+  <Step title="Return through the bridge">
+    The result comes back to your web app the same way the request went out.
+  </Step>
+</Steps>
 
-## Method Groups
+Because both flows expose the same methods, your app's logic doesn't need a separate code path for desktop versus mobile.
 
-| Group | Purpose | Method reference |
+## What You Can Ask a Wallet to Do
+
+BRC-100 methods fall into a few groups:
+
+| Group | Purpose | Example methods |
 | --- | --- | --- |
-| Actions | Create, sign, abort, list, and internalize transactions. | `createAction`, `signAction`, `internalizeAction` |
-| Outputs | Query and relinquish tracked outputs in baskets. | `listOutputs`, `relinquishOutput` |
-| Keys and crypto | Derive public keys, encrypt/decrypt, HMAC, signatures, key linkage. | `getPublicKey`, `encrypt`, `createSignature` |
-| Certificates | Acquire, list, prove, relinquish, and discover identity certificates. | `acquireCertificate`, `proveCertificate` |
-| Wallet state | Authentication, chain height, headers, network, version. | `getHeight`, `getVersion` |
+| Actions | Create, sign, cancel, list, or absorb transactions | `createAction`, `signAction`, `internalizeAction` |
+| Outputs | Query or release the coins your app is tracking | `listOutputs`, `relinquishOutput` |
+| Keys and crypto | Derive keys, encrypt, decrypt, sign | `getPublicKey`, `encrypt`, `createSignature` |
+| Certificates | Issue, list, prove, or discover identity certificates | `acquireCertificate`, `proveCertificate` |
+| Wallet state | Check authentication, chain height, network, version | `getHeight`, `getVersion` |
 
-Full method reference: ts-stack's [BRC-100 Wallet Interface spec](https://bsv-blockchain.github.io/ts-stack/specs/brc-100-wallet/).
+## What createAction Can Return
 
-## Action Lifecycle
+Calling `createAction` ends in one of two ways:
 
-`createAction` has two common outcomes:
-
-| Outcome | What the app receives | What happens next |
+| Outcome | What you get back | What it means |
 | --- | --- | --- |
-| Immediate action | `txid` and/or `tx` | Wallet had enough information to fund, sign, and process the transaction. |
-| Signable action | `signableTransaction: { tx, reference }` | App signs specific inputs or creates unlocking scripts, then calls `signAction({ reference, spends })`. |
+| Immediate action | A `txid` and/or the transaction itself | The wallet had everything it needed to fund, sign, and process the transaction on its own. |
+| Signable action | `signableTransaction: { tx, reference }` | Your app still needs to sign specific inputs itself, then call `signAction` to finish. |
 
-`noSend` and `sendWith` support chained batches. A wallet can create several actions without broadcasting them, pass change forward through `noSendChange`, and later send them together.
+Wallets can also chain several actions together before broadcasting any of them, carrying change forward and sending the whole batch at once.
 
-## Labels vs Tags
+## Organizing What the Wallet Tracks
 
-| Concept | Scope | Used by |
+BRC-100 gives you three different ways to tag things, and they're not interchangeable:
+
+| Concept | Applies to | Used by |
 | --- | --- | --- |
-| Labels | Whole action/transaction | `createAction({ labels })`, `listActions({ labels })` |
-| Tags | Specific output | `createAction({ outputs: [{ tags }] })`, `listOutputs({ tags })` |
-| Baskets | Named output containers | `listOutputs({ basket })`, `internalizeAction` basket insertions |
-
-Do not use labels as output tags or tags as action labels. They are different indexes.
+| Labels | A whole action or transaction | `createAction`, `listActions` |
+| Tags | One specific output | `createAction`, `listOutputs` |
+| Baskets | A named group of outputs | `listOutputs`, `internalizeAction` |
 
 ## Source
 
-- [BRC-100 Wallet Interface on ts-stack](https://bsv-blockchain.github.io/ts-stack/architecture/brc-100/) (verified 2026-09-24 per ts-stack's own metadata)
+- [BRC-100 Wallet Interface on ts-stack](https://bsv-blockchain.github.io/ts-stack/architecture/brc-100/)
