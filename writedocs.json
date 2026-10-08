@@ -44,10 +44,8 @@
           {
             "group": "Guides",
             "pages": [
-              "docs/guides/index",
               "docs/guides/choose-your-stack/index",
-              "docs/guides/payments/index",
-              "docs/guides/paymail/index"
+              "docs/guides/payments/index"
             ]
           }
         ]
@@ -59,10 +57,10 @@
           {
             "group": "Concepts",
             "pages": [
-              "docs/concepts/index",
               "docs/concepts/brc-100/index",
               "docs/concepts/stack-layers/index",
-              "docs/concepts/beef/index"
+              "docs/concepts/beef/index",
+              "docs/concepts/paymail/index"
             ]
           }
         ]
