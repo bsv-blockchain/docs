@@ -1,36 +1,46 @@
 ---
 title: Choose Your Stack
-description: Which BSV package to start with, based on what you're building.
+description: Which BSV package to start with, based on what you're building and who holds the keys.
 ---
 
 <Badge color="orange">External, not yet reviewed</Badge>
 
-Copied as-is from [ts-stack](https://bsv-blockchain.github.io/ts-stack/get-started/choose-your-stack/), the source Connor called BSV's best developer documentation. Not yet adapted to this site's style guide, not yet fact-checked by our team.
+Copied as-is from [ts-stack](https://bsv-blockchain.github.io/ts-stack/get-started/choose-your-stack/). Not yet adapted to this site's style guide, not yet fact-checked by our team.
 
-Start from who controls the keys and how close you need to be to the protocol.
+The right starting package depends on two things: who controls the private key, and how close to the raw protocol you need to work. Answer those and the rest follows.
 
-If you run a server/agent wallet or build a wallet product, plan for both recoverable keys and wallet records from the start. See ts-stack's [Wallet backup and recovery](https://bsv-blockchain.github.io/ts-stack/guides/wallet-backup-recovery/) and [agent implementation brief](https://bsv-blockchain.github.io/ts-stack/guides/wallet-recovery-agent-brief/).
+<Callout type="info">
+If you're building a server or agent wallet, or a wallet product, plan for key recovery and wallet records from the start, not as an afterthought. See ts-stack's [wallet backup and recovery guide](https://bsv-blockchain.github.io/ts-stack/guides/wallet-backup-recovery/) and [agent implementation brief](https://bsv-blockchain.github.io/ts-stack/guides/wallet-recovery-agent-brief/).
+</Callout>
 
-```
-Browser app using a user's wallet?
-  -> @bsv/simple/browser
+## Find Your Starting Point
 
-Backend agent with its own key?
-  -> @bsv/simple/server
-
-Coming from another chain and want to build transactions explicitly?
-  -> @bsv/wallet-helper
-
-Wallet implementation or wallet infrastructure?
-  -> @bsv/wallet-toolbox + BRC-100 spec
-
-Protocol, crypto, scripts, transactions, BEEF, or conformance?
-  -> @bsv/sdk
-```
+<CardGroup cols={2}>
+  <Card title="Browser app, user's wallet" icon="globe">
+    Your app runs in the browser and the person using it already has their own wallet.
+    → `@bsv/simple/browser`
+  </Card>
+  <Card title="Backend service, its own key" icon="server">
+    A service or agent that holds and manages its own private key.
+    → `@bsv/simple/server`
+  </Card>
+  <Card title="Coming from another chain" icon="right-left">
+    You want to build transactions explicitly, the way you're used to elsewhere.
+    → `@bsv/wallet-helper`
+  </Card>
+  <Card title="Building a wallet" icon="vault">
+    You're implementing a wallet product or wallet infrastructure, not an app.
+    → `@bsv/wallet-toolbox` + the BRC-100 spec
+  </Card>
+  <Card title="Working at the protocol level" icon="code">
+    You need direct access to crypto, scripts, transactions, BEEF, or conformance testing.
+    → `@bsv/sdk`
+  </Card>
+</CardGroup>
 
 ## Browser App
 
-Use this when the user already has a local BRC-100 wallet such as BSV Desktop or BSV Browser.
+Use this when the person using your app already has a local <Hint tip="The standard wallet-to-application interface">BRC-100</Hint> wallet installed, such as BSV Desktop or BSV Browser.
 
 ```bash
 npm install @bsv/simple
@@ -49,13 +59,13 @@ const result = await wallet.pay({
 console.log(result.txid)
 ```
 
-The web app does not hold private keys. The wallet client finds an available substrate and forwards BRC-100 calls to the user's wallet application.
+Your web app never holds a private key here. `createWallet()` finds whatever wallet is available on the user's machine and forwards BRC-100 calls to it.
 
 ## Transaction Builder
 
-Use `@bsv/wallet-helper` when you want to construct transactions directly, but you do not want to drop all the way into raw `WalletClient.createAction` and `signAction` calls.
+Reach for `@bsv/wallet-helper` when you want to construct transactions explicitly, outputs, scripts, metadata, inputs, change, without dropping all the way down to raw `WalletClient.createAction` and `signAction` calls.
 
-This is often the clearest starting point for developers coming from other blockchain stacks: you can think in terms of explicit transaction outputs, scripts, ordinals, metadata, inputs, and change, while the user's BRC-100 wallet still controls keys and signing.
+This is usually the most comfortable starting point if you're coming from another blockchain stack: you still think in terms of transaction structure, while the user's BRC-100 wallet keeps control of keys and signing.
 
 ```bash
 npm install @bsv/wallet-helper
@@ -63,7 +73,7 @@ npm install @bsv/wallet-helper
 
 ## Server Agent
 
-Use this for automated services, bots, funding agents, or test harnesses where the service owns a key.
+Use this when a service, bot, or test harness owns its own key, with no human wallet in the loop.
 
 ```bash
 npm install @bsv/simple
@@ -79,35 +89,35 @@ const wallet = await ServerWallet.create({
 })
 ```
 
-Use a secret manager for `SERVER_PRIVATE_KEY`. Use a region-specific Wallet Infra endpoint when you operate your own deployment.
+Keep `SERVER_PRIVATE_KEY` in a secret manager, never in code or plain config. If you run your own deployment, point `storageUrl` at your own region-specific Wallet Infra endpoint instead.
 
 <Callout type="warning">
-Our own testing (Heitor, BSV vs Solana onboarding report, 2026-10-06/07) found this funding path blocked on testnet: the documented `fund-metanet` tool fails, and the funding transaction is rejected for an invalid AtomicBEEF on both storage servers tested. Flag this to the reader rather than presenting it as working end to end.
+Our own testing found this funding path blocked on testnet: the documented `fund-metanet` tool fails, and the funding transaction is rejected for an invalid AtomicBEEF on both storage servers we tested. Flag this to the reader rather than presenting it as working end to end.
 </Callout>
 
 ## Wallet Builder
 
-Use `@bsv/wallet-toolbox` when you are building a BRC-100 wallet, extending wallet storage, implementing permission UX, or porting the model to another language.
+Use `@bsv/wallet-toolbox` when you're building a BRC-100 wallet yourself: implementing storage, permission UX, or porting the wallet model to another language.
 
 ```bash
 npm install @bsv/wallet-toolbox
 ```
 
-The toolbox contains the reference pieces: `Wallet`, `WalletStorageManager`, storage providers, `WalletSigner`, `Services`, `Monitor`, key managers, permissions, and test utilities such as `MockChain`.
+It ships the reference pieces you'd otherwise have to build from scratch: `Wallet`, `WalletStorageManager`, storage providers, `WalletSigner`, `Services`, `Monitor`, key managers, permissions, and test utilities like `MockChain`.
 
 ## Protocol Engineer
 
-Use `@bsv/sdk` for direct access to the core primitives.
+Use `@bsv/sdk` directly when you need the primitives themselves, with nothing abstracted away above them.
 
 ```bash
 npm install @bsv/sdk
 ```
 
-The SDK provides secp256k1/r1 cryptography, hashing, scripts, transactions, BEEF (BRC-62), BUMP/Merkle paths (BRC-74), BRC-42 key derivation, ARC broadcasting, Chaintracks clients, BRC-100 interfaces, and wallet substrates.
+It covers secp256k1/r1 cryptography, hashing, Script, transactions, <Hint tip="BRC-62">BEEF</Hint>, <Hint tip="BRC-74">BUMP</Hint>/Merkle paths, BRC-42 key derivation, ARC broadcasting, Chaintracks clients, the BRC-100 interface types, and wallet substrates.
 
 ## Service Operator
 
-Use the infrastructure docs when you need shared services rather than npm packages.
+Some things aren't packages you install, they're shared infrastructure you run or connect to instead:
 
 | Service | First page |
 | --- | --- |
@@ -118,7 +128,7 @@ Use the infrastructure docs when you need shared services rather than npm packag
 | Wallet authentication backend | [WAB](https://bsv-blockchain.github.io/ts-stack/infrastructure/wab/) |
 | Block headers and Merkle roots | [Chaintracks Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/chaintracks-server/) |
 
-## Decision Matrix
+## Still Not Sure? Match It to What You're Building
 
 | What you're building | Start with | Usually adds |
 | --- | --- | --- |

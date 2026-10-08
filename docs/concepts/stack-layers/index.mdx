@@ -1,91 +1,100 @@
 ---
-title: Stack Layers
-description: How the SDK, wallet toolkit, and application layers fit together.
+title: How the BSV Stack Fits Together
+description: Where each BSV package sits, from raw cryptography up to the app you build.
 ---
 
 <Badge color="orange">External, not yet reviewed</Badge>
 
-Copied as-is from [ts-stack](https://bsv-blockchain.github.io/ts-stack/architecture/layers/), the source Connor called BSV's best developer documentation. Not yet adapted to this site's style guide, not yet fact-checked by our team.
+This page is provisional content, not yet adapted to this site's style guide or fact-checked by our team.
 
-The stack is organized in three primary layers with supporting components that connect horizontally.
+BSV's developer stack has three main layers, plus a handful of capabilities that sit alongside them rather than stacking on top. If you've worked with another chain's SDK before, the shape should feel familiar: a low-level cryptography library at the bottom, a wallet boundary in the middle, and app-friendly packages on top.
 
-![ts-stack layers diagram showing application APIs above the BRC-100 wallet boundary, wallet builder toolkit components below it, and @bsv/sdk as the foundation](https://bsv-blockchain.github.io/ts-stack/assets/diagrams/stack-layers.svg)
+<Frame caption="Application APIs above the BRC-100 wallet boundary, the wallet toolkit below it, and @bsv/sdk as the foundation">
+  <img src="https://bsv-blockchain.github.io/ts-stack/assets/diagrams/stack-layers.svg" alt="Stack layers diagram" />
+</Frame>
 
-## Adjacent Capabilities
+## The Foundation: @bsv/sdk
 
-These packages are not a fourth vertical layer. They sit alongside the main stack and usually connect through the BRC-100 wallet interface, `@bsv/sdk` primitives, or direct service APIs.
+`@bsv/sdk` sits at the bottom of everything and has zero external dependencies, which means no `node_modules` surface area in the part of the stack that handles your cryptography. Every other package builds on it. It covers:
 
-| Capability | Packages | What it provides | Connects through |
-| --- | --- | --- | --- |
-| Data overlays | @bsv/overlay, @bsv/overlay-express, @bsv/overlay-topics | Topic managers, lookup services, SHIP/SLAP discovery, and shared on-chain context | `@bsv/sdk` transactions, overlay services |
-| P2P messaging and payments | @bsv/message-box-client, @bsv/authsocket, @bsv/paymail | Store-and-forward encrypted messages, live authenticated channels, BRC-29 payment derivation | BRC-100 wallet, BRC-103/104 auth |
-| Identity | @bsv/auth-express-middleware, @bsv/authsocket | BRC-31 HTTP handshake and peer identity framework | BRC-100 wallet, BRC-103/104 peer framework |
-| Monetization | @bsv/402-pay, @bsv/payment-express-middleware | BRC-121 HTTP 402 plus the distinct legacy authenticated payment flow | BRC-100 wallet; BRC-121 for `402-pay`; BRC-103/104 + BRC-29 for PaymentExpress |
-| Tokens | @bsv/btms, @bsv/btms-permission-module | Token metadata, wallet permission display context, and BRC-48 PushDrop flows | BRC-100 wallet, overlay topics |
-| Storage | @bsv/overlay-topics, UHRP | Universal Hash Resolution for content-addressed files | UHRP servers, BRC-26 |
+<CardGroup cols={2}>
+  <Card title="Cryptography" icon="key">
+    secp256k1 and secp256r1 ECDSA, Schnorr signatures, ECDH, plus SHA-256/512, RIPEMD-160, and HMAC.
+  </Card>
+  <Card title="Script and transactions" icon="code">
+    A full Bitcoin Script interpreter, a transaction builder, serialization, the fee model, and UTXO handling.
+  </Card>
+  <Card title="BEEF and Merkle proofs" icon="layer-group">
+    The `Beef` class for <Hint tip="BRC-62, the format for sending a transaction with its proof">BEEF</Hint> encoding and decoding, and `MerklePath` for <Hint tip="BRC-74">BUMP</Hint> proofs.
+  </Card>
+  <Card title="Key derivation and network" icon="network-wired">
+    BRC-42/43 key derivation, `ArcBroadcaster` to submit transactions, and `ChaintracksClient` for block headers.
+  </Card>
+</CardGroup>
 
-## Foundation: @bsv/sdk
+It also defines the BRC-100 types that the wallet layer and wallet clients both rely on.
 
-`@bsv/sdk` is the only zero-dependency package in the stack. It provides every primitive the other layers build on:
+## The Wallet Boundary: BRC-100
 
-- **Cryptography** — secp256k1 and secp256r1 ECDSA, Schnorr, ECDH; SHA-256/512, RIPEMD-160, HMAC
-- **Script engine** — Full Bitcoin Script interpreter and template system
-- **Transactions** — Transaction builder, serialization, fee model, UTXO handling
-- **BEEF** — `Beef` class: BRC-62 encoding/decoding, streaming validation ordering
-- **Merkle paths** — `MerklePath` class: BRC-74 BUMP format, compound path support
-- **Key derivation** — BRC-42 BKDS, BRC-43 security levels
-- **Network** — `ArcBroadcaster` for transaction submission; `ChaintracksClient` for block headers
-- **BRC-100 types** — Interface definitions consumed by wallet-toolbox and wallet clients
+The single most important seam in the stack is the <Hint tip="The standard interface between app code and wallet code">BRC-100 wallet interface</Hint>. Everything above it is app logic that never touches a key; everything below it is wallet logic that never needs to know what the app is actually building:
 
-No dependencies means no `node_modules` vulnerabilities in the cryptographic core.
+- **Above the line**: your app calls `createAction`, `signAction`, `listOutputs`, `listActions`, `internalizeAction`, and other high-level methods. It never manages keys or storage directly.
+- **Below the line**: the wallet handles storage, signing, key derivation, choosing which coins to spend, and gathering Merkle proofs.
 
-## BRC-100 Boundary
+Because that boundary is standardized, you can swap in any BRC-100-compliant wallet underneath your app without changing a line of application code, the same idea behind WalletConnect on other chains.
 
-The BRC-100 wallet interface is the single most important seam in the stack. It separates:
+## Building a Wallet: @bsv/wallet-toolbox
 
-- **Above** — Application business logic. Uses `createAction`, `signAction`, `listOutputs`, `listActions`, `internalizeAction`, and cryptographic primitives. Does not manage keys or storage.
-- **Below** — Wallet/key management. Implements storage, signing, key derivation, UTXO selection, Merkle proof acquisition. Does not know what the application is building.
-
-Any BRC-100-compliant wallet can be swapped below this boundary without changing application code.
-
-## Wallet Builder Toolkit: @bsv/wallet-toolbox
-
-`@bsv/wallet-toolbox` is not a single monolithic wallet. It is a set of composable modules:
+`@bsv/wallet-toolbox` is for the other side of that boundary, developers building a wallet rather than an app. It's not one monolithic wallet, it's a set of composable pieces you assemble:
 
 | Module | Role |
 | --- | --- |
-| `WalletStorageManager` | Orchestrates persistence providers (active + backup + incremental sync) |
-| `KnexWalletStorage` | SQL persistence (SQLite, MySQL, PostgreSQL) |
-| `IndexedDBWalletStorage` | Browser persistence |
-| `RemoteWalletStorage` | Remote storage over HTTPS (for relay setups) |
-| `Monitor` | Background daemon: confirms transactions, acquires Merkle proofs, rebroadcasts stalled txs |
-| `PrivilegedKeyManager` | Handles the privileged-mode keyring for identity operations |
-| `ShamirWalletManager` | Shamir secret sharing for key backup |
-| `WalletSigner` | Bridges BRC-100 `signAction` to `@bsv/sdk` signing internals |
-| `Services` | Container wiring ARC, Chaintracks, WhatsOnChain |
+| `WalletStorageManager` | Coordinates where wallet data is stored (active, backup, and incremental sync) |
+| `KnexWalletStorage` | SQL-backed storage (SQLite, MySQL, PostgreSQL) |
+| `IndexedDBWalletStorage` | Storage inside the browser |
+| `RemoteWalletStorage` | Storage over HTTPS, for relay-style setups |
+| `Monitor` | A background process that confirms transactions, fetches proofs, and rebroadcasts anything stuck |
+| `PrivilegedKeyManager` | Handles the higher-permission keyring used for identity operations |
+| `ShamirWalletManager` | Splits key backups using Shamir secret sharing |
+| `WalletSigner` | Connects the BRC-100 `signAction` call to the SDK's actual signing logic |
+| `Services` | Wires up the external services a wallet needs: ARC, Chaintracks, WhatsOnChain |
 
-Wallet builders compose these into a BRC-100 `Wallet`. The resulting object is the same interface that `@bsv/simple` and other app-layer packages use.
+Whatever you assemble from these pieces ends up exposing the same BRC-100 interface that app-layer packages like `@bsv/simple` expect to talk to.
 
-## Application Layer: @bsv/simple
+## Building an App: @bsv/simple
 
-`@bsv/simple` is the recommended entry point for most application developers. `@bsv/simple/browser` returns a high-level browser wallet that wraps the SDK `WalletClient`; advanced callers can access the raw BRC-100 client with `wallet.getClient()`. Within a browser app, that client discovers an available wallet over localhost, postMessage, JSON API, or another supported substrate and exposes methods such as `createAction` and `listOutputs` without the app ever holding private keys.
+For most app developers, `@bsv/simple` is where to start, it's the layer built specifically to avoid making you deal with BRC-100 calls directly. It has two entry points, and which one you need depends on who holds the keys:
 
-`@bsv/wallet-toolbox` is for developers building wallets, not applications. If you have a strong opinion about wallet UX or are building a competing wallet implementation, `wallet-toolbox` is where you start.
-
-Two entry points in `@bsv/simple`:
-
-**`@bsv/simple/browser`** — Browser entry point. Communicates with the user's BRC-100 wallet over localhost, postMessage, or another SDK wallet substrate. The app never holds private keys. Exports include `createWallet`, `Wallet`, `Overlay`, `Certifier`, `DID`, `CredentialSchema`, `CredentialIssuer`, and `MemoryRevocationStore`.
-
-**`@bsv/simple/server`** — Manages a self-custodial server wallet from a private key, using a wallet storage endpoint such as Wallet Infra. Suitable for automated agents, backend services, and MCP servers. Exports include `ServerWallet`, `ServerWalletManager`, `FileRevocationStore`, handler factories, `JsonFileStore`, `IdentityRegistry`.
+<CardGroup cols={2}>
+  <Card title="@bsv/simple/browser" icon="globe">
+    For apps that rely on the user's own wallet. It wraps the SDK's `WalletClient`, finds whatever BRC-100 wallet is available on the user's machine (over localhost, `postMessage`, or another supported channel), and your app never holds a private key. Need lower-level access? `wallet.getClient()` exposes the raw BRC-100 client underneath.
+  </Card>
+  <Card title="@bsv/simple/server" icon="server">
+    For a backend service or automated agent that manages its own key, self-custodial, with a wallet storage endpoint behind it. Useful for things like automated agents, backend services, or an MCP server.
+  </Card>
+</CardGroup>
 
 <Callout type="warning">
-Our own testing (Heitor, BSV vs Solana onboarding report, 2026-10-06/07) found the `@bsv/simple/server` funding path blocked: the documented `fund-metanet` tool fails, and the funding transaction is rejected for an invalid AtomicBEEF on both storage servers tested. Don't present this path as working end to end without flagging that.
+Our own testing found the `@bsv/simple/server` funding path blocked: the documented `fund-metanet` tool fails, and the funding transaction is rejected for an invalid AtomicBEEF on both storage servers we tested. Don't present this path as working end to end without flagging that.
 </Callout>
 
-## Direct service access
+## Capabilities That Sit Alongside the Stack
 
-Application code can also communicate with overlays, message box servers, and UHRP storage servers **independently of the wallet**. The wallet is only required for operations that need private keys. Private keys stay on the user's device at all times; the wallet interface is the architectural boundary separating key material from application code.
+A few more packages don't fit neatly into the three layers above, instead they connect into the stack horizontally, through BRC-100, through `@bsv/sdk` primitives, or directly against a service's API:
+
+| Capability | Packages | What it gives you | Connects through |
+| --- | --- | --- | --- |
+| Data overlays | `@bsv/overlay`, `@bsv/overlay-express`, `@bsv/overlay-topics` | Shared, queryable on-chain context: topic managers, lookup services, peer discovery | `@bsv/sdk` transactions, overlay services |
+| Messaging and peer payments | `@bsv/message-box-client`, `@bsv/authsocket`, `@bsv/paymail` | Store-and-forward encrypted messages, live authenticated channels, payment address derivation (BRC-29) | BRC-100 wallet, BRC-103/104 auth |
+| Identity | `@bsv/auth-express-middleware`, `@bsv/authsocket` | An HTTP handshake and peer identity framework (BRC-31) | BRC-100 wallet, BRC-103/104 |
+| Monetization | `@bsv/402-pay`, `@bsv/payment-express-middleware` | Pay-per-request APIs over HTTP 402, plus a separate legacy authenticated payment flow | BRC-100 wallet; BRC-121 for `402-pay` |
+| Tokens | `@bsv/btms`, `@bsv/btms-permission-module` | Token metadata, wallet permission prompts, and the PushDrop token pattern (BRC-48) | BRC-100 wallet, overlay topics |
+| File storage | `@bsv/overlay-topics`, UHRP | Content-addressed file storage and retrieval | UHRP servers, BRC-26 |
+
+## Talking to Services Directly
+
+Your app doesn't have to go through the wallet for everything. Overlays, message box servers, and UHRP storage all expose their own APIs, and your app can call them directly. The wallet only needs to be involved when an operation actually requires a private key, everything else can talk to these services on its own. Private keys never leave the wallet; that boundary is what keeps key material separate from the rest of your application.
 
 ## Source
 
-- [Stack Layers on ts-stack](https://bsv-blockchain.github.io/ts-stack/architecture/layers/) (verified 2026-08-26 per ts-stack's own metadata)
+- [Stack Layers on ts-stack](https://bsv-blockchain.github.io/ts-stack/architecture/layers/)
