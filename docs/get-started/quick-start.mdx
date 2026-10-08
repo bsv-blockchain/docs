@@ -3,38 +3,29 @@ title: Quick Start
 description: Set up a BSV testnet wallet, connect an app to it with the TypeScript SDK, and send a first payment without putting a private key in your code.
 ---
 
-On **BSV**, an app does not hold private keys. It connects to a wallet that follows the BRC-100 standard, such as **BSV Desktop**, and the wallet signs every transaction after you approve it. Working on testnet lets you build and test with free coins before any real BSV is involved.
+On BSV, an app does not hold private keys. It connects to a wallet that follows the BRC-100 standard, such as BSV Desktop, and the wallet signs every transaction after you approve it. Working on testnet lets you build and test with free coins before any real BSV is involved.
 
 ## Before You Begin
 
-Make sure you have the following:
-
-- A computer running Windows, macOS, or Linux
-- A terminal to run the scripts
-- Node.js 22 or newer. To check your version, run `node --version` in the terminal
-- A web browser to request testnet coins
+Make sure you have Node.js 22 or newer installed.
 
 ## Set Up a Testnet Wallet
 
-Follow these steps to install BSV Desktop, switch it to testnet, and fund it with free coins:
+The first step is to set up a wallet. This guide uses [BSV Desktop](https://desktop.bsvb.tech/), which you install, switch to testnet, and fund with free coins:
 
 <Steps>
   <Step title="Install BSV Desktop">
     Download the installer for your system from [desktop.bsvb.tech](https://desktop.bsvb.tech/), run it, and open the app.
-
-    <Callout type="note">
-      The app follows the language of your system. After you create the wallet, you can change it in **Settings**, under **Language**.
-    </Callout>
   </Step>
   <Step title="Trust the local certificate">
     When the app opens for the first time, the **SSL Certificate Trust** dialog asks to add a certificate to your system. Click **Trust Certificate** and confirm the system prompt, or click **Not Now**. Either choice works for the scripts in this guide.
-
-    <Frame>
-      <img src="/images/quick-start/01-certificate-trust.png" alt="The SSL Certificate Trust dialog of BSV Desktop with the Trust Certificate and Not Now options" />
-    </Frame>
   </Step>
   <Step title="Switch the network to Testnet">
     Click **Create Wallet**, then the gear icon at the top right. In **Configuration**, which opens on **Mainnet**, select **Testnet** under **BSV Network** and click **Apply Configuration**. Leave the other options as they are. The network cannot be changed later in **Settings**, so check it before you continue.
+
+    <Frame>
+      <img src="/images/quick-start/01-configuration-testnet.png" alt="The Configuration screen of BSV Desktop with Testnet selected under BSV Network" />
+    </Frame>
   </Step>
   <Step title="Create the wallet">
     Click **Create New Key**. The **Primary Key** field shows the recovery phrase of your wallet. Write it down, keep it somewhere safe, and click **Login**.
@@ -45,52 +36,49 @@ Follow these steps to install BSV Desktop, switch it to testnet, and fund it wit
   </Step>
   <Step title="Protect the wallet">
     Next, **Protect your wallet** asks for a passphrase. Enter it in both fields and click **Create vault**. The app asks for this passphrase each time it opens.
-
-    <Frame>
-      <img src="/images/quick-start/02-protect-wallet.png" alt="The Protect your wallet screen with the Unlock passphrase and Confirm passphrase fields and the Create vault button" />
-    </Frame>
   </Step>
   <Step title="Copy your testnet address">
     The wallet opens on the **Legacy Bridge** page. Copy the address under **Your Payment Address**. A testnet address starts with `m` or `n`. The page shows a **Deprecated** notice about payments sent to an address, but these payments still work for funding a new wallet.
 
     <Frame>
-      <img src="/images/quick-start/03-legacy-bridge-address.png" alt="The Legacy Bridge page of BSV Desktop showing a testnet payment address and its QR code" />
+      <img src="/images/quick-start/02-legacy-bridge-address.png" alt="The Legacy Bridge page of BSV Desktop showing a testnet payment address and its QR code" />
     </Frame>
   </Step>
-  <Step title="Request testnet coins">
+  <Step title="Sign in to the faucet">
     Open [bsvfaucet.com](https://bsvfaucet.com/) and sign in with **Continue with BSV wallet**. If the browser asks to access other apps and services on this device, allow it, so the faucet can find your wallet.
 
     <Frame>
-      <img src="/images/quick-start/04-faucet-sign-in.png" alt="The Sign in to BSV Faucet screen with the Continue with BSV wallet option" />
+      <img src="/images/quick-start/03-faucet-sign-in.png" alt="The Sign in to BSV Faucet screen with the Continue with BSV wallet option" />
     </Frame>
-
+  </Step>
+  <Step title="Request testnet coins">
     On the faucet page, paste your address in **Destination address**, enter an amount such as `1000000`, and click **Request BSV**.
 
     The amount is in satoshis, not BSV. A satoshi is the smallest unit of BSV, and 100,000,000 satoshis make 1 BSV, so `1` requests a single satoshi.
 
     <Frame>
-      <img src="/images/quick-start/05-faucet-request-success.png" alt="The BSV Testnet Faucet form after a request, with the Successfully sent message and the transaction ID" />
+      <img src="/images/quick-start/04-faucet-request-success.png" alt="The BSV Testnet Faucet form after a request, with the Successfully sent message and the transaction ID" />
     </Frame>
   </Step>
 </Steps>
 
-<Callout type="note">
+<Callout type="info">
   The faucet allows up to 10,000,000 satoshis per request and one request every 24 hours.
 </Callout>
 
-The faucet confirms with a **Successfully sent** message and a transaction ID. BSV Desktop then imports the payment on its own and shows the new amount under **Your Balance**, at the top of the sidebar, within a few minutes. The **Available Balance** on the Legacy Bridge page can stay at 0.
+The faucet confirms with a **Successfully sent** message and a transaction ID. BSV Desktop then imports the payment on its own and adds the coins to your balance within a few minutes. The **Available Balance** on the Legacy Bridge page may keep showing 0 satoshis, so check the amount under **Your Balance** at the top of the page.
 
 <Frame>
-  <img src="/images/quick-start/06-wallet-balance.png" alt="BSV Desktop after the faucet payment, with the new balance and an Imported 1 payment notice" />
+  <img src="/images/quick-start/05-wallet-balance.png" alt="BSV Desktop after the faucet payment, with the new balance and an Imported 1 payment notice" />
 </Frame>
 
 ## Connect Your App to the Wallet
 
-Complete these steps to connect a script to BSV Desktop and read the identity key of your wallet:
+With the wallet set up, install the SDK and connect your app to it:
 
 <Steps>
   <Step title="Install the SDK">
-    In the terminal, go to an empty folder and run these commands. They create a project and add `@bsv/sdk`, the BSV TypeScript SDK:
+    In the terminal, create a project in an empty folder and install the SDK:
 
     ```bash
     npm init -y
@@ -112,14 +100,13 @@ Complete these steps to connect a script to BSV Desktop and read the identity ke
     console.log('Network:', network)
     ```
 
-    The script does three things:
+    Two parts of the script are worth knowing:
 
-    - `new WalletClient('auto', 'example.com')` finds the wallet available on your machine. The second value is the name your app shows to the wallet, for example in the **Spending Request**, and scripts run with Node must include it.
+    - `new WalletClient('auto', 'example.com')` finds the wallet available on your machine. The second value, `example.com`, is the name of your app. The wallet shows it whenever your app asks for something, such as a payment approval, and scripts run with Node must include it.
     - `getPublicKey({ identityKey: true })` asks the wallet for its identity key, the public key that identifies the wallet. The private key stays in the wallet.
-    - `getNetwork()` returns the network the wallet is on, so you can confirm it is testnet before you send a payment.
   </Step>
   <Step title="Run the script">
-    With BSV Desktop open and unlocked, run this command in the terminal:
+    With BSV Desktop open and unlocked, run the script:
 
     ```bash
     node connect.mjs
@@ -168,14 +155,13 @@ Take these steps to send 1,000 satoshis to your own testnet address and verify t
     console.log('Explorer:', `https://test.whatsonchain.com/tx/${txid}`)
     ```
 
-    Each part of the script has one job:
+    Two parts of the script do the work:
 
     - `new P2PKH().lock(address)` builds the part of the payment that sends the coins to your address.
     - `createAction` asks the wallet to create the payment. The wallet chooses the coins, adds the fee, and signs, so the script never touches a private key.
-    - The two `console.log` lines print the transaction ID and a link to the transaction on the testnet explorer.
   </Step>
   <Step title="Run the script and approve the payment">
-    Run this command in the terminal:
+    Run the script:
 
     ```bash
     node pay.mjs
@@ -184,7 +170,7 @@ Take these steps to send 1,000 satoshis to your own testnet address and verify t
     The script waits with no output until you answer in the wallet. In the BSV Desktop window, the **Spending Request** shows the app name, `example.com`, the payment description, and the total with the fee. Click **Authorize**.
 
     <Frame>
-      <img src="/images/quick-start/07-spending-request.png" alt="The Spending Request window of BSV Desktop for a payment named Pay my own address, with the Deny and Authorize buttons" />
+      <img src="/images/quick-start/06-spending-request.png" alt="The Spending Request window of BSV Desktop for a payment named Pay my own address, with the Deny and Authorize buttons" />
     </Frame>
 
     After you approve, the script prints the transaction ID and the explorer link:
@@ -198,7 +184,7 @@ Take these steps to send 1,000 satoshis to your own testnet address and verify t
     Open the explorer link from the output. The page shows your transaction on the BSV testnet. If it does not show yet, wait a few minutes and reload.
 
     <Frame>
-      <img src="/images/quick-start/08-explorer-transaction.jpg" alt="A transaction page on the WhatsOnChain testnet explorer with the block, the fee paid and the number of confirmations" />
+      <img src="/images/quick-start/07-explorer-transaction.png" alt="A transaction page on the WhatsOnChain testnet explorer with the block, the fee paid and the number of confirmations" />
     </Frame>
   </Step>
 </Steps>
@@ -210,7 +196,7 @@ Take these steps to send 1,000 satoshis to your own testnet address and verify t
 BSV Desktop then detects the payment to your own address and imports it within a few minutes, so your balance goes down only by the fee. You have sent a first BSV payment from code, approved it in your wallet, and verified it on the testnet.
 
 <Frame>
-  <img src="/images/quick-start/09-payment-imported.jpg" alt="BSV Desktop with an Imported 1 payment notice after the payment to your own address" />
+  <img src="/images/quick-start/08-payment-imported.png" alt="BSV Desktop with an Imported 1 payment notice after the payment to your own address" />
 </Frame>
 
 ## Troubleshooting
@@ -227,18 +213,9 @@ BSV Desktop then detects the payment to your own address and imports it within a
   </Accordion>
 </AccordionGroup>
 
-## Related Articles
+## Next Steps
 
-To learn more about building on **BSV**, review these articles:
+With a first payment sent, continue with the concepts behind it or build with an AI agent:
 
-<CardGroup cols={2}>
-  <Card title="What is BSV" href="/docs/get-started/what-is-bsv">
-    A conceptual introduction to BSV Blockchain.
-  </Card>
-  <Card title="Learn the Concepts" href="/docs/concepts">
-    UTXOs, SPV, BEEF, and the BRC-100 wallet interface.
-  </Card>
-  <Card title="Code with an AI Agent" href="/docs/ai-agent">
-    Build BSV apps using an AI coding agent.
-  </Card>
-</CardGroup>
+- [Learn the Concepts](/docs/concepts)
+- [Code with an AI Agent](/docs/ai-agent)
