@@ -1,6 +1,69 @@
 ---
 title: What is BSV
-description: A conceptual introduction to BSV Blockchain for developers.
+description: What BSV is, how it works, and what you can build on it.
 ---
 
-Content in progress.
+import AppWalletFlowSteps from '/snippets/AppWalletFlowSteps.jsx';
+
+The **BSV** blockchain implements the original Bitcoin protocol. Forked from Bitcoin Cash in 2018, BSV runs on the UTXO model with no fixed protocol limit on block size and a maximum transaction size of 1 GB.
+
+On BSV, your app can send payments, issue tokens and prove data integrity, verify transactions without running a node, and leave the private keys with the user's wallet.
+
+## How BSV Works
+
+Design your app around four ideas:
+
+- Ownership lives in **UTXOs**, unspent transaction outputs. You can handle each output on its own, without a global account state.
+- Verification runs in your app through <Hint tip="Simplified Payment Verification"><strong>SPV</strong></Hint>. It lets your app check its own transactions with Merkle paths and block headers.
+- Transactions travel in <Hint tip="Background Evaluation Extended Format (BRC-62)"><strong>BEEF</strong></Hint>, a format that bundles a transaction with the proofs needed for SPV validation.
+- Wallet access goes through <Hint tip="BRC stands for Bitcoin Request for Comments, the standards process of BSV."><strong>BRC-100</strong></Hint>, the standard wallet-to-application interface that wallets such as **BSV Desktop** implement.
+
+The following diagram follows one request, from the app's call to the wallet's result:
+
+<AppWalletFlowSteps />
+
+<Visibility for="agents">
+The diagram has five steps. The app calls a BRC-100 method on the wallet, such as `createAction`, `signAction` or `listOutputs`. The wallet selects outputs, signs locally and returns the result. For `createAction`, the transaction can come back as AtomicBEEF. The app never takes custody of the private keys.
+</Visibility>
+
+## What You Can Build
+
+Start with the use that matches your app:
+
+<CardGroup cols={3}>
+  <Card title="Payments" icon="wallet">
+    Ask the user's wallet to create the transaction.
+  </Card>
+  <Card title="Tokens" icon="coins">
+    Track specific UTXOs in an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> that defines what each token means.
+  </Card>
+  <Card title="Data integrity" icon="shield-check">
+    Put a hash of your data in a transaction and check it later against its Merkle path and block header.
+  </Card>
+</CardGroup>
+
+## Which Package to Use
+
+Pair the foundation with the package for the side you build:
+
+| **Package** | **What you get** |
+|---|---|
+| **Foundation**<br />`@bsv/sdk` | Keys, signatures, Script, transactions, BEEF and Merkle paths |
+| **App**<br />`@bsv/simple` | Helpers for payments and tokens, connected to the user's wallet |
+| **Wallet**<br />`@bsv/wallet-toolbox` | The pieces to build BRC-100 wallets |
+
+## Where to Go Next
+
+Begin with the Quick Start, or explore the concepts and coding with an AI agent:
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" href="/docs/get-started/quick-start">
+    Set up a wallet, connect, and send your first transaction.
+  </Card>
+  <Card title="Learn the Concepts" href="/docs/concepts">
+    UTXOs, SPV, BEEF, and the BRC-100 wallet interface.
+  </Card>
+  <Card title="Code with an AI Agent" href="/docs/ai-agent">
+    Build BSV apps using an AI coding agent.
+  </Card>
+</CardGroup>
