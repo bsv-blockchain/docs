@@ -30,41 +30,34 @@
             ]
           },
           {
-            "group": "Learn the Concepts",
-            "pages": [
-              "docs/concepts/index"
-            ]
-          },
-          {
             "group": "Code with an AI Agent",
             "pages": [
               "docs/ai-agent/index"
-            ]
-          },
-          {
-            "group": "Components (sample)",
-            "pages": [
-              "docs/components/index"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
-        "icon": "code",
+        "tab": "Guides",
+        "icon": "compass",
         "pages": [
           {
-            "group": "Overview",
+            "group": "Guides",
             "pages": [
-              "api-reference/introduction"
+              "docs/guides/index"
             ]
-          },
+          }
+        ]
+      },
+      {
+        "tab": "Concepts",
+        "icon": "book-open-check",
+        "pages": [
           {
-            "group": "Endpoints",
-            "openapi": {
-              "src": "api-reference/openapi.yaml",
-              "path": "/api-reference"
-            }
+            "group": "Concepts",
+            "pages": [
+              "docs/concepts/index"
+            ]
           }
         ]
       }
