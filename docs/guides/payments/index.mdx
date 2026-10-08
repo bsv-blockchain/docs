@@ -11,6 +11,10 @@ This page is provisional content, not yet adapted to this site's style guide or 
 Our own testing found the `ServerWallet.create()` funding path used in this guide blocked on testnet: the documented `fund-metanet` tool fails, and the funding transaction is rejected for an invalid AtomicBEEF on both storage servers tested. Flag this before presenting the server side as working end to end.
 </Callout>
 
+<Callout type="warning">
+Some code examples on this page use Mainnet (`network: 'main'`), moving real BSV. A BSV transaction cannot be reversed once broadcast. Review every example carefully and switch to a testnet setup while you're learning.
+</Callout>
+
 This guide sets up an API that charges for access using HTTP 402 Payment Required, the standard HTTP status code reserved for exactly this. You'll build a server that gates specific routes behind a price, and a client that pays automatically when it hits one.
 
 **Time:** ~25 minutes
