@@ -3,7 +3,7 @@ title: "BEEF (BRC-62)"
 description: The binary format that lets your app verify a transaction without running a full node.
 ---
 
-<Badge color="orange">External, not yet reviewed</Badge>
+<Badge color="orange">In progress, not fully rewritten</Badge>
 
 **BEEF** (<Hint tip="Background Evaluation Extended Format">Background Evaluation Extended Format</Hint>, <Hint tip="BSV Request for Comments 62">BRC-62</Hint>) is the binary format BSV uses to send a transaction together with the proof that it is real. A wallet or app that receives a BEEF package can check the transaction against block headers it already has, instead of asking a full node to confirm it. This check is called <Hint tip="Simplified Payment Verification">SPV</Hint>.
 
