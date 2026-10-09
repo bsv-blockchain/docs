@@ -92,7 +92,3 @@ A few more packages don't fit neatly into the three layers above, instead they c
 ## Talking to Services Directly
 
 Your app doesn't have to go through the wallet for everything. Overlays, message box servers, and UHRP storage all expose their own APIs, and your app can call them directly. The wallet only needs to be involved when an operation actually requires a private key, everything else can talk to these services on its own. Private keys never leave the wallet; that boundary is what keeps key material separate from the rest of your application.
-
-## Source
-
-- [Stack Layers on ts-stack](https://bsv-blockchain.github.io/ts-stack/architecture/layers/)

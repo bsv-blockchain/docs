@@ -380,7 +380,3 @@ npx ts-node main.ts
     If payment processing fails after the wallet has already started work, the middleware returns `503` without issuing a new challenge. Treat that as ambiguous, reconcile the transaction before asking the client to pay again, rather than assuming the payment never happened.
   </Accordion>
 </AccordionGroup>
-
-## Source
-
-- [HTTP 402 Payment Gating on ts-stack](https://bsv-blockchain.github.io/ts-stack/guides/http-402-payments/) (verified 2026-08-26 per ts-stack's own metadata)
