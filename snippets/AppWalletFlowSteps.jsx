@@ -42,7 +42,7 @@ const steps = [
 const walletItems = ['Select outputs', 'Sign locally', 'Return the result'];
 
 const css = `
-.awf { position: relative; max-width: 760px; margin: 24px auto; border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); padding: 16px; color: var(--wd-text); font-size: 13px; }
+.awf { position: relative; container-type: inline-size; width: 100%; margin: 24px 0; border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); padding: 16px; color: var(--wd-text); font-size: 13px; }
 .awf-svg { display: block; width: 100%; height: auto; }
 .awf-stack { display: none; flex-direction: column; gap: 8px; }
 .awf-card { padding: 10px 12px; border: 1px solid var(--wd-border); border-radius: 10px; background: var(--wd-background); color: var(--wd-text-muted); }
@@ -73,6 +73,8 @@ const css = `
 .awf-btn:disabled { color: var(--wd-text-muted); cursor: default; opacity: 0.6; }
 @media (max-width: 640px) {
   .awf { padding: 12px; }
+}
+@container (max-width: 780px) {
   .awf-svg { display: none; }
   .awf-stack { display: flex; }
 }
@@ -133,7 +135,7 @@ export default function AppWalletFlowSteps() {
 
       <svg
         className="awf-svg"
-        viewBox="0 0 760 236"
+        viewBox="0 0 880 236"
         role="img"
         aria-label="Diagram: the app calls a wallet method. The wallet selects outputs, signs locally and returns the result to the app. The private keys stay in the wallet."
       >
@@ -143,8 +145,8 @@ export default function AppWalletFlowSteps() {
           </marker>
         </defs>
 
-        <rect x="0.5" y="0.5" width="759" height="100" rx="12" style={lane} />
-        <rect x="0.5" y="108.5" width="759" height="127" rx="12" style={lane} />
+        <rect x="0.5" y="0.5" width="879" height="100" rx="12" style={lane} />
+        <rect x="0.5" y="108.5" width="879" height="127" rx="12" style={lane} />
         <text x="16" y="22" fontSize="11" fontWeight="600" letterSpacing="1" style={muted}>YOUR APP</text>
         <text x="16" y="130" fontSize="11" fontWeight="600" letterSpacing="1" style={muted}>THE USER'S WALLET</text>
 
@@ -152,23 +154,23 @@ export default function AppWalletFlowSteps() {
         <text x="32" y="58" fontSize="14" fontWeight="600" style={{ ...font, fill: ink('ask') }}>Call a wallet method</text>
         <text x="32" y="76" fontSize="12" style={muted}>A BRC-100 method</text>
 
-        <rect x="520" y="34" width="224" height="56" rx="10" style={frame('use')} />
-        <text x="536" y="58" fontSize="14" fontWeight="600" style={{ ...font, fill: ink('use') }}>Use the result</text>
-        <text x="536" y="76" fontSize="12" style={muted}>Comes back from the wallet</text>
+        <rect x="640" y="34" width="224" height="56" rx="10" style={frame('use')} />
+        <text x="656" y="58" fontSize="14" fontWeight="600" style={{ ...font, fill: ink('use') }}>Use the result</text>
+        <text x="656" y="76" fontSize="12" style={muted}>Comes back from the wallet</text>
 
-        <rect x="250" y="120" width="270" height="100" rx="10" style={frame('wallet')} />
-        <text x="268" y="142" fontSize="14" fontWeight="600" style={{ ...font, fill: ink('wallet') }}>Wallet</text>
+        <rect x="305" y="120" width="270" height="100" rx="10" style={frame('wallet')} />
+        <text x="323" y="142" fontSize="14" fontWeight="600" style={{ ...font, fill: ink('wallet') }}>Wallet</text>
         {walletItems.map((label, i) => {
           const state = itemState(i);
           const cy = 164 + i * 20;
           return (
             <g key={label}>
               {state === 'upcoming' ? (
-                <circle cx="276" cy={cy} r="5" style={{ fill: 'none', stroke: 'var(--wd-text-muted)', strokeWidth: 1.5 }} />
+                <circle cx="331" cy={cy} r="5" style={{ fill: 'none', stroke: 'var(--wd-text-muted)', strokeWidth: 1.5 }} />
               ) : (
-                <circle cx="276" cy={cy} r="5" style={{ fill: state === 'done' ? 'var(--wd-primary)' : 'var(--wd-text)', stroke: 'none' }} />
+                <circle cx="331" cy={cy} r="5" style={{ fill: state === 'done' ? 'var(--wd-primary)' : 'var(--wd-text)', stroke: 'none' }} />
               )}
-              <text x="290" y={cy + 4} fontSize="12" fontWeight={state === 'current' ? 600 : 400} style={{ ...font, fill: state === 'upcoming' ? 'var(--wd-text-muted)' : 'var(--wd-text)' }}>{label}</text>
+              <text x="345" y={cy + 4} fontSize="12" fontWeight={state === 'current' ? 600 : 400} style={{ ...font, fill: state === 'upcoming' ? 'var(--wd-text-muted)' : 'var(--wd-text)' }}>{label}</text>
             </g>
           );
         })}
@@ -176,11 +178,11 @@ export default function AppWalletFlowSteps() {
         <text x="16" y="172" fontSize="12" fontStyle="italic" style={muted}>Private keys stay in</text>
         <text x="16" y="188" fontSize="12" fontStyle="italic" style={muted}>the wallet</text>
 
-        <path d="M 262 62 H 385 V 117" style={line} markerEnd="url(#awfs-arrow)" />
-        <text x="395" y="86" fontSize="12" style={muted}>Request</text>
+        <path d="M 262 62 H 440 V 117" style={line} markerEnd="url(#awfs-arrow)" />
+        <text x="450" y="86" fontSize="12" style={muted}>Request</text>
 
-        <path d="M 520 170 H 632 V 93" style={line} markerEnd="url(#awfs-arrow)" />
-        <text x="642" y="140" fontSize="12" style={muted}>Result</text>
+        <path d="M 575 170 H 752 V 93" style={line} markerEnd="url(#awfs-arrow)" />
+        <text x="762" y="140" fontSize="12" style={muted}>Result</text>
       </svg>
 
       <div className="awf-stack" aria-hidden="true">
