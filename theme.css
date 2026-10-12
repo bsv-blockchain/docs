@@ -1,6 +1,8 @@
+/* Same logo and size as bsvassociation.org's header (BSV-A-logo-blue.svg, 303x26, shown about 225px wide). */
 .wd-logo-light,
 .wd-logo-dark {
-  height: 32px !important;
+  height: 19px !important;
+  width: auto !important;
 }
 
 .bsv-hero {
