@@ -1,0 +1,234 @@
+/* Homepage (index.mdx, mode custom). Everything is scoped under .bsv-home. */
+/* Official BSV Association palette (bsvassociation.org, Elementor global colors, 2026-10-12):
+   primary #1B1EA9, secondary #003FFF, accent #FF2DAF / #D31A8C, text #2D2D31,
+   light #DAE3FF, background #F9F9F9. Dark-mode tints are derived from the primary. */
+.bsv-home {
+  --bh-ink: #2d2d31;
+  --bh-soft: #5c5c66;
+  --bh-line: #e3e6f2;
+  --bh-card: #ffffff;
+  --bh-tint: #eef2ff;
+  --bh-accent: #1b1ea9;
+  --bh-pink: #d31a8c;
+  --bh-grad: linear-gradient(90deg, #1b1ea9 0%, #003fff 100%);
+  color: var(--bh-ink);
+}
+
+[data-theme="dark"] .bsv-home {
+  --bh-ink: #eef0fa;
+  --bh-soft: #a9adc6;
+  --bh-line: #262a48;
+  --bh-card: #12142b;
+  --bh-tint: #181c3d;
+  --bh-accent: #8c9bff;
+  --bh-pink: #ff5cc2;
+}
+
+.bsv-home * { box-sizing: border-box; }
+.bsv-home a { text-decoration: none; }
+.bsv-home h1, .bsv-home h2, .bsv-home h3 { margin: 0; text-wrap: balance; }
+
+/* Backgrounds span the viewport; content stays within 1440px, centred. */
+/* Custom-mode pages sit in a centred, max-width frame; break out of it so the page spans
+   the whole viewport on large screens. */
+.bsv-home { width: 100vw; position: relative; left: 50%; margin-left: -50vw; overflow-x: clip; }
+/* No side padding: content is 1440px wide on large screens, with a 1.5rem margin only on screens narrower than that. */
+.bh-wrap { width: min(1440px, 100% - 3rem); margin: 0 auto; padding: 0; }
+
+.bh-eyebrow {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bh-accent);
+  margin-bottom: 1rem;
+}
+
+/* Hero: full-width brand band. The triangle grid (the Association's motif) is decoration only:
+   low opacity, and masked so it fades out behind the text column on the left. */
+.bh-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 5rem 0 5.5rem;
+  color: #ffffff;
+  background: linear-gradient(115deg, #1b1ea9 0%, #1a2fd0 55%, #003fff 100%);
+}
+.bh-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='84'%3E%3Cpath d='M10 4 L44 22 L10 40Z M58 46 L92 64 L58 82Z' fill='%23ffffff'/%3E%3C/svg%3E");
+  background-size: 96px 84px;
+  opacity: 0.09;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 75%);
+  mask-image: linear-gradient(90deg, transparent 0%, transparent 30%, #000 75%);
+  pointer-events: none;
+}
+.bh-hero-inner { position: relative; }
+.bh-hero-text { max-width: 720px; }
+
+/* Secondary hero button: outlined, white on the brand band. */
+.bh-btn-ghost {
+  display: inline-block;
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.8rem 1.4rem;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.bh-btn-ghost:hover { background: rgba(255, 255, 255, 0.12); border-color: #ffffff; }
+
+.bh-hero .bh-eyebrow { color: #dae3ff; }
+.bh-hero .bh-sub { color: #dae3ff; }
+.bh-hero .bh-grad-text { background: none; color: #dae3ff; -webkit-text-fill-color: currentColor; }
+.bh-hero .bh-link { color: #ffffff; border-color: rgba(255, 255, 255, 0.45); }
+.bh-hero .bh-link:hover { color: #ffffff; border-color: #ffffff; }
+.bh-hero h1 { font-size: clamp(2.1rem, 4.2vw, 3.2rem); line-height: 1.1; letter-spacing: -0.02em; }
+.bh-grad-text {
+  background: var(--bh-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.bh-sub { color: var(--bh-soft); font-size: 1.1rem; line-height: 1.65; max-width: 56ch; margin: 1.25rem 0 2rem; }
+.bh-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 1.25rem; }
+.bh-btn {
+  display: inline-block;
+  /* #D31A8C in both themes: white text on it is 4.6:1. */
+  background: #d31a8c;
+  color: #fff !important;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.85rem 1.6rem;
+  border-radius: 8px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.bh-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 20px -8px rgba(211, 26, 140, 0.6); }
+.bh-link {
+  color: var(--bh-ink);
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-bottom: 1px solid var(--bh-line);
+  padding-bottom: 2px;
+}
+.bh-link:hover { color: var(--bh-accent); border-color: var(--bh-accent); }
+
+/* Sections */
+.bh-section { padding: 4rem 0 0; }
+.bh-head { max-width: 60ch; margin-bottom: 2rem; }
+.bh-head h2 { font-size: 1.8rem; letter-spacing: -0.01em; }
+.bh-head p { color: var(--bh-soft); line-height: 1.65; margin: 0.6rem 0 0; }
+
+/* Path cards */
+.bh-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+@media (min-width: 1800px) { .bh-hero h1 { font-size: 3.6rem; } }
+.bh-grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 1.25rem; }
+.bh-card {
+  position: relative;
+  display: block;
+  border: 1px solid var(--bh-line);
+  border-radius: 12px;
+  background: var(--bh-card);
+  padding: 1.6rem 1.5rem;
+  color: var(--bh-ink);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.bh-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(27, 30, 169, 0.45);
+  box-shadow: 0 14px 30px -22px rgba(27, 30, 169, 0.45);
+}
+.bh-card h3 { font-size: 1.15rem; margin-bottom: 0.45rem; }
+.bh-card p { color: var(--bh-soft); font-size: 0.92rem; line-height: 1.6; margin: 0 0 1rem; }
+.bh-card.bh-soft { background: var(--bh-tint); }
+.bh-go { font-weight: 600; font-size: 0.85rem; color: var(--bh-accent); }
+.bh-go span { display: inline-block; margin-left: 0.3em; transition: transform 0.2s ease; }
+.bh-card:hover .bh-go span { transform: translateX(4px); }
+.bh-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 1rem;
+  background: var(--bh-tint);
+  color: var(--bh-accent);
+}
+.bh-icon svg { width: 22px; height: 22px; }
+
+/* Steps */
+.bh-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; counter-reset: step; }
+.bh-step { border-top: 2px solid transparent; border-image: var(--bh-grad) 1; padding-top: 1.1rem; }
+.bh-step::before {
+  counter-increment: step;
+  content: "0" counter(step);
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--bh-pink);
+  margin-bottom: 0.5rem;
+}
+.bh-step h3 { font-size: 1.02rem; margin-bottom: 0.4rem; }
+.bh-step p { color: var(--bh-soft); font-size: 0.9rem; line-height: 1.55; margin: 0 0 0.75rem; }
+.bh-step a { font-size: 0.86rem; font-weight: 600; color: var(--bh-accent); }
+
+/* Use cases: as many columns as fit, so five cards never leave one orphan on a wide row. */
+.bh-grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem; }
+
+/* Section head with a link on the right */
+.bh-head-row { max-width: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; }
+.bh-head-row > div { max-width: 60ch; }
+.bh-see-all { font-weight: 600; font-size: 0.92rem; color: var(--bh-accent); white-space: nowrap; }
+.bh-see-all span { display: inline-block; transition: transform 0.2s ease; }
+.bh-see-all:hover span { transform: translateX(4px); }
+
+/* Example apps */
+.bh-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bh-pink);
+  background: var(--bh-tint);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+/* Explore the docs: an area card with its top pages */
+.bh-explore {
+  border: 1px solid var(--bh-line);
+  border-radius: 12px;
+  background: var(--bh-card);
+  padding: 1.4rem 1.5rem 1.2rem;
+}
+.bh-explore-head { display: flex; gap: 0.9rem; align-items: flex-start; color: var(--bh-ink); margin-bottom: 0.9rem; }
+.bh-explore-head .bh-icon { flex: none; margin: 0; }
+.bh-explore-head strong { display: block; font-size: 1.08rem; margin-bottom: 0.2rem; }
+.bh-explore-head strong + span { display: block; color: var(--bh-soft); font-size: 0.9rem; line-height: 1.5; }
+.bh-explore-head:hover strong { color: var(--bh-accent); }
+.bh-explore ul { list-style: none; margin: 0; padding: 0.8rem 0 0; border-top: 1px solid var(--bh-line); }
+.bh-explore li { margin: 0; padding: 0.3rem 0; }
+.bh-explore li a { color: var(--bh-accent); font-size: 0.92rem; font-weight: 500; }
+.bh-explore li a:hover { text-decoration: underline; }
+
+.bh-last { padding-bottom: 5rem; }
+
+@media (max-width: 960px) {
+  .bh-steps { grid-template-columns: repeat(2, 1fr); }
+  .bh-grid3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 760px) {
+  .bh-hero { padding: 3rem 0 3.5rem; }
+  /* Text fills the hero on phones, so the grid would sit behind it: drop the decoration. */
+  .bh-hero::before { display: none; }
+  .bh-grid3, .bh-grid2, .bh-steps { grid-template-columns: 1fr; }
+  .bh-head-row { flex-direction: column; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bsv-home * { transition: none !important; }
+}

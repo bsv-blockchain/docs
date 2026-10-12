@@ -1,0 +1,44 @@
+---
+title: "Human-readable payment addresses with Paymail"
+description: Replace raw BSV addresses with email-style payment handles.
+---
+
+**Paymail** replaces a raw BSV address with a handle that looks like an email address, so people can pay each other without copying and pasting long strings of characters.
+
+❌ `17Dx2iAnGWPJCdqVvRFr45vL9YvT86TDsn`
+
+✅ `alice@walletprovider.com`
+
+Anyone can implement Paymail, you can self-host it or let a wallet provider handle it for you, and it's discoverable: a sending wallet can look up a handle and automatically find out what the receiving wallet supports, without a person needing to configure anything.
+
+## How It Works, at a High Level
+
+Paymail is really a family of protocols, collectively called `bsvalias`, that build on top of each other:
+
+<CardGroup cols={2}>
+  <Card title="Service Discovery" icon="magnifying-glass">
+    Given a domain, find out what Paymail capabilities it supports and where.
+  </Card>
+  <Card title="Public Key Infrastructure" icon="key">
+    Look up the public key associated with a handle.
+  </Card>
+  <Card title="Payment Addressing" icon="wallet">
+    Resolve a handle into an actual address to send a payment to.
+  </Card>
+  <Card title="BRFC Specifications" icon="file-lines">
+    The versioning scheme Paymail extensions use to declare what they implement.
+  </Card>
+</CardGroup>
+
+A wallet only gets to call itself "Paymail" if it implements at least three of these: Service Discovery, Public Key Infrastructure, and the basic address resolution part of Payment Addressing.
+
+## Beyond the Basics
+
+Because the protocol is open, anyone can propose an extension, and a wallet declares which ones it supports through Service Discovery. A few of the more notable extensions:
+
+- **Sender Validation**: lets a receiving wallet confirm who actually sent a payment.
+- **Receiver Approvals**: lets a receiving wallet require explicit approval before a payment goes through.
+- **PayTo Protocol Prefix**: a URI scheme for triggering a payment from a link.
+- Multisig authorizations, threshold signature group setup, and payment channels.
+
+If you're building a wallet or a payment feature, you don't need to implement all of these, just the core three, plus whichever extensions your use case actually needs.

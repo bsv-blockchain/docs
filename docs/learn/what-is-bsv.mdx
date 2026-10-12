@@ -1,0 +1,43 @@
+---
+title: What is BSV
+description: What BSV is, how it works, and what you can build on it.
+---
+
+import AppWalletFlowSteps from '/snippets/AppWalletFlowSteps.jsx';
+
+The **BSV** blockchain implements the original Bitcoin protocol. Forked from Bitcoin Cash in 2018, BSV runs on the UTXO model.
+
+On BSV, your app can send payments, issue tokens and prove data integrity, verify transactions without running a node, and leave the private keys with the user's wallet.
+
+## How BSV Works
+
+BSV separates your app's code, the user's wallet and shared infrastructure:
+
+- Ownership lives in <Hint tip="Unspent transaction output">UTXOs</Hint>. You can handle each UTXO on its own, without a global account state.
+- Verification runs in your app through <Hint tip="Simplified Payment Verification">SPV</Hint>. It lets your app check its own transactions with Merkle paths and block headers.
+- Transactions travel in <Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint>, a format that bundles a transaction with the proofs needed for SPV validation.
+- Wallet access goes through <Hint tip="BSV Request for Comments">BRC-100</Hint>, the standard wallet-to-application interface that wallets such as **BSV Desktop** implement.
+
+The following diagram follows one request, from the app's call to the wallet's result:
+
+<AppWalletFlowSteps />
+
+<Visibility for="agents">
+The diagram has five steps. The app calls a BRC-100 method on the wallet, such as `createAction`, `signAction` or `listOutputs`. The wallet selects outputs, signs locally and returns the result. For `createAction`, the transaction can come back as AtomicBEEF. The app never takes custody of the private keys.
+</Visibility>
+
+## What You Can Build
+
+The same transaction model supports more than payments. A BSV app can also track tokens with an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, or put a hash of its data in a transaction and check it later against its Merkle path and block header. For a guide per use case, see [Guides](/docs/guides).
+
+## Packages for Building on BSV
+
+Most apps start with `@bsv/simple`, which handles payments and tokens through the user's wallet. It builds on `@bsv/sdk` (hashing, keys, Script, BEEF, Merkle paths), and wallet builders use `@bsv/wallet-toolbox`. To compare them and pick one, see the [SDKs overview](/docs/sdk).
+
+## Next Steps
+
+Begin with the Quick Start, or explore the concepts and coding with an AI agent:
+
+- [Quick Start](/docs/get-started/quick-start-browser)
+- [Learn the Concepts](/docs/learn)
+- [Code with an AI Agent](/docs/build-with-ai)
