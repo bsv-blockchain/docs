@@ -110,7 +110,7 @@
                 ]
               },
               {
-                "group": "Operate services in production",
+                "group": "Run in production",
                 "page": "docs/guides/services/operations/index",
                 "pages": [
                   "docs/guides/services/operations/edge-security",
@@ -227,7 +227,7 @@
             "group": "TypeScript",
             "pages": [
               {
-                "group": "Build apps with @bsv/simple",
+                "group": "@bsv/simple",
                 "page": "docs/sdk/simple/index",
                 "pages": [
                   "docs/sdk/simple/architecture",
@@ -235,7 +235,7 @@
                 ]
               },
               {
-                "group": "Use the TypeScript SDK",
+                "group": "TypeScript SDK",
                 "page": "docs/sdk/typescript/index",
                 "pages": [
                   "docs/sdk/typescript/setup",
@@ -243,7 +243,7 @@
                 ]
               },
               {
-                "group": "Build transactions by hand",
+                "group": "Low-level transactions",
                 "page": "docs/sdk/typescript/low-level/index",
                 "pages": [
                   "docs/sdk/typescript/low-level/transactions",
@@ -252,7 +252,7 @@
                 ]
               },
               {
-                "group": "Find more TypeScript packages",
+                "group": "More TypeScript packages",
                 "page": "docs/sdk/packages/index",
                 "pages": [
                   "docs/sdk/packages/message-box-client",
@@ -266,7 +266,7 @@
             "group": "Other languages",
             "pages": [
               {
-                "group": "Use the Go SDK",
+                "group": "Go SDK",
                 "page": "docs/sdk/go/index",
                 "pages": [
                   "docs/sdk/go/keys",
@@ -275,7 +275,7 @@
                 ]
               },
               {
-                "group": "Use the Python SDK",
+                "group": "Python SDK",
                 "page": "docs/sdk/python/index",
                 "pages": [
                   "docs/sdk/python/simple-tx",
@@ -383,7 +383,7 @@
                 }
               },
               {
-                "group": "HTTP 402 payments (BRC-121)",
+                "group": "BRC-121 payments",
                 "openapi": {
                   "src": "openapi/brc121.yaml",
                   "path": "/reference/brc-121"
@@ -440,7 +440,7 @@
             "pages": [
               "docs/wallet-dev/index",
               {
-                "group": "Build a wallet with wallet-toolbox",
+                "group": "Use wallet-toolbox",
                 "page": "docs/wallet-dev/wallet-toolbox/index",
                 "pages": [
                   "docs/wallet-dev/wallet-toolbox/utxo-lifecycle",
@@ -449,7 +449,7 @@
               },
               "docs/wallet-dev/permissions",
               {
-                "group": "Test BRC-100 conformance",
+                "group": "Test conformance",
                 "page": "docs/wallet-dev/conformance/index",
                 "pages": [
                   "docs/wallet-dev/conformance/vector-catalog",
@@ -458,7 +458,7 @@
               },
               "docs/wallet-dev/infrastructure",
               {
-                "group": "Run the SPV Wallet server",
+                "group": "SPV Wallet server",
                 "page": "docs/wallet-dev/spv-wallet/index",
                 "pages": [
                   "docs/wallet-dev/spv-wallet/quickstart",
