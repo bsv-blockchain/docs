@@ -3,6 +3,8 @@ title: BRC-100 Wallet Interface
 description: The standard interface that lets any app talk to any wallet, without touching a private key.
 ---
 
+import CreateActionFlow from '/snippets/diagrams/CreateActionFlow.jsx';
+
 **BRC-100** is the line between your app's code and wallet code. Your app says what it wants done, in plain method calls; the wallet decides how to do it, including which coins to use, which permissions apply, and how to sign. If you've used <Hint tip="A standard that lets any app connect to any compatible wallet">WalletConnect</Hint> on another chain, this plays a similar role: one interface, many wallets.
 
 <Frame caption="How a desktop and mobile request flow through BRC-100">
@@ -88,7 +90,13 @@ BRC-100 methods fall into a few groups:
 
 ## What createAction Can Return
 
-Calling `createAction` ends in one of two ways:
+Calling `createAction` ends in one of two ways, shown in the following diagram and table:
+
+<Visibility for="agents">
+The diagram has seven steps and two paths. First, the app calls `createAction`. Second, the wallet checks whether it can fund, sign and process the transaction on its own. Path 1, immediate action: the wallet finishes alone and returns a `txid` and/or the transaction itself. Path 2, signable action: the wallet returns `signableTransaction: { tx, reference }` to the app, the app signs its inputs and calls `signAction` to finish. On both paths the wallet then returns the result, and the app uses it.
+</Visibility>
+
+<CreateActionFlow />
 
 | Outcome | What you get back | What it means |
 | --- | --- | --- |

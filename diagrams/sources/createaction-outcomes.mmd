@@ -1,0 +1,9 @@
+%% Source of truth: docs/concepts/wallet-model.mdx, "What createAction Can Return".
+%% No classDefs on purpose: WriteDocs themes Mermaid itself and redraws it on light/dark switch.
+flowchart TD
+    call["Your app calls createAction"] --> q{"Can the wallet fund,<br/>sign and process it alone?"}
+    q -- Yes --> immediate["Immediate action:<br/>txid and/or the transaction"]
+    q -- No --> signable["Signable action:<br/>signableTransaction { tx, reference }"]
+    signable --> sign["Your app signs its inputs"]
+    sign --> signAction["Your app calls signAction"]
+    signAction --> done["Wallet finishes the transaction"]
