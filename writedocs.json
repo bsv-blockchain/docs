@@ -25,9 +25,6 @@
       }
     }
   },
-  "socials": {
-    "github": "https://github.com/writechoiceorg/bsv-docs"
-  },
   "variables": {
     "network": "testnet",
     "faucetUrl": "https://bsvfaucet.com",
