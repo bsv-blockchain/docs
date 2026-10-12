@@ -41,14 +41,6 @@
         "icon": "rocket",
         "pages": [
           {
-            "group": "Before you code",
-            "pages": [
-              "docs/get-started/use-testnet",
-              "docs/get-started/set-up-wallet",
-              "docs/get-started/get-test-coins"
-            ]
-          },
-          {
             "group": "Build your first app",
             "pages": [
               "docs/get-started/quick-start-browser",
