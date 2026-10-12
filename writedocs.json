@@ -97,6 +97,30 @@
             ]
           },
           {
+            "group": "Run your own services",
+            "pages": [
+              "docs/guides/services/index",
+              "docs/guides/services/broadcasting",
+              {
+                "group": "Run ts-stack services",
+                "page": "docs/guides/services/stack-services/index",
+                "pages": [
+                  "docs/guides/services/stack-services/overlay-server",
+                  "docs/guides/services/stack-services/message-box-server"
+                ]
+              },
+              {
+                "group": "Operate services in production",
+                "page": "docs/guides/services/operations/index",
+                "pages": [
+                  "docs/guides/services/operations/edge-security",
+                  "docs/guides/services/operations/scaling"
+                ]
+              },
+              "docs/guides/services/local-stack"
+            ]
+          },
+          {
             "group": "Examples",
             "pages": [
               "docs/showcase/p2p-medical",
@@ -447,56 +471,6 @@
         ]
       },
       {
-        "tab": "Infrastructure",
-        "icon": "server",
-        "pages": [
-          "docs/infrastructure/index",
-          {
-            "group": "Nodes",
-            "pages": [
-              {
-                "group": "Run SV Node",
-                "page": "docs/infrastructure/sv-node/index",
-                "pages": [
-                  "docs/infrastructure/sv-node/installation",
-                  "docs/infrastructure/sv-node/configuration",
-                  "docs/infrastructure/sv-node/rpc-methods"
-                ]
-              },
-              "docs/infrastructure/teranode"
-            ]
-          },
-          {
-            "group": "Services",
-            "pages": [
-              "docs/infrastructure/broadcasting",
-              {
-                "group": "Run ts-stack services",
-                "page": "docs/infrastructure/stack-services/index",
-                "pages": [
-                  "docs/infrastructure/stack-services/overlay-server",
-                  "docs/infrastructure/stack-services/message-box-server"
-                ]
-              },
-              {
-                "group": "Operate services in production",
-                "page": "docs/infrastructure/operations/index",
-                "pages": [
-                  "docs/infrastructure/operations/edge-security",
-                  "docs/infrastructure/operations/scaling"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Testing",
-            "pages": [
-              "docs/infrastructure/local-stack"
-            ]
-          }
-        ]
-      },
-      {
         "tab": "Changelog",
         "icon": "history",
         "pages": [
@@ -513,6 +487,28 @@
               "docs/changelog/payments-middleware",
               "docs/changelog/wallet-infrastructure",
               "docs/changelog/other-packages"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Node operators",
+        "icon": "server",
+        "hidden": true,
+        "pages": [
+          {
+            "group": "Nodes",
+            "pages": [
+              {
+                "group": "Run SV Node",
+                "page": "docs/nodes/sv-node/index",
+                "pages": [
+                  "docs/nodes/sv-node/installation",
+                  "docs/nodes/sv-node/configuration",
+                  "docs/nodes/sv-node/rpc-methods"
+                ]
+              },
+              "docs/nodes/teranode"
             ]
           }
         ]
