@@ -23,11 +23,11 @@
 .bsv-home a { text-decoration: none; }
 .bsv-home h1, .bsv-home h2, .bsv-home h3 { margin: 0; text-wrap: balance; }
 
-/* Full width at every screen size: sections span the viewport, content keeps a fluid side gutter. */
+/* Backgrounds span the viewport; content stays within 1440px, centred. */
 /* Custom-mode pages sit in a centred, max-width frame; break out of it so the page spans
    the whole viewport on large screens. */
 .bsv-home { width: 100vw; position: relative; left: 50%; margin-left: -50vw; overflow-x: clip; }
-.bh-wrap { width: 100%; max-width: none; margin: 0; padding: 0 clamp(1.5rem, 6vw, 10rem); }
+.bh-wrap { width: 100%; max-width: 1440px; margin: 0 auto; padding: 0 clamp(1.5rem, 4vw, 3rem); }
 
 .bh-eyebrow {
   display: inline-block;
