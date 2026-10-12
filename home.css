@@ -23,7 +23,11 @@
 .bsv-home a { text-decoration: none; }
 .bsv-home h1, .bsv-home h2, .bsv-home h3 { margin: 0; text-wrap: balance; }
 
-.bh-wrap { max-width: 1140px; margin: 0 auto; padding: 0 1.5rem; }
+/* Full width at every screen size: sections span the viewport, content keeps a fluid side gutter. */
+/* Custom-mode pages sit in a centred, max-width frame; break out of it so the page spans
+   the whole viewport on large screens. */
+.bsv-home { width: 100vw; position: relative; left: 50%; margin-left: -50vw; overflow-x: clip; }
+.bh-wrap { width: 100%; max-width: none; margin: 0; padding: 0 clamp(1.5rem, 6vw, 10rem); }
 
 .bh-eyebrow {
   display: inline-block;
@@ -51,7 +55,8 @@
   background: radial-gradient(closest-side, rgba(91, 75, 214, 0.2), rgba(47, 143, 224, 0.08) 55%, transparent 75%);
   pointer-events: none;
 }
-.bh-hero-inner { position: relative; max-width: 760px; }
+.bh-hero-inner { position: relative; }
+.bh-hero-inner > * { max-width: 820px; }
 .bh-hero h1 { font-size: clamp(2.1rem, 4.2vw, 3.2rem); line-height: 1.1; letter-spacing: -0.02em; }
 .bh-grad-text {
   background: var(--bh-grad);
@@ -89,6 +94,7 @@
 
 /* Path cards */
 .bh-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+@media (min-width: 1800px) { .bh-hero h1 { font-size: 3.6rem; } }
 .bh-grid2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; margin-top: 1.25rem; }
 .bh-card {
   position: relative;

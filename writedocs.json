@@ -39,7 +39,8 @@
             "pages": [
               "docs/get-started/use-testnet",
               "docs/get-started/set-up-wallet",
-              "docs/get-started/get-test-coins"
+              "docs/get-started/get-test-coins",
+              "docs/get-started/glossary"
             ]
           },
           {
@@ -151,8 +152,14 @@
           {
             "dropdown": "BSV Academy",
             "icon": "graduation-cap",
-            "page": "docs/learn/academy/index",
             "products": [
+              {
+                "product": "All courses",
+                "description": "Every course, with links",
+                "pages": [
+                  "docs/learn/academy/index"
+                ]
+              },
               {
                 "product": "Bitcoin Whitepaper Series",
                 "description": "The Bitcoin whitepaper, section by section (206 pages).",
@@ -246,6 +253,29 @@
                 ]
               }
             ]
+          },
+          {
+            "group": "SDK reference",
+            "pages": [
+              {
+                "group": "SDK API reference",
+                "page": "docs/sdk/api/index",
+                "pages": [
+                  "docs/sdk/api/simple/browser-wallet",
+                  "docs/sdk/api/simple/server-wallet"
+                ]
+              },
+              {
+                "label": "Go SDK (pkg.go.dev)",
+                "href": "https://pkg.go.dev/github.com/bsv-blockchain/go-sdk"
+              },
+              {
+                "label": "Python SDK (GitHub)",
+                "href": "https://github.com/bsv-blockchain/py-sdk"
+              },
+              "docs/sdk/defaults",
+              "docs/sdk/runtimes"
+            ]
           }
         ]
       },
@@ -259,15 +289,7 @@
               "docs/reference/index",
               "docs/reference/networks",
               "docs/reference/errors",
-              "docs/reference/defaults",
-              "docs/reference/runtimes"
-            ]
-          },
-          {
-            "group": "Lookup tables",
-            "pages": [
-              "docs/reference/script-opcodes",
-              "docs/reference/glossary"
+              "docs/reference/script-opcodes"
             ]
           },
           {
@@ -336,27 +358,6 @@
                   "src": "openapi/brc121.yaml",
                   "path": "/reference/brc-121"
                 }
-              }
-            ]
-          },
-          {
-            "group": "SDK API",
-            "pages": [
-              {
-                "group": "SDK API reference",
-                "page": "docs/reference/sdk-api/index",
-                "pages": [
-                  "docs/reference/sdk-api/simple/browser-wallet",
-                  "docs/reference/sdk-api/simple/server-wallet"
-                ]
-              },
-              {
-                "label": "Go SDK (pkg.go.dev)",
-                "href": "https://pkg.go.dev/github.com/bsv-blockchain/go-sdk"
-              },
-              {
-                "label": "Python SDK (GitHub)",
-                "href": "https://github.com/bsv-blockchain/py-sdk"
               }
             ]
           },
