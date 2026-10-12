@@ -45,8 +45,7 @@
             "pages": [
               "docs/get-started/use-testnet",
               "docs/get-started/set-up-wallet",
-              "docs/get-started/get-test-coins",
-              "docs/get-started/glossary"
+              "docs/get-started/get-test-coins"
             ]
           },
           {
@@ -55,9 +54,7 @@
               "docs/get-started/quick-start-browser",
               "docs/get-started/quick-start-server",
               "docs/get-started/verify",
-              "docs/get-started/key-concepts",
               "docs/get-started/project-starter",
-              "docs/get-started/choose-stack",
               "docs/get-started/try-it"
             ]
           },
@@ -153,6 +150,7 @@
                       "docs/learn/wiki/bitcoin-transactions"
                     ]
                   },
+                  "docs/learn/glossary",
                   {
                     "group": "Case studies",
                     "page": "docs/showcase/case-studies/index",
@@ -167,6 +165,7 @@
               {
                 "group": "Concepts",
                 "pages": [
+                  "docs/concepts/how-your-payment-worked",
                   "docs/concepts/architecture",
                   "docs/concepts/wallet-model",
                   "docs/concepts/transactions",
@@ -577,7 +576,11 @@
     },
     {
       "source": "/docs/guides/choose-your-stack",
-      "destination": "/docs/get-started/choose-stack"
+      "destination": "/docs/sdk"
+    },
+    {
+      "source": "/docs/get-started/choose-stack",
+      "destination": "/docs/sdk"
     },
     {
       "source": "/docs/concepts/brc-100",
