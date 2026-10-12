@@ -1,79 +1,82 @@
 ---
 title: SDKs overview
-description: Compare the BSV SDKs and packages, and pick where to start based on what you're building and who holds the keys.
+description: Which BSV package to start with, based on where the signing key lives and how close to the protocol your code needs to be.
 ---
 
-<Callout type="warning">
-Some code examples on this page use Mainnet (`network: 'main'`), moving real BSV. A BSV transaction cannot be reversed once broadcast. Review every example carefully and switch to a testnet setup while you're learning.
-</Callout>
+import StackChooser from '/snippets/StackChooser.jsx';
 
-The right starting package depends on two things: who controls the private key, and how close to the raw protocol you need to work. Answer those and the rest follows.
-
-<Callout type="info">
-If you're building a server or agent wallet, or a wallet product, plan for key recovery and wallet records from the start, not as an afterthought. See ts-stack's [wallet backup and recovery guide](https://bsv-blockchain.github.io/ts-stack/guides/wallet-backup-recovery/) and [agent implementation brief](https://bsv-blockchain.github.io/ts-stack/guides/wallet-recovery-agent-brief/).
-</Callout>
+The **BSV SDKs and packages** cover different jobs, from asking a user's wallet to sign a transaction to working with raw scripts. Which one to start with depends on where the signing key lives and how close to the protocol your code needs to be.
 
 ## Find Your Starting Point
 
-<CardGroup cols={2}>
-  <Card title="Browser app, user's wallet" icon="globe">
-    Your app runs in the browser and the person using it already has their own wallet.
-    → `@bsv/simple/browser`
-  </Card>
-  <Card title="Backend service, its own key" icon="server">
-    A service or agent that holds and manages its own private key.
-    → `@bsv/simple/server`
-  </Card>
-  <Card title="Coming from another chain" icon="right-left">
-    You want to build transactions explicitly, the way you're used to elsewhere.
-    → `@bsv/wallet-helper`
-  </Card>
-  <Card title="Building a wallet" icon="vault">
-    You're implementing a wallet product or wallet infrastructure, not an app.
-    → `@bsv/wallet-toolbox` + the BRC-100 spec
-  </Card>
-  <Card title="Working at the protocol level" icon="code">
-    You need direct access to crypto, scripts, transactions, BEEF, or conformance testing.
-    → `@bsv/sdk`
-  </Card>
-</CardGroup>
+Choose where your signing key lives to see which package to start with.
 
-## Browser App
+<StackChooser />
 
-Use this when the person using your app already has a local <Hint tip="The standard wallet-to-application interface">BRC-100</Hint> wallet installed, such as BSV Desktop or BSV Browser.
+Shared services such as wallet storage, messaging or overlay lookup are not packages. They are covered in [Services and Packages for Other Jobs](#services-and-packages-for-other-jobs).
 
-```bash
-npm install @bsv/simple
-```
+## See Each Package in Code
+
+<Tabs>
+<Tab title="WalletClient">
+
+Your app asks a local <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet, such as BSV Desktop or BSV Browser, to do the work, and `@bsv/sdk` is the place to start. Through `WalletClient`, the app finds the wallet on the user's machine, and the wallet keeps the keys and asks the user to approve each spend.
 
 ```typescript
-import { createWallet } from '@bsv/simple/browser'
+import { WalletClient } from '@bsv/sdk'
 
-const wallet = await createWallet()
-const recipientIdentityKey = '025706528f0f6894b2ba505007267ccff1133e004452a1f6b72ac716f246216366'
-const result = await wallet.pay({
-  to: recipientIdentityKey,
-  satoshis: 1000
-})
-
-console.log(result.txid)
+// The second value is the name of your app, shown in the wallet's prompts
+const wallet = new WalletClient('auto', 'example.com')
+console.log(await wallet.getNetwork())
 ```
 
-Your web app never holds a private key here. `createWallet()` finds whatever wallet is available on the user's machine and forwards BRC-100 calls to it.
+<Accordion title="Sample output">
 
-## Transaction Builder
-
-Reach for `@bsv/wallet-helper` when you want to construct transactions explicitly, outputs, scripts, metadata, inputs, change, without dropping all the way down to raw `WalletClient.createAction` and `signAction` calls.
-
-This is usually the most comfortable starting point if you're coming from another blockchain stack: you still think in terms of transaction structure, while the user's BRC-100 wallet keeps control of keys and signing.
-
-```bash
-npm install @bsv/wallet-helper
+```text
+{ network: 'testnet' }
 ```
 
-## Server Agent
+</Accordion>
 
-Use this when a service, bot, or test harness owns its own key, with no human wallet in the loop.
+<Callout type="info">
+The `@bsv/simple/browser` package offers shortcuts for payments and tokens, such as `pay()` and `createToken()`, on top of these wallet calls. In version 0.7.0, `pay()` returns an empty `txid`, and `createWallet()` reports the network as `main` whatever network the wallet is on. To get the transaction ID, use `createAction` on `WalletClient`, and to read the network, use `getNetwork()`.
+</Callout>
+
+</Tab>
+<Tab title="Wallet helper">
+
+If you come from another chain, use `@bsv/wallet-helper` (beta) to describe outputs, scripts and change explicitly while the wallet still holds the keys and signs. It runs in the browser and in Node.
+
+```typescript
+import { WalletClient } from '@bsv/sdk'
+import { TransactionBuilder } from '@bsv/wallet-helper'
+
+const recipientAddress = '<testnet address>'
+
+const wallet = new WalletClient('auto', 'example.com')
+const { txid } = await new TransactionBuilder(wallet, 'Pay a testnet address')
+  .addP2PKHOutput({ address: recipientAddress, satoshis: 1000 })
+  .build()
+
+console.log(txid)
+```
+
+<Accordion title="Sample output">
+
+```text
+1713a693288b5f9669ee48ca6fc471156e2d5dc6f9d47131f8a77610bb8d4daf
+```
+
+The wallet asks the user to approve the spend before the transaction ID prints.
+
+</Accordion>
+
+A single payment is simpler with `@bsv/simple`, and full low-level control comes from `@bsv/sdk`.
+
+</Tab>
+<Tab title="Server wallet">
+
+A service, bot or test harness that owns its key, with no person approving each payment, starts from `@bsv/simple/server`. The server entry point is part of the `@bsv/simple` package, so install that package:
 
 ```bash
 npm install @bsv/simple
@@ -87,59 +90,125 @@ const wallet = await ServerWallet.create({
   network: 'main',
   storageUrl: 'https://store-us-1.bsvb.tech'
 })
+console.log(await wallet.getBalance())
 ```
 
-Keep `SERVER_PRIVATE_KEY` in a secret manager, never in code or plain config. If you run your own deployment, point `storageUrl` at your own region-specific Wallet Infra endpoint instead.
+<Accordion title="Sample output">
+
+```text
+{
+  totalSatoshis: 0,
+  totalOutputs: 0,
+  spendableSatoshis: 0,
+  spendableOutputs: 0
+}
+```
+
+</Accordion>
+
+The public Wallet Infra endpoints cover several regions, for example `store-eu-1.bsvb.tech` and `store-ap-1.bsvb.tech`, and you can point `storageUrl` at your own deployment instead.
 
 <Callout type="warning">
-Our own testing found this funding path blocked on testnet: the documented `fund-metanet` tool fails, and the funding transaction is rejected for an invalid AtomicBEEF on both storage servers we tested. Flag this to the reader rather than presenting it as working end to end.
+The public Wallet Infra endpoints store mainnet wallets. A wallet created with `network: 'testnet'` connects without an error, but payments sent to it are rejected with `The tx parameter must be valid AtomicBEEF`. To test on testnet, keep the wallet storage local with `Setup.createWalletSQLite` from `@bsv/wallet-toolbox`.
 </Callout>
 
-## Wallet Builder
+If you are building the wallet itself, use `@bsv/wallet-toolbox` instead.
 
-Use `@bsv/wallet-toolbox` when you're building a BRC-100 wallet yourself: implementing storage, permission UX, or porting the wallet model to another language.
+</Tab>
+<Tab title="Wallet toolbox">
 
-```bash
-npm install @bsv/wallet-toolbox
+Implementing a wallet, extending its storage, building permission screens, or porting the wallet model to another language starts from `@bsv/wallet-toolbox`. The package ships the reference pieces: `Wallet`, `WalletStorageManager`, storage providers, `WalletSigner`, `Services`, `Monitor`, key managers, permissions, and test utilities such as `MockChain`. The [BRC-100 Wallet Interface](/docs/concepts/wallet-model/) page explains the boundary between an app and a wallet.
+
+```typescript
+import { PrivateKey } from '@bsv/sdk'
+import { Setup } from '@bsv/wallet-toolbox'
+
+const key = PrivateKey.fromRandom()
+const identityKey = key.toPublicKey().toString()
+
+const { wallet } = await Setup.createWalletSQLite({
+  env: {
+    chain: 'test',
+    identityKey,
+    identityKey2: identityKey,
+    filePath: 'wallet.sqlite',
+    taalApiKey: '',
+    devKeys: { [identityKey]: key.toHex() }
+  },
+  rootKeyHex: key.toHex(),
+  filePath: 'wallet.sqlite',
+  databaseName: 'my-wallet'
+})
+
+console.log(await wallet.getNetwork())
 ```
 
-It ships the reference pieces you'd otherwise have to build from scratch: `Wallet`, `WalletStorageManager`, storage providers, `WalletSigner`, `Services`, `Monitor`, key managers, permissions, and test utilities like `MockChain`.
+<Accordion title="Sample output">
 
-## Protocol Engineer
-
-Use `@bsv/sdk` directly when you need the primitives themselves, with nothing abstracted away above them.
-
-```bash
-npm install @bsv/sdk
+```text
+{ network: 'testnet' }
 ```
 
-It covers secp256k1/r1 cryptography, hashing, Script, transactions, <Hint tip="BRC-62">BEEF</Hint>, <Hint tip="BRC-74">BUMP</Hint>/Merkle paths, BRC-42 key derivation, ARC broadcasting, Chaintracks clients, the BRC-100 interface types, and wallet substrates.
+</Accordion>
 
-## Service Operator
+An ordinary web app, or a backend agent with a private key, starts from one of the first three tabs.
 
-Some things aren't packages you install, they're shared infrastructure you run or connect to instead:
+</Tab>
+<Tab title="SDK primitives">
 
-| Service | First page |
+Code that works with the primitives themselves, with nothing built on top of them, uses `@bsv/sdk` directly. It covers secp256k1 and secp256r1 cryptography, hashing, Script, transactions, [BEEF](/docs/concepts/spv/) (BRC-62), Merkle paths (BRC-74), BRC-42 key derivation, ARC broadcasting, and the BRC-100 interface types with wallet substrates.
+
+```typescript
+import { PrivateKey, P2PKH } from '@bsv/sdk'
+
+const key = PrivateKey.fromRandom()
+const address = key.toPublicKey().toAddress()
+console.log(address, new P2PKH().lock(address).toASM())
+```
+
+<Accordion title="Sample output">
+
+```text
+1AB4wscnziNS6euaxcF39VrWW77SZh485A OP_DUP OP_HASH160 64a095f0148483a9c603de9255bd98ce066f3ab6 OP_EQUALVERIFY OP_CHECKSIG
+```
+
+</Accordion>
+
+For a full wallet with persistent storage and signing, use `@bsv/wallet-toolbox`, and for token issuance and transfer, use `@bsv/btms`.
+
+</Tab>
+</Tabs>
+
+## Services and Packages for Other Jobs
+
+Some pieces are shared services you run or connect to, not packages you install:
+
+| **Service** | **What it does** |
 | --- | --- |
-| Wallet state and UTXO storage | [Wallet Infra](https://bsv-blockchain.github.io/ts-stack/infrastructure/wallet-infra/) |
-| Store-and-forward encrypted messages | [Message Box Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/message-box-server/) |
-| Shared on-chain topic lookup | [Overlay Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/overlay-server/) |
-| Content-addressed files | [UHRP servers](https://bsv-blockchain.github.io/ts-stack/infrastructure/uhrp-server-basic/) |
-| Wallet authentication backend | [WAB](https://bsv-blockchain.github.io/ts-stack/infrastructure/wab/) |
-| Block headers and Merkle roots | [Chaintracks Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/chaintracks-server/) |
+| [Wallet Infra](/docs/wallet-dev/infrastructure/) | JSON-RPC storage and management of wallet UTXOs |
+| [Message Box Server](/docs/guides/services/stack-services/message-box-server/) | Peer-to-peer messaging with real-time WebSocket delivery |
+| [Overlay Server](/docs/guides/services/stack-services/overlay-server/) | Topic managers and lookup services for an overlay network |
+| [UHRP Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/uhrp-server-cloud-bucket/) | Production file storage on Google Cloud, addressed by content |
+| [Wallet Abstraction Backend (WAB)](/docs/wallet-dev/infrastructure/) | Multi-factor user authentication and key recovery, with SMS, ID verification and one-time codes |
+| [Chaintracks Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/chaintracks-server/) | Block header chain and Merkle root validation over REST |
 
-## Still Not Sure? Match It to What You're Building
+For work beyond the starting points above, add the package built for it:
 
-| What you're building | Start with | Usually adds |
-| --- | --- | --- |
-| Browser app | `@bsv/simple/browser` | `@bsv/message-box-client`, overlays |
-| Transaction-building app | `@bsv/wallet-helper` | `@bsv/templates`, BRC-100 method reference |
-| Server agent | `@bsv/simple/server` | `@bsv/402-pay`, Message Box |
-| BRC-100 wallet | `@bsv/wallet-toolbox` | Wallet Infra, WAB, Chaintracks |
-| Protocol library | `@bsv/sdk` | Conformance vectors |
-| Overlay node | `@bsv/overlay`, `@bsv/overlay-express` | `@bsv/overlay-topics`, GASP |
-| Token system | `@bsv/btms`, `@bsv/btms-permission-module` | Overlay topics, wallet permissions |
-| Authenticated API | `@bsv/auth-express-middleware` | BRC-100 wallet |
-| Payment-gated API | `@bsv/402-pay` | `@bsv/payment-express-middleware` |
-| File storage | `@bsv/overlay-topics` | UHRP server |
+| **You are building** | **Add** |
+| --- | --- |
+| Messaging between users | `@bsv/message-box-client` with a Message Box Server |
+| A token system | `@bsv/btms` and `@bsv/btms-permission-module` |
+| An overlay node | `@bsv/overlay` and `@bsv/overlay-express` |
+| An authenticated API | `@bsv/auth-express-middleware` |
+| A payment-gated API | `@bsv/402-pay` (beta), set up in [Gate an API Behind Payments](/docs/guides/payments/) |
+| File storage | `@bsv/overlay-topics` (experimental) with a UHRP Server |
 
+## Related Articles
+
+To learn more about the BSV stack, review these articles:
+
+- [Send a payment from a web app](/docs/get-started/quick-start-browser/)
+- [Send a payment from a server](/docs/get-started/quick-start-server/)
+- [BRC-100 Wallet Interface](/docs/concepts/wallet-model/)
+- [How the BSV Stack Fits Together](/docs/concepts/architecture/)
+- [Gate an API Behind Payments](/docs/guides/payments/)
