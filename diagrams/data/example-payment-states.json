@@ -1,0 +1,94 @@
+{
+  "_note": "Example data modeled on a payment status lifecycle. Replace labels, API values, and descriptions with the client's real definitions before publishing.",
+  "id": "payment-lifecycle",
+  "title": "Payment status lifecycle",
+  "summary": "Every payment has a status and a more specific substatus. Select a status to see what it means and where it can move next.",
+  "apiFields": { "group": "status", "state": "substatus" },
+  "columns": 5,
+  "groups": [
+    { "id": "created", "label": "Created", "apiValue": "created", "status": "neutral", "column": 0, "order": 0,
+      "description": "The payment object exists but no payment method is attached yet." },
+    { "id": "ready_to_pay", "label": "Ready to pay", "apiValue": "ready_to_pay", "status": "neutral", "column": 0, "order": 1,
+      "description": "A payment method is attached and the payment can be submitted." },
+    { "id": "verified", "label": "Verified", "apiValue": "verified", "status": "success", "column": 0, "order": 2,
+      "description": "The payment data passed validation and is sent for processing." },
+
+    { "id": "expired", "label": "Expired", "apiValue": "expired", "status": "failure", "column": 1, "order": 0, "terminal": true,
+      "description": "The payment was not completed before its expiration time. Create a new payment to try again." },
+    { "id": "pending", "label": "Pending", "apiValue": "pending", "status": "pending", "column": 1, "order": 1,
+      "description": "The payment is being processed. Check the substatus to know what it is waiting for.",
+      "states": [
+        { "id": "in_process", "label": "In process", "apiValue": "in_process", "description": "The provider is processing the payment." },
+        { "id": "authorized", "label": "Authorized", "apiValue": "authorized", "description": "Funds are reserved and waiting for capture." },
+        { "id": "waiting_additional_step", "label": "Waiting additional step", "apiValue": "waiting_additional_step", "description": "The customer must complete an extra step, such as 3D Secure authentication." },
+        { "id": "pending_provider_confirmation", "label": "Pending provider confirmation", "apiValue": "pending_provider_confirmation", "description": "Waiting for the provider to confirm the result." },
+        { "id": "pending_fraud_review", "label": "Pending fraud review", "apiValue": "pending_fraud_review", "description": "The payment is under fraud analysis." }
+      ] },
+    { "id": "rejected", "label": "Rejected / declined", "apiValue": "rejected", "status": "failure", "column": 1, "order": 2, "terminal": true,
+      "description": "The payment was not approved. The substatus tells you who refused it.",
+      "states": [
+        { "id": "rejected_sub", "label": "Rejected", "apiValue": "rejected", "description": "Refused by validation rules before reaching the provider." },
+        { "id": "declined", "label": "Declined", "apiValue": "declined", "description": "Refused by the issuer or provider." },
+        { "id": "fraud_declined", "label": "Fraud declined", "apiValue": "fraud_declined", "description": "Refused by fraud screening." }
+      ] },
+
+    { "id": "fraud_verified", "label": "Fraud verified", "apiValue": "fraud_verified", "status": "success", "column": 2, "order": 0,
+      "description": "The payment passed fraud screening.",
+      "states": [
+        { "id": "fraud_screening_verified", "label": "Fraud screening verified", "apiValue": "fraud_screening_verified", "description": "Fraud checks completed without findings." }
+      ] },
+    { "id": "cancelled", "label": "Cancelled", "apiValue": "cancelled", "status": "failure", "column": 2, "order": 1, "terminal": true,
+      "description": "The payment was cancelled before completion.",
+      "states": [
+        { "id": "cancel_pending_provider_confirmation", "label": "Pending provider confirmation", "apiValue": "pending_provider_confirmation", "description": "Cancellation requested, waiting for provider confirmation." },
+        { "id": "cancelled_sub", "label": "Cancelled", "apiValue": "cancelled", "description": "Cancellation confirmed." }
+      ] },
+
+    { "id": "succeeded", "label": "Succeeded", "apiValue": "succeeded", "status": "success", "column": 3, "order": 0,
+      "description": "The payment was approved. The substatus shows capture, refund, and chargeback progress.",
+      "states": [
+        { "id": "partially_approved", "label": "Partially approved", "apiValue": "partially_approved", "description": "Only part of the requested amount was approved." },
+        { "id": "approved", "label": "Approved", "apiValue": "approved", "description": "The full amount was approved." },
+        { "id": "partially_captured", "label": "Partially captured", "apiValue": "partially_captured", "description": "Part of the approved amount was captured." },
+        { "id": "captured", "label": "Captured", "apiValue": "captured", "description": "The full amount was captured." },
+        { "id": "partially_refunded", "label": "Partially refunded", "apiValue": "partially_refunded", "description": "Part of the captured amount was refunded." },
+        { "id": "partially_chargebacked", "label": "Partially chargebacked", "apiValue": "partially_chargebacked", "description": "Part of the amount was reversed by a chargeback." }
+      ] },
+
+    { "id": "in_dispute", "label": "In dispute", "apiValue": "in_dispute", "status": "dispute", "column": 4, "order": 0,
+      "description": "The cardholder disputed the payment. Submit evidence before the deadline.",
+      "states": [
+        { "id": "received", "label": "Received", "apiValue": "received", "description": "The dispute was opened." },
+        { "id": "pending_review", "label": "Pending review", "apiValue": "pending_review", "description": "Evidence was submitted and is under review." }
+      ] },
+    { "id": "chargeback", "label": "Chargeback", "apiValue": "chargeback", "status": "failure", "column": 4, "order": 1, "terminal": true,
+      "description": "The dispute was lost and the amount was reversed.",
+      "states": [
+        { "id": "lost", "label": "Lost", "apiValue": "lost", "description": "The dispute decision went to the cardholder." }
+      ] },
+    { "id": "refunded", "label": "Refunded", "apiValue": "refunded", "status": "refund", "column": 4, "order": 2, "terminal": true,
+      "description": "The full amount was returned to the customer.",
+      "states": [
+        { "id": "refund_pending_provider_confirmation", "label": "Pending provider confirmation", "apiValue": "pending_provider_confirmation", "description": "Refund requested, waiting for provider confirmation." },
+        { "id": "refunded_sub", "label": "Refunded", "apiValue": "refunded", "description": "Refund confirmed." }
+      ] }
+  ],
+  "transitions": [
+    { "from": "created", "to": "ready_to_pay" },
+    { "from": "ready_to_pay", "to": "verified" },
+    { "from": "verified", "to": "pending" },
+    { "from": "pending", "to": "expired", "label": "Timeout" },
+    { "from": "pending", "to": "rejected" },
+    { "from": "pending", "to": "fraud_verified" },
+    { "from": "pending", "to": "cancelled" },
+    { "from": "fraud_verified", "to": "succeeded" },
+    { "from": "succeeded", "to": "in_dispute" },
+    { "from": "in_dispute", "to": "succeeded", "label": "Won" },
+    { "from": "in_dispute", "to": "chargeback", "label": "Lost" },
+    { "from": "succeeded", "to": "refunded" }
+  ],
+  "global": [
+    { "id": "error", "label": "Error", "apiValue": "error", "status": "failure",
+      "description": "Can happen at any point in the flow. The substatus explains the error." }
+  ]
+}

@@ -1,0 +1,14 @@
+%% Template: decision flow to help readers choose an integration path.
+%% Use for: "Which integration should I use?", error-handling decisions, retry logic.
+%% Rules: decisions are questions, outcomes link to pages (click NodeId href "/path"), max ~12 nodes.
+flowchart TD
+    start([Start]) --> q1{Do you handle card data on your servers?}
+    q1 -- No --> hosted[Hosted checkout]
+    q1 -- Yes --> q2{Are you PCI DSS compliant?}
+    q2 -- Yes --> direct[Direct API integration]
+    q2 -- No --> fields[Secure fields SDK]
+    click hosted "/guides/hosted-checkout"
+    click direct "/guides/direct-api"
+    click fields "/guides/secure-fields"
+    %% Paste classDefs from diagrams/brand/generated/mermaid-classdefs.light.mmd below, then:
+    %% class hosted,fields,direct success
