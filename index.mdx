@@ -1,32 +1,124 @@
 ---
-title: BSV Blockchain Documentation
-description: Pick your path in one click, from five intent cards.
+title: "BSV Developer Docs"
+description: "Pick your path: build a web app, run a server wallet, build with an AI agent, get a wallet, or learn how BSV works."
+mode: custom
 ---
 
-<Badge color="green">New page</Badge> <Badge stroke>Landing</Badge> <Badge color="yellow" icon="construction">Placeholder</Badge>
+<div className="bsv-home">
 
-<Callout type="note" title="Page goal">
-Pick your path in one click. Planned as a custom-mode page; shown here with the sidebar so the IA stays visible.
-</Callout>
+<section className="bh-hero">
+  <div className="bh-wrap bh-hero-inner">
+    <span className="bh-eyebrow">BSV Developer Docs</span>
+    <h1>Build apps that <span className="bh-grad-text">pay and get paid on BSV</span></h1>
+    <p className="bh-sub">Your app never holds private keys. It asks the user's wallet, and the wallet signs. Start on testnet with free coins, and send your first payment from your own code.</p>
+    <div className="bh-cta">
+      <a className="bh-btn" href="/docs/get-started/use-testnet/">Send your first payment</a>
+      <a className="bh-link" href="/docs/learn/what-is-bsv/">What is BSV</a>
+    </div>
+  </div>
+</section>
 
-<div className="bsv-hero">
-<CardGroup cols={2}>
-  <Card title="Build a browser app" icon="app-window" href="/docs/get-started/overview">
-    Send your first testnet payment from a web page, through your wallet.
-  </Card>
-  <Card title="Run a server wallet" icon="server" href="/docs/get-started/overview">
-    Send payments from a backend or automation, with a wallet on the server.
-  </Card>
-  <Card title="Build with an AI agent" icon="bot" href="/docs/build-with-ai">
-    Connect Claude Code or Cursor to BSV, and let the agent build while you approve.
-  </Card>
-  <Card title="I want a wallet" icon="wallet" href="/docs/get-started/set-up-wallet">
-    Install BSV Desktop and set it up on testnet.
-  </Card>
-  <Card title="Learn about BSV" icon="book-open" href="/docs/learn">
-    How BSV works: wallets, transactions, SPV and overlays.
-  </Card>
-</CardGroup>
+<section className="bh-section">
+  <div className="bh-wrap">
+    <div className="bh-head">
+      <h2>Which path is yours?</h2>
+      <p>Every path ends with the same result: a page or a service that sends 1,000 testnet satoshis from your wallet.</p>
+    </div>
+    <div className="bh-grid3">
+      <a className="bh-card" href="/docs/get-started/quick-start-browser/">
+        <div className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M3 9h18" /><path d="M7 6.5h.01M10 6.5h.01" /></svg></div>
+        <h3>Build a web app</h3>
+        <p>Connect a web page to the user's wallet and send a payment they approve.</p>
+        <span className="bh-go">Send a payment from a web app <span aria-hidden="true">→</span></span>
+      </a>
+      <a className="bh-card" href="/docs/get-started/quick-start-server/">
+        <div className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="7" rx="1.5" /><rect x="3" y="13" width="18" height="7" rx="1.5" /><path d="M7 7.5h.01M7 16.5h.01" /></svg></div>
+        <h3>Run a server wallet</h3>
+        <p>Send payments from a backend or an automation, with a wallet that runs on the server.</p>
+        <span className="bh-go">Send a payment from a server <span aria-hidden="true">→</span></span>
+      </a>
+      <a className="bh-card" href="/docs/build-with-ai/">
+        <div className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="8" width="16" height="11" rx="2" /><path d="M12 8V4M9 13h.01M15 13h.01" /></svg></div>
+        <h3>Build with an AI agent</h3>
+        <p>Connect Claude Code or Cursor to BSV, and let the agent build while you approve each step.</p>
+        <span className="bh-go">Build with AI <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
+    <div className="bh-needs">
+      <span><strong>You need:</strong> Node.js 22 or newer</span>
+      <span>BSV Desktop on testnet</span>
+      <span>Free test coins from a faucet</span>
+    </div>
+    <div className="bh-grid2">
+      <a className="bh-card bh-soft" href="/docs/get-started/set-up-wallet/">
+        <h3>I just want a wallet</h3>
+        <p>Install BSV Desktop and set it up on testnet.</p>
+        <span className="bh-go">Set up a testnet wallet <span aria-hidden="true">→</span></span>
+      </a>
+      <a className="bh-card bh-soft" href="/docs/learn/">
+        <h3>Learn how BSV works</h3>
+        <p>Wallets, transactions, SPV and overlays, plus the BSV Academy courses.</p>
+        <span className="bh-go">BSV overview <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section className="bh-section">
+  <div className="bh-wrap">
+    <div className="bh-head">
+      <h2>Your first payment in five steps</h2>
+      <p>The order matters: the wallet and your code must be on the same network.</p>
+    </div>
+    <div className="bh-steps">
+      <div className="bh-step">
+        <h3>Use testnet</h3>
+        <p>Pick the network, its faucet and its explorer.</p>
+        <a href="/docs/get-started/use-testnet/">Use testnet →</a>
+      </div>
+      <div className="bh-step">
+        <h3>Set up a wallet</h3>
+        <p>Install BSV Desktop and create a testnet wallet.</p>
+        <a href="/docs/get-started/set-up-wallet/">Set up →</a>
+      </div>
+      <div className="bh-step">
+        <h3>Get test coins</h3>
+        <p>Fund the wallet from a faucet.</p>
+        <a href="/docs/get-started/get-test-coins/">Get coins →</a>
+      </div>
+      <div className="bh-step">
+        <h3>Send a payment</h3>
+        <p>Run your code, approve the payment in the wallet.</p>
+        <a href="/docs/get-started/quick-start-browser/">Send →</a>
+      </div>
+      <div className="bh-step">
+        <h3>Verify it</h3>
+        <p>Find your transaction on the testnet explorer.</p>
+        <a href="/docs/get-started/verify/">Verify →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section className="bh-section">
+  <div className="bh-wrap">
+    <div className="bh-head">
+      <h2>Already building?</h2>
+      <p>Jump straight to the reference.</p>
+    </div>
+    <div className="bh-grid3">
+      <a className="bh-quick" href="/reference/wallet-api/">Wallet API (BRC-100) <span>→</span></a>
+      <a className="bh-quick" href="/docs/reference/errors/">Error codes <span>→</span></a>
+      <a className="bh-quick" href="/docs/reference/networks/">Network endpoints <span>→</span></a>
+      <a className="bh-quick" href="/docs/sdk/">SDKs overview <span>→</span></a>
+      <a className="bh-quick" href="/docs/wallet-dev/">Build a wallet <span>→</span></a>
+      <a className="bh-quick" href="/docs/standards/brc-index/">BRC specifications index <span>→</span></a>
+    </div>
+  </div>
+</section>
+
+<div className="bh-wrap">
+  <p className="bh-note">IA preview. This page replaces "Which path is yours?" from the first draft. Planned additions: the help channel (pending Q10), and the network and wallet names once Q1 and Q4 are answered.</p>
 </div>
 
-Also: [Build a wallet](/docs/wallet-dev) · [Reference](/docs/reference) · [Standards](/docs/standards) · help channel (pending Q10)
+</div>

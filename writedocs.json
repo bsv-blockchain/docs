@@ -33,14 +33,7 @@
       {
         "tab": "Get started",
         "icon": "rocket",
-        "page": "index",
         "pages": [
-          {
-            "group": "Start here",
-            "pages": [
-              "docs/get-started/overview"
-            ]
-          },
           {
             "group": "Before you code",
             "pages": [
@@ -50,30 +43,25 @@
             ]
           },
           {
-            "group": "Your first payment",
+            "group": "Build your first app",
             "pages": [
               "docs/get-started/quick-start-browser",
               "docs/get-started/quick-start-server",
-              "docs/get-started/verify"
-            ]
-          },
-          {
-            "group": "Build with AI",
-            "page": "docs/build-with-ai/index",
-            "pages": [
-              "docs/build-with-ai/simple-mcp",
-              "docs/build-with-ai/skill",
-              "docs/build-with-ai/llm-resources",
-              "docs/build-with-ai/prompts"
-            ]
-          },
-          {
-            "group": "Next steps",
-            "pages": [
+              "docs/get-started/verify",
               "docs/get-started/key-concepts",
               "docs/get-started/project-starter",
               "docs/get-started/choose-stack",
               "docs/get-started/try-it"
+            ]
+          },
+          {
+            "group": "Build with AI",
+            "pages": [
+              "docs/build-with-ai/index",
+              "docs/build-with-ai/simple-mcp",
+              "docs/build-with-ai/prompts",
+              "docs/build-with-ai/llm-resources",
+              "docs/build-with-ai/skill"
             ]
           }
         ]
@@ -81,8 +69,8 @@
       {
         "tab": "Guides",
         "icon": "compass",
-        "page": "docs/guides/index",
         "pages": [
+          "docs/guides/index",
           {
             "group": "Use cases",
             "pages": [
@@ -115,14 +103,14 @@
       {
         "tab": "Learn",
         "icon": "book-open",
-        "tabs": [
+        "dropdowns": [
           {
-            "tab": "How BSV works",
-            "page": "docs/learn/index",
+            "dropdown": "How BSV works",
+            "icon": "blocks",
             "pages": [
+              "docs/learn/index",
               {
                 "group": "Concepts",
-                "page": "docs/concepts/index",
                 "pages": [
                   "docs/concepts/architecture",
                   "docs/concepts/wallet-model",
@@ -161,28 +149,32 @@
             ]
           },
           {
-            "tab": "BSV Academy",
+            "dropdown": "BSV Academy",
+            "icon": "graduation-cap",
+            "page": "docs/learn/academy/index",
             "products": [
               {
-                "product": "BSV Academy",
-                "icon": "graduation-cap",
-                "description": "Courses on Bitcoin and BSV, carried over unchanged.",
+                "product": "Bitcoin Whitepaper Series",
+                "description": "The Bitcoin whitepaper, section by section (206 pages).",
                 "pages": [
-                  "docs/learn/academy/index",
-                  {
-                    "group": "Bitcoin Whitepaper Series",
-                    "pages": [
-                      "docs/learn/academy/bitcoin-whitepaper-series/bitcoin-whitepaper-abstract",
-                      "docs/learn/academy/bitcoin-whitepaper-series/bitcoin-whitepaper-abstract/assessment-1"
-                    ]
-                  },
-                  {
-                    "group": "BSV Theory",
-                    "pages": [
-                      "docs/learn/academy/bsv-theory/abstract",
-                      "docs/learn/academy/bsv-theory/abstract/cooperation-in-the-network"
-                    ]
-                  }
+                  "docs/learn/academy/bitcoin-whitepaper-series/bitcoin-whitepaper-abstract",
+                  "docs/learn/academy/bitcoin-whitepaper-series/bitcoin-whitepaper-abstract/assessment-1"
+                ]
+              },
+              {
+                "product": "BSV Theory",
+                "description": "The theory behind BSV's design (95 pages).",
+                "pages": [
+                  "docs/learn/academy/bsv-theory/abstract",
+                  "docs/learn/academy/bsv-theory/abstract/cooperation-in-the-network"
+                ]
+              },
+              {
+                "product": "Introduction to Blockchain Technology",
+                "description": "Blockchain basics for newcomers (94 pages).",
+                "pages": [
+                  "docs/learn/academy/introduction-to-blockchain-technology/blockchain-applications-around-the-world",
+                  "docs/learn/academy/introduction-to-blockchain-technology/blockchain-applications-around-the-world/assessment-1"
                 ]
               }
             ]
@@ -192,13 +184,13 @@
       {
         "tab": "SDKs",
         "icon": "code",
-        "page": "docs/sdk/index",
         "pages": [
+          "docs/sdk/index",
           {
             "group": "TypeScript",
             "pages": [
               {
-                "group": "@bsv/simple",
+                "group": "Build apps with @bsv/simple",
                 "page": "docs/sdk/simple/index",
                 "pages": [
                   "docs/sdk/simple/architecture",
@@ -206,7 +198,7 @@
                 ]
               },
               {
-                "group": "TypeScript SDK (@bsv/sdk)",
+                "group": "Use the TypeScript SDK",
                 "page": "docs/sdk/typescript/index",
                 "pages": [
                   "docs/sdk/typescript/setup",
@@ -214,7 +206,7 @@
                 ]
               },
               {
-                "group": "Low-level transactions and keys",
+                "group": "Build transactions by hand",
                 "page": "docs/sdk/typescript/low-level/index",
                 "pages": [
                   "docs/sdk/typescript/low-level/transactions",
@@ -223,7 +215,7 @@
                 ]
               },
               {
-                "group": "Other ts-stack packages",
+                "group": "Find more TypeScript packages",
                 "page": "docs/sdk/packages/index",
                 "pages": [
                   "docs/sdk/packages/message-box-client",
@@ -237,7 +229,7 @@
             "group": "Other languages",
             "pages": [
               {
-                "group": "Go SDK",
+                "group": "Use the Go SDK",
                 "page": "docs/sdk/go/index",
                 "pages": [
                   "docs/sdk/go/keys",
@@ -246,7 +238,7 @@
                 ]
               },
               {
-                "group": "Python SDK",
+                "group": "Use the Python SDK",
                 "page": "docs/sdk/python/index",
                 "pages": [
                   "docs/sdk/python/simple-tx",
@@ -260,8 +252,24 @@
       {
         "tab": "Reference",
         "icon": "list",
-        "page": "docs/reference/index",
         "pages": [
+          {
+            "group": "Getting started",
+            "pages": [
+              "docs/reference/index",
+              "docs/reference/networks",
+              "docs/reference/errors",
+              "docs/reference/defaults",
+              "docs/reference/runtimes"
+            ]
+          },
+          {
+            "group": "Lookup tables",
+            "pages": [
+              "docs/reference/script-opcodes",
+              "docs/reference/glossary"
+            ]
+          },
           {
             "group": "Wallet API (BRC-100)",
             "openapi": {
@@ -270,30 +278,16 @@
             }
           },
           {
-            "group": "SDK API",
+            "group": "Service APIs",
             "pages": [
               {
-                "group": "SDK API",
-                "page": "docs/reference/sdk-api/index",
+                "group": "Service APIs overview",
+                "page": "docs/reference/http-apis/index",
                 "pages": [
-                  "docs/reference/sdk-api/simple/browser-wallet",
-                  "docs/reference/sdk-api/simple/server-wallet"
+                  "docs/reference/http-apis/authsocket",
+                  "docs/reference/http-apis/brc-103-mutual-auth"
                 ]
               },
-              {
-                "label": "Go SDK (pkg.go.dev)",
-                "href": "https://pkg.go.dev/github.com/bsv-blockchain/go-sdk"
-              },
-              {
-                "label": "Python SDK (GitHub)",
-                "href": "https://github.com/bsv-blockchain/py-sdk"
-              }
-            ]
-          },
-          {
-            "group": "Service APIs",
-            "page": "docs/reference/http-apis/index",
-            "pages": [
               {
                 "group": "ARC broadcast",
                 "openapi": {
@@ -346,24 +340,34 @@
             ]
           },
           {
-            "group": "Look it up",
+            "group": "SDK API",
             "pages": [
-              "docs/reference/networks",
-              "docs/reference/defaults",
-              "docs/reference/errors",
-              "docs/reference/runtimes",
-              "docs/reference/script-opcodes",
-              "docs/reference/glossary"
+              {
+                "group": "SDK API reference",
+                "page": "docs/reference/sdk-api/index",
+                "pages": [
+                  "docs/reference/sdk-api/simple/browser-wallet",
+                  "docs/reference/sdk-api/simple/server-wallet"
+                ]
+              },
+              {
+                "label": "Go SDK (pkg.go.dev)",
+                "href": "https://pkg.go.dev/github.com/bsv-blockchain/go-sdk"
+              },
+              {
+                "label": "Python SDK (GitHub)",
+                "href": "https://github.com/bsv-blockchain/py-sdk"
+              }
             ]
           },
           {
             "group": "Standards",
-            "page": "docs/standards/index",
             "pages": [
+              "docs/standards/index",
               "docs/standards/brc-index",
               "docs/standards/brc-100",
               {
-                "group": "Paymail",
+                "group": "Paymail specification",
                 "page": "docs/standards/paymail/index",
                 "pages": [
                   "docs/standards/paymail/basic-address-resolution",
@@ -386,8 +390,8 @@
       {
         "tab": "Wallets",
         "icon": "wallet",
-        "page": "docs/wallets/index",
         "pages": [
+          "docs/wallets/index",
           {
             "group": "Use a wallet",
             "pages": [
@@ -402,10 +406,10 @@
           },
           {
             "group": "Build a wallet",
-            "page": "docs/wallet-dev/index",
             "pages": [
+              "docs/wallet-dev/index",
               {
-                "group": "wallet-toolbox and storage",
+                "group": "Build a wallet with wallet-toolbox",
                 "page": "docs/wallet-dev/wallet-toolbox/index",
                 "pages": [
                   "docs/wallet-dev/wallet-toolbox/utxo-lifecycle",
@@ -414,7 +418,7 @@
               },
               "docs/wallet-dev/permissions",
               {
-                "group": "Conformance testing",
+                "group": "Test BRC-100 conformance",
                 "page": "docs/wallet-dev/conformance/index",
                 "pages": [
                   "docs/wallet-dev/conformance/vector-catalog",
@@ -423,7 +427,7 @@
               },
               "docs/wallet-dev/infrastructure",
               {
-                "group": "SPV Wallet server (Go)",
+                "group": "Run the SPV Wallet server",
                 "page": "docs/wallet-dev/spv-wallet/index",
                 "pages": [
                   "docs/wallet-dev/spv-wallet/quickstart",
@@ -438,13 +442,13 @@
       {
         "tab": "Infrastructure",
         "icon": "server",
-        "page": "docs/infrastructure/index",
         "pages": [
+          "docs/infrastructure/index",
           {
             "group": "Nodes",
             "pages": [
               {
-                "group": "SV Node",
+                "group": "Run SV Node",
                 "page": "docs/infrastructure/sv-node/index",
                 "pages": [
                   "docs/infrastructure/sv-node/installation",
@@ -460,7 +464,7 @@
             "pages": [
               "docs/infrastructure/broadcasting",
               {
-                "group": "ts-stack services",
+                "group": "Run ts-stack services",
                 "page": "docs/infrastructure/stack-services/index",
                 "pages": [
                   "docs/infrastructure/stack-services/overlay-server",
@@ -468,7 +472,7 @@
                 ]
               },
               {
-                "group": "Operations runbooks",
+                "group": "Operate services in production",
                 "page": "docs/infrastructure/operations/index",
                 "pages": [
                   "docs/infrastructure/operations/edge-security",
@@ -488,8 +492,8 @@
       {
         "tab": "Changelog",
         "icon": "history",
-        "page": "docs/changelog/index",
         "pages": [
+          "docs/changelog/index",
           "docs/changelog/whats-new",
           {
             "group": "Products",
