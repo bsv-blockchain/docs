@@ -179,16 +179,6 @@
 .bh-quick:hover { border-color: rgba(27, 30, 169, 0.45); transform: translateY(-1px); }
 .bh-quick span { color: var(--bh-soft); }
 
-/* Planning note (preview only) */
-.bh-note {
-  margin-top: 4rem;
-  border-top: 1px dashed var(--bh-line);
-  padding: 1.5rem 0 3rem;
-  color: var(--bh-soft);
-  font-size: 0.88rem;
-  line-height: 1.6;
-}
-
 @media (max-width: 960px) {
   .bh-steps { grid-template-columns: repeat(2, 1fr); }
 }

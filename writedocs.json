@@ -14,7 +14,16 @@
       "light": "/images/logo_light.svg",
       "dark": "/images/logo_dark.svg"
     },
-    "favicon": "/images/favicon.ico"
+    "favicon": "/images/favicon.ico",
+    "fonts": {
+      "family": "Noto Sans",
+      "heading": {
+        "family": "Chillax",
+        "source": "/fonts/Chillax-Medium.woff2",
+        "format": "woff2",
+        "weight": 500
+      }
+    }
   },
   "socials": {
     "github": "https://github.com/writechoiceorg/bsv-docs"
@@ -109,24 +118,11 @@
             "dropdown": "How BSV works",
             "icon": "blocks",
             "pages": [
-              "docs/learn/index",
-              {
-                "group": "Concepts",
-                "pages": [
-                  "docs/concepts/architecture",
-                  "docs/concepts/wallet-model",
-                  "docs/concepts/transactions",
-                  "docs/concepts/script",
-                  "docs/concepts/keys-identity",
-                  "docs/concepts/spv",
-                  "docs/concepts/overlays",
-                  "docs/concepts/networks"
-                ]
-              },
               {
                 "group": "About BSV",
                 "pages": [
                   "docs/learn/what-is-bsv",
+                  "docs/learn/index",
                   {
                     "group": "BSV wiki",
                     "page": "docs/learn/wiki/index",
@@ -145,6 +141,19 @@
                       "docs/showcase/case-studies/identity"
                     ]
                   }
+                ]
+              },
+              {
+                "group": "Concepts",
+                "pages": [
+                  "docs/concepts/architecture",
+                  "docs/concepts/wallet-model",
+                  "docs/concepts/transactions",
+                  "docs/concepts/script",
+                  "docs/concepts/keys-identity",
+                  "docs/concepts/spv",
+                  "docs/concepts/overlays",
+                  "docs/concepts/networks"
                 ]
               }
             ]
