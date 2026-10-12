@@ -100,16 +100,149 @@ mode: custom
 <section className="bh-section">
   <div className="bh-wrap">
     <div className="bh-head">
-      <h2>Already building?</h2>
-      <p>Jump straight to the reference.</p>
+      <h2>What you can build</h2>
+      <p>After your first payment, add a real feature. Each guide adds one capability to your app.</p>
+    </div>
+    <div className="bh-grid-auto">
+      <a className="bh-card" href="/docs/guides/payments/">
+        <div className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /><path d="M6 15h4" /></svg></div>
+        <h3>Accept and send payments</h3>
+        <p>Take payments in your app, including payment-gated APIs.</p>
+        <span className="bh-go">Read the guide <span aria-hidden="true">→</span></span>
+      </a>
+      <a className="bh-card" href="/docs/guides/identity-auth/">
+        <div className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-6 8-6s8 2 8 6" /></svg></div>
+        <h3>Authenticate users with their wallet</h3>
+        <p>Identify users and sign requests with wallet keys and certificates.</p>
+        <span className="bh-go">Read the guide <span aria-hidden="true">→</span></span>
+      </a>
+      <a className="bh-card" href="/docs/guides/data-storage/">
+        <div className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v6c0 1.7 3.6 3 8 3s8-1.3 8-3V5" /><path d="M4 11v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6" /></svg></div>
+        <h3>Store data and files</h3>
+        <p>Put data on-chain or in UHRP storage, and get it back.</p>
+        <span className="bh-go">Read the guide <span aria-hidden="true">→</span></span>
+      </a>
+      <a className="bh-card" href="/docs/guides/messaging/">
+        <div className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z" /></svg></div>
+        <h3>Send messages between users</h3>
+        <p>Send messages and payments between identities with MessageBox.</p>
+        <span className="bh-go">Read the guide <span aria-hidden="true">→</span></span>
+      </a>
+      <a className="bh-card" href="/docs/guides/overlays/">
+        <div className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3 2 8l10 5 10-5-10-5z" /><path d="m2 13 10 5 10-5" /></svg></div>
+        <h3>Track transactions with overlays</h3>
+        <p>Track and look up your app's transactions, and run your own overlay.</p>
+        <span className="bh-go">Read the guide <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section className="bh-section">
+  <div className="bh-wrap">
+    <div className="bh-head bh-head-row">
+      <div>
+        <h2>Example apps</h2>
+        <p>Complete apps with their source code, to read or copy from.</p>
+      </div>
+      <a className="bh-see-all" href="/docs/showcase/">See all examples <span aria-hidden="true">→</span></a>
     </div>
     <div className="bh-grid3">
-      <a className="bh-quick" href="/reference/wallet-api/">Wallet API (BRC-100) <span>→</span></a>
-      <a className="bh-quick" href="/docs/reference/errors/">Error codes <span>→</span></a>
-      <a className="bh-quick" href="/docs/reference/networks/">Network endpoints <span>→</span></a>
-      <a className="bh-quick" href="/docs/sdk/">SDKs overview <span>→</span></a>
-      <a className="bh-quick" href="/docs/wallet-dev/">Build a wallet <span>→</span></a>
-      <a className="bh-quick" href="/docs/standards/brc-index/">BRC specifications index <span>→</span></a>
+      <a className="bh-card bh-demo" href="/docs/showcase/p2p-medical/">
+        <span className="bh-tag">Example app</span>
+        <h3>P2P Medical</h3>
+        <p>A medical-records app built on WalletClient and BSV Desktop.</p>
+        <span className="bh-go">See the example <span aria-hidden="true">→</span></span>
+      </a>
+      <a className="bh-card bh-demo" href="/docs/showcase/time-anchor/">
+        <span className="bh-tag">Example app</span>
+        <h3>Time Anchor</h3>
+        <p>Anchors file hashes with createAction, UHRP storage and an overlay topic.</p>
+        <span className="bh-go">See the example <span aria-hidden="true">→</span></span>
+      </a>
+      <a className="bh-card bh-demo" href="/docs/showcase/beef-inspector/">
+        <span className="bh-tag">Example app</span>
+        <h3>Beef Inspector</h3>
+        <p>A debugging tool that parses a BEEF payload and shows its SPV proofs.</p>
+        <span className="bh-go">See the example <span aria-hidden="true">→</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section className="bh-section bh-last">
+  <div className="bh-wrap">
+    <div className="bh-head">
+      <h2>Explore the docs</h2>
+      <p>Everything else, by area. Each area has an overview page, plus its most-used pages here.</p>
+    </div>
+    <div className="bh-grid3">
+      <div className="bh-explore">
+        <a className="bh-explore-head" href="/docs/sdk/">
+          <span className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="m8 8-4 4 4 4" /><path d="m16 8 4 4-4 4" /></svg></span>
+          <span><strong>SDKs</strong><span>TypeScript, Go and Python SDKs, with their API reference.</span></span>
+        </a>
+        <ul>
+          <li><a href="/docs/sdk/simple/">Build apps with @bsv/simple</a></li>
+          <li><a href="/docs/sdk/typescript/">Use the TypeScript SDK</a></li>
+          <li><a href="/docs/sdk/api/">SDK API reference</a></li>
+        </ul>
+      </div>
+      <div className="bh-explore">
+        <a className="bh-explore-head" href="/docs/reference/">
+          <span className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M4 6h16M4 12h16M4 18h10" /></svg></span>
+          <span><strong>Reference</strong><span>Wallet and service APIs, error codes and network endpoints.</span></span>
+        </a>
+        <ul>
+          <li><a href="/reference/wallet-api/">Wallet API (BRC-100)</a></li>
+          <li><a href="/docs/reference/errors/">Error codes</a></li>
+          <li><a href="/docs/reference/networks/">Network endpoints</a></li>
+        </ul>
+      </div>
+      <div className="bh-explore">
+        <a className="bh-explore-head" href="/docs/wallets/">
+          <span className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="6" width="18" height="13" rx="2" /><path d="M16 12.5h.01" /><path d="M3 9h18" /></svg></span>
+          <span><strong>Wallets</strong><span>Use a BRC-100 wallet, or build your own.</span></span>
+        </a>
+        <ul>
+          <li><a href="/docs/wallets/bsv-desktop/">BSV Desktop</a></li>
+          <li><a href="/docs/wallet-dev/">Build a wallet</a></li>
+          <li><a href="/docs/wallet-dev/conformance/">Test BRC-100 conformance</a></li>
+        </ul>
+      </div>
+      <div className="bh-explore">
+        <a className="bh-explore-head" href="/docs/infrastructure/">
+          <span className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="7" rx="1.5" /><rect x="3" y="13" width="18" height="7" rx="1.5" /><path d="M7 7.5h.01M7 16.5h.01" /></svg></span>
+          <span><strong>Infrastructure</strong><span>Run nodes, broadcast transactions and operate BSV services.</span></span>
+        </a>
+        <ul>
+          <li><a href="/docs/infrastructure/sv-node/">Run SV Node</a></li>
+          <li><a href="/docs/infrastructure/broadcasting/">Broadcast transactions with ARC</a></li>
+          <li><a href="/docs/infrastructure/local-stack/">Run a local test chain</a></li>
+        </ul>
+      </div>
+      <div className="bh-explore">
+        <a className="bh-explore-head" href="/docs/standards/">
+          <span className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3h9l3 3v15H6z" /><path d="M9 11h6M9 15h6" /></svg></span>
+          <span><strong>Standards</strong><span>The BRC specifications BSV apps and wallets follow.</span></span>
+        </a>
+        <ul>
+          <li><a href="/docs/standards/brc-index/">BRC specifications index</a></li>
+          <li><a href="/docs/standards/brc-100/">BRC-100 wallet standard</a></li>
+          <li><a href="/docs/standards/paymail/">Paymail specification</a></li>
+        </ul>
+      </div>
+      <div className="bh-explore">
+        <a className="bh-explore-head" href="/docs/learn/what-is-bsv/">
+          <span className="bh-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M2 6c3-1.5 7-1.5 10 0 3-1.5 7-1.5 10 0v13c-3-1.5-7-1.5-10 0-3-1.5-7-1.5-10 0z" /><path d="M12 6v13" /></svg></span>
+          <span><strong>Learn</strong><span>How BSV works, from concepts to full courses.</span></span>
+        </a>
+        <ul>
+          <li><a href="/docs/learn/what-is-bsv/">What is BSV</a></li>
+          <li><a href="/docs/learn/">How BSV works</a></li>
+          <li><a href="/docs/learn/academy/">BSV Academy</a></li>
+        </ul>
+      </div>
     </div>
   </div>
 </section>

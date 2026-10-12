@@ -175,32 +175,59 @@
 .bh-step p { color: var(--bh-soft); font-size: 0.9rem; line-height: 1.55; margin: 0 0 0.75rem; }
 .bh-step a { font-size: 0.86rem; font-weight: 600; color: var(--bh-accent); }
 
-/* Quick links */
-.bh-quick {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.8rem;
-  border: 1px solid var(--bh-line);
-  border-radius: 10px;
-  background: var(--bh-card);
-  padding: 1rem 1.2rem;
-  color: var(--bh-ink);
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: border-color 0.2s ease, transform 0.2s ease;
+/* Use cases: as many columns as fit, so five cards never leave one orphan on a wide row. */
+.bh-grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem; }
+
+/* Section head with a link on the right */
+.bh-head-row { max-width: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; }
+.bh-head-row > div { max-width: 60ch; }
+.bh-see-all { font-weight: 600; font-size: 0.92rem; color: var(--bh-accent); white-space: nowrap; }
+.bh-see-all span { display: inline-block; transition: transform 0.2s ease; }
+.bh-see-all:hover span { transform: translateX(4px); }
+
+/* Example apps */
+.bh-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bh-pink);
+  background: var(--bh-tint);
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  margin-bottom: 0.9rem;
 }
-.bh-quick:hover { border-color: rgba(27, 30, 169, 0.45); transform: translateY(-1px); }
-.bh-quick span { color: var(--bh-soft); }
+
+/* Explore the docs: an area card with its top pages */
+.bh-explore {
+  border: 1px solid var(--bh-line);
+  border-radius: 12px;
+  background: var(--bh-card);
+  padding: 1.4rem 1.5rem 1.2rem;
+}
+.bh-explore-head { display: flex; gap: 0.9rem; align-items: flex-start; color: var(--bh-ink); margin-bottom: 0.9rem; }
+.bh-explore-head .bh-icon { flex: none; margin: 0; }
+.bh-explore-head strong { display: block; font-size: 1.08rem; margin-bottom: 0.2rem; }
+.bh-explore-head strong + span { display: block; color: var(--bh-soft); font-size: 0.9rem; line-height: 1.5; }
+.bh-explore-head:hover strong { color: var(--bh-accent); }
+.bh-explore ul { list-style: none; margin: 0; padding: 0.8rem 0 0; border-top: 1px solid var(--bh-line); }
+.bh-explore li { margin: 0; padding: 0.3rem 0; }
+.bh-explore li a { color: var(--bh-accent); font-size: 0.92rem; font-weight: 500; }
+.bh-explore li a:hover { text-decoration: underline; }
+
+.bh-last { padding-bottom: 5rem; }
 
 @media (max-width: 960px) {
   .bh-steps { grid-template-columns: repeat(2, 1fr); }
+  .bh-grid3 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 760px) {
   .bh-hero { padding: 3rem 0 3.5rem; }
   /* Text fills the hero on phones, so the grid would sit behind it: drop the decoration. */
   .bh-hero::before { display: none; }
   .bh-grid3, .bh-grid2, .bh-steps { grid-template-columns: 1fr; }
+  .bh-head-row { flex-direction: column; align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) {
   .bsv-home * { transition: none !important; }
