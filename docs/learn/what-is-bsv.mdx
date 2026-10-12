@@ -28,29 +28,11 @@ The diagram has five steps. The app calls a BRC-100 method on the wallet, such a
 
 ## What You Can Build
 
-The same transaction model supports more than payments. A BSV app can put value, ownership or proof in transactions:
-
-<CardGroup cols={3}>
-  <Card title="Payments" icon="wallet">
-    Send and receive BSV.
-  </Card>
-  <Card title="Tokens" icon="coins">
-    Track UTXOs as tokens, such as a redeemable voucher, with an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> that applies rules you define.
-  </Card>
-  <Card title="Data integrity" icon="shield-check">
-    Put a hash of your data in a transaction, then check it later against its Merkle path and block header.
-  </Card>
-</CardGroup>
+The same transaction model supports more than payments. A BSV app can also track tokens with an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, or put a hash of its data in a transaction and check it later against its Merkle path and block header. For a guide per use case, see [Guides](/docs/guides).
 
 ## Packages for Building on BSV
 
-You don't build on raw transactions directly. Pick the package that matches what you're building, each one wraps the layer below it:
-
-| **Role** | **Package** | **What you get** |
-|---|---|---|
-| Foundation | `@bsv/sdk` | Hashing, keys, Script, BEEF, Merkle paths |
-| App helpers | `@bsv/simple` | Payments and tokens through the user's wallet |
-| Wallet | `@bsv/wallet-toolbox` | Tools to build BRC-100 wallets |
+Most apps start with `@bsv/simple`, which handles payments and tokens through the user's wallet. It builds on `@bsv/sdk` (hashing, keys, Script, BEEF, Merkle paths), and wallet builders use `@bsv/wallet-toolbox`. To compare them and pick one, see the [SDKs overview](/docs/sdk).
 
 ## Next Steps
 
