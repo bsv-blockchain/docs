@@ -1,0 +1,57 @@
+---
+config:
+  theme: "base"
+  themeVariables:
+    darkMode: false
+    fontFamily: "Noto Sans, system-ui, -apple-system, 'Segoe UI', sans-serif"
+    fontSize: "14px"
+    background: "#ffffff"
+    textColor: "#1f2430"
+    titleColor: "#1f2430"
+    lineColor: "#5b6475"
+    primaryColor: "#f6f7f9"
+    primaryTextColor: "#1f2430"
+    primaryBorderColor: "#c3c9d2"
+    secondaryColor: "#ECF5FF"
+    secondaryTextColor: "#1f2430"
+    secondaryBorderColor: "#1B1EA9"
+    tertiaryColor: "#ffffff"
+    tertiaryTextColor: "#1f2430"
+    tertiaryBorderColor: "#e3e6eb"
+    mainBkg: "#f6f7f9"
+    nodeBorder: "#c3c9d2"
+    clusterBkg: "#ffffff"
+    clusterBorder: "#c3c9d2"
+    edgeLabelBackground: "#ffffff"
+    noteBkgColor: "#ECF5FF"
+    noteTextColor: "#1f2430"
+    noteBorderColor: "#1B1EA9"
+    actorBkg: "#f6f7f9"
+    actorBorder: "#c3c9d2"
+    actorTextColor: "#1f2430"
+    actorLineColor: "#c3c9d2"
+    signalColor: "#5b6475"
+    signalTextColor: "#1f2430"
+    labelBoxBkgColor: "#f6f7f9"
+    labelBoxBorderColor: "#c3c9d2"
+    labelTextColor: "#1f2430"
+    loopTextColor: "#5b6475"
+    activationBkgColor: "#ECF5FF"
+    activationBorderColor: "#1B1EA9"
+    sequenceNumberColor: "#ffffff"
+  themeCSS: ".node rect, .node polygon, .cluster rect, rect.actor, .statediagram-state rect, .stateGroup rect { rx: 8px; ry: 8px; } .node rect, .node polygon, .node circle, rect.actor, .statediagram-state rect.basic { stroke-width: 1.25px; } .flowchart-link, .messageLine0, .messageLine1, .transition { stroke-width: 1.25px; } .edgeLabel, .messageText, .noteText { font-size: 12px; } code, .sublabel { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace; }"
+  flowchart:
+    curve: "basis"
+    htmlLabels: true
+    padding: 12
+    nodeSpacing: 40
+    rankSpacing: 48
+  sequence:
+    mirrorActors: false
+    actorMargin: 56
+    messageMargin: 32
+    noteMargin: 12
+    boxMargin: 8
+  state:
+    padding: 8
+---
