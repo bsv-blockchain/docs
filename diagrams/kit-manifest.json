@@ -25,7 +25,11 @@
     "diagrams/components/StepFlow.jsx",
     "diagrams/components/Mermaid.jsx",
     "diagrams/components/diagram-components.css",
-    "diagrams/data/example-payment-states.json"
+    "diagrams/data/example-payment-states.json",
+    ".claude/skills/diagrams/references/verify.md",
+    ".claude/skills/diagrams/references/platforms/_template.md",
+    ".claude/skills/diagrams/references/platforms/writedocs.md",
+    "diagrams/scripts/check-page.mjs"
   ],
   "projectFiles": [
     ".claude/skills/diagrams/project.md",
