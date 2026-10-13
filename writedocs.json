@@ -142,16 +142,7 @@
                       "docs/learn/wiki/bitcoin-transactions"
                     ]
                   },
-                  "docs/learn/glossary",
-                  {
-                    "group": "Case studies",
-                    "page": "docs/showcase/case-studies/index",
-                    "pages": [
-                      "docs/showcase/case-studies/fintech",
-                      "docs/showcase/case-studies/supply-chain",
-                      "docs/showcase/case-studies/identity"
-                    ]
-                  }
+                  "docs/learn/glossary"
                 ]
               },
               {
@@ -256,23 +247,8 @@
           {
             "group": "Other languages",
             "pages": [
-              {
-                "group": "Go SDK",
-                "page": "docs/sdk/go/index",
-                "pages": [
-                  "docs/sdk/go/keys",
-                  "docs/sdk/go/simple-tx",
-                  "docs/sdk/go/broadcasting"
-                ]
-              },
-              {
-                "group": "Python SDK",
-                "page": "docs/sdk/python/index",
-                "pages": [
-                  "docs/sdk/python/simple-tx",
-                  "docs/sdk/python/verifying-beef"
-                ]
-              }
+              "docs/sdk/go/index",
+              "docs/sdk/python/index"
             ]
           },
           {
@@ -447,16 +423,7 @@
                   "docs/wallet-dev/conformance/typescript-runner"
                 ]
               },
-              "docs/wallet-dev/infrastructure",
-              {
-                "group": "SPV Wallet server",
-                "page": "docs/wallet-dev/spv-wallet/index",
-                "pages": [
-                  "docs/wallet-dev/spv-wallet/quickstart",
-                  "docs/wallet-dev/spv-wallet/installation",
-                  "docs/wallet-dev/spv-wallet/go-client"
-                ]
-              }
+              "docs/wallet-dev/infrastructure"
             ]
           }
         ]
