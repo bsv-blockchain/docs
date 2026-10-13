@@ -29,7 +29,8 @@
     ".claude/skills/diagrams/references/verify.md",
     ".claude/skills/diagrams/references/platforms/_template.md",
     ".claude/skills/diagrams/references/platforms/writedocs.md",
-    "diagrams/scripts/check-page.mjs"
+    "diagrams/scripts/check-page.mjs",
+    "diagrams/scripts/check-diagram.mjs"
   ],
   "projectFiles": [
     ".claude/skills/diagrams/project.md",

@@ -253,11 +253,20 @@ Use these instead of \`accent\` when a diagram encodes lifecycle status (payment
 |---|---|---|---|
 ${statusKeys.map((s) => { const a = t.status[s].light, b = t.status[s].dark; return `| \`status-${s}\` | ${t.status[s].label ?? s} | \`${a.fill}\` / \`${a.border}\` / \`${a.text}\` | \`${b.fill}\` / \`${b.border}\` / \`${b.text}\` |`; }).join("\n")}
 
+## Documentation diagram rules (diagram kit extension)
+
+These rules override any default of the diagram-design skill.
+
+- No title, no subtitle, no header or intro text above or inside the diagram. Start directly with the diagram. The explanation goes in the page text and the caption, outside the image.
+- Do not use the \`title\` role. Labels, sublabels, group tags (\`eyebrow\`), arrow labels and legends that belong to the diagram are fine.
+- No decorative text (taglines, "Figure 1", watermarks, author or date lines).
+- The canvas starts at the first element of the diagram: no empty band on top where a title would go.
+
 ## Typography
 
 | Role | Family | Size | Weight | Usage |
 |---|---|---|---|---|
-| \`title\` | ${t.font.heading} | 1.5rem | 600 | Page H1 |
+| \`title\` | ${t.font.heading} | 1.5rem | 600 | Not used in documentation diagrams (see the rules below) |
 | \`node-name\` | ${t.font.sans} | ${t.font.sizeLabel}px | 600 | Human-readable labels |
 | \`sublabel\` | ${t.font.mono} | ${t.font.sizeSublabel}px | 400 | API values, fields, endpoints |
 | \`eyebrow\` | ${t.font.sans} | ${t.font.sizeSublabel}px | 500 | Group tags, axis labels |

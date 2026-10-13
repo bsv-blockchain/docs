@@ -1,6 +1,6 @@
 # Contrast report: BSV Docs
 
-Generated 2026-10-12. Thresholds follow WCAG 2.x: 4.5:1 for text, 3:1 for essential lines and borders.
+Generated 2026-10-13. Thresholds follow WCAG 2.x: 4.5:1 for text, 3:1 for essential lines and borders.
 
 | Check | Foreground | Background | Ratio | Min | Result |
 |---|---|---|---|---|---|
