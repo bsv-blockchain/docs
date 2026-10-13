@@ -5,7 +5,7 @@ Platform: WriteDocs (`writedocs.json`), MDX pages, `snippets/` for React.
 
 ## Summary
 
-The skill worked end to end after a minimal setup, but the kit assumed platforms that have no built-in components and no per-platform export check. Seven decisions came out of the test. The two that change the skill most are D3 (custom swimlane instead of StateMachine) and D6 (agent text above every component diagram).
+The skill worked end to end after a minimal setup, but the kit assumed platforms that have no built-in components and no per-platform export check. Nine decisions came out of the test. The three that change the skill most are D3 (custom swimlane instead of StateMachine), D6 (agent text above every component diagram) and D8 (verify the rendered page before delivering).
 
 ## Decisions
 
@@ -44,6 +44,14 @@ Risk: the text lives twice (agent block and component), so they can drift. Accep
 **D7. Tried and rejected: pass the steps as `<Step>` children of the component.**
 Idea: one source of text, in the page, used by both the export and the diagram. Result: the `.md` export keeps the children as text, but WriteDocs hands snippets pre-rendered HTML in an Astro island, not React elements, so the component cannot read them (a marker title change appeared in the HTML island and the export, but not in the diagram). Reading the HTML string would depend on WriteDocs internals; skipped. Documented under "Does not work" in `types.md`.
 
+**D8. A verify step: render the page before delivering.**
+The first diagrams were delivered unseen. The user found every real problem (duplicate of a built-in, overlapping labels, a crash, a stale export). Added `references/verify.md` and `diagrams/scripts/check-page.mjs` (Playwright: console errors, screenshots in light, dark, desktop and phone, markdown export text check). Tested on the real page. Also: check platform built-ins and the portal's existing diagrams before choosing a type.
+Finding from the first run: the page's content column is under 780px at a 1280px window, so a component with a narrow-container layout shows its stacked layout; the script has `--desktop-width` to see both.
+Needs `playwright-core` and Chromium; verify.md says what to do without them (do not claim verified).
+
+**D9. Per-platform references.**
+Platform facts moved out of `platforms.md` into `references/platforms/<platform>.md`, from a fixed template (`_template.md`): CSS, Mermaid, React, built-ins that overlap, markdown export, agent text syntax, verify command, dated gotchas. `platforms.md` keeps the wiring snippets for platforms not yet verified and an index. A platform gets its own file the first time it is verified in a project.
+
 ## Changes to kit files (merge into the central repo)
 
 | File | Change |
@@ -53,6 +61,10 @@ Idea: one source of text, in the page, used by both the export and the diagram. 
 | `references/checklist.md` | Two items: agent text block present and matching; markdown export checked |
 | `references/platforms.md` | New section: WriteDocs |
 | `references/setup.md` | WriteDocs row in the platform detection table |
+| `references/verify.md` | New: verify procedure |
+| `references/platforms/_template.md`, `platforms/writedocs.md` | New: per-platform reference template and the WriteDocs file (moved out of `platforms.md`) |
+| `diagrams/scripts/check-page.mjs` | New: render and export check |
+| `diagrams/kit-manifest.json` | The four new files listed as kit files |
 
 `KIT_VERSION` and `kit-manifest.json` were not changed. Suggest a version bump when merged.
 
