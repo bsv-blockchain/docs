@@ -6,11 +6,11 @@ description: Set up a BSV testnet wallet, connect an app to it with the TypeScri
 
 On BSV, an app does not hold private keys. It connects to a wallet that follows the BRC-100 standard, such as BSV Desktop, and the wallet signs every transaction after you approve it. Working on testnet lets you build and test with free coins before any real BSV is involved.
 
-## Before You Begin
+## Before you begin
 
 Make sure you have Node.js 22 or newer installed.
 
-## Set Up a Testnet Wallet
+## Set up a testnet wallet
 
 The first step is to set up a wallet. This guide uses [BSV Desktop](https://desktop.bsvb.tech/), which you install, switch to testnet, and fund with free coins:
 
@@ -73,7 +73,7 @@ The faucet confirms with a **Successfully sent** message and a transaction ID. B
   <img src="/images/quick-start/05-wallet-balance.png" alt="BSV Desktop after the faucet payment, with the new amount under Your Balance, 0 satoshis as the Available Balance on the Legacy Bridge page, and the payment under Received" />
 </Frame>
 
-## Connect Your App to the Wallet
+## Connect your app to the wallet
 
 With the testnet wallet set up, it is time to install the SDK and connect your app to it:
 
@@ -124,7 +124,7 @@ With the testnet wallet set up, it is time to install the SDK and connect your a
 
 Your app is now connected to the wallet and can read from it on testnet. These calls only read from the wallet, so they cost nothing and BSV Desktop does not ask you to approve them.
 
-## Send Your First Payment
+## Send your first payment
 
 Take these steps to send 1,000 satoshis to your own testnet address and verify the payment on the testnet explorer. This example uses testnet, but keep in mind that a BSV transaction, on testnet or Mainnet, cannot be reversed once broadcast. Always double check the recipient address and amount before sending.
 
@@ -214,9 +214,9 @@ BSV Desktop then detects the payment to your own address and imports it within a
   </Accordion>
 </AccordionGroup>
 
-## Next Steps
+## Next steps
 
 With a first payment sent, continue with the concepts behind it or build with an AI agent:
 
-- [Learn the Concepts](/docs/learn)
-- [Code with an AI Agent](/docs/build-with-ai)
+- [How BSV works](/docs/learn/)
+- [Code with an AI agent](/docs/build-with-ai/)
