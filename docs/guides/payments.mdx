@@ -7,8 +7,8 @@ description: Monetize an API with BSV micropayments, client and server, using HT
 Our own testing found the `ServerWallet.create()` funding path used in this guide blocked on testnet: the documented `fund-metanet` tool fails, and the funding transaction is rejected for an invalid AtomicBEEF on both storage servers tested. Flag this before presenting the server side as working end to end.
 </Callout>
 
-<Callout type="warning">
-Some code examples on this page use Mainnet (`network: 'main'`), moving real BSV. A BSV transaction cannot be reversed once broadcast. Review every example carefully and switch to a testnet setup while you're learning.
+<Callout type="note">
+The examples on this page run on testnet, with free coins. Before you switch them to mainnet, where payments move real BSV and cannot be reversed, read [Move your app to mainnet](/docs/guides/go-to-mainnet/).
 </Callout>
 
 This guide sets up an API that charges for access using HTTP 402 Payment Required, the standard HTTP status code reserved for exactly this. You'll build a server that gates specific routes behind a price, and a client that pays automatically when it hits one.
@@ -84,8 +84,8 @@ async function setupServer() {
   // 1. Initialize the server's own wallet
   const wallet = await ServerWallet.create({
     privateKey: process.env.SERVER_PRIVATE_KEY!,
-    network: 'main',
-    storageUrl: 'https://store-us-1.bsvb.tech'
+    network: 'testnet',
+    storageUrl: 'https://go-wallet-testnet-us-1.bsvblockchain.tech'
   })
 
   // 2. Create the payment-gating middleware
@@ -267,8 +267,8 @@ import { ServerWallet } from '@bsv/simple/server'
 async function main() {
   const wallet = await ServerWallet.create({
     privateKey: process.env.SERVER_PRIVATE_KEY!,
-    network: 'main',
-    storageUrl: 'https://store-us-1.bsvb.tech'
+    network: 'testnet',
+    storageUrl: 'https://go-wallet-testnet-us-1.bsvblockchain.tech'
   })
 
   const paymentMiddleware = createPaymentMiddleware({
