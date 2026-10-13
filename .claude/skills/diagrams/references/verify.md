@@ -13,6 +13,9 @@ Never deliver a diagram you have not seen rendered. Most problems found in testi
 4. Fetch the page's markdown export and read what an AI reader gets. Component tags are empty there; the agent text block must carry the content.
 5. Fix and repeat until the report is clean and the screenshots are acceptable.
 
+## Static diagrams from diagram-design
+Run `node diagrams/scripts/check-diagram.mjs <exports>` and confirm the local profile is current (`--profile <slug>`). Then look at the exported image: no title, no subtitle, no empty band on top.
+
 ## If the browser tooling is missing
 `check-page.mjs` needs `playwright-core` and a Chromium (set `PLAYWRIGHT_CORE` and `CHROME_PATH`). If neither exists, say so, run the other checks (build log, console via the dev server output, markdown export with curl), and ask the user to look at the page in light, dark and phone width. Do not report the diagram as verified.
 

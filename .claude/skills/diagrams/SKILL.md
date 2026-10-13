@@ -26,6 +26,7 @@ Collect, from the request or by asking (one question at a time, only what is mis
 
 - What the reader needs to understand or do after seeing the diagram
 - The page it goes on and the surrounding text
+- If the diagram is interactive and its parts match existing pages or sections of the portal: whether the parts should be clickable and open that section. Ask once, and suggest the matches you found in the navigation (see `types.md > Clickable parts`). Default to asking, not to adding links on your own
 - The source of truth for names and values: API reference, OpenAPI spec, SDK, or SME notes. Never invent endpoint names, status values, field names, or event names. If the source is missing, ask.
 
 For bigger requests, use `templates/diagram-request.md`.
@@ -68,7 +69,7 @@ Verify the result as described in `references/verify.md` (render it, screenshots
 
 - The files created or changed
 - The MDX snippet to paste (component, image with alt text, or Mermaid block)
-- A suggested caption and the sentence that introduces the diagram in the page
+- The sentence that introduces the diagram in the page, and a suggested caption. Both go in the page text, never inside the image
 - The agent text block, when the diagram is a React component
 - What you verified and how (screenshots checked, markdown export checked), or what you could not verify
 - Anything you assumed and need them to confirm (names, values, transitions)
@@ -79,6 +80,7 @@ Verify the result as described in `references/verify.md` (render it, screenshots
 - Sources: `diagrams/sources/` (Mermaid `.mmd`, diagram-design `.html`, `figma-links.md`). Data: `diagrams/data/`. Exports: the folder in `project.md`.
 - Colors only through tokens. Never hardcode a hex value in a diagram, component, or Mermaid block, except the generated classDefs.
 - Status colors always mean the same thing across the portal: the keys in `tokens.json > status`.
+- **No title or intro text inside static diagrams.** A non-interactive diagram (Mermaid, diagram-design, Figma, any exported image) starts with the diagram itself: no title, no subtitle, no explanatory sentence at the top. The explanation goes in the page text before it and in the caption (outside the image). Labels, box subtitles, legends and arrow labels that are part of the diagram are fine. Interactive components can have a step title and description because those are part of the interaction.
 - **Agent text rule.** Every React component diagram (StateMachine, StepFlow, custom swimlane) is followed by nothing on its own for AI readers: the markdown export of a page keeps the component tag and drops what it renders. So always add an agent-only text block immediately ABOVE the component, in the page, with the full content of the diagram (every step, state, branch and transition, with exact names). On WriteDocs: `<Visibility for="agents">`. Mermaid fences and static images with alt text do not need it, because Mermaid source survives as text. Details in `types.md > Agent text for component diagrams`.
 - Text stays text (Mermaid, SVG, React). Never ship diagrams as raster images with baked-in text unless it is a product screenshot.
 - One idea per diagram. If a diagram needs more than about 12 nodes or two levels of nesting, split it or use StateMachine.

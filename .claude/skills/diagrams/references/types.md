@@ -8,7 +8,7 @@ Best for: request sequences, small decision flows, small lifecycles, anything th
    - `sequence-api-request.mmd`: client ↔ API ↔ provider, with async webhook
    - `flowchart-integration-decision.mmd`: "which path should I use"
    - `state-lifecycle.mmd`: small lifecycle without substatuses
-2. Replace content with names from the source of truth. Endpoints as `METHOD /path`, events and status values exactly as in the API.
+2. No `title:` in the frontmatter and no title node: the page text introduces the diagram. Replace content with names from the source of truth. Endpoints as `METHOD /path`, events and status values exactly as in the API.
 3. Status colors: copy the `classDef` lines from `diagrams/brand/generated/mermaid-classdefs.light.mmd` to the end of flowcharts and state diagrams, then `class NodeId <status-key>`. Sequence diagrams do not need classDefs.
 4. Theme: if `project.md` says the platform has no global Mermaid theme, prepend `mermaid-frontmatter.light.yaml`.
 5. Lifecycles with substatuses: do not write by hand. Create `diagrams/data/<slug>.json` and run
@@ -57,6 +57,18 @@ Best for: a flow with two actors (for example app and wallet) or a branch, where
 5. Provide the stacked layout for narrow containers, the Back/Next buttons, and a live-region announcement for each step.
 6. Add the agent text block above the component (next section).
 
+## Clickable parts
+
+For an interactive diagram whose parts match existing pages or sections of the portal (a box named after a concept that has its own page, a step that is explained in a section), offer to make the parts clickable. The skill asks once, in the request step, and suggests the matches it found. Do not add links without the answer.
+
+- Find matches in the navigation config and the page headings. Only link to pages and anchors that exist; run the platform's broken-link check after (here `npm run broken-links`).
+- Link the box to the most specific section, not to the home of the docs. One target per box.
+- The link must not break the interaction: Back/Next and the active-step highlight keep working. Clicking a box follows its link, so show it clearly: an underline or a small arrow on the label, a pointer cursor, and a visible keyboard focus.
+- Swimlane: an optional `href` on each box, rendered as an SVG `<a>` around the box (`href` as a plain path, so it works as a normal link and in the stacked layout too).
+- StepFlow and StateMachine: use the `href` field in the data, where the component supports it.
+- Mermaid is not interactive for this purpose, but `click NodeId "/path"` makes a node a link.
+- Mention the links in the agent text block (name the target page) so AI readers get them too.
+
 ## Agent text for component diagrams
 
 React components render in the browser. The markdown export of a page (what AI tools and agents read) contains only the component tag, with nothing inside it. So every component diagram needs a text twin.
@@ -84,7 +96,15 @@ Best for: architecture and integration overviews, swimlanes for multi-actor proc
 
 Note: diagram-design output can vary between runs and is not diff-friendly. Prefer Mermaid or StateMachine for diagrams that change often.
 
+Required line in every diagram-design request (exact wording): "No title, no subtitle, no header or intro text, no empty band above the diagram. Start directly with the first element of the diagram." Static diagrams carry no title or intro text (see SKILL.md).
+
+After exporting, run `node diagrams/scripts/check-diagram.mjs <file.svg|file.html> ...`. It flags text that looks like a title (large text near the top, or text above the first box). A flag is a suspect for a human to confirm in the screenshot, not proof. If confirmed, ask diagram-design again with the required line; do not hand-edit the SVG.
+
+Before the first request on a machine, and whenever `tokens.json` changes, check that the local profile is current: `node diagrams/scripts/check-diagram.mjs --profile <client-slug>`. It compares `~/.diagram-design/profiles/<slug>.md` with `diagrams/brand/generated/diagram-design-profile.md`. If they differ, copy the repo file over the local one.
+
 ## Figma
+
+Frames have no title or intro text, only the diagram or illustration (see SKILL.md).
 
 Best for: concept illustrations, hero images, annotated screenshots of the client's dashboard, anything visual that is not boxes and arrows.
 

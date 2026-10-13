@@ -4,6 +4,9 @@ Run through this before delivering any diagram. Report anything that fails and w
 
 ## Content
 - [ ] Every name and value (endpoints, statuses, events, fields) matches the source of truth exactly
+- [ ] Static diagrams have no title, subtitle or intro sentence inside the image; the explanation is in the page text and caption
+- [ ] diagram-design exports: `check-diagram.mjs` run with no title suspects, and the local profile matches the repo profile
+- [ ] Interactive diagrams related to existing sections: asked whether the parts should be clickable; links, if added, point to existing pages or anchors and the broken-link check passes
 - [ ] The diagram shows one idea; no more than about 12 nodes unless it is a StateMachine
 - [ ] Happy path is clear; errors are covered here or in a linked diagram or table
 - [ ] Everything in the diagram is also available as text on the page (prose, table, or steps)
@@ -21,7 +24,7 @@ Run through this before delivering any diagram. Report anything that fails and w
 - [ ] Readable at the portal's content width and on a phone (or scrolls horizontally on purpose)
 
 ## Accessibility
-- [ ] Alt text (static images) or a figure caption with title (components) describes what it shows and the takeaway
+- [ ] Alt text (static images) or a figure caption (components) describes what it shows and the takeaway
 - [ ] Color is never the only way to understand a state or path
 - [ ] Text contrast at least 4.5:1, essential lines and borders at least 3:1 (`generate.mjs` checks tokens)
 - [ ] Interactive components work with the keyboard and show focus

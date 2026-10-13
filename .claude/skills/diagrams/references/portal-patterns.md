@@ -57,7 +57,7 @@ Developer portals that set the bar (Stripe, Adyen, Twilio, Plaid) use a small se
 3. **Same names everywhere.** Labels in the diagram match the API reference, the headings, and the code samples exactly, including case.
 4. **Numbers match prose.** If the text says "in step 3", the diagram shows a 3 in the same place.
 5. **Color is never the only signal.** Every colored element also has a text label (WCAG 1.4.1). Status colors mean the same thing across the whole portal.
-6. **Caption when it helps.** Use a caption for figures referenced from elsewhere or that need a source note.
+6. **Caption when it helps, outside the image.** Never put a title or an explanatory sentence at the top of a static diagram: the introduction is in the page text and the caption is in the page, not in the image. Use a caption for figures referenced from elsewhere or that need a source note.
 7. **Alt text.** Short alt text says what the diagram is and its main takeaway. For complex diagrams, the surrounding text or table is the long description.
 8. **One idea per diagram.** Split when you need more than about 12 nodes, or when a reader would need to zoom.
 9. **Happy path first.** Show the main flow; cover errors in a separate diagram or table.

@@ -68,7 +68,8 @@ Follow the section for this platform in `references/platforms.md`:
 
 1. Copy `diagrams/brand/generated/diagram-design-profile.md` to `~/.diagram-design/profiles/<client-slug>.md`. Each writer who generates diagrams for this client does this once on their machine; the file in the repo is the source.
 2. Create `.diagram-design` at the repo root containing exactly one line: `profile: <client-slug>`.
-3. Tell the user: diagram-design uses one focal accent per diagram by design. For lifecycle diagrams, ask it to use the "Documentation status roles" table in the profile.
+3. Each writer repeats step 1 on their machine whenever the profile changes; `check-diagram.mjs --profile <slug>` tells them if their copy is stale.
+4. Tell the user: diagram-design uses one focal accent per diagram by design. For lifecycle diagrams, ask it to use the "Documentation status roles" table in the profile.
 
 ## 6. Connect Figma (if enabled)
 
