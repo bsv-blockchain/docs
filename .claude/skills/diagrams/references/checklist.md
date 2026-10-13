@@ -9,7 +9,8 @@ Run through this before delivering any diagram. Report anything that fails and w
 - [ ] Everything in the diagram is also available as text on the page (prose, table, or steps)
 - [ ] Numbered steps match the numbers referenced in the text
 - [ ] React component diagrams have the agent text block directly above them, covering every step, branch and transition, and matching the component's text
-- [ ] Fetched the page's markdown export (for example `<page>.md` on the dev server; restart it if stale) and confirmed the text twin is there
+- [ ] Fetched the page's markdown export and confirmed the agent text is there (on WriteDocs the tag is stripped and the prose kept)
+- [ ] Rendered the page and looked at screenshots in light, dark and phone width (`verify.md`); no console errors
 
 ## Style
 - [ ] Colors come only from tokens (generated classDefs, CSS variables, client Figma variables, or the diagram-design profile)

@@ -63,7 +63,7 @@ React components render in the browser. The markdown export of a page (what AI t
 
 Rule: immediately above the component, add a block that only agents see, with the whole content of the diagram in prose.
 
-- WriteDocs: `<Visibility for="agents">...</Visibility>`.
+- WriteDocs: `<Visibility for="agents">...</Visibility>` (the export keeps the prose and strips the tag).
 - Other platforms: use that platform's equivalent. If none exists, put the same text in a visible paragraph or table before the diagram.
 - Content: the number of steps or states, then every step, branch and transition in order, with exact names (methods, fields, statuses). Do not write "see the diagram".
 - Keep it in the same page file, and update it together with the component: when the steps change, change both.

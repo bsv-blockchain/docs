@@ -1,5 +1,15 @@
 # Platform wiring
 
+## Per-platform references
+
+Verified platforms have their own file in `references/platforms/`, written from `references/platforms/_template.md`. Read the file for this project's platform before building. Platforms without a file below are starting points only, not verified in practice.
+
+| Platform | Reference |
+|---|---|
+| WriteDocs | `platforms/writedocs.md` (verified 2026-10-12) |
+
+When a project's platform has no file, create one from the template during the first diagram (after the verify step) and add it to this table.
+
 Platforms change often. Before wiring, check the platform's current docs for Mermaid support, custom React components, and custom CSS, and record what you verified in `project.md`. The snippets below are starting points, not guaranteed APIs.
 
 All paths below assume the kit sits at the repo root (`diagrams/`, `.claude/skills/diagrams/`). Adjust import aliases to the project's setup.
@@ -127,19 +137,6 @@ Same approach as Fumadocs (Next.js, `.dark` class, `public/`). Nextra supports `
 ## Starlight (Astro)
 
 **Dark selector:** `[data-theme='dark']`. React components need the `@astrojs/react` integration and a `client:load` directive when used in MDX. Mermaid needs a plugin (rehype or Astro integration); pass `mm.light` from the generated config, or use static SVG exports. Add the CSS files through Starlight's `customCss` option.
-
-## WriteDocs
-
-Verified 2026-10-12 against https://preview.writedocs.io/docs/content/diagrams.md, /snippets.md, /configuration/custom-code.md, and by testing on a real project.
-
-- **Dark selector:** `[data-theme="dark"]` on `<html>`. Config file: `writedocs.json`.
-- **CSS:** every `.css` file in the project loads automatically, alphabetically by path (dot-folders, `node_modules`, `dist` excluded). Do not copy the generated CSS into another file, and do not leave stray `.css` under `diagrams/`.
-- **Mermaid:** native ```mermaid fences. WriteDocs themes them and redraws on light/dark switch; no theme option is documented. Skip the kit classDefs and the frontmatter theme (light-only fills break in dark mode).
-- **React snippets:** `.jsx` in `snippets/`, imported with `import X from '/snippets/...'`, default export. Keep the explicit `import { useState, ... } from 'react'` line (without it a module-level `useEffect` fails with `useEffect is not defined`); remove `"use client"`. Hooks inside components work. Props that are components are not interactive.
-- **Children:** MDX children passed to a snippet arrive as pre-rendered HTML in an Astro island, not as React elements. A component cannot read them. They do appear in the markdown export.
-- **Markdown export:** `<page>.md` on the dev server. Component tags stay as bare tags. `<Visibility for="agents">` content appears as plain prose. Mermaid fences appear as text. The dev server can serve a stale `.md`; restart it before judging.
-- **Built-in components** such as `<Steps>` overlap with the kit's StepFlow. Do not use StepFlow on WriteDocs.
-- **Interactive diagrams already in the portal** use `--wd-*` CSS variables. New custom diagrams follow them (see Custom step-through swimlane in `types.md`).
 
 ## Any other platform
 

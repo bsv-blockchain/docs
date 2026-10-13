@@ -32,6 +32,8 @@ For bigger requests, use `templates/diagram-request.md`.
 
 ### 2. Choose the pattern, then the type
 
+First read the platform reference in `references/platforms/` and check the platform's built-in components and the diagrams the portal already has (see `references/verify.md`). A built-in that does the same job beats a kit type, and an existing interactive diagram sets the experience to match.
+
 First pick the documentation pattern in `references/portal-patterns.md` (lifecycle, request sequence, integration architecture, decision flow, step flow, concept illustration, annotated UI). The pattern decides what the diagram must show.
 
 Then pick the diagram type. Only use types listed as enabled in `project.md`.
@@ -62,12 +64,13 @@ Follow the type's section in `references/types.md`. The short version:
 
 ### 4. Check and deliver
 
-Run the checklist in `references/checklist.md`. Then give the user:
+Verify the result as described in `references/verify.md` (render it, screenshots in light, dark and phone width, console errors, markdown export). Then run the checklist in `references/checklist.md`. Then give the user:
 
 - The files created or changed
 - The MDX snippet to paste (component, image with alt text, or Mermaid block)
 - A suggested caption and the sentence that introduces the diagram in the page
 - The agent text block, when the diagram is a React component
+- What you verified and how (screenshots checked, markdown export checked), or what you could not verify
 - Anything you assumed and need them to confirm (names, values, transitions)
 
 ## Conventions
@@ -84,7 +87,8 @@ Run the checklist in `references/checklist.md`. Then give the user:
 ## Reference files
 
 - `references/setup.md`: adapting the kit to a project
-- `references/platforms.md`: wiring for Fumadocs, Docusaurus, Mintlify, and others
+- `references/platforms.md`: wiring for Fumadocs, Docusaurus, Mintlify, and others, and the index of per-platform files in `references/platforms/`
+- `references/verify.md`: how to check a diagram in the running portal before delivering
 - `references/types.md`: detailed workflow per diagram type
 - `references/portal-patterns.md`: documentation diagram patterns and writing rules, with external references
 - `references/checklist.md`: definition of done and review checklist
