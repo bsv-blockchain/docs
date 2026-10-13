@@ -87,8 +87,8 @@ import { ServerWallet } from '@bsv/simple/server'
 
 const wallet = await ServerWallet.create({
   privateKey: process.env.SERVER_PRIVATE_KEY!,
-  network: 'main',
-  storageUrl: 'https://store-us-1.bsvb.tech'
+  network: 'testnet',
+  storageUrl: 'https://go-wallet-testnet-us-1.bsvblockchain.tech'
 })
 console.log(await wallet.getBalance())
 ```
@@ -106,10 +106,10 @@ console.log(await wallet.getBalance())
 
 </Accordion>
 
-The public Wallet Infra endpoints cover several regions, for example `store-eu-1.bsvb.tech` and `store-ap-1.bsvb.tech`, and you can point `storageUrl` at your own deployment instead.
+On testnet, `storageUrl` points at BSV's testnet storage server, `go-wallet-testnet-us-1.bsvblockchain.tech`. The public Wallet Infra endpoints, such as `store-us-1.bsvb.tech`, `store-eu-1.bsvb.tech` and `store-ap-1.bsvb.tech`, store mainnet wallets. You can also point `storageUrl` at your own deployment.
 
 <Callout type="warning">
-The public Wallet Infra endpoints store mainnet wallets. A wallet created with `network: 'testnet'` connects without an error, but payments sent to it are rejected with `The tx parameter must be valid AtomicBEEF`. To test on testnet, keep the wallet storage local with `Setup.createWalletSQLite` from `@bsv/wallet-toolbox`.
+BSV recommends keeping wallet storage local when you can, with `Setup.createWalletSQLite` from `@bsv/wallet-toolbox`. Funding a server wallet from BSV Desktop doesn't work yet: the payment is rejected with `The tx parameter must be valid AtomicBEEF`. A fix is in progress.
 </Callout>
 
 If you are building the wallet itself, use `@bsv/wallet-toolbox` instead.

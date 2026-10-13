@@ -54,7 +54,7 @@ Because that boundary is standardized, you can swap in any BRC-100-compliant wal
 | `PrivilegedKeyManager` | Handles the higher-permission keyring used for identity operations |
 | `ShamirWalletManager` | Splits key backups using Shamir secret sharing |
 | `WalletSigner` | Connects the BRC-100 `signAction` call to the SDK's actual signing logic |
-| `Services` | Wires up the external services a wallet needs: ARC, Chaintracks, WhatsOnChain |
+| `Services` | Wires up the external services a wallet needs: Arcade for broadcasting, Chaintracks, WhatsOnChain |
 
 Whatever you assemble from these pieces ends up exposing the same BRC-100 interface that app-layer packages like `@bsv/simple` expect to talk to.
 
