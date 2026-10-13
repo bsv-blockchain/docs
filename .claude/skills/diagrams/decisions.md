@@ -52,6 +52,18 @@ Needs `playwright-core` and Chromium; verify.md says what to do without them (do
 **D9. Per-platform references.**
 Platform facts moved out of `platforms.md` into `references/platforms/<platform>.md`, from a fixed template (`_template.md`): CSS, Mermaid, React, built-ins that overlap, markdown export, agent text syntax, verify command, dated gotchas. `platforms.md` keeps the wiring snippets for platforms not yet verified and an index. A platform gets its own file the first time it is verified in a project.
 
+**D10. Interactive diagrams related to existing sections: ask about clickable parts.**
+User decision. When the parts of an interactive diagram match pages or sections of the portal, the skill asks once whether they should be clickable, and suggests the matches from the navigation. Default is to ask, not to add links. Links must target existing pages or anchors (broken-link check), keep the Back/Next interaction working, show the affordance, and be named in the agent text. Rules in `types.md > Clickable parts`. Not yet implemented in `CreateActionFlow.jsx` (the swimlane has no `href` support yet); do it when a diagram needs it.
+
+**D11. No title or intro text inside static diagrams.**
+User decision, from a reviewed example that had a title and a one-line description above the diagram. Rule: non-interactive diagrams (Mermaid, diagram-design, Figma, exports) start with the diagram; the explanation goes in the page text and the caption outside the image. Labels and legends that belong to the diagram are fine. Interactive components may keep a step title and description. Added to `SKILL.md`, `types.md` (Mermaid, diagram-design, Figma), `checklist.md` and `portal-patterns.md`.
+Four layers, because diagram-design is third-party and its output varies:
+1. `generate.mjs` now writes a "Documentation diagram rules" section into the diagram-design profile and marks the `title` role as unused. Before this, the profile defined `title` as "Page H1", which invited a title.
+2. `types.md` has an exact line to include in every diagram-design request.
+3. New `diagrams/scripts/check-diagram.mjs` flags title suspects in exported SVG/HTML (large text near the top, or text above the first box). Heuristic: confirm by looking. Tested only on two synthetic SVGs (one with a title, one clean), not on real diagram-design output.
+4. `check-diagram.mjs --profile <slug>` compares the writer's `~/.diagram-design/profiles/<slug>.md` with the repo profile, because each writer copies the profile once and can keep a stale one.
+Not tested: diagram-design itself (not installed here). The rule is untested end to end until a real run.
+
 ## Changes to kit files (merge into the central repo)
 
 | File | Change |
@@ -64,6 +76,7 @@ Platform facts moved out of `platforms.md` into `references/platforms/<platform>
 | `references/verify.md` | New: verify procedure |
 | `references/platforms/_template.md`, `platforms/writedocs.md` | New: per-platform reference template and the WriteDocs file (moved out of `platforms.md`) |
 | `diagrams/scripts/check-page.mjs` | New: render and export check |
+| `diagrams/scripts/check-diagram.mjs`, `generate.mjs` | New check script for static diagrams and profile sync; the profile now carries the no-title rules (D11) |
 | `diagrams/kit-manifest.json` | The four new files listed as kit files |
 
 `KIT_VERSION` and `kit-manifest.json` were not changed. Suggest a version bump when merged.
