@@ -61,23 +61,20 @@ mode: custom
   </div>
 </section>
 
-<section className="bh-section">
+<section className="bh-section bh-band">
   <div className="bh-wrap">
-    <div className="bh-head">
-      <h2>Your first payment in two steps</h2>
-      <p>The order matters: the wallet and your code must be on the same network.</p>
-    </div>
-    <div className="bh-steps">
-      <div className="bh-step">
-        <h3>Send a payment</h3>
-        <p>Run your code, approve the payment in the wallet.</p>
-        <a href="/docs/get-started/quick-start-browser/">Send →</a>
+    <div className="bh-flow">
+      <div className="bh-flow-top">
+        <p className="bh-flow-title">Your first payment, in five steps. The order matters: the wallet and your code must be on the same network.</p>
+        <a className="bh-see-all" href="/docs/get-started/quick-start-browser/">Start the quick start <span aria-hidden="true">→</span></a>
       </div>
-      <div className="bh-step">
-        <h3>Verify it</h3>
-        <p>Find your transaction on the testnet explorer.</p>
-        <a href="/docs/get-started/verify/">Verify →</a>
-      </div>
+      <ol className="bh-flow-steps">
+        <li><strong>Use testnet</strong><span>Pick the network, its faucet and its explorer.</span></li>
+        <li><strong>Set up a wallet</strong><span>Install BSV Desktop and create a testnet wallet.</span></li>
+        <li><strong>Get test coins</strong><span>Fund the wallet from a faucet.</span></li>
+        <li><strong>Send a payment</strong><span>Run your code, approve the payment in the wallet.</span></li>
+        <li><strong>Verify it</strong><span>Find your transaction on the testnet explorer.</span></li>
+      </ol>
     </div>
   </div>
 </section>

@@ -118,7 +118,7 @@
 
 /* Sections */
 .bh-section { padding: 4rem 0 0; }
-.bh-head { max-width: 60ch; margin-bottom: 2rem; }
+.bh-head { margin-bottom: 2rem; }
 .bh-head h2 { font-size: 1.8rem; letter-spacing: -0.01em; }
 .bh-head p { color: var(--bh-soft); line-height: 1.65; margin: 0.6rem 0 0; }
 
@@ -175,12 +175,22 @@
 .bh-step p { color: var(--bh-soft); font-size: 0.9rem; line-height: 1.55; margin: 0 0 0.75rem; }
 .bh-step a { font-size: 0.86rem; font-weight: 600; color: var(--bh-accent); }
 
+/* Process strip: one highlighted flow, linked once at the top. */
+/* Full-width tinted band: the section spans the viewport, so no border or card edge is needed. */
+.bh-band { margin-top: 4rem; padding: 3rem 0; background: var(--bh-tint); }
+.bh-flow-top { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.4rem; }
+.bh-flow-title { margin: 0; color: var(--bh-soft); line-height: 1.6; }
+.bh-flow-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; counter-reset: flow; }
+.bh-flow-steps li { position: relative; margin: 0; padding-top: 1.1rem; border-top: 2px solid transparent; border-image: var(--bh-grad) 1; counter-increment: flow; }
+.bh-flow-steps li::before { content: "0" counter(flow); display: block; font-size: 0.85rem; font-weight: 600; color: var(--bh-pink); margin-bottom: 0.4rem; }
+.bh-flow-steps strong { display: block; font-size: 1.02rem; margin-bottom: 0.3rem; }
+.bh-flow-steps span { color: var(--bh-soft); font-size: 0.9rem; line-height: 1.55; }
+
 /* Use cases: as many columns as fit, so five cards never leave one orphan on a wide row. */
 .bh-grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.25rem; }
 
 /* Section head with a link on the right */
 .bh-head-row { max-width: none; display: flex; align-items: flex-end; justify-content: space-between; gap: 1.5rem; }
-.bh-head-row > div { max-width: 60ch; }
 .bh-see-all { font-weight: 600; font-size: 0.92rem; color: var(--bh-accent); white-space: nowrap; }
 .bh-see-all span { display: inline-block; transition: transform 0.2s ease; }
 .bh-see-all:hover span { transform: translateX(4px); }
@@ -219,14 +229,15 @@
 .bh-last { padding-bottom: 5rem; }
 
 @media (max-width: 960px) {
-  .bh-steps { grid-template-columns: repeat(2, 1fr); }
+  .bh-flow-steps { grid-template-columns: repeat(2, 1fr); }
   .bh-grid3 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 760px) {
   .bh-hero { padding: 3rem 0 3.5rem; }
   /* Text fills the hero on phones, so the grid would sit behind it: drop the decoration. */
   .bh-hero::before { display: none; }
-  .bh-grid3, .bh-grid2, .bh-steps { grid-template-columns: 1fr; }
+  .bh-grid3, .bh-grid2, .bh-flow-steps { grid-template-columns: 1fr; }
+  .bh-flow-top { flex-direction: column; gap: 0.75rem; }
   .bh-head-row { flex-direction: column; align-items: flex-start; }
 }
 @media (prefers-reduced-motion: reduce) {
