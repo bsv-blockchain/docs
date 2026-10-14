@@ -169,7 +169,7 @@ With the server answering 402, the client needs a wallet that signs the payment 
   </Step>
 </Steps>
 
-The wrapper sends the request, reads the price from the 402, asks the wallet for a payment to an address derived from the server key, and sends the request again with five `x-bsv-*` headers. When the server rejects that payment, the second answer is another 402 and `fetch402` returns it instead of throwing, so the status of the response tells whether the payment was accepted.
+The wrapper reads the price from the 402, pays from the wallet to an address derived from the server key, and sends the request again with five `x-bsv-*` headers. When the server rejects that payment, `fetch402` returns the second 402 instead of throwing, so the status of the response tells whether the payment was accepted.
 
 ## Customize and deploy
 
