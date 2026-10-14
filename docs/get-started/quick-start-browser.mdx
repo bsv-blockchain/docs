@@ -18,7 +18,7 @@ Make sure you have Node.js 22 or newer installed.
 
 ## How it works
 
-Your app never holds a private key. In this tutorial, the scripts `connect.mjs` and `pay.mjs` play the role of your app. They run in a terminal and use `WalletClient` from `@bsv/sdk` to send requests to BSV Desktop, which shows each request and signs only after you approve. In a web app, the same calls go in the front-end code.
+Your app never holds a private key. In this tutorial, the scripts `connect.mjs` and `pay.mjs` play the role of your app. They run in a terminal and use `WalletClient` from `@bsv/sdk` to send requests to BSV Desktop, which shows each request and signs only after you approve. In a web app, the same calls go in the front-end code. Two sites complete the flow: a faucet sends the free testnet coins, and the testnet explorer shows the payment.
 
 ## Set up a testnet wallet
 
