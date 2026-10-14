@@ -4,15 +4,26 @@ sidebarTitle: "Pay from a web app"
 description: Set up a BSV testnet wallet, connect an app to it with the TypeScript SDK, and send a first payment without putting a private key in your code.
 ---
 
-On BSV, an app does not hold private keys. It connects to a wallet that follows the BRC-100 standard, such as BSV Desktop, and the wallet signs every transaction after you approve it. Working on testnet lets you build and test with free coins before any real BSV is involved.
+In this tutorial, you set up a testnet wallet, connect an app to it with the TypeScript SDK, and send 1,000 testnet satoshis. At the end, you have a funded BSV Desktop wallet, two short scripts that act as your app, and a payment you can see on the testnet explorer. Start here when you want to see how an app pays on **BSV** without holding a private key. The app sends a request, and a wallet that follows the BRC-100 standard signs the transaction after you approve it. The example runs on its own with free testnet coins, so it needs no existing project and no real BSV.
 
 ## Before you begin
 
 Make sure you have Node.js 22 or newer installed.
 
+## How it works
+
+Four parts work together in this tutorial:
+
+- Your app sends requests to the wallet. Here, two Node.js scripts, `connect.mjs` and `pay.mjs`, play that role. They run in a terminal from your project folder and use `WalletClient` from `@bsv/sdk`. In a web app, the same calls go in the front-end code, and `WalletClient` connects the same way from a page in the browser.
+- BSV Desktop is the wallet on your machine. It holds the keys, shows you each request from your app, and signs the payment after you approve it.
+- The faucet at [bsvfaucet.com](https://bsvfaucet.com/) sends free testnet coins to your wallet.
+- The testnet explorer at [test.whatsonchain.com](https://test.whatsonchain.com/) shows the payment once it is on the testnet.
+
+Your app never sees a private key. It asks, BSV Desktop shows you the request, and the wallet signs only after you approve.
+
 ## Set up a testnet wallet
 
-The first step is to set up a wallet. This guide uses [BSV Desktop](https://desktop.bsvb.tech/), which you install, switch to testnet, and fund with free coins:
+The first step is to set up the wallet your app talks to. This guide uses [BSV Desktop](https://desktop.bsvb.tech/), which you install, switch to testnet, and fund with free coins from the faucet in your browser:
 
 <Steps>
   <Step title="Install BSV Desktop">
@@ -75,7 +86,7 @@ The faucet confirms with a **Successfully sent** message and a transaction ID. B
 
 ## Connect your app to the wallet
 
-With the testnet wallet set up, it is time to install the SDK and connect your app to it:
+With the testnet wallet set up, create the project of your app in a terminal and connect it to the wallet:
 
 <Steps>
   <Step title="Install the SDK">
@@ -87,7 +98,7 @@ With the testnet wallet set up, it is time to install the SDK and connect your a
     ```
   </Step>
   <Step title="Write the connection script">
-    In the same folder, create a file named `connect.mjs` with this code:
+    In the same folder, create a file named `connect.mjs`. This script is the part of your app that finds the wallet and reads from it:
 
     ```javascript connect.mjs
     import { WalletClient } from '@bsv/sdk'
@@ -126,14 +137,14 @@ Your app is now connected to the wallet and can read from it on testnet. These c
 
 ## Send your first payment
 
-Take these steps to send 1,000 satoshis to your own testnet address and verify the payment on the testnet explorer. This example uses testnet, but keep in mind that a BSV transaction, on testnet or Mainnet, cannot be reversed once broadcast. Always double check the recipient address and amount before sending.
+Take these steps to send 1,000 satoshis to your own testnet address and verify the payment on the testnet explorer. This example uses testnet, but keep in mind that a BSV transaction, on testnet or mainnet, cannot be reversed once broadcast. Always double check the recipient address and amount before sending.
 
 <Steps>
   <Step title="Copy your current address">
     In BSV Desktop, open **Legacy Bridge** and copy the address under **Your Payment Address**. The address changes every day, so copy today's, even if you copied one in the first section.
   </Step>
   <Step title="Write the payment script">
-    In the same folder as `connect.mjs`, create a file named `pay.mjs`. Replace `YOUR_TESTNET_ADDRESS` with the address you copied:
+    In the same folder as `connect.mjs`, create a file named `pay.mjs`. This script is the part of your app that asks the wallet for a payment. Replace `YOUR_TESTNET_ADDRESS` with the address you copied:
 
     ```javascript pay.mjs
     import { P2PKH, WalletClient } from '@bsv/sdk'
@@ -216,7 +227,8 @@ BSV Desktop then detects the payment to your own address and imports it within a
 
 ## Next steps
 
-With a first payment sent, continue with the concepts behind it or build with an AI agent:
+With a first payment sent, check it in detail on the explorer, then continue with the concepts behind it or build with an AI agent:
 
+- [Verify your payment](/docs/get-started/verify/)
 - [How BSV works](/docs/learn/)
 - [Code with an AI agent](/docs/build-with-ai/)
