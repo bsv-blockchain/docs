@@ -3,11 +3,22 @@ title: Store data and files
 description: Put data in a BSV transaction output through the user's wallet and read it back with the TypeScript SDK.
 ---
 
-A **BSV** transaction can carry data next to the coins it moves. An output that starts with `OP_FALSE OP_RETURN` holds any bytes you choose. It cannot be spent, and anyone with the transaction id can read it. Your app writes the output through the user's wallet and reads it back from the same wallet.
+A **BSV** transaction can carry data next to the coins it moves. An output that starts with `OP_FALSE OP_RETURN` holds any bytes you choose. It cannot be spent, and anyone with the transaction id can read it. Use it for a small public record that needs a timestamp and cannot be changed later, such as a note, a hash or a receipt.
+
+Your app writes the output through the user's wallet (BSV Desktop) on the network the wallet uses, then reads it back from the same wallet. The examples run on their own in a new Node script, and you can copy them into an existing app.
 
 ## Before you begin
 
 You need a funded testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set one up.
+
+The code runs with [Node.js](https://nodejs.org/) in an empty project folder. In that folder, run these commands in the terminal to create an ES module project and install the SDK and `tsx`, a tool that runs TypeScript files without a build step:
+
+```bash
+npm init -y
+npm pkg set type=module
+npm install @bsv/sdk
+npm install -D tsx
+```
 
 <Callout type="note">
 The network comes from the wallet, not from the code. These examples use a testnet wallet. To use mainnet, read [Move your app to mainnet](/docs/guides/go-to-mainnet/).
@@ -19,10 +30,11 @@ The wallet writes the output and reads it back, and both sections below use only
 
 ### Write data to a transaction output
 
-Follow these steps to write a short text to a transaction output with the wallet in BSV Desktop:
+Follow these steps to write a short text to a transaction output.
 
 <Steps>
   <Step title="Connect to the wallet">
+    Create a file in your project folder, for example `store-note.ts`, and connect to BSV Desktop with `WalletClient`:
 
     ```ts
     import { WalletClient } from '@bsv/sdk'
@@ -33,6 +45,7 @@ Follow these steps to write a short text to a transaction output with the wallet
     The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without one.
   </Step>
   <Step title="Build the data output">
+    Build the locking script that holds your text, in the same file and after the connection:
 
     ```ts
     import { LockingScript, OP, Utils } from '@bsv/sdk'
@@ -51,6 +64,7 @@ Follow these steps to write a short text to a transaction output with the wallet
     The SDK has no template for a data output, so the script is built from its two opcodes and one data push.
   </Step>
   <Step title="Create the transaction">
+    Ask the wallet to create a transaction with that script and log the id it returns:
 
     ```ts
     const { txid } = await wallet.createAction({
@@ -64,12 +78,31 @@ Follow these steps to write a short text to a transaction output with the wallet
       }],
       options: { acceptDelayedBroadcast: false }
     })
+
+    console.log(txid)
     ```
 
     The output holds no coins, so the cost is the network fee, which grows with the size of the transaction and uses the rate set in BSV Desktop under **Settings**, **Advanced settings**, **Transaction fees**. The `basket` and `tags` let you list the output later, and `acceptDelayedBroadcast: false` makes the wallet broadcast the transaction before the call returns.
   </Step>
+  <Step title="Run the script">
+    In the terminal, in your project folder, run the file while BSV Desktop is open and unlocked:
+
+    ```bash
+    npx tsx store-note.ts
+    ```
+
+    The script stops at `createAction` until you answer the request in the next step.
+  </Step>
   <Step title="Authorize the request in BSV Desktop">
     BSV Desktop opens a **Spending Request** with the name of your app, the `description` you passed and the network fee. The call returns after you click **Authorize**. The `description` and the `outputDescription` are what the user reads, so write them for the user.
+
+    After you authorize, the terminal prints the `txid`, a 64 character hexadecimal string that identifies the transaction, for example:
+
+    ```text
+    ed5ca9804da9c2cb5d2bf3541727cb65348abc7197a61ed6965c3b404ac323de
+    ```
+
+    You use the `txid` to find the transaction on an explorer in the last step of the next section.
   </Step>
 </Steps>
 
@@ -83,6 +116,7 @@ Once the transaction is broadcast, read the output from the wallet and from the 
 
 <Steps>
   <Step title="List the output from the wallet">
+    Add this code below the rest of `store-note.ts` and run the file again, which also writes a new note:
 
     ```ts
     const { outputs } = await wallet.listOutputs({
@@ -108,16 +142,20 @@ Once the transaction is broadcast, read the output from the wallet and from the 
     }
     ```
 
-    The helper skips the two opcodes and the push length bytes, so it returns only your data.
+    The helper skips the two opcodes and the push length bytes, so it returns only your data. The terminal prints one line for each output in the basket, so a second run adds a second line:
+
+    ```text
+    hello from my app
+    ```
   </Step>
   <Step title="Check the transaction on an explorer">
     Open the transaction in a testnet explorer such as [WhatsOnChain](https://test.whatsonchain.com/), by its `txid`. Output 0 has a value of 0 and the same script. An explorer can cut a large script short, and the WhatsOnChain API returns only its first 50,000 bytes.
   </Step>
 </Steps>
 
-## Store data with @bsv/simple
+## Store data with `@bsv/simple`
 
-If your app already uses `@bsv/simple`, its wallet writes the same output in one call:
+If your app already uses `@bsv/simple` in a browser, its wallet writes the same output in one call:
 
 ```ts
 import { createWallet } from '@bsv/simple/browser'
@@ -132,14 +170,25 @@ console.log(text.txid, json.txid)
 
 `createWallet` connects to BSV Desktop with its own originator, and BSV Desktop asks you to authorize each call, as it does for `createAction`. The output is the same `OP_FALSE OP_RETURN` script, so the helper above reads it when you list the `notes` basket without the `tags` filter.
 
+## Adapt the example to your app
+
+To use this in a real app, apply these three points:
+
+- Encrypt the data before you write it when it should stay private, because the output is public.
+- Use one `basket` for each kind of data your app stores, and `tags` to filter inside it, so a read returns only what you expect.
+- Move to mainnet by using a mainnet wallet. The code does not change, and the fee is paid in real BSV.
+
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="No wallet available over any communication substrate" defaultOpen>
-    The script reached no wallet. A Node script cannot connect to BSV Desktop without an originator, so pass one as the second argument of `WalletClient`, for example `new WalletClient('auto', 'localhost')`, and keep BSV Desktop open and unlocked.
+  <Accordion title="Node script cannot reach the wallet" defaultOpen>
+    The `@bsv/sdk` package throws `No wallet available over any communication substrate` in the terminal of your script when `WalletClient` reaches no wallet, so the error does not come from BSV Desktop. A Node script cannot connect to BSV Desktop without an originator. Pass one as the second argument of `WalletClient`, for example `new WalletClient('auto', 'localhost')`, and keep BSV Desktop open and unlocked.
   </Accordion>
-  <Accordion title="The call never returns">
-    BSV Desktop is waiting for you to authorize the **Spending Request**. Bring the app to the front, check the amount and click **Authorize**.
+  <Accordion title="BSV Desktop keeps the call waiting">
+    The script prints nothing and does not exit, and no error appears, because BSV Desktop is waiting for you to authorize the **Spending Request**. Bring the app to the front, check the amount and click **Authorize**.
+  </Accordion>
+  <Accordion title="Output reader rejects a stored output">
+    Your own `readData` helper throws `Not a data output` when the output it reads does not start with `OP_FALSE OP_RETURN`. It happens when you list a basket that also holds other outputs. Filter the list with `tags`, or use a basket only for data outputs.
   </Accordion>
 </AccordionGroup>
 
@@ -147,6 +196,7 @@ console.log(text.txid, json.txid)
 
 To learn more about data and transactions in BSV, review these articles:
 
+- [Send messages between users](/docs/guides/messaging/)
 - [Transactions](/docs/concepts/transactions/)
 - [Script](/docs/concepts/script/)
 - [Permissions and outputs](/docs/guides/wallet-aware-apps/)
