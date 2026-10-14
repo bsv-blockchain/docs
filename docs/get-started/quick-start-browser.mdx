@@ -18,16 +18,11 @@ Make sure you have Node.js 22 or newer installed.
 
 ## How it works
 
-Your app never holds a private key. It sends a request, you approve it in the wallet, and the wallet signs:
-
-- The scripts `connect.mjs` and `pay.mjs` are your app in this tutorial. They run in a terminal and use `WalletClient` from `@bsv/sdk`. In a web app, the same calls go in the front-end code.
-- BSV Desktop holds the keys, shows each request, and signs after you approve.
-- [bsvfaucet.com](https://bsvfaucet.com/) sends free testnet coins.
-- [test.whatsonchain.com](https://test.whatsonchain.com/) shows the payment.
+Your app never holds a private key. In this tutorial, the scripts `connect.mjs` and `pay.mjs` play the role of your app. They run in a terminal and use `WalletClient` from `@bsv/sdk` to send requests to BSV Desktop, which shows each request and signs only after you approve. In a web app, the same calls go in the front-end code.
 
 ## Set up a testnet wallet
 
-The first step is to set up [BSV Desktop](https://desktop.bsvb.tech/), the wallet your app talks to:
+The first step is to set up [BSV Desktop](https://desktop.bsvb.tech/) on testnet:
 
 <Steps>
   <Step title="Install BSV Desktop">
