@@ -238,25 +238,16 @@ The function returns these five headers:
 
 ### Prepare the API for production
 
-Complete these steps before the API serves more than one process or leaves your machine:
+Before the API serves more than one process or leaves your machine, check these points:
 
-<Steps>
-  <Step title="Serve the API over HTTPS">
-    The client refuses a plain `http://` URL unless the host is `localhost`, `127.0.0.1` or `[::1]`, and it sends the payment with `redirect: 'manual'`, so request the final HTTPS address instead of one that redirects.
-  </Step>
-  <Step title="Share one replay store between processes">
+- Serve the API over HTTPS. The client refuses a plain `http://` URL unless the host is `localhost`, `127.0.0.1` or `[::1]`, and it sends the payment with `redirect: 'manual'`, so request the final HTTPS address instead of one that redirects.
+- Share one replay store between processes. The server accepts each payment transaction once. The default store lives in the memory of one process and holds 100,000 entries, and when it is full the middleware answers 503. With more than one process, pass `replayStore`, an object whose `claim(txid, expiresAt)` method is atomic and shared:
 
-    The server accepts each payment transaction once. The default store lives in the memory of one process and holds 100,000 entries, and when it is full the middleware answers 503. With more than one process, pass `replayStore`, an object whose `claim(txid, expiresAt)` method is atomic and shared:
+  ```ts
+  createPaymentMiddleware({ wallet, calculatePrice: () => 1000, replayStore })
+  ```
 
-    ```ts
-    createPaymentMiddleware({ wallet, calculatePrice: () => 1000, replayStore })
-    ```
-
-  </Step>
-  <Step title="Keep the clocks in sync">
-    The server rejects a payment whose timestamp differs from its own clock by more than 30 seconds, in either direction. Keep both clocks on NTP, or change the window with `paymentWindowMs`.
-  </Step>
-</Steps>
+- Keep the clocks in sync. The server rejects a payment whose timestamp differs from its own clock by more than 30 seconds, in either direction. Keep both clocks on NTP, or change the window with `paymentWindowMs`.
 
 A 503 means the wallet or the replay store failed after the payment started. The middleware sends no new 402 then, so that the client does not pay twice, and the payment may already be credited to the wallet.
 
