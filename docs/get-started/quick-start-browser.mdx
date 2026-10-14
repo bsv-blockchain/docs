@@ -138,16 +138,12 @@ Your app is now connected to the wallet and can read from it on testnet. These c
 
 Take these steps to send 1,000 satoshis to your own testnet address and see the payment on the testnet explorer. The coins come back to your wallet, so only the fee is spent:
 
-<Callout type="danger">
-  A BSV transaction, on testnet or mainnet, cannot be reversed once broadcast. Double check the recipient address and amount before you send.
-</Callout>
-
 <Steps>
   <Step title="Copy your current address">
     In BSV Desktop, open **Legacy Bridge** and copy the address under **Your Payment Address**. The address changes every day, so copy today's, even if you copied one in the first section.
   </Step>
   <Step title="Write the payment script">
-    In the same folder as `connect.mjs`, create a file named `pay.mjs`. This script is the part of your app that asks the wallet for a payment. Replace `YOUR_TESTNET_ADDRESS` with the address you copied:
+    In the same folder as `connect.mjs`, create a file named `pay.mjs`. This script is the part of your app that asks the wallet for a payment. Replace `YOUR_TESTNET_ADDRESS` with the address you copied, and check it before you run the script, since a sent transaction cannot be reversed:
 
     ```javascript pay.mjs
     import { P2PKH, WalletClient } from '@bsv/sdk'
