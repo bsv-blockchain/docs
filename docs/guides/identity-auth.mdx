@@ -120,7 +120,7 @@ With the server running, call it from a client whose wallet is BSV Desktop:
 The response also carries the identity key of the server in the `x-bsv-auth-identity-key` header, so the client can tell which server answered.
 
 <Callout type="info">
-  By default BSV Desktop answers these calls without asking. With **Require permission for signature creation**, **Require permission for public key revelation** and **Require permission for identity key revelation** turned on in **Settings**, and the app reloaded, the first call of an app opens two **Protocol Access Request** windows, one for **identity key retrieval** and one for **auth message signature**. Select **Grant Access** to let the call through. BSV Desktop remembers the choice for the originator, also after a restart, and asks again for **auth message signature** when your server runs with a new identity key.
+  By default BSV Desktop answers these calls without asking. With **Require permission for signature creation**, **Require permission for public key revelation** and **Require permission for identity key revelation** turned on in **Settings**, and the app reloaded, the first call opens two **Protocol Access Request** windows, for **identity key retrieval** and **auth message signature**. Select **Grant Access** to let the call through, and BSV Desktop remembers the choice for the originator.
 </Callout>
 
 ## Handle callers without authentication
