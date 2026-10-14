@@ -239,8 +239,6 @@ To let a script or a server pay with nobody at the screen to click **Authorize**
   With this permission off, any process on the machine that reaches the local API of BSV Desktop can spend from the wallet without asking, because that API has no authentication. Use a wallet only for this purpose, with little funds.
 </Callout>
 
-The permission is all or nothing, because BSV Desktop has no limit per payment.
-
 ### Pay without the fetch wrapper
 
 A client that cannot use `create402Fetch`, such as a service worker or another HTTP library, builds the payment headers itself. This example reads the price and the server key from the 402, builds the headers and sends the paid request, and the `fetch` calls stand for the HTTP client you use. The code goes inside an async function, like `main` in `client.ts`:
