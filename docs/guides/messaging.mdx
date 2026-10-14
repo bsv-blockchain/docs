@@ -3,14 +3,14 @@ title: "Send messages between users"
 description: "Send encrypted messages and payments between users with MessageBox, which holds each message until its recipient reads it."
 ---
 
-**MessageBox** delivers encrypted messages and payments from one user to another, addressed by identity key. A host keeps each message in the recipient's box until the recipient reads and acknowledges it, so the two users do not need to be online at the same time. The client encrypts the body with your wallet before it leaves your app, so the host only stores ciphertext.
+**MessageBox** delivers encrypted messages and payments to a user's identity key. A host keeps each one until the recipient reads it, so the two users do not need to be online at the same time, and the client encrypts the body with your wallet before it leaves your app.
 
 ## Before you begin
 
-The examples are Node scripts that talk to [BSV Desktop](https://desktop.bsvb.tech/) on testnet. Set it up and fund it as in the [Quick Start](/docs/get-started/quick-start-browser/), since a few hundred satoshis cover everything on this page.
+You need a funded testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set one up.
 
 <Callout type="note">
-The examples on this page run on testnet, with free coins. Before you switch them to mainnet, where every transaction costs real BSV and cannot be reversed, read [Move your app to mainnet](/docs/guides/go-to-mainnet/).
+The wallet decides the network. These examples use a testnet wallet. To use mainnet, read [Move your app to mainnet](/docs/guides/go-to-mainnet/).
 </Callout>
 
 ## Connect to your wallet
@@ -25,7 +25,7 @@ The first step is to install the packages and connect a client to BSV Desktop:
     ```
 
   </Step>
-  <Step title="Create the clients">
+  <Step title="Create the client">
 
     ```ts
     import { MessageBoxClient } from '@bsv/message-box-client'
@@ -38,7 +38,7 @@ The first step is to install the packages and connect a client to BSV Desktop:
     })
     ```
 
-    The second argument of **`WalletClient`** is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without one. The **`networkPreset`** tells the client which overlay network to ask for the recipient's MessageBox host. When it finds none, the client uses the host you configure, which defaults to **`https://message-box-us-1.bsvb.tech`**.
+    The second argument of **`WalletClient`** is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without one. The **`networkPreset`** only picks the overlay network that looks up a recipient's MessageBox host. When it finds none, the client uses **`https://message-box-us-1.bsvb.tech`**.
 
   </Step>
   <Step title="Get your identity key">
@@ -52,9 +52,13 @@ The first step is to install the packages and connect a client to BSV Desktop:
   </Step>
 </Steps>
 
-## Send a message
+## Send and receive messages
 
-With the client ready, send a message to an identity key, starting with your own to try it:
+With the client ready, you send a message to an identity key and read it from the recipient's box. The examples start with your own key, which needs only one wallet.
+
+### Send a message
+
+Send a message to your own identity key:
 
 <Steps>
   <Step title="Send the message">
@@ -68,14 +72,14 @@ With the client ready, send a message to an identity key, starting with your own
     console.log(sent) // { status: 'success', messageId: '...', message: '...' }
     ```
 
-    The **`body`** is a string or an object. The **`messageBox`** is free text and belongs to the recipient, so each identity has its own **`inbox`**. A message to an ordinary box name costs nothing.
+    The **`body`** is a string or an object. The **`messageBox`** is free text and belongs to the recipient, so each identity has its own **`inbox`**. Avoid **`notifications`** as a box name, because it is a built-in box that charges the sender a fee.
 
   </Step>
 </Steps>
 
 The host accepts a message for any valid key, so a successful send does not tell you that the recipient exists. It refuses messages over roughly 98,000 characters of text.
 
-## Read and acknowledge messages
+### Read and acknowledge messages
 
 The recipient reads the box with their own wallet and acknowledges each message once the app has handled it:
 
@@ -89,7 +93,7 @@ The recipient reads the box with their own wallet and acknowledges each message 
     }
     ```
 
-    The client decrypts each body for you. A message has **`messageId`**, **`body`** and **`sender`**, which is the sender's identity key. The dates come back as **`createdAt`** and **`updatedAt`**, although the package types declare **`created_at`** and **`updated_at`**. A third identity that lists a box with the same name sees nothing of yours.
+    The client decrypts each body for you. A message has **`messageId`**, **`body`** and **`sender`**, which is the sender's identity key. Its dates are **`createdAt`** and **`updatedAt`**, although the package types declare **`created_at`** and **`updated_at`**.
 
   </Step>
   <Step title="Acknowledge the messages">
@@ -107,7 +111,7 @@ The recipient reads the box with their own wallet and acknowledges each message 
 
 After the acknowledgment the host deletes the messages, and a second acknowledgment of the same ids fails.
 
-## Receive messages as they arrive
+### Receive messages as they arrive
 
 To get a message the moment it is sent, instead of listing the box, the recipient listens on a live connection and the sender sends over it:
 
@@ -127,7 +131,7 @@ To get a message the moment it is sent, instead of listing the box, the recipien
     })
     ```
 
-    The default connection does not work with the default host and ends with "WebSocket authentication timed out!", so the **`transports`** option is required. Pass each client its own **`socketOptions`** object.
+    The **`transports`** option is required, because the default connection does not work with the default host. Give each client its own **`socketOptions`** object.
 
   </Step>
   <Step title="Send a live message">
@@ -140,56 +144,12 @@ To get a message the moment it is sent, instead of listing the box, the recipien
     })
     ```
 
-    The **`sender`** is a client built like **`live`**, with the sender's wallet. It returns `{ status: 'success', messageId }`.
+    The **`sender`** is a client built like **`live`**, with the sender's wallet.
 
   </Step>
 </Steps>
 
 The listener receives **`sender`**, **`messageId`** and **`body`**, with the body as a JSON string. The message also stays in the box until the recipient acknowledges it.
-
-## Send one message to several recipients
-
-To deliver the same message to many identity keys in one call, send it as a batch:
-
-<Steps>
-  <Step title="Send the batch">
-
-    ```ts
-    const batch = await client.sendMessageToRecipients({
-      recipients: [firstIdentityKey, secondIdentityKey],
-      messageBox: 'inbox',
-      body: { text: 'Hello everyone' },
-      skipEncryption: true
-    })
-    console.log(batch.status, batch.sent.length, batch.blocked)
-    ```
-
-    A batch cannot be encrypted for each recipient, so the client requires **`skipEncryption: true`** and the host stores the body as readable text. Send one encrypted message per recipient when the content is private.
-
-  </Step>
-</Steps>
-
-The result lists the delivered messages in **`sent`**. A recipient that blocked you appears in **`blocked`** while **`status`** stays `success`, and a batch holds up to 100 unique recipients.
-
-## Control who can send to you
-
-To stop a sender, set a permission on your box for that sender's identity key. A **`recipientFee`** of **`-1`** blocks them, and **`0`** allows them again:
-
-<Steps>
-  <Step title="Block a sender">
-
-    ```ts
-    await client.setMessageBoxPermission({
-      messageBox: 'inbox',
-      sender: senderIdentityKey,
-      recipientFee: -1
-    })
-    ```
-
-    The blocked sender's next **`sendMessage`** is refused with **`ERR_DELIVERY_BLOCKED`**, and nothing reaches your box.
-
-  </Step>
-</Steps>
 
 ## Send a payment between users
 
@@ -224,7 +184,7 @@ A payment travels as a message in the recipient's **`payment_inbox`** box on the
   </Step>
 </Steps>
 
-The recipient needs a wallet that can internalize payments, such as BSV Desktop. A payment you send to yourself costs only the network fee. Instead of accepting a payment, **`rejectPayment(payment)`** returns it to the sender minus 1,000 satoshis.
+The recipient needs a wallet that can internalize payments, such as BSV Desktop. A payment you send to yourself costs only the network fee, and the Wallet page of BSV Desktop shows the new balance after you press its refresh button.
 
 ## Troubleshooting
 
@@ -232,38 +192,11 @@ The recipient needs a wallet that can internalize payments, such as BSV Desktop.
   <Accordion title={<>"Identity key retrieval failed"</>} defaultOpen>
     The client cannot reach BSV Desktop. A Node script needs an originator, as in **`new WalletClient('auto', 'localhost')`**, and BSV Desktop must be open and on testnet.
   </Accordion>
-  <Accordion title={<>"Failed to acknowledge messages on all hosts:"</>}>
-    The id is unknown, already acknowledged, or belongs to another identity. List the box again and acknowledge only the ids it returns.
-  </Accordion>
-  <Accordion title={<>"Failed to send message."</>}>
-    The host refused the request, most likely because the message is too large. Keep each message under roughly 98,000 characters of text.
-  </Accordion>
-  <Accordion title={<>"Message recipient must be a canonical compressed public key."</>}>
-    The recipient is not an identity key. Use the 66 character hex key that starts with **`02`** or **`03`**.
-  </Accordion>
-  <Accordion title={<>`ERR_MISSING_PAYMENT_TX`</>}>
-    The box charges a fee and the message carried no payment. Ask what the box costs with **`getMessageBoxQuote`**, then send with **`checkPermissions: true`** and a **`maximumPayment`** at or above the quote.
-  </Accordion>
-  <Accordion title={<>`ERR_INTERNALIZE_FAILED`</>}>
-    The box charges a delivery fee to the host, as the built-in `notifications` box does, and the host could not take the payment. The wallet has already paid, so the message is not delivered and the fee is spent. Check **`deliveryFee`** in the quote before sending, and use a box that has none while you build on testnet.
-  </Accordion>
-  <Accordion title={<>"BRC-29 settlement failed recipient, amount, transaction, or wallet validation."</>}>
-    The recipient wallet cannot internalize the payment. Accept it with a wallet such as BSV Desktop.
-  </Accordion>
-  <Accordion title={<>"A shared multi-recipient batch cannot be encrypted per recipient."</>}>
-    A batch is stored as readable text. Pass **`skipEncryption: true`** if that is acceptable, or send one encrypted message per recipient.
-  </Accordion>
   <Accordion title={<>"WebSocket authentication timed out!"</>}>
     The default live connection does not work with the default host. Create the client with **`socketOptions: { managerOptions: { transports: ['websocket'] } }`**.
   </Accordion>
-  <Accordion title={<>"managerOptions.hostname cannot override the authenticated server URL"</>}>
-    Two clients share one **`socketOptions`** object. Pass each client a new object.
-  </Accordion>
   <Accordion title={<>"BRC-29 settlement could not be built safely."</>}>
     The payment could not be built, often because the wallet holds less than the amount plus the fee. Check the balance in BSV Desktop.
-  </Accordion>
-  <Accordion title="The balance in BSV Desktop does not change after accepting a payment">
-    The Wallet page does not update by itself. Press its refresh button.
   </Accordion>
 </AccordionGroup>
 
@@ -274,4 +207,3 @@ To learn more about messaging and payments in BSV, review these articles:
 - [Send messages with @bsv/message-box-client](/docs/sdk/packages/message-box-client/)
 - [Gate an API behind payments](/docs/guides/payments/)
 - [Authenticate users with their wallet](/docs/guides/identity-auth/)
-- [Move your app to mainnet](/docs/guides/go-to-mainnet/)
