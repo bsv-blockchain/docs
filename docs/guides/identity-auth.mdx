@@ -4,7 +4,7 @@ sidebarTitle: Authenticate users
 description: Use the identity key of a BSV wallet to know which user sends each request to your Express API, with mutual authentication handled by middleware.
 ---
 
-Every BSV wallet has an identity key, and **mutual authentication** lets your API and the caller's wallet prove to each other who they are before a request is served. The `@bsv/auth-express-middleware` package runs the handshake on an Express server and signs the responses. `AuthFetch` from `@bsv/sdk` signs each request on the client, so a route can read the identity key of the wallet that called it.
+Every BSV wallet has an identity key. With **mutual authentication**, your API and the caller's wallet prove to each other who they are before a request is served, so each route can read the identity key of the wallet that called it.
 
 ## Before you begin
 
@@ -15,7 +15,7 @@ To follow this guide, have these ready:
 
 ## Set up the authenticated API
 
-The server protects its routes with the middleware, and the client reaches them with a wallet that signs each request.
+`@bsv/auth-express-middleware` protects the routes on the server, and `AuthFetch` from `@bsv/sdk` signs each request on the client.
 
 ### Protect the API with the auth middleware
 
