@@ -156,10 +156,10 @@ Without a key, the server gets a new random one, and so a new identity, at every
 
 ## Prepare the API for production
 
-Complete these before the API serves real users:
+Before the API serves real users, check these points:
 
 - Share the session state across instances. The default session manager lives in the memory of one process, so a service with several instances needs a shared `sessionManager`.
-- Check the limits in `transportLimits`. The defaults are a 30 second request timeout, 1,000 pending requests per process and 8 MiB for a signed response. A response over `maxResponseBytes` returns `413` with `ERR_RESPONSE_TOO_LARGE`, and a process at its pending limit returns `503` with `ERR_AUTH_CAPACITY`. Each authenticated request can hold more than one pending slot, so a very low `maxPendingRequests` rejects ordinary traffic.
+- Review `transportLimits`. The defaults are a 30 second request timeout, 1,000 pending requests per process and 8 MiB for a signed response, and a request over a limit is rejected with `413` or `503`. Do not set `maxPendingRequests` too low, because each authenticated request can hold more than one pending slot.
 - Move off testnet by following [Go to mainnet](/docs/guides/go-to-mainnet/).
 
 ## Troubleshooting
