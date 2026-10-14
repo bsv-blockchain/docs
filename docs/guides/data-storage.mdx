@@ -13,7 +13,11 @@ You need a funded testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [
 The network comes from the wallet, not from the code. These examples use a testnet wallet. To use mainnet, read [Move your app to mainnet](/docs/guides/go-to-mainnet/).
 </Callout>
 
-## Write data to a transaction output
+## Store data with the wallet
+
+The wallet writes the output and reads it back, and both sections below use only `@bsv/sdk`.
+
+### Write data to a transaction output
 
 Follow these steps to write a short text to a transaction output with the wallet in BSV Desktop:
 
@@ -73,7 +77,7 @@ Follow these steps to write a short text to a transaction output with the wallet
 Anything in the output is public. Do not put personal data or secrets in it, and encrypt what should stay private before you write it.
 </Callout>
 
-## Read the data back
+### Read the data back
 
 Once the transaction is broadcast, read the output from the wallet and from the network:
 
