@@ -7,10 +7,7 @@ description: Charge for API routes with HTTP 402 Payment Required, using an Expr
 
 ## Before you begin
 
-To follow this guide, have these ready:
-
-- Node.js 22 or newer.
-- BSV Desktop on testnet with some test coins, for the client, as set up in [Send a payment from a web app](/docs/get-started/quick-start-browser/).
+You need Node.js 22 or newer, and a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/) with some test coins for the client. [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set one up.
 
 ## Set up the gated API
 
@@ -143,7 +140,7 @@ With the server answering 402, the client needs a wallet that signs the payment 
     main().catch(console.error)
     ```
 
-    The second argument of `WalletClient` is the originator, the name BSV Desktop shows in the payment request. A Node script needs one to reach BSV Desktop.
+    The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without one.
 
   </Step>
   <Step title="Run the client and authorize the payment">
@@ -152,7 +149,7 @@ With the server answering 402, the client needs a wallet that signs the payment 
     npx tsx client.ts
     ```
 
-    BSV Desktop opens a **Spending Request** for `localhost`, labeled `BRC-121 web payment`, with the price plus a network fee that depends on the size of the transaction, for example 1,057 satoshis for a price of 1000. Select **Authorize**. The client then prints `200` and the premium content, with `satoshisPaid`, `paidBy` and the `txid` of the payment.
+    BSV Desktop opens a **Spending Request** for `localhost`, labeled `BRC-121 web payment`, with the price plus a network fee that depends on the size of the transaction, for example 1,057 satoshis for a price of 1000. Click **Authorize**. The client then prints `200` and the premium content, with `satoshisPaid`, `paidBy` and the `txid` of the payment.
 
   </Step>
   <Step title="Cache paid responses">
@@ -177,34 +174,19 @@ Once the basic flow works, adapt how the client pays and prepare the server for 
 
 ### Pay without confirming each request
 
-To let a script or a server pay without a request for each payment, turn off the spending permission of BSV Desktop:
+To let a script or a server pay without asking for your approval each time, turn off the spending permission of BSV Desktop:
 
-<Tabs>
-  <Tab title="BSV Desktop 3.1.1">
-
-    <Steps>
-      <Step>Open **Settings**, and under **Network & connections** select **Advanced settings**.</Step>
-      <Step>Scroll to **Permissions Configuration** and turn off **Require permission for spending wallet funds** in **General Settings**.</Step>
-      <Step>Select **Save Permissions Configuration** and reload the app.</Step>
-    </Steps>
-
-  </Tab>
-  <Tab title="BSV Desktop 2.9.9">
-
-    <Steps>
-      <Step>Open **Settings**, and under **Permissions Configuration** select **Show Advanced Settings**.</Step>
-      <Step>Scroll to **General Settings** and turn off **Require permission for spending wallet funds**.</Step>
-      <Step>Select **Save Permissions Configuration** and reload the app.</Step>
-    </Steps>
-
-  </Tab>
-</Tabs>
+<Steps>
+  <Step>Open **Settings**, and under **Network & connections** click **Advanced settings**.</Step>
+  <Step>Scroll to **Permissions Configuration** and turn off **Require permission for spending wallet funds** in **General Settings**.</Step>
+  <Step>Click **Save Permissions Configuration** and reload the app.</Step>
+</Steps>
 
 <Callout type="warning">
   With this permission off, any process on the machine that reaches the local API of BSV Desktop can spend from the wallet without asking, because that API has no authentication. Use a wallet only for this purpose, with little funds.
 </Callout>
 
-With the permission off, the client pays without opening a request. The permission is on or off, and BSV Desktop has no limit per payment.
+With the permission off, the client pays without opening a request. The permission is all or nothing, because BSV Desktop has no limit per payment.
 
 ### Pay without the fetch wrapper
 
@@ -254,8 +236,8 @@ A 503 means the wallet or the replay store failed after the payment started, for
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title={<>"No wallet available over any communication substrate"</>}>
-    The client reached no wallet because a Node script needs an originator to connect to BSV Desktop. Create the wallet with `new WalletClient('auto', 'localhost:3000')`, and keep BSV Desktop open and unlocked.
+  <Accordion title="No wallet available over any communication substrate">
+    The script reached no wallet. A Node script cannot connect to BSV Desktop without an originator, so pass one as the second argument of `WalletClient`, as in `client.ts`, and keep BSV Desktop open and unlocked.
   </Accordion>
   <Accordion title={<>"A valid wallet instance is required"</>}>
     The middleware got an object that is not a BRC-100 wallet, such as a `ServerWallet` from `@bsv/simple`. Pass the wallet from `Setup.createWalletSQLite`, or `serverWallet.getClient()` for a `ServerWallet`.
@@ -264,10 +246,7 @@ A 503 means the wallet or the replay store failed after the payment started, for
     The server rejected the payment, and `fetch402` returns that second 402 instead of throwing. The usual causes are a timestamp more than 30 seconds off the server clock, an output below the price, and a payment that was already used.
   </Accordion>
   <Accordion title="The server answers 503 with an empty body">
-    The wallet or the replay store failed after the payment started, and the middleware hides the error. To read it, wrap `wallet.internalizeAction` in a `try` and `catch` and log the error. A `ServerWallet` on a remote storage server for another network fails here with `The tx parameter must be valid AtomicBEEF`, so use local storage as in this guide.
-  </Accordion>
-  <Accordion title={<>"Wallet storage returned invalid settings."</>}>
-    `ServerWallet.create` rejects a storage server that answers an empty `dbtype`, as the Go testnet storage server does. Use a wallet on local storage with `Setup.createWalletSQLite`.
+    The wallet or the replay store failed after the payment started, and the middleware hides the error. To read it, wrap `wallet.internalizeAction` in a `try` and `catch` and log the error.
   </Accordion>
   <Accordion title={<>"Payment requests require HTTPS except on the local loopback interface"</>}>
     The client refuses to send a payment over plain `http://` to any host except `localhost`, `127.0.0.1` and `[::1]`. Serve the API over HTTPS and request that address.
