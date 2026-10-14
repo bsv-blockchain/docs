@@ -20,7 +20,7 @@ The `@bsv/402-pay` package implements both sides of the exchange that [BRC-121](
 
 <PaymentGatingFlow />
 
-The server answers a priced route with a 402 that carries the price. The client pays from the wallet to an address derived from the server key, and sends the request again with the payment in five `x-bsv-*` headers. When the server rejects that payment, `fetch402` returns the second 402 instead of throwing, so the status of the response tells whether the payment was accepted.
+The client pays from the wallet to an address derived from the server key, and sends the payment in five `x-bsv-*` headers.
 
 ## Set up the gated API
 
@@ -139,11 +139,9 @@ Follow these steps in an empty folder for the server to charge 1000 satoshis for
   </Step>
 </Steps>
 
-The server serves `/api/free` to anyone and answers `/api/premium` with a 402 until a payment of 1000 satoshis arrives.
-
 ### Pay for a route
 
-With the server answering 402, create a second folder for the client, a Node project separate from the server, with a wallet that signs the payment and a `fetch` that pays and repeats the request:
+With the server answering 402, create a second folder for the client, with a wallet that signs the payment and a `fetch` that pays and repeats the request:
 
 <Steps>
   <Step title="Install the packages in the client folder">
@@ -241,7 +239,7 @@ To let a script or a server pay with nobody at the screen to click **Authorize**
   With this permission off, any process on the machine that reaches the local API of BSV Desktop can spend from the wallet without asking, because that API has no authentication. Use a wallet only for this purpose, with little funds.
 </Callout>
 
-With the permission off, the client pays without opening a request. The permission is all or nothing, because BSV Desktop has no limit per payment.
+The permission is all or nothing, because BSV Desktop has no limit per payment.
 
 ### Pay without the fetch wrapper
 
@@ -256,7 +254,7 @@ A client that cannot use `create402Fetch`, such as a service worker or another H
     const serverIdentityKey = first.headers.get('x-bsv-server')!
     ```
 
-    `x-bsv-sats` holds the price in satoshis and `x-bsv-server` the identity key of the server wallet, the same two headers that the `curl` output showed. Headers arrive as strings, so the price is converted to a number.
+    `x-bsv-sats` holds the price in satoshis and `x-bsv-server` the identity key of the server wallet, the same two headers that the `curl` output showed.
 
   </Step>
   <Step title="Build the headers and repeat the request">
@@ -300,7 +298,7 @@ x-bsv-vout: 0
 
 Before the API serves more than one process or leaves your machine, check these points:
 
-- Serve the API over HTTPS. The client refuses a plain `http://` URL unless the host is `localhost`, `127.0.0.1` or `[::1]`, and it sends the payment with `redirect: 'manual'`, so request the final HTTPS address instead of one that redirects.
+- Serve the API over HTTPS. The client refuses a plain `http://` URL except on the local loopback addresses, and it sends the payment with `redirect: 'manual'`, so request the final HTTPS address instead of one that redirects.
 - Share one replay store between processes. The server accepts each payment transaction once. The default store lives in the memory of one process and holds 100,000 entries. With more than one process, pass `replayStore`, an object whose `claim(txid, expiresAt)` method is atomic and shared:
 
   ```ts
@@ -309,7 +307,7 @@ Before the API serves more than one process or leaves your machine, check these 
 
 - Keep the clocks in sync. The server rejects a payment whose timestamp differs from its own clock by more than 30 seconds, in either direction. Keep both clocks on NTP, or change the window with `paymentWindowMs`.
 
-A 503 comes from the middleware of your server, not from BSV Desktop. It means the wallet or the replay store failed after the payment started, for example because the store is full. The middleware sends no new 402 then, so that the client does not pay twice, and the payment may already be credited to the wallet.
+After a 503 the middleware sends no new 402, so that the client does not pay twice, and the payment may already be credited to the wallet.
 
 To adopt this in a real project, add `createPaymentMiddleware` to the routes you want to charge for in your own Express API. Keep `SERVER_PRIVATE_KEY` in your secret store and the SQLite file on storage that survives restarts, because the wallet keeps the payments it receives there. The clients that call the API need a wallet that can sign the payment, such as the one in BSV Desktop.
 
