@@ -296,38 +296,36 @@ x-bsv-vout: 0
 
 Before the API serves more than one process or leaves your machine, check these points:
 
-- Serve the API over HTTPS. The client refuses a plain `http://` URL except on the local loopback addresses, and it sends the payment with `redirect: 'manual'`, so request the final HTTPS address instead of one that redirects.
-- Share one replay store between processes. The server accepts each payment transaction once. The default store lives in the memory of one process and holds 100,000 entries. With more than one process, pass `replayStore`, an object whose `claim(txid, expiresAt)` method is atomic and shared:
+- Serve the API over HTTPS. The client sends the payment with `redirect: 'manual'`, so request the final HTTPS address instead of one that redirects.
+- Share one replay store between processes. The server accepts each payment transaction once, and the default store lives in the memory of one process and holds 100,000 entries. With more than one process, pass `replayStore`, an object whose `claim(txid, expiresAt)` method is atomic and shared:
 
   ```ts
   createPaymentMiddleware({ wallet, calculatePrice: () => 1000, replayStore })
   ```
 
-- Keep the clocks in sync. The server rejects a payment whose timestamp differs from its own clock by more than 30 seconds, in either direction. Keep both clocks on NTP, or change the window with `paymentWindowMs`.
+- Keep the clocks in sync with NTP, or change the window with `paymentWindowMs`.
 
-After a 503 the middleware sends no new 402, so that the client does not pay twice, and the payment may already be credited to the wallet.
-
-To adopt this in a real project, add `createPaymentMiddleware` to the routes you want to charge for in your own Express API. Keep `SERVER_PRIVATE_KEY` in your secret store and the SQLite file on storage that survives restarts, because the wallet keeps the payments it receives there. The clients that call the API need a wallet that can sign the payment, such as the one in BSV Desktop.
+To adopt this in a real project, add `createPaymentMiddleware` to the routes you want to charge for in your own Express API, and keep `SERVER_PRIVATE_KEY` in your secret store and the SQLite file on storage that survives restarts.
 
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="The client cannot find BSV Desktop">
+  <Accordion title="Client cannot find BSV Desktop">
     The client fails with `No wallet available over any communication substrate`. A Node script cannot connect to BSV Desktop without an originator, so pass one as the second argument of `WalletClient`, as in `client.ts`, and keep BSV Desktop open and unlocked.
   </Accordion>
-  <Accordion title="The middleware does not accept the wallet you passed">
+  <Accordion title="Middleware rejects the wallet you passed">
     The `wallet` option of `createPaymentMiddleware` takes a BRC-100 wallet, the object that `Setup.createWalletSQLite` returns in this guide. Any other object makes the server stop with `A valid wallet instance is required`. A `ServerWallet` from `@bsv/simple` is one of those objects, so pass `serverWallet.getClient()` for it.
   </Accordion>
-  <Accordion title="The client gets a 402 again after it paid">
+  <Accordion title="Client gets a 402 again after paying">
     The middleware of your server rejected the payment, and `fetch402` returns that second 402 instead of throwing. The usual causes are a timestamp more than 30 seconds off the server clock, an output below the price, and a payment that was already used.
   </Accordion>
-  <Accordion title="The server answers 503 with an empty body">
-    The middleware of your server answers this when the wallet or the replay store failed after the payment started, and it hides the error. To read it, wrap `wallet.internalizeAction` in a `try` and `catch` and log the error.
+  <Accordion title="Server answers 503 with an empty body">
+    The middleware of your server answers this when the wallet or the replay store failed after the payment started, and it hides the error. To read it, wrap `wallet.internalizeAction` in a `try` and `catch` and log the error. The middleware sends no new 402 after a 503, so that the client does not pay twice, and the payment may already be credited to the wallet.
   </Accordion>
-  <Accordion title="The client refuses to pay over plain http">
+  <Accordion title="Client refuses to pay over plain http">
     The client stops with `Payment requests require HTTPS except on the local loopback interface`. It sends a payment over `http://` only to `localhost`, `127.0.0.1` and `[::1]`, so serve the API over HTTPS and request that address.
   </Accordion>
-  <Accordion title="The server crashes when you start it with ts-node">
+  <Accordion title="Server crashes when started with ts-node">
     The crash shows `Cannot read properties of undefined (reading 'fileExists')`. `ts-node` 10.9.2 fails with TypeScript 7, the version that `npm install -D typescript` installs today. Run the scripts with `tsx`, as in this guide.
   </Accordion>
 </AccordionGroup>
