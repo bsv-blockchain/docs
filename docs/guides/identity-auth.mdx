@@ -4,18 +4,15 @@ sidebarTitle: Authenticate users
 description: Use the identity key of a BSV wallet to know which user sends each request to your Express API, with mutual authentication handled by middleware.
 ---
 
-**Mutual authentication** identifies the user behind each request by the identity key of their BSV wallet. The API and the wallet prove to each other who they are before a request is served, and each route can read the identity key of the wallet that called it.
+With **mutual authentication**, the API and the user's BSV wallet prove to each other who they are before a request is served. Each route can then read the identity key of the wallet that called it, which identifies the user behind the request.
 
 ## Before you begin
 
-To follow this guide, have these ready:
-
-- Node.js 22 or newer.
-- BSV Desktop with a testnet wallet, set up as in [Send a payment from a web app](/docs/get-started/quick-start-browser/).
+You need Node.js 22 or newer and a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set one up.
 
 ## Set up the authenticated API
 
-You build a server that identifies each caller with `@bsv/auth-express-middleware`, then a client that signs its requests with `AuthFetch` from `@bsv/sdk`.
+Build a server that identifies each caller with `@bsv/auth-express-middleware`, then a client that signs its requests with `AuthFetch` from `@bsv/sdk`.
 
 ### Protect the API with the auth middleware
 
@@ -83,7 +80,7 @@ Start with the server, which is the part that identifies the caller:
 
 ### Call the API with AuthFetch
 
-With the server running, call it from a client whose wallet is BSV Desktop:
+Next, call the server from a client whose wallet is BSV Desktop:
 
 <Steps>
   <Step title="Create the client">
@@ -97,7 +94,7 @@ With the server running, call it from a client whose wallet is BSV Desktop:
     console.log(await response.json())
     ```
 
-    The second argument of `WalletClient` is the `originator`, a domain name that identifies your app to the wallet. A Node client has to pass one, or the connection to BSV Desktop fails. BSV Desktop shows the originator as the app name in its permission windows and keeps permissions per originator.
+    The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app in its permission windows. BSV Desktop keeps permissions per originator, and a Node script cannot reach the wallet without one.
   </Step>
   <Step title="Run the server and the client">
     Run the server and the client in two terminals:
@@ -120,7 +117,7 @@ With the server running, call it from a client whose wallet is BSV Desktop:
 The response also carries the identity key of the server in the `x-bsv-auth-identity-key` header, so the client can tell which server answered.
 
 <Callout type="info">
-  By default BSV Desktop answers these calls without asking. With **Require permission for signature creation**, **Require permission for public key revelation** and **Require permission for identity key revelation** turned on in **Settings**, and the app reloaded, the first call opens two **Protocol Access Request** windows, for **identity key retrieval** and **auth message signature**. Select **Grant Access** to let the call through, and BSV Desktop remembers the choice for the originator.
+  By default BSV Desktop answers these calls without asking. With **Require permission for signature creation**, **Require permission for public key revelation** and **Require permission for identity key revelation** turned on in **Settings**, and the app reloaded, the first call opens two **Protocol Access Request** windows, for **identity key retrieval** and **auth message signature**. Click **Grant Access** to let the call through, and BSV Desktop remembers the choice for the originator.
 </Callout>
 
 ## Handle callers without authentication
@@ -168,8 +165,8 @@ Before the API serves real users, check these points:
   <Accordion title={<>A request returns <code>401</code> with "Mutual-authentication failed!"</>} defaultOpen>
     The request reached a protected route without the authentication headers, for example from `fetch`, `curl` or a browser. Call the route with `AuthFetch`, or set `allowUnauthenticated` on the middleware if the route must accept anonymous callers.
   </Accordion>
-  <Accordion title="No wallet available over any communication substrate. Install a BSV wallet today!">
-    `WalletClient` raises this error when it cannot reach a wallet. A Node client gets it when no `originator` is passed, even with BSV Desktop running. Pass an `originator`, as in `client.ts`.
+  <Accordion title="No wallet available over any communication substrate">
+    The script reached no wallet. A Node script cannot connect to BSV Desktop without an originator, so pass one as the second argument of `WalletClient`, as in `client.ts`, and keep BSV Desktop open and unlocked.
   </Accordion>
   <Accordion title="Type 'ProtoWallet' is missing the following properties from type 'WalletInterface'">
     `createAuthMiddleware` and `AuthFetch` take a `WalletInterface`, and a `ProtoWallet` does not implement it. Pass a wallet like the one `createServerWallet` returns.
