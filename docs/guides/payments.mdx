@@ -241,7 +241,7 @@ The function returns these five headers:
 Before the API serves more than one process or leaves your machine, check these points:
 
 - Serve the API over HTTPS. The client refuses a plain `http://` URL unless the host is `localhost`, `127.0.0.1` or `[::1]`, and it sends the payment with `redirect: 'manual'`, so request the final HTTPS address instead of one that redirects.
-- Share one replay store between processes. The server accepts each payment transaction once. The default store lives in the memory of one process and holds 100,000 entries, and when it is full the middleware answers 503. With more than one process, pass `replayStore`, an object whose `claim(txid, expiresAt)` method is atomic and shared:
+- Share one replay store between processes. The server accepts each payment transaction once. The default store lives in the memory of one process and holds 100,000 entries. With more than one process, pass `replayStore`, an object whose `claim(txid, expiresAt)` method is atomic and shared:
 
   ```ts
   createPaymentMiddleware({ wallet, calculatePrice: () => 1000, replayStore })
@@ -249,7 +249,7 @@ Before the API serves more than one process or leaves your machine, check these 
 
 - Keep the clocks in sync. The server rejects a payment whose timestamp differs from its own clock by more than 30 seconds, in either direction. Keep both clocks on NTP, or change the window with `paymentWindowMs`.
 
-A 503 means the wallet or the replay store failed after the payment started. The middleware sends no new 402 then, so that the client does not pay twice, and the payment may already be credited to the wallet.
+A 503 means the wallet or the replay store failed after the payment started, for example because the store is full. The middleware sends no new 402 then, so that the client does not pay twice, and the payment may already be credited to the wallet.
 
 ## Troubleshooting
 
@@ -264,7 +264,7 @@ A 503 means the wallet or the replay store failed after the payment started. The
     The server rejected the payment, and `fetch402` returns that second 402 instead of throwing. The usual causes are a timestamp more than 30 seconds off the server clock, an output below the price, and a payment that was already used.
   </Accordion>
   <Accordion title="The server answers 503 with an empty body">
-    The wallet or the replay store failed after the payment started, and the middleware hides the error. To read it, wrap `wallet.internalizeAction` in a `try` and `catch` and log the error. A `ServerWallet` created with a remote storage server for another network fails here with `The tx parameter must be valid AtomicBEEF`, for example a storage server that reports the chain `main` for a testnet wallet. Use local storage as in this guide.
+    The wallet or the replay store failed after the payment started, and the middleware hides the error. To read it, wrap `wallet.internalizeAction` in a `try` and `catch` and log the error. A `ServerWallet` on a remote storage server for another network fails here with `The tx parameter must be valid AtomicBEEF`, so use local storage as in this guide.
   </Accordion>
   <Accordion title={<>"Wallet storage returned invalid settings."</>}>
     `ServerWallet.create` rejects a storage server that answers an empty `dbtype`, as the Go testnet storage server does. Use a wallet on local storage with `Setup.createWalletSQLite`.
