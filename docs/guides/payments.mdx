@@ -5,7 +5,7 @@ description: Charge for API routes with HTTP 402 Payment Required, using an Expr
 
 import PaymentGatingFlow from '/snippets/PaymentGatingFlow.jsx';
 
-**HTTP 402 payment gating** lets an API charge per request, with no accounts and no API keys, which fits when each request should be paid as it happens. In this guide you build an Express API with one free route and one priced route, then a client that pays the price from [BSV Desktop](https://desktop.bsvb.tech/) and gets the content. The server and the client are separate Node projects, and only the middleware is something you add to an API you already have.
+**HTTP 402 payment gating** lets an API charge per request, with no accounts and no API keys, which fits when each request should be paid. In this guide you build an Express API with one free route and one priced route, then a client that pays the price from [BSV Desktop](https://desktop.bsvb.tech/) and gets the content. The server and the client are separate Node projects.
 
 ## Before you begin
 
@@ -241,7 +241,7 @@ To let a script or a server pay with nobody at the screen to click **Authorize**
 
 ### Pay without the fetch wrapper
 
-A client that cannot use `create402Fetch`, such as a service worker or another HTTP library, builds the payment headers itself. This example reads the price and the server key from the 402, builds the headers and sends the paid request, and the `fetch` calls stand for the HTTP client you use. The code goes inside an async function, like `main` in `client.ts`:
+A client that cannot use `create402Fetch`, such as a service worker or another HTTP library, builds the payment headers itself. This example reads the price and the server key from the 402, builds the headers and sends the paid request. The `fetch` calls stand for the HTTP client you use, and the code goes inside an async function, like `main` in `client.ts`:
 
 <Steps>
   <Step title="Read the price and the server key from the 402">
@@ -271,26 +271,15 @@ A client that cannot use `create402Fetch`, such as a service worker or another H
   </Step>
 </Steps>
 
-The function returns these five headers:
+`constructPaymentHeaders` returns five headers, and the client repeats the request with them:
 
-| Header | Value |
+| Header, as sent | What it holds |
 | --- | --- |
-| `x-bsv-beef` | The payment transaction as base64 BEEF |
-| `x-bsv-sender` | The identity public key of the client |
-| `x-bsv-nonce` | Base64 of 8 random bytes, the derivation prefix |
-| `x-bsv-time` | A Unix timestamp in milliseconds, which the server accepts within 30 seconds of its own clock |
-| `x-bsv-vout` | The index of the payment output, `0` |
-
-The paid request then looks like this, with the long values shortened:
-
-```http
-GET /api/premium HTTP/1.1
-x-bsv-beef: <base64 BEEF of the payment transaction>
-x-bsv-sender: <66 hex characters, the identity key of the client>
-x-bsv-nonce: q83vEjRWeJA=
-x-bsv-time: 1791979200000
-x-bsv-vout: 0
-```
+| `x-bsv-beef: <base64 BEEF>` | The payment transaction as base64 BEEF |
+| `x-bsv-sender: <66 hex characters>` | The identity public key of the client |
+| `x-bsv-nonce: q83vEjRWeJA=` | Base64 of 8 random bytes, the derivation prefix |
+| `x-bsv-time: 1791979200000` | A Unix timestamp in milliseconds, which the server accepts within 30 seconds of its own clock |
+| `x-bsv-vout: 0` | The index of the payment output |
 
 ### Prepare the API for production
 
