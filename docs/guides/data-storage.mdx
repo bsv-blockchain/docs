@@ -26,7 +26,7 @@ Follow these steps to write a short text to a transaction output with the wallet
     const wallet = new WalletClient('auto', 'localhost')
     ```
 
-    The second argument is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without it.
+    The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without one.
   </Step>
   <Step title="Build the data output">
 
@@ -75,7 +75,7 @@ Anything in the output is public. Do not put personal data or secrets in it, and
 
 ## Read the data back
 
-With the transaction broadcast, the next step is to read the output from the wallet and from the network:
+Once the transaction is broadcast, read the output from the wallet and from the network:
 
 <Steps>
   <Step title="List the output from the wallet">
@@ -132,7 +132,7 @@ console.log(text.txid, json.txid)
 
 <AccordionGroup>
   <Accordion title="No wallet available over any communication substrate" defaultOpen>
-    The script reached no wallet. Open BSV Desktop and unlock it, and pass an originator as the second argument of `WalletClient`, for example `new WalletClient('auto', 'localhost')`.
+    The script reached no wallet. A Node script cannot connect to BSV Desktop without an originator, so pass one as the second argument of `WalletClient`, for example `new WalletClient('auto', 'localhost')`, and keep BSV Desktop open and unlocked.
   </Accordion>
   <Accordion title="The call never returns">
     BSV Desktop is waiting for you to authorize the **Spending Request**. Bring the app to the front, check the amount and click **Authorize**.
