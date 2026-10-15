@@ -43,7 +43,12 @@ PLAYWRIGHT_CORE=<path to playwright-core> node diagrams/scripts/check-page.mjs \
 ```
 Expect the text, not the `<Visibility` tag, in the export. The content column is narrower than the window because of the sidebars: at 1280px wide it can be under 780px, which makes the swimlane show its stacked layout. Use `--desktop-width 1900` to see the SVG layout, and check both.
 
+## Images (light and dark pair)
+`<Image src="/images/diagrams/x.light.svg" srcDark="/images/diagrams/x.dark.svg" size="720px" alt="..." />`. WriteDocs renders both `<img>` and swaps them by theme (classes `wd-image-light` and `wd-image-dark`), caps the width at `size`, shrinks it on narrow screens, and adds click-to-zoom unless `noZoom`. It reads width and height from project files (project-relative path, SVG supported). Images are not resized or converted. Content column at 1440px and wider is 852px, at 1280px it is 718px, at 768px it is 696px, on a phone 318px, so design static images at 720px.
+
 ## Gotchas found
+- 2026-10-15: the audit found SVG text at 10.2 to 11.2px rendered in components whose SVG is drawn on a 880 unit canvas and shown at about 0.93. A component's SVG text must be about 14 units or more. At the 1280px window the swimlane shows its stacked layout (container under 780px), so the SVG is only on screen from about 1440px.
+- 2026-10-15: the existing How BSV works diagram has the same small text (lane labels 10.2px, subtitles 11.2px at 1440px).
 - 2026-10-13: `<p>` elements inside a snippet are restyled by the portal (inline, left-aligned, ignoring the snippet's CSS). Use `div` with explicit `display` and `text-align`.
 - 2026-10-13: a snippet inside `<Frame caption="...">` renders fine; the caption stays page text.
 - 2026-10-12: `useEffect is not defined` after removing the `react` import from `StateMachine.jsx`.

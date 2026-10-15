@@ -46,20 +46,35 @@ Best for: getting-started and go-live guides, onboarding sequences, multi-step s
 - The numbered steps must match the headings that follow on the page, in the same order and with the same names.
 - Use `direction="horizontal"` only for 3 or 4 short steps at the top of a page.
 
+## Static SVG pair (build-svg)
+
+Best for: any static figure: process flow, sequence, layered architecture, lifecycle, decision flow, swimlane. One spec produces the light and the dark SVG with identical geometry and colors from `tokens.json`. Examples of each type, with their specs: `diagrams/sources/sample-*.diagram.json`, shown on `docs/diagram-samples.mdx`.
+
+1. Pick the pattern type, then copy the closest sample spec. Names and values come from the source of truth.
+2. Spec: `slug`, `alt` (what it shows plus the takeaway; becomes the image alt text and the SVG `<title>`), `width` (the content column width in `project.md`, default 720), `height`, `elements`. Element kinds: `group` (lanes, layers, containers), `node` (role plain, muted, accent or a status key; shapes rect, pill, diamond), `edge` (auto-routed or explicit `via`/`points`, label, dashed), `line` (lifelines), `text`. Full schema in the header of `build-svg.mjs`.
+3. Colors only through roles. Use status roles only for states (success, pending, failure, info, neutral, dispute, refund). Use `accent` for at most one or two focal elements.
+4. No title or intro text in the image (SKILL.md). Group titles, node subtitles, arrow labels and step numbers are part of the diagram.
+5. Text sizes default to 14 (labels, 13 for monospace), 13 (subtitles, arrow labels, chips) and 12.5 (group labels), and the script rejects any size below 12.4 on a 720px canvas (12px on screen in the narrowest desktop column). Size the boxes for this text: choose widths and heights so the text fits, and drop words before you shrink the font. At 720px wide the image shrinks on a phone, so keep the image content simple; readers can tap to zoom on WriteDocs.
+6. Run `node diagrams/scripts/build-svg.mjs <spec> --png <scratch dir>` with `PLAYWRIGHT_CORE` set. It measures every text in a real browser and fails (exit code 2) on: a font size below the minimum, text that does not fit its box or group, text outside the canvas, text on top of a box, an arrow, a lifeline or other text (this is what catches "Yes" and "No" labels under blocks), boxes overlapping, arrows crossing boxes. Without a browser it falls back to estimates and says so, which is weaker. A pass is not proof of a good diagram: always read the PNGs for both modes. Place edge labels in clear space, near the start of an arrow, and not in the corridor between two boxes where another arrow runs.
+7. Place the page snippet the script prints (WriteDocs: `<Image src srcDark size="720px" alt />`). Run `check-diagram.mjs` on the SVGs.
+8. A static image needs no agent text block when the alt text carries the content. When the diagram has more than about 6 nodes, also add the agent text block above it, because alt text is too short to carry a sequence or a branch.
+
+Fonts are the system font stack: an SVG loaded as an image cannot use the portal's web fonts.
+
 ## Custom step-through swimlane
 
 Best for: a flow with two actors (for example app and wallet) or a branch, where readers should go step by step. Use it when the platform already has a diagram like this and the kit's StateMachine does not fit (see the decisions file, D3).
 
 1. Copy the project's existing swimlane snippet (here `snippets/AppWalletFlowSteps.jsx` or `snippets/diagrams/CreateActionFlow.jsx`) and change only the `steps`, `cards` and the SVG boxes and arrows.
 2. Draw on fixed coordinates in a viewBox, so nothing overlaps: one box per fixed slot, arrows as explicit `M ... H ... V ...` paths, labels only where there is empty space. Put conditions in box subtitles instead of on arrows when the gap is under about 120px.
-3. Colors from the platform's theme variables (here `--wd-*`), never hex. Highlight the active box with the primary color, 2.5px stroke.
+3. Text sizes: SVG text of at least 14 user units when the SVG is shown at 0.89 or more of its size, and HTML text of 13px or more; the audit in `check-page.mjs` reports the rendered size. Colors from the platform's theme variables (here `--wd-*`), never hex. Highlight the active box with the primary color, 2.5px stroke.
 4. Order the steps so a branch reads as "Path 1" then "Path 2", and say which path each step is on.
 5. Provide the stacked layout for narrow containers, the Back/Next buttons, and a live-region announcement for each step.
 6. Add the agent text block above the component (next section).
 
 ## Static inline component (architecture, layers)
 
-Best for: layered architecture and box-in-box overviews when diagram-design is not available, on platforms where the project can ship React snippets. First built: `snippets/diagrams/StackLayers.jsx` on `docs/concepts/architecture.mdx`, replacing a hotlinked SVG image.
+Best for: layered architecture and box-in-box overviews that should reflow on narrow screens or hold links (otherwise prefer the static SVG pair), on platforms where the project can ship React snippets. First built: `snippets/diagrams/StackLayers.jsx` on `docs/concepts/architecture.mdx`, replacing a hotlinked SVG image.
 
 1. Source of truth for names: the page's own text or the API/SDK docs. Do not copy names from an old image; check each against the source and flag any you cannot confirm.
 2. Build it as HTML and CSS (flex, wrapping chips), not as a fixed-coordinate SVG. It then adapts to any width with no separate mobile layout, and nothing overlaps. Use SVG only when arrows must cross between boxes in two dimensions (then use the swimlane pattern).

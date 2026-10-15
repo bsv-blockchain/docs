@@ -7,11 +7,15 @@ Never deliver a diagram you have not seen rendered. Most problems found in testi
 2. List the platform's built-in components and the diagrams the portal already has. If a built-in does the same job, use it. If the portal has an interactive diagram, match its experience (see `types.md > Custom step-through swimlane`).
 
 ## After building
+The page check includes a rendered-size audit: it measures the font size the reader sees, for SVG text (after scaling), text inside `<img>` SVGs, and HTML text inside the selector, at 768, 1280 and 1440px windows. Anything below 12px is a problem to fix, not a note.
 1. Start the dev server (command in the platform file). If the page does not show the change, restart it.
 2. Run `node diagrams/scripts/check-page.mjs` with the command from the platform file. It reports console errors and a missing selector, writes screenshots (light, dark, desktop, phone), and checks that the markdown export contains the agent text.
 3. Open the screenshots (the Read tool shows images) and check: overlapping text or arrows through boxes, contrast in dark mode, readable text at phone width, the active-step highlight, and that nothing is cut off. If the component has a layout switch for narrow containers, check both layouts (`--desktop-width`).
 4. Fetch the page's markdown export and read what an AI reader gets. Component tags are empty there; the agent text block must carry the content.
 5. Fix and repeat until the report is clean and the screenshots are acceptable.
+
+## Static SVG pairs from build-svg
+Run `build-svg.mjs <spec> --png <scratch>`, then read the PNG of both modes and look for: text touching a box edge, arrows through boxes, labels on top of lines, contrast, and balance. Then place the images and check them on the real page in light, dark and phone width (`check-page.mjs`), because the portal can add a frame or change the size.
 
 ## Static diagrams from diagram-design
 Run `node diagrams/scripts/check-diagram.mjs <exports>` and confirm the local profile is current (`--profile <slug>`). Then look at the exported image: no title, no subtitle, no empty band on top.

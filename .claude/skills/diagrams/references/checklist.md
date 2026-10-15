@@ -5,6 +5,7 @@ Run through this before delivering any diagram. Report anything that fails and w
 ## Content
 - [ ] Every name and value (endpoints, statuses, events, fields) matches the source of truth exactly
 - [ ] Static diagrams have no title, subtitle or intro sentence inside the image; the explanation is in the page text and caption
+- [ ] Static images are a light and dark pair from one spec; PNGs of both modes were read; the page shows the right one in each mode
 - [ ] diagram-design exports: `check-diagram.mjs` run with no title suspects, and the local profile matches the repo profile
 - [ ] Interactive diagrams related to existing sections: asked whether the parts should be clickable; links, if added, point to existing pages or anchors and the broken-link check passes
 - [ ] The diagram shows one idea; no more than about 12 nodes unless it is a StateMachine
@@ -19,6 +20,8 @@ Run through this before delivering any diagram. Report anything that fails and w
 - [ ] Colors come only from tokens (generated classDefs, CSS variables, client Figma variables, or the diagram-design profile)
 - [ ] Status colors use the semantic keys and mean the same as everywhere else in the portal
 - [ ] At most one or two elements use the accent color
+- [ ] Every text renders at 12px or more in the narrowest desktop column: `build-svg.mjs` passes and `check-page.mjs` reports no rendered-size problems
+- [ ] No label sits on a box, arrow, lifeline or other text; node text fits in its box
 - [ ] Fonts, radius, and stroke match the client setup
 - [ ] Looks correct in light and dark mode
 - [ ] Readable at the portal's content width and on a phone (or scrolls horizontally on purpose)

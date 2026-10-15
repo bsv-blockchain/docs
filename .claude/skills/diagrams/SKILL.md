@@ -45,7 +45,7 @@ Then pick the diagram type. Only use types listed as enabled in `project.md`.
 | Is it a status lifecycle or process readers look up repeatedly and should explore? | React `StateMachine` (data-driven) |
 | Is it an ordered set of steps in a guide, with links to pages? | React `StepFlow`, or Mermaid flowchart if React is disabled |
 | Is it a flow with branches or two actors that readers should step through, and the platform supports custom React? | Custom step-through swimlane (see `types.md`) |
-| Is it a polished static figure (architecture, overview, swimlane, landing-page diagram)? | diagram-design. If diagram-design is not enabled in `project.md`: layered architecture or other box-in-box figures use the static inline component (see `types.md`), flows use Mermaid or the custom swimlane |
+| Is it a static figure (process flow, sequence, layered architecture, lifecycle, decision flow, swimlane)? | Static SVG pair built with `build-svg.mjs` (see `types.md`). Use diagram-design instead when the user wants a more illustrated, polished figure and it is enabled in `project.md`. If diagram-design is not enabled in `project.md`: layered architecture or other box-in-box figures use the static inline component (see `types.md`), flows use Mermaid or the custom swimlane |
 | Is it an illustration, concept image, hero image, or annotated product screenshot? | Figma |
 
 When two types fit, prefer the one that keeps a text source in the repo (Mermaid, data JSON) over a drawn file. When React is disabled and the request is a lifecycle, write the data JSON anyway and render it with `state-to-mermaid.mjs`, so it can move to React later.
@@ -60,6 +60,7 @@ Follow the type's section in `references/types.md`. The short version:
 - **StateMachine**: write or update `diagrams/data/<slug>.json` (schema: `diagrams/data/example-payment-states.json`), then place the component in the MDX page.
 - **StepFlow**: props inline in the MDX page.
 - **diagram-design**: confirm `.diagram-design` at the repo root points to this client's profile, then prompt the diagram-design skill. Save the HTML in `diagrams/sources/` and export SVG light and dark to the export folder.
+- **Static SVG pair**: write `diagrams/sources/<slug>.diagram.json` and run `node diagrams/scripts/build-svg.mjs <spec> --png <scratch>`; follow `types.md > Static SVG pair`. Output is `<slug>.light.svg` and `<slug>.dark.svg` in the export folder.
 - **Custom swimlane**: follow `types.md > Custom step-through swimlane`. The agent text rule below applies.
 - **Figma**: use the Figma MCP with the client's library (link in `project.md`). Use the client's variables only. Export SVG when possible.
 
@@ -76,10 +77,13 @@ Verify the result as described in `references/verify.md` (render it, screenshots
 
 ## Conventions
 
+- Static images are always built as a light and dark pair from one spec, 720px wide (the column width in `project.md`), never as two separately drawn files.
 - File names: kebab-case slug describing the content, the same across source, data, and exports: `payment-lifecycle.json`, `payment-lifecycle.light.svg`, `payment-lifecycle.dark.svg`.
 - Sources: `diagrams/sources/` (Mermaid `.mmd`, diagram-design `.html`, `figma-links.md`). Data: `diagrams/data/`. Exports: the folder in `project.md`.
 - Colors only through tokens. Never hardcode a hex value in a diagram, component, or Mermaid block, except the generated classDefs.
 - Status colors always mean the same thing across the portal: the keys in `tokens.json > status`.
+- **Minimum text size, for every diagram type.** Text must render at 12px or more on screen in the narrowest desktop content column (696px wide); phone width is excluded because everything shrinks there and readers zoom. Do not guess: `build-svg.mjs` rejects smaller sizes, and `check-page.mjs` measures the rendered size of SVG text, image text and component text on the real page. A scaled SVG renders smaller than its font size: at 0.89 to 0.97 of its size, 14 units become about 12.5 to 13.6px.
+- **No label on top of anything.** Edge labels ("Yes", "No", message names) must not sit on a box, an arrow, a lifeline or other text, and node text must fit inside its box. `build-svg.mjs` measures this in a browser and fails; for components, read the screenshot.
 - **No title or intro text inside static diagrams.** A non-interactive diagram (Mermaid, diagram-design, Figma, any exported image) starts with the diagram itself: no title, no subtitle, no explanatory sentence at the top. The explanation goes in the page text before it and in the caption (outside the image). Labels, box subtitles, legends and arrow labels that are part of the diagram are fine. Interactive components can have a step title and description because those are part of the interaction.
 - **Agent text rule.** Every React component diagram (StateMachine, StepFlow, custom swimlane) is followed by nothing on its own for AI readers: the markdown export of a page keeps the component tag and drops what it renders. So always add an agent-only text block immediately ABOVE the component, in the page, with the full content of the diagram (every step, state, branch and transition, with exact names). On WriteDocs: `<Visibility for="agents">`. Mermaid fences and static images with alt text do not need it, because Mermaid source survives as text. Details in `types.md > Agent text for component diagrams`.
 - Text stays text (Mermaid, SVG, React). Never ship diagrams as raster images with baked-in text unless it is a product screenshot.

@@ -70,6 +70,24 @@ Differences from the example, by the skill's rules: no title or subtitle; neutra
 Found while testing: the portal restyles `<p>` inside snippets, so the first render had names and notes on one line and uncentered text; fixed with `div`s. The first render was wrong and only the screenshot showed it, which is the case for the verify step.
 Skill changes: `SKILL.md` routing row; `types.md > Static inline component`; `platforms/writedocs.md` gotchas. Clickable links were not added (D10: ask first); the component supports them.
 
+**D13. Static diagrams as a light and dark SVG pair, generated from one spec.**
+Prompted by the Claude Code docs, which ship hand-written SVG pairs (`name.svg`, `name-dark.svg`) at about the column width. The kit had no way to produce a pair: only diagram-design (not installed) and Figma (untested).
+Built `diagrams/scripts/build-svg.mjs`: JSON spec (groups, nodes with roles and shapes, auto-routed or explicit edges, lifelines, text) to `<slug>.light.svg` and `<slug>.dark.svg`, same geometry, colors from `tokens.json`, system fonts, `<title>` for accessibility, no drawn title, 720px wide by default. Checks: text that may not fit, overlapping boxes, arrows crossing boxes, outside the canvas (exit 2); `--png` renders previews for review.
+Examples of six types (process flow, sequence, layered architecture, lifecycle, decision flow, swimlane) as specs in `diagrams/sources/sample-*.diagram.json`, with the SVGs in `images/diagrams/` and a draft page `docs/diagram-samples.mdx` that also shows the live types (Mermaid, step-through swimlane, layered component). Verified in the running portal in light and dark mode; the pair swaps correctly with WriteDocs `<Image srcDark>`.
+Measured the portal's content column: 852px (1440 and wider), 718px (1280), 696px (768), 318px (phone). Hence 720px: about 1:1 on the narrowest desktop, shrinking below that. On a phone the image is about 0.44 of its size, so 11px text is about 5px; readers must tap to zoom. This is a known limit of fixed-size static images.
+Limits: the author still places every box; the script guarantees consistent colors, pairing and sizing, plus basic geometry checks, not an automatic layout. The overflow check is an estimate (system fonts vary).
+Skill changes: routing (static figures go to build-svg; diagram-design for illustrated figures), `types.md > Static SVG pair`, `verify.md`, checklist, `platforms/writedocs.md > Images`, `project.md`, manifest.
+
+**D14. Enforce a minimum rendered text size and catch labels on top of blocks.**
+User review of the demo page found three problems: static images with 11px subtitles, a component with small text, and the "Yes" label of a decision flow sitting under a block. Causes: the generator only estimated widths and had no minimum size, nothing checked where edge labels land, and the page check did not measure rendered text.
+Changes:
+1. `build-svg.mjs`: default sizes raised (label 14, subtitle 13, edge label 13, group label 12.5); any size under 12.4 on a 720px canvas is an error (12px rendered at the narrowest desktop column, 696px). Text is measured in a browser when available (estimated otherwise). It now fails on text that does not fit its box or group, text outside the canvas, and text on top of a box, an arrow, a lifeline or other text. Run on the old decision flow it reported exactly the user's case: `text on top of box "o1" (edge-label: "Yes")`. All six sample specs were re-laid out for the larger text (the layered one is taller and the toolkit and foundation layers use two rows of chips).
+2. `check-page.mjs`: a rendered-size audit at 768, 1280 and 1440px windows for SVG text (after scaling), text inside `<img>` SVGs and HTML text inside the selector; below 12px is reported. Phone width is excluded (everything shrinks, readers zoom).
+3. Components: the step-through swimlane SVG text raised to 14+ units, HTML text to 13px or more; the audit passes. The demo page passes.
+4. Lesson: a diagram drawn on a canvas wider than its column renders smaller than its font size, so the minimum must be checked on the rendered page, not in the source.
+Finding: the portal's own How BSV works diagram fails the audit (15 findings, lane labels 10.2px at 1440px). Not changed: it is the client's page.
+Known limits: the checks use a browser measure of text boxes, not of every pixel; arrows crossing other arrows and unbalanced layouts are not detected, so reading the PNGs stays required.
+
 ## Changes to kit files (merge into the central repo)
 
 | File | Change |
@@ -82,6 +100,8 @@ Skill changes: `SKILL.md` routing row; `types.md > Static inline component`; `pl
 | `references/verify.md` | New: verify procedure |
 | `references/platforms/_template.md`, `platforms/writedocs.md` | New: per-platform reference template and the WriteDocs file (moved out of `platforms.md`) |
 | `diagrams/scripts/check-page.mjs` | New: render and export check |
+| `diagrams/scripts/build-svg.mjs` | New: static light/dark SVG pair generator (D13), with measured text checks and the minimum size (D14) |
+| `diagrams/scripts/check-page.mjs` | Rendered font size audit (D14) |
 | `diagrams/scripts/check-diagram.mjs`, `generate.mjs` | New check script for static diagrams and profile sync; the profile now carries the no-title rules (D11) |
 | `diagrams/kit-manifest.json` | The four new files listed as kit files |
 

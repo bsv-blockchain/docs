@@ -45,3 +45,5 @@ Hand-built SVG snippets using `--wd-*` variables (like `AppWalletFlowSteps.jsx`)
 - Agent text rule applies to every React component diagram here: `<Visibility for="agents">` block directly above the component. Verified that the `.md` export drops component output and keeps Mermaid text.
 - Test history and decisions: `.claude/skills/diagrams/decisions.md`.
 - Verify command and platform notes: `references/platforms/writedocs.md`. Playwright here: `PLAYWRIGHT_CORE=/home/heitor/repositorios/triple-a-docs/node_modules/playwright-core` (machine-specific).
+- Static images: `build-svg.mjs`, 720px wide (content column is 852px at 1440+, 718px at 1280, 696px at 768, 318px on a phone), exported to `images/diagrams/`, placed with `<Image src srcDark size="720px" alt />`. Samples: `docs/diagram-samples.mdx` (draft page, not in navigation).
+- Text rules: minimum 12px on screen at the narrowest desktop column (696px); checked by `build-svg.mjs` (static SVG) and `check-page.mjs` (rendered pages). Labels must not sit on boxes, arrows or other text.
