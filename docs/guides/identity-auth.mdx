@@ -6,7 +6,7 @@ description: Use the identity key of a BSV wallet to know which user sends each 
 
 import AuthenticationFlow from '/snippets/AuthenticationFlow.jsx';
 
-With **mutual authentication**, an API identifies each caller by the identity key of the user's BSV wallet, so a route knows who sent the request without accounts or passwords. This fits an API that serves a user's own data or actions. In this guide you build an Express API that reads the identity key behind each request, then a Node client that signs its requests from BSV Desktop. Both run in one project you can adapt to your API.
+**Mutual authentication** lets an API identify each caller by the identity key of the user's BSV wallet, so a route knows who sent the request without accounts or passwords. This fits an API that serves a user's own data or actions. In this guide you build an Express API that reads the identity key behind each request, then a Node client that signs its requests from BSV Desktop. Both run in one project you can adapt to your API.
 
 ## Before you begin
 
