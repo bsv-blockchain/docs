@@ -8,13 +8,13 @@ const rows = [
     nodes: [
       { who: 'Your script', text: 'Calls **createAction** with the data' },
       { who: 'BSV Desktop', text: 'You click **Authorize** in the wallet, which signs and broadcasts' },
-      { who: 'The network', text: 'Records your data in an output and sends back the **txid**', end: true },
+      { who: 'The network', text: 'Records your data in an output and sends back the txid', end: true },
     ],
   },
   {
     label: 'Read',
     nodes: [
-      { who: 'Your script', text: 'Calls **listOutputs** with the **basket** and **tags**' },
+      { who: 'Your script', text: 'Calls **listOutputs** with the basket and tags' },
       { who: 'BSV Desktop', text: 'Sends back the outputs you asked for' },
       { who: 'Your script', text: 'Reads your data back from the output', end: true },
     ],
