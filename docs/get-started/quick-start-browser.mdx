@@ -22,7 +22,7 @@ Your app never holds a private key. In this tutorial, the scripts `connect.mjs` 
 
 ## Set up a testnet wallet
 
-The first step is to set up [BSV Desktop](https://desktop.bsvb.tech/) on testnet:
+The first step is to set up [BSV Desktop](https://desktop.bsvb.tech/) on testnet. The screens below come from BSV Desktop 3.1.1.
 
 <Steps>
   <Step title="Install BSV Desktop">
@@ -30,38 +30,71 @@ The first step is to set up [BSV Desktop](https://desktop.bsvb.tech/) on testnet
   </Step>
   <Step title="Trust the local certificate">
     When the app opens for the first time, the **SSL Certificate Trust** dialog asks to add a certificate to your system. Click **Trust Certificate** and confirm the system prompt, or click **Not Now**. Either choice works for the scripts in this tutorial.
-  </Step>
-  <Step title="Switch the network to Testnet">
-    Click **Create Wallet**, then the gear icon at the top right. In **Configuration**, which opens on **Mainnet**, select **Testnet** under **BSV Network** and click **Apply Configuration**. Leave the other options as they are. You can switch it later in **Settings** under **BSV network**.
 
-    {/* WRITER: the wallet creation steps (Create Wallet, Configuration, Create New Key, Protect your wallet) and screenshot 01 were tested on BSV Desktop 2.9.9. Retest on 3.1.1 (planned for 2026-10-15). */}
-
-    <Frame>
-      <img src="/images/quick-start/01-configuration-testnet.png" alt="The Configuration screen of BSV Desktop with Testnet selected under BSV Network" />
-    </Frame>
+    {/* WRITER: not seen in the 3.1.1 retest of 2026-10-15 (separate app data folder). Confirm whether 3.1.1 still shows this dialog before review. */}
   </Step>
   <Step title="Create the wallet">
-    Click **Create New Key**. The **Primary Key** field shows the recovery phrase of your wallet. Write it down, keep it somewhere safe, and click **Login**.
+    Click **Create a wallet**.
+
+    <Frame>
+      <img src="/images/quick-start/01-create-wallet.png" alt="The first screen of BSV Desktop with the Create a wallet and Import an existing wallet buttons" />
+    </Frame>
+
+    The next screen shows the twelve words of your recovery phrase. Write them down in order and keep them somewhere safe. Then select **I saved my recovery phrase somewhere safe.** and click **Open my wallet**.
+
+    <Frame>
+      <img src="/images/quick-start/02-recovery-phrase.png" alt="The Your wallet starts here screen with the recovery phrase hidden, the I saved my recovery phrase somewhere safe checkbox and the Open my wallet button" />
+    </Frame>
 
     <Callout type="warning">
       The recovery phrase restores your wallet, so keep it private. Never share it or paste it into code.
     </Callout>
   </Step>
   <Step title="Protect the wallet">
-    Next, **Protect your wallet** asks for a passphrase. Enter it in both fields and click **Create vault**. The app asks for this passphrase each time it opens.
+    In **Protect your wallet**, enter a password in **Device password** and **Confirm device password**, and click **Protect my wallet**. The app asks for this password each time it opens.
+
+    <Frame>
+      <img src="/images/quick-start/03-protect-wallet.png" alt="The Protect your wallet screen with the Device password and Confirm device password fields and the Protect my wallet button" />
+    </Frame>
+  </Step>
+  <Step title="Switch the network to testnet">
+    The wallet opens on Mainnet. Click **Mainnet** at the top right of the **Wallet** page.
+
+    <Frame>
+      <img src="/images/quick-start/04-network-button.png" alt="The Wallet page of BSV Desktop on Mainnet with the network button at the top right" />
+    </Frame>
+
+    In **Network & services**, select **Testnet** and click **Switch network**. Leave **Wallet services** and **Connection proxy** as they are. The app shows **Testnet is ready**, and the balance shows **BSV · TEST**.
+
+    <Frame>
+      <img src="/images/quick-start/05-network-testnet.png" alt="The Network and services window of BSV Desktop with Testnet selected and the Switch network button" />
+    </Frame>
   </Step>
   <Step title="Copy your testnet address">
     On the **Wallet** page, click **Get paid** and copy the address with **Copy address**. A testnet address starts with `m` or `n`. Keep this screen open while you request the coins, since BSV Desktop adds incoming payments to your wallet while it is open.
 
     <Frame>
-      <img src="/images/quick-start/02-get-paid-address.png" alt="The Get paid screen of BSV Desktop with the receive address, its QR code and the Copy address button" />
+      <img src="/images/quick-start/06-get-paid-address.png" alt="The Get paid screen of BSV Desktop with the receive address, its QR code and the Copy address button" />
     </Frame>
   </Step>
+</Steps>
+
+## Get free testnet coins
+
+Your new wallet is empty. Take these steps to get free testnet coins from the BSV faucet:
+
+<Steps>
   <Step title="Sign in to the faucet">
-    Open [bsvfaucet.com](https://bsvfaucet.com/) and sign in with **Continue with BSV wallet**. If the browser asks to access other apps and services on this device, allow it, so the faucet can find your wallet.
+    Open [bsvfaucet.com](https://bsvfaucet.com/), click **Get testnet BSV**, and sign in with **Continue with BSV wallet**. If the browser asks to access other apps and services on this device, allow it, so the faucet can find your wallet.
 
     <Frame>
-      <img src="/images/quick-start/03-faucet-sign-in.png" alt="The Sign in to BSV Faucet screen with the Continue with BSV wallet option" />
+      <img src="/images/quick-start/07-faucet-sign-in.png" alt="The Sign in to BSV Faucet screen with the Continue with BSV wallet option" />
+    </Frame>
+
+    BSV Desktop shows a **Protocol Access Request** from `bsvfaucet.com` for the **bsv faucet login** protocol. Click **Grant Access**.
+
+    <Frame>
+      <img src="/images/quick-start/08-faucet-grant-access.png" alt="The Protocol Access Request window of BSV Desktop for bsvfaucet.com with the Deny and Grant Access buttons" />
     </Frame>
   </Step>
   <Step title="Request testnet coins">
@@ -70,7 +103,13 @@ The first step is to set up [BSV Desktop](https://desktop.bsvb.tech/) on testnet
     The amount is in satoshis, not BSV. A satoshi is the smallest unit of BSV, and 100,000,000 satoshis make 1 BSV, so `1` requests a single satoshi.
 
     <Frame>
-      <img src="/images/quick-start/04-faucet-request-success.png" alt="The BSV Testnet Faucet form after a request, with the Successfully sent message and the transaction ID" />
+      <img src="/images/quick-start/09-faucet-request.png" alt="The BSV Testnet Faucet form with the Destination address and Amount fields and the Request BSV button" />
+    </Frame>
+
+    The faucet confirms with a **Successfully sent** message and a transaction ID.
+
+    <Frame>
+      <img src="/images/quick-start/10-faucet-request-success.png" alt="The BSV Testnet Faucet form after a request, with the Successfully sent message" />
     </Frame>
   </Step>
 </Steps>
@@ -79,12 +118,10 @@ The first step is to set up [BSV Desktop](https://desktop.bsvb.tech/) on testnet
   The faucet allows up to 10,000,000 satoshis per request and one request every 24 hours.
 </Callout>
 
-{/* WRITER: the faucet import on 3.1.1 follows the Get paid screen text, retest it with a new wallet (planned for 2026-10-15). */}
-
-The faucet confirms with a **Successfully sent** message and a transaction ID. With the **Get paid** screen open, BSV Desktop adds the coins to your wallet, and the amount shows under **Available balance** on the **Wallet** page.
+With the **Get paid** screen open, BSV Desktop adds the coins to your wallet, and the amount shows under **Available balance** on the **Wallet** page.
 
 <Frame>
-  <img src="/images/quick-start/05-wallet-balance.png" alt="The Wallet page of BSV Desktop with the Available balance in satoshis and the Pay and Get paid buttons" />
+  <img src="/images/quick-start/11-wallet-balance.png" alt="The Wallet page of BSV Desktop with an Available balance of 1,000,000 satoshis on BSV TEST" />
 </Frame>
 
 ## Connect your app to the wallet
@@ -144,7 +181,7 @@ Take these steps to send 1,000 satoshis to your own testnet address and see the 
 
 <Steps>
   <Step title="Copy your current address">
-    In BSV Desktop, click **Get paid** on the **Wallet** page and copy the address with **Copy address**. The address changes every day, so copy today's, even if you copied one in the first section.
+    In BSV Desktop, click **Get paid** on the **Wallet** page and copy the address with **Copy address**. Copy it again here, even if you copied one in the first section.
   </Step>
   <Step title="Write the payment script">
     In the same folder as `connect.mjs`, create a file named `pay.mjs`. This script is the part of your app that asks the wallet for a payment:
@@ -189,7 +226,7 @@ Take these steps to send 1,000 satoshis to your own testnet address and see the 
     The script waits with no output until you approve the payment in BSV Desktop. The app opens a **Spending Request** window on top of its main screen, with the app name, `example.com`, the payment description, and the total with the fee. If you do not see it, switch to the BSV Desktop window, since it can stay behind the terminal. Click **Authorize**.
 
     <Frame>
-      <img src="/images/quick-start/06-spending-request.png" alt="The Spending Request window of BSV Desktop for a payment named Pay my own address, with the Deny and Authorize buttons" />
+      <img src="/images/quick-start/12-spending-request.png" alt="The Spending Request window of BSV Desktop from example.com for a payment named Pay my own address, with the total in satoshis and the Deny and Authorize buttons" />
     </Frame>
 
     After you approve, the script prints the transaction ID and a link to the testnet explorer, a site that shows the details of the transaction:
@@ -200,23 +237,23 @@ Take these steps to send 1,000 satoshis to your own testnet address and see the 
     ```
   </Step>
   <Step title="Verify the payment on the testnet explorer">
-    Open the explorer link from the output. The page shows your transaction on the BSV testnet. If it does not show yet, wait a few minutes and reload.
+    Open the explorer link from the output. The page shows your transaction on the BSV testnet. If the explorer shows **This page cannot be found**, it has not listed the payment yet, so wait a minute and reload.
 
     <Frame>
-      <img src="/images/quick-start/07-explorer-transaction.png" alt="A transaction page on the WhatsOnChain testnet explorer with the block, the fee paid and the number of confirmations" />
+      <img src="/images/quick-start/13-explorer-transaction.png" alt="A transaction page on the WhatsOnChain testnet explorer with the Unconfirmed status, the fee offered to the miner and the size" />
     </Frame>
   </Step>
   <Step title="Add the payment back to your balance">
-    The 1,000 satoshis went to your own address, so your **Available balance** first goes down by the amount plus the fee. To add the amount back, click **Get paid** on the **Wallet** page, then **Check for payments**.
+    The 1,000 satoshis went to your own address, so your **Available balance** first goes down by the amount plus the fee. To add the amount back, click **Get paid** on the **Wallet** page, then **Check for payments**. BSV Desktop shows **Received 1 address payment.**
 
     <Frame>
-      <img src="/images/quick-start/09-check-for-payments.png" alt="The Get paid screen of BSV Desktop with the Check for payments button and the message that all shown addresses have been checked" />
+      <img src="/images/quick-start/14-payment-received.png" alt="The Payments screen of BSV Desktop with a Received 1 address payment notice" />
     </Frame>
 
-    BSV Desktop shows a **Received** notice, and your balance ends up lower only by the fee.
+    Your **Available balance** is now lower than before the payment only by the fee.
 
     <Frame>
-      <img src="/images/quick-start/08-payment-received.png" alt="The Payments screen of BSV Desktop with a Received 2 address payments notice" />
+      <img src="/images/quick-start/15-final-balance.png" alt="The Wallet page of BSV Desktop with the Available balance after the payment and the Pay my own address entry in Recent activity" />
     </Frame>
   </Step>
 </Steps>
@@ -227,10 +264,13 @@ You have sent a first BSV payment from code, approved it in your wallet, and ver
 
 <AccordionGroup>
   <Accordion title={<>The script fails with "No wallet available over any communication substrate"</>}>
-    This message means the script cannot reach BSV Desktop, usually because the app is closed or locked. Open BSV Desktop, unlock it with your passphrase, and run the script again.
+    This message means the script cannot reach BSV Desktop, usually because the app is closed or locked. Open BSV Desktop, unlock it with your device password, and run the script again.
   </Accordion>
   <Accordion title="The script prints nothing and does not finish">
     The script is waiting for you to approve the payment, so switch to the BSV Desktop window and answer the **Spending Request** that is open there.
+  </Accordion>
+  <Accordion title={<>The faucet shows "Couldn't verify wallet"</>}>
+    Another wallet installed as a browser extension can answer the faucet before BSV Desktop. Turn off that extension while you sign in, keep BSV Desktop open and unlocked, and click **Continue with BSV wallet** again.
   </Accordion>
   <Accordion title={<>A payment fails with "HTTP status 400"</>}>
     This error means BSV Desktop did not complete the payment, either because you clicked **Deny** or because your balance does not cover the amount plus the fee. Check your balance in BSV Desktop, then run the script again and click **Authorize**.
