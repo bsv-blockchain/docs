@@ -4,6 +4,8 @@ description: "Index your app's transactions in an overlay and look them up by se
 sidebarTitle: "Track with overlays"
 ---
 
+import OverlayFlow from '/snippets/OverlayFlow.jsx';
+
 Send a transaction that carries data to an overlay topic, then look it up back, so your app can find its own transactions without scanning the chain. An **overlay** indexes the transactions that matter to your app under a topic, and this guide builds that flow as a Node script with BSV Desktop on testnet that you can adapt to your own app.
 
 ## Before you begin
@@ -18,10 +20,11 @@ The wallet decides the network. These examples use a testnet wallet and a local 
 
 ## How it works
 
-An <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> pairs a topic with a lookup service. A topic (`tm_`) is what the host stores, and a lookup service (`ls_`) is how your app asks for it. Your app sends a transaction to the topic, the host validates and indexes the output, and your app later queries the lookup service to find it:
+An <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> pairs a topic with a lookup service. The topic is what a host stores, and the lookup service is how your app asks for it:
 
-- Send. Your app creates a transaction with an output that carries data, then broadcasts it to the topic.
-- Look up. Your app asks the lookup service, and the host returns the transaction evidence for the outputs it admitted.
+<OverlayFlow />
+
+A topic name starts with `tm_`, and a lookup service name starts with `ls_`.
 
 ## Connect to your wallet
 
