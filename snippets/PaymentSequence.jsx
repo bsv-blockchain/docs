@@ -1,67 +1,39 @@
-// Sequence diagram for "Pay from a web app": how one payment moves between the app, the wallet and the network.
-// Content only: edit actors and messages here. Tested on BSV Desktop 3.1.1, 2026-10-15.
-const actors = [
-  { name: 'Your app', note: <><span className="font-mono">pay.mjs</span> in this tutorial</> },
-  { name: 'BSV Desktop', note: 'Holds the private key' },
-  { name: 'Testnet', note: 'Records the payment' },
+// Flow of one payment in "Pay from a web app": four boxes, left to right, linked by arrows.
+// Content only: edit the steps here. Tested on BSV Desktop 3.1.1, 2026-10-15.
+const steps = [
+  { who: 'Your app', what: <>Asks the wallet for a payment of 1,000 satoshis with <code>createAction</code></> },
+  { who: 'BSV Desktop', what: <>Shows a <strong>Spending Request</strong>. You click <strong>Authorize</strong>, and the wallet signs with the private key</> },
+  { who: 'Testnet', what: 'Receives the signed transaction from the wallet and records it' },
+  { who: 'Your app', what: 'Gets the transaction ID back from the wallet, never the key' },
 ];
 
-// from and to are indexes in actors. The same index draws a note on that actor.
-const messages = [
-  { from: 0, to: 1, text: <>Asks for a payment of 1,000 satoshis with <code>createAction</code></> },
-  { from: 1, to: 1, text: <>Shows a <strong>Spending Request</strong>. You click <strong>Authorize</strong>, and the wallet signs</> },
-  { from: 1, to: 2, text: 'Sends the signed transaction' },
-  { from: 1, to: 0, text: 'Returns the transaction ID' },
-];
-
-const n = actors.length;
-
-function Message({ from, to, text, step }) {
-  const left = Math.min(from, to);
-  const span = Math.max(from, to) - left + 1;
-  const edge = `${50 / span}%`;
-  const toRight = to > from;
-  const number = <span className="mr-1 font-semibold text-[#1B1EA9] dark:text-[#8C9BFF]">{step}</span>;
+function Arrow() {
   return (
-    <div className="relative py-2" style={{ gridColumn: `${left + 1} / span ${span}` }}>
-      {from === to ? (
-        <div className="relative z-10 mx-auto w-[92%] rounded-lg border border-dashed border-[#1B1EA9] bg-white px-2 py-1 text-center text-xs dark:border-[#8C9BFF] dark:bg-gray-900">
-          {number}{text}
-        </div>
-      ) : (
-        <div style={{ marginLeft: edge, marginRight: edge }}>
-          <p className="relative z-10 m-0 mb-1 text-center text-xs">
-            <span className="bg-white px-1 dark:bg-gray-900">{number}{text}</span>
-          </p>
-          <div className="relative h-0 border-t-2 border-[#1B1EA9] dark:border-[#8C9BFF]">
-            <span
-              className={`absolute -top-[7px] h-0 w-0 border-y-[6px] border-y-transparent ${toRight ? '-right-1 border-l-[8px] border-l-[#1B1EA9] dark:border-l-[#8C9BFF]' : '-left-1 border-r-[8px] border-r-[#1B1EA9] dark:border-r-[#8C9BFF]'}`}
-            />
-          </div>
-        </div>
-      )}
+    <div aria-hidden="true" className="flex shrink-0 items-center justify-center text-[#1B1EA9] dark:text-[#8C9BFF]">
+      <span className="text-xl leading-none sm:hidden">↓</span>
+      <span className="hidden text-xl leading-none sm:inline">→</span>
     </div>
   );
 }
 
 export default function PaymentSequence() {
   return (
-    <figure className="not-prose my-6 overflow-x-auto rounded-xl border border-gray-200 p-4 dark:border-gray-700" aria-label="Sequence of one payment: your app asks BSV Desktop, you approve, the wallet signs and sends it to testnet, and returns the transaction ID">
-      <div className="relative grid min-w-[480px] gap-x-3" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
-        {actors.map((a, i) => (
-          <div key={a.name} className="pointer-events-none absolute bottom-0 top-14 border-l border-dashed border-gray-300 dark:border-gray-600" style={{ left: `${((i + 0.5) / n) * 100}%` }} />
+    <figure className="not-prose my-6">
+      <ol className="m-0 flex list-none flex-col gap-2 p-0 sm:flex-row sm:items-stretch" aria-label="How one payment moves between your app, BSV Desktop and testnet">
+        {steps.map((step, i) => (
+          <li key={i} className="m-0 flex flex-col gap-2 sm:flex-1 sm:flex-row">
+            <div className="flex-1 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
+              <div className="flex items-center gap-2 bg-[#1B1EA9] px-3 py-2 text-white dark:bg-[#8C9BFF] dark:text-gray-900">
+                <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white text-xs font-bold text-[#1B1EA9] dark:bg-gray-900 dark:text-[#8C9BFF]">{i + 1}</span>
+                <span className="text-sm font-semibold">{step.who}</span>
+              </div>
+              <p className="m-0 px-3 py-2 text-sm text-gray-700 dark:text-gray-300">{step.what}</p>
+            </div>
+            {i < steps.length - 1 && <Arrow />}
+          </li>
         ))}
-        {actors.map((a) => (
-          <div key={a.name} className="relative z-10 mb-2 rounded-lg bg-[#1B1EA9] px-2 py-2 text-center text-white dark:bg-[#8C9BFF] dark:text-gray-900">
-            <p className="m-0 text-sm font-semibold">{a.name}</p>
-            <p className="m-0 text-xs opacity-90">{a.note}</p>
-          </div>
-        ))}
-        {messages.map((m, i) => (
-          <Message key={i} {...m} step={i + 1} />
-        ))}
-      </div>
-      <figcaption className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">The private key never leaves BSV Desktop. Your app only receives the transaction ID.</figcaption>
+      </ol>
+      <figcaption className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">The private key never leaves BSV Desktop.</figcaption>
     </figure>
   );
 }

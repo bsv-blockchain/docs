@@ -60,7 +60,7 @@ The first step is to set up BSV Desktop on testnet. The screens below come from 
       <img src="/images/quick-start/02-network-button.png" alt="The Wallet page of BSV Desktop on Mainnet with the network button at the top right" />
     </Frame>
 
-    In **Network & services**, select **Testnet** and click **Switch network**. Leave **Wallet services** and **Connection proxy** as they are. The app shows **Testnet is ready**, and the balance shows **BSV · TEST**.
+    In **Network & services**, select **Testnet** and click **Switch network**. Leave **Wallet services** and **Connection proxy** as they are. Each network keeps its own balance and payment history, so the coins you get next show only on testnet. The app shows **Testnet is ready**, and the balance shows **BSV · TEST**.
 
     <Frame>
       <img src="/images/quick-start/03-network-testnet.png" alt="The Network and services window of BSV Desktop with Testnet selected and the Switch network button" />
@@ -247,17 +247,17 @@ You have sent a first BSV payment from code, approved it in your wallet, and ver
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Script cannot reach BSV Desktop">
-    The script fails with `No wallet available over any communication substrate`. This message means the script cannot reach BSV Desktop, usually because the app is closed or locked. Open BSV Desktop, unlock it with your device password, and run the script again.
+  <Accordion title={<>The script fails with "No wallet available over any communication substrate"</>}>
+    This message means the script cannot reach BSV Desktop, usually because the app is closed or locked. Open BSV Desktop, unlock it with your device password, and run the script again.
   </Accordion>
-  <Accordion title="Script waits with no output">
-    The script prints nothing and does not finish. It is waiting for you to approve the payment, so switch to the BSV Desktop window and answer the **Spending Request** that is open there.
+  <Accordion title="The script prints nothing and does not finish">
+    The script is waiting for you to approve the payment, so switch to the BSV Desktop window and answer the **Spending Request** that is open there.
   </Accordion>
-  <Accordion title="Faucet cannot verify your wallet">
-    The faucet shows `Couldn't verify wallet`. Another wallet installed as a browser extension can answer the faucet before BSV Desktop. Turn off that extension while you sign in, keep BSV Desktop open and unlocked, and click **Continue with BSV wallet** again.
+  <Accordion title={<>The faucet shows "Couldn't verify wallet"</>}>
+    Another wallet installed as a browser extension can answer the faucet before BSV Desktop. Turn off that extension while you sign in, keep BSV Desktop open and unlocked, and click **Continue with BSV wallet** again.
   </Accordion>
-  <Accordion title="Payment is rejected">
-    The script fails with `HTTP status 400`. This error means BSV Desktop did not complete the payment, either because you clicked **Deny** or because your balance does not cover the amount plus the fee. Check your balance in BSV Desktop, then run the script again and click **Authorize**.
+  <Accordion title={<>A payment fails with "HTTP status 400"</>}>
+    This error means BSV Desktop did not complete the payment, either because you clicked **Deny** or because your balance does not cover the amount plus the fee. Check your balance in BSV Desktop, then run the script again and click **Authorize**.
   </Accordion>
 </AccordionGroup>
 
