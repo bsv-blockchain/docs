@@ -1,55 +1,40 @@
-// The overlay loop: your app sends a transaction to a topic, the host admits and indexes it,
-// and later your app reads it back through the lookup service. Two squares (app and host)
-// joined by two arrows (Send, Look up), with the topic and the lookup service shown inside the host.
+// The overlay flow as two clear phases, Send and Look up. Each phase is one row:
+// your app on the left, the overlay host on the right, an arrow between them.
+// The host box carries the name it uses in that phase (tm_ topic, ls_ lookup service).
+// Readable on its own: a reader sees two steps, a developer sees the topic and the lookup service.
 // Edit the text below; the layout does not need to change.
-// Wrap a term in ** ** to show it in bold.
 // Source: the guide "Track with overlays" and @bsv/sdk (TopicBroadcaster and LookupResolver).
 
-const app = {
-  who: 'Your app',
-  text: 'Builds the transaction with **your wallet** and broadcasts it to the topic.',
-};
-
-const host = {
-  who: 'Overlay host',
-  chips: [
-    { name: 'tm_', role: 'Topic', text: 'Admits and indexes the outputs your app sends.' },
-    { name: 'ls_', role: 'Lookup service', text: 'Answers the queries your app makes.' },
-  ],
-  note: 'One host runs the topic and its lookup service together.',
-};
-
-const arrows = [
-  { label: 'Send', glyph: '→', cls: 'ofl-send' },
-  { label: 'Look up', glyph: '←', cls: 'ofl-look' },
+const phases = [
+  {
+    label: 'Send',
+    app: 'Builds a transaction with your wallet and sends it to the topic.',
+    tag: 'tm_ topic',
+    host: 'Admits the output to the topic and keeps it, so it can be found later.',
+  },
+  {
+    label: 'Look up',
+    app: 'Asks the lookup service for the outputs it stored.',
+    tag: 'ls_ lookup service',
+    host: 'Returns the output, and your app reads the data back.',
+  },
 ];
 
-const bold = (t) => t.split(/\*\*(.+?)\*\*/).map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part));
-
 const css = `
-.ofl { container-type: inline-size; margin: 24px 0; }
-.ofl-grid { display: grid; grid-template-columns: 1fr minmax(88px, 128px) 1.5fr; grid-template-rows: 1fr 1fr; gap: 10px; align-items: stretch; }
-.ofl-card { display: flex; flex-direction: column; gap: 8px; padding: 16px; border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); color: var(--wd-text); }
-.ofl-app { grid-column: 1; grid-row: 1 / 3; }
-.ofl-host { grid-column: 3; grid-row: 1 / 3; border-color: var(--wd-primary); border-width: 2px; }
-.ofl-who { font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--wd-text); }
-.ofl-text { font-size: 13px; line-height: 1.45; margin: 0; color: var(--wd-text-muted); }
-.ofl-text strong { color: var(--wd-text); font-weight: 600; }
-.ofl-chips { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.ofl-chip { display: flex; flex-direction: column; gap: 4px; padding: 10px; border: 1px solid var(--wd-border); border-radius: 10px; background: var(--wd-background); }
-.ofl-tag { align-self: flex-start; font-size: 12px; font-weight: 700; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; padding: 2px 7px; border-radius: 6px; background: var(--wd-primary); color: var(--wd-background); }
-.ofl-role { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--wd-text-muted); }
-.ofl-note { font-size: 12.5px; line-height: 1.45; margin: 0; color: var(--wd-text-muted); }
-.ofl-arrow { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; }
-.ofl-send { grid-column: 2; grid-row: 1; }
-.ofl-look { grid-column: 2; grid-row: 2; }
-.ofl-glyph { font-size: 22px; line-height: 1; color: var(--wd-primary); }
-.ofl-label { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--wd-text-muted); }
-@container (max-width: 640px) {
-  .ofl-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
-  .ofl-app, .ofl-host, .ofl-arrow { grid-column: 1; grid-row: auto; }
-  .ofl-glyph { transform: rotate(90deg); }
-  .ofl-chips { grid-template-columns: 1fr; }
+.ofl { container-type: inline-size; margin: 24px 0; display: flex; flex-direction: column; gap: 12px; }
+.ofl-row { display: grid; grid-template-columns: 78px minmax(0, 1fr) 44px minmax(0, 1.15fr); align-items: stretch; gap: 10px; }
+.ofl-phase { display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px 6px; border-radius: 12px; background: var(--wd-primary); color: var(--wd-background); font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.ofl-card { display: flex; flex-direction: column; gap: 6px; justify-content: center; min-height: 84px; padding: 16px; border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); color: var(--wd-text); }
+.ofl-host { border-color: var(--wd-primary); border-width: 2px; }
+.ofl-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.ofl-who { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--wd-text-muted); }
+.ofl-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: var(--wd-primary); color: var(--wd-background); }
+.ofl-text { font-size: 13.5px; line-height: 1.5; margin: 0; color: var(--wd-text); }
+.ofl-arrow { display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--wd-primary); }
+@container (max-width: 620px) {
+  .ofl-row { grid-template-columns: 1fr; gap: 8px; }
+  .ofl-phase { justify-content: flex-start; }
+  .ofl-arrow { transform: rotate(90deg); }
 }
 `;
 
@@ -57,31 +42,23 @@ export default function OverlayFlow() {
   return (
     <div className="ofl" role="group" aria-label="Your app sends a transaction to an overlay topic and reads it back through the lookup service">
       <style>{css}</style>
-      <div className="ofl-grid">
-        <div className="ofl-card ofl-app">
-          <span className="ofl-who">{app.who}</span>
-          <p className="ofl-text">{bold(app.text)}</p>
-        </div>
-        {arrows.map((a) => (
-          <div className={`ofl-arrow ${a.cls}`} key={a.label}>
-            <span className="ofl-glyph" aria-hidden="true">{a.glyph}</span>
-            <span className="ofl-label">{a.label}</span>
+      {phases.map((p) => (
+        <div className="ofl-row" key={p.label}>
+          <div className="ofl-phase">{p.label}</div>
+          <div className="ofl-card ofl-app">
+            <span className="ofl-who">Your app</span>
+            <p className="ofl-text">{p.app}</p>
           </div>
-        ))}
-        <div className="ofl-card ofl-host">
-          <span className="ofl-who">{host.who}</span>
-          <div className="ofl-chips">
-            {host.chips.map((c) => (
-              <div className="ofl-chip" key={c.name}>
-                <span className="ofl-tag">{c.name}</span>
-                <span className="ofl-role">{c.role}</span>
-                <p className="ofl-note">{bold(c.text)}</p>
-              </div>
-            ))}
+          <div className="ofl-arrow" aria-hidden="true">→</div>
+          <div className="ofl-card ofl-host">
+            <div className="ofl-head">
+              <span className="ofl-who">Overlay host</span>
+              <span className="ofl-tag">{p.tag}</span>
+            </div>
+            <p className="ofl-text">{p.host}</p>
           </div>
-          <p className="ofl-note">{host.note}</p>
         </div>
-      </div>
+      ))}
     </div>
   );
 }
