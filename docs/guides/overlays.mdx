@@ -6,21 +6,21 @@ sidebarTitle: "Track with overlays"
 
 import OverlayFlow from '/snippets/OverlayFlow.jsx';
 
-**Overlays** index the transactions that matter to your app under a topic, so your app can find its own transactions without scanning the chain. This fits an app that needs to look up its own transactions again, and here it runs as a standalone Node script with BSV Desktop on testnet that you can adapt. In this guide you send a transaction that carries data to a topic and look it up back.
+**Overlays** index the transactions that matter to your app under a topic, so your app can find them again without scanning the chain. This fits an app that queries what it wrote, and here it runs as a standalone Node script with BSV Desktop on testnet that you can adapt. In this guide you send a transaction that carries data to a topic and look it up back.
 
 ## Before you begin
 
-You need a funded testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/) and Node.js 22 or newer. [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set up the wallet.
+You need a funded testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/) and Node.js 22 or newer. The BSV Desktop windows in this guide come from version 3.1.1. [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set up the wallet.
 
-An overlay is shared infrastructure, so a transaction is tracked only by a host that runs your topic. There is no public overlay on testnet that runs every topic, so for development run an overlay yourself with [Run the overlay server](/docs/guides/services/stack-services/overlay-server/) or point at a host that runs your topic.
+An overlay is shared infrastructure, so only a host that runs your topic tracks it. There is no public overlay on testnet that runs every topic, so for development run one yourself with [Run the overlay server](/docs/guides/services/stack-services/overlay-server/) or point at a host that has it.
 
-<Callout type="info">
-The wallet decides the network. These examples use a testnet wallet and a local overlay. To use Mainnet, read [Move your app to Mainnet](/docs/guides/go-to-mainnet/).
+<Callout type="note">
+The wallet decides the network. These examples use a testnet wallet and a local overlay. To use Mainnet, read [Move your app to mainnet](/docs/guides/go-to-mainnet/).
 </Callout>
 
 ## How it works
 
-An <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> pairs a topic with a lookup service. The topic is what a host stores, and the lookup service is how your app asks for it:
+An <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> pairs a topic with a lookup service:
 
 <OverlayFlow />
 
@@ -53,19 +53,23 @@ The first step is to install the SDK and connect a script to BSV Desktop.
     const networkPreset = 'local'
     ```
 
-    The second argument of **`WalletClient`** is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without it. The **`networkPreset`** is the network the overlay discovery uses: `mainnet`, `testnet`, or `local` for an overlay on `localhost`.
+    This file holds every example in the guide, one after another, and you run it with `node overlay.mjs` while BSV Desktop is open. The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without it. The `networkPreset` is the network the overlay discovery uses: `mainnet`, `testnet`, or `local` for an overlay on `localhost`.
 
   </Step>
 </Steps>
 
-## Send a transaction to a topic
+## Track a transaction with an overlay
 
-With the wallet connected, create an output that carries your data and broadcast it to the topic.
+The host keeps the transaction under the topic, and the lookup service returns it.
+
+### Send it to a topic
+
+With the wallet connected, create an output that carries your data.
 
 <Steps>
   <Step title="Build the output">
 
-    Add a `PushDrop` with your data to the same file:
+    Add a `PushDrop` with your data to `overlay.mjs`:
 
     ```js
     import { PushDrop, SecurityLevels, Utils } from '@bsv/sdk'
@@ -80,12 +84,12 @@ With the wallet connected, create an output that carries your data and broadcast
     )
     ```
 
-    The <Hint tip="The part of a transaction output that sets the condition to spend it.">locking script</Hint> from **`PushDrop`** stores one or more data fields, here a short message.
+    The <Hint tip="The part of a transaction output that sets the condition to spend it.">locking script</Hint> from `PushDrop` stores one or more data fields, here a short message.
 
   </Step>
   <Step title="Create the transaction">
 
-    Ask the wallet to create the action with the output, in the same file:
+    Ask the wallet to create the action with the output:
 
     ```js
     const action = await wallet.createAction({
@@ -102,12 +106,12 @@ With the wallet connected, create an output that carries your data and broadcast
     })
     ```
 
-    BSV Desktop opens a **Spending Request** window from the originator, `localhost`, showing the amount in satoshis and the action description, and you approve it with **Authorize**. The amount includes the transaction fee, so it is more than the 1 satoshi output. The **`basket`** keeps the output in your wallet under an app name, and **`customInstructions`** carries the key ID the output was created with.
+    BSV Desktop opens a **Spending Request** window from the originator, `localhost`, showing the amount in satoshis and the action description, and you approve it with **Authorize**. The amount includes the transaction fee, so it is more than the 1 satoshi output. The `basket` keeps the output in your wallet under an app name, and `customInstructions` carries the key ID the output was created with.
 
   </Step>
   <Step title="Broadcast to the topic">
 
-    Send the transaction to the topic with a topic broadcaster:
+    Use a topic broadcaster to send it:
 
     ```js
     import { TopicBroadcaster, Transaction } from '@bsv/sdk'
@@ -129,19 +133,19 @@ With the wallet connected, create an output that carries your data and broadcast
     }
     ```
 
-    The topic name must start with `tm_` and must be one the host runs. A transaction is permanent once it is mined, so a wrong output cannot be undone.
+    The topic must be one the host runs. A transaction cannot be undone once it is broadcast to the network.
 
   </Step>
 </Steps>
 
-## Look up the transaction
+### Look up the output
 
-Now that the host indexed the output, ask for it by lookup service and read the data back.
+With the output indexed, ask the service for it.
 
 <Steps>
   <Step title="Query the lookup service">
 
-    Query the service in the same file:
+    Call the resolver with the service name:
 
     ```js
     import { LookupResolver } from '@bsv/sdk'
@@ -154,7 +158,7 @@ Now that the host indexed the output, ask for it by lookup service and read the 
     console.log(JSON.stringify(answer))
     ```
 
-    The name must start with `ls_`. The service answers with the outputs it admitted:
+    The service answers with the outputs it admitted:
 
     ```json
     {
@@ -164,9 +168,9 @@ Now that the host indexed the output, ask for it by lookup service and read the 
     ```
 
   </Step>
-  <Step title="Read the data back">
+  <Step title="Decode the fields">
 
-    Decode the <Hint tip="Background Evaluation Extended Format (BRC-62): a transaction with the evidence a host needs to verify it.">BEEF</Hint> in the same file to get the fields you stored:
+    Decode the <Hint tip="Background Evaluation Extended Format (BRC-62): a transaction with the evidence a host needs to verify it.">BEEF</Hint> to get the fields you stored:
 
     ```js
     import { PushDrop } from '@bsv/sdk'
@@ -183,6 +187,15 @@ Now that the host indexed the output, ask for it by lookup service and read the 
   </Step>
 </Steps>
 
+## Adapt the example to your app
+
+To use this in a real app, apply these points:
+
+- Replace `tm_myapp` and `ls_myapp` with your own topic and lookup service names, and run a host that has them
+- Set the originator to your app name, because BSV Desktop shows it in its permission windows
+- Point `networkPreset` at the network where your host runs, because discovery only queries the trackers of that network
+- Decode the fields in the order your app wrote them, because the lookup returns the raw transaction
+
 ## Troubleshooting
 
 <AccordionGroup>
@@ -198,7 +211,7 @@ Now that the host indexed the output, ask for it by lookup service and read the 
   </Accordion>
   <Accordion title="Host rejects the transaction">
 
-    The topic manager returned no admitted outputs, so the broadcast answers `ERR_ALL_HOSTS_REJECTED` or `No host acknowledged the required topics.` The output does not match the topic format, or the topic is not one the host runs. Check that the topic name starts with `tm_` and that the host has it registered.
+    The topic manager returned no admitted outputs, so the broadcast answers `ERR_ALL_HOSTS_REJECTED` or `No host acknowledged the required topics.` The output does not match the topic format, or the topic is not one the host runs. Check the topic name and that the host has it registered.
 
   </Accordion>
 </AccordionGroup>
@@ -209,4 +222,4 @@ With the flow working, continue with:
 
 - [How overlays work](/docs/concepts/overlays/)
 - [Run the overlay server](/docs/guides/services/stack-services/overlay-server/)
-- [Move your app to Mainnet](/docs/guides/go-to-mainnet/)
+- [Move your app to mainnet](/docs/guides/go-to-mainnet/)
