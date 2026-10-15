@@ -51,7 +51,7 @@
             ]
           },
           {
-            "group": "Build with AI",
+            "group": "Set up your AI",
             "pages": [
               "docs/build-with-ai/index",
               "docs/build-with-ai/simple-mcp",
