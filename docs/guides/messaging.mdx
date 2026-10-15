@@ -11,8 +11,8 @@ import MessagingFlow from '/snippets/MessagingFlow.jsx';
 
 You need a funded testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set one up.
 
-<Callout type="note">
-The wallet decides the network. These examples use a testnet wallet. To use mainnet, read [Move your app to mainnet](/docs/guides/go-to-mainnet/).
+<Callout type="info">
+The wallet decides the network. These examples use a testnet wallet. To use Mainnet, read [Move your app to mainnet](/docs/guides/go-to-mainnet/).
 </Callout>
 
 ## How it works
@@ -41,7 +41,7 @@ The first step is to install the packages and set up a client:
 
     Create `messaging.ts` in an empty project folder and connect the client to BSV Desktop:
 
-    ```ts
+    ```ts messaging.ts
     import { MessageBoxClient } from '@bsv/message-box-client'
     import { WalletClient } from '@bsv/sdk'
 
@@ -52,7 +52,7 @@ The first step is to install the packages and set up a client:
     })
     ```
 
-    The second argument of **`WalletClient`** is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without one. The **`networkPreset`** only picks the overlay network that looks up a recipient's MessageBox host. When it finds none, the client uses **`https://message-box-us-1.bsvb.tech`**.
+    The second argument of **`WalletClient`** is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without one. The **`networkPreset`** only picks the <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> that looks up a recipient's MessageBox host. When it finds none, the client uses **`https://message-box-us-1.bsvb.tech`**.
 
   </Step>
   <Step title="Get your identity key">
