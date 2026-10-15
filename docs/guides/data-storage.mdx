@@ -51,7 +51,7 @@ Follow these steps to write a short text to a transaction output.
     The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app.
   </Step>
   <Step title="Build the data output">
-    Build the locking script that holds your text, in the same file and after the connection:
+    Build the <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> that holds your text, in the same file and after the connection:
 
     ```ts
     import { LockingScript, OP, Utils } from '@bsv/sdk'
@@ -67,7 +67,7 @@ Follow these steps to write a short text to a transaction output.
     ])
     ```
 
-    A data output starts with `OP_FALSE OP_RETURN`, which makes it unspendable, followed by the bytes you choose. The SDK has no template for it, so the script is built from the two opcodes and one data push.
+    A data output starts with `OP_FALSE OP_RETURN`, which makes it unspendable, followed by the bytes you choose. The SDK has no template for it, so the script is built from the two opcodes and one data push. `pushOp` picks the opcode that announces the push by the length of the data: up to 75 bytes the length itself is the opcode, and longer data uses `OP_PUSHDATA1`, `OP_PUSHDATA2` or `OP_PUSHDATA4`.
   </Step>
   <Step title="Create the transaction">
     Ask the wallet to create a transaction with that script and log the id it returns:
@@ -108,8 +108,8 @@ Follow these steps to write a short text to a transaction output.
   </Step>
 </Steps>
 
-<Callout type="info">
-Anything in the output is public, and anyone with the `txid` can read it. Do not put personal data or secrets in it.
+<Callout type="warning">
+Anything in the output is public, and anyone with the transaction ID can read it. Do not put personal data or secrets in it.
 </Callout>
 
 ### Read the data back
@@ -144,6 +144,8 @@ Once the transaction is broadcast, read the output from the wallet and from the 
     }
     ```
 
+    `readData` reverses the script: it checks that the script starts with `OP_FALSE OP_RETURN`, reads the push opcode and the length, and returns the data bytes, which `Utils.toUTF8` turns back into text.
+
     The terminal prints one line for each output in the basket, so a second run adds a second line:
 
     ```text
@@ -151,7 +153,7 @@ Once the transaction is broadcast, read the output from the wallet and from the 
     ```
   </Step>
   <Step title="Check the transaction on an explorer">
-    Open the transaction in a testnet explorer such as [WhatsOnChain](https://test.whatsonchain.com/), by its `txid`. Output 0 has a value of 0 and the same script. An explorer can cut a large script short, and the WhatsOnChain API returns only its first 50,000 bytes.
+    Open the transaction in a testnet explorer such as [WhatsOnChain](https://test.whatsonchain.com/), by its transaction ID. Output 0 has a value of 0 and the same script. An explorer can cut a large script short, and the WhatsOnChain API returns only its first 50,000 bytes.
   </Step>
 </Steps>
 
@@ -193,11 +195,11 @@ To use this in a real app, apply these two points:
   </Accordion>
 </AccordionGroup>
 
-## See also
+## Related articles
 
 To learn more about data and transactions in BSV, review these articles:
 
+- [Permissions and outputs](/docs/guides/wallet-aware-apps/)
 - [Send messages between users](/docs/guides/messaging/)
 - [Transactions](/docs/concepts/transactions/)
 - [Script](/docs/concepts/script/)
-- [Permissions and outputs](/docs/guides/wallet-aware-apps/)
