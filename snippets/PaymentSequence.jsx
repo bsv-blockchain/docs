@@ -4,7 +4,7 @@ const steps = [
   { who: 'Your app', what: <>Asks the wallet for a payment of 1,000 satoshis with <code>createAction</code></> },
   { who: 'BSV Desktop', what: <>Shows a <strong>Spending Request</strong>. You click <strong>Authorize</strong>, and the wallet signs with the private key</> },
   { who: 'Testnet', what: 'Receives the signed transaction from the wallet and records it' },
-  { who: 'Your app', what: 'Gets the transaction ID back from the wallet, never the key' },
+  { who: 'Your app', what: 'Gets the transaction ID back from the wallet' },
 ];
 
 function Arrow() {
