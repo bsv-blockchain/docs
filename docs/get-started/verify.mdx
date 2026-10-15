@@ -63,14 +63,14 @@ The transaction page changes once the payment is in a block. Take these steps to
     Right after the payment, the page shows **Status** as **UNCONFIRMED**, with **Fee offered to miner**, **Fee Rate**, **Size**, and the inputs and outputs. In the outputs, you find the amount you sent and the address it went to.
 
     <Frame>
-      <img src="/images/verify/01-explorer-unconfirmed.png" alt="A WhatsOnChain testnet transaction page with the UNCONFIRMED status, the fee offered to miner, the fee rate and the size" />
+      <img src="/images/verify/01-explorer-unconfirmed.png" alt="A WhatsOnChain testnet transaction page with the UNCONFIRMED status, the fee offered to miner and the size" />
     </Frame>
   </Step>
   <Step title="Reload until the payment is confirmed">
-    Reload the page from time to time. Once the payment is in a block, the page shows **Block** with its number, **Confirmations**, and **Fee Paid** in place of **Fee offered to miner**.
+    Reload the page from time to time. Once the payment is in a block, the **Status** line gives way to **Timestamp (utc)** and **Block** with its number, and the page shows **Confirmations** and **Fee Paid** in place of **Fee offered to miner**.
 
     <Frame>
-      <img src="/images/verify/02-explorer-confirmed.png" alt="The same transaction page after confirmation, with the block number, one confirmation and the fee paid" />
+      <img src="/images/verify/02-explorer-confirmed.png" alt="The same transaction page after confirmation, with the timestamp, the block number, the fee paid, the size and 13 confirmations" />
     </Frame>
   </Step>
 </Steps>
@@ -83,10 +83,10 @@ The fee on the explorer is the same fee you approved in your wallet:
 
 <Steps>
   <Step title="Read the fee on the explorer">
-    The fee is next to **Fee offered to miner**, or **Fee Paid** once confirmed, in BSV. Multiply it by 100,000,000 to get satoshis, so `0.00000057` BSV is 57 satoshis.
+    The fee is next to **Fee offered to miner**, or **Fee Paid** once confirmed, in BSV. Multiply it by 100,000,000 to get satoshis, so `0.00000116` BSV is 116 satoshis.
   </Step>
   <Step title="Compare it with BSV Desktop">
-    In BSV Desktop, the **Spending Request** you approved showed the total with the fee, for example 1,057 satoshis for a payment of 1,000. The difference is the same fee as on the explorer.
+    In BSV Desktop, the **Spending Request** you approved showed the total with the fee, for example 1,116 satoshis for a payment of 1,000. The difference is the same fee as on the explorer.
   </Step>
 </Steps>
 
@@ -108,9 +108,9 @@ The explorer also answers requests from code, so your app can check a payment wi
     ```json
     {
       "txid": "<txid>",
-      "size": 226,
-      "blockheight": 1763235,
-      "confirmations": 6
+      "size": 464,
+      "blockheight": 1763389,
+      "confirmations": 13
     }
     ```
 
