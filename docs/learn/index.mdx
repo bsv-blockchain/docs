@@ -5,9 +5,9 @@ description: How your app, the user's wallet and shared services work together o
 
 import AppWalletFlowSteps from '/snippets/AppWalletFlowSteps.jsx';
 
-On **BSV**, the app, the wallet and shared services each have one job. Your app asks for actions and verifies the results, the user's wallet holds the private keys and signs, and shared services broadcast transactions, provide block headers and index app data.
+On BSV, the app, the wallet and shared services each have one job. Your app asks for actions and verifies the results, the user's wallet holds the private keys and signs, and shared services broadcast transactions, provide block headers and index app data.
 
-## The Core Ideas
+## The core ideas
 
 Four ideas shape how these parts work together, and each has its own page:
 
@@ -19,14 +19,14 @@ Four ideas shape how these parts work together, and each has its own page:
     Your app verifies transactions itself through <Hint tip="Simplified Payment Verification">SPV</Hint>, with Merkle paths and block headers. BEEF bundles a transaction with the proofs that check needs.
   </Card>
   <Card title="BRC-100 Wallet Interface" href="/docs/concepts/wallet-model/">
-    Your app asks the wallet to act through <Hint tip="Bitcoin Request for Comments 100">BRC-100</Hint>, the standard wallet-to-application interface, and the wallet keeps the private keys.
+    Your app asks the wallet to act through <Hint tip="BSV Request for Comments 100">BRC-100</Hint>, the standard wallet-to-application interface, and the wallet keeps the private keys.
   </Card>
   <Card title="How overlays work" href="/docs/concepts/overlays/">
     An overlay service tracks your app's own transactions. Topic managers decide which outputs it admits, and lookup services answer queries about them.
   </Card>
 </CardGroup>
 
-## How an App Talks to the Wallet
+## How an app talks to the wallet
 
 The following diagram follows one request, from the app's call to the wallet's result:
 
@@ -36,7 +36,7 @@ The following diagram follows one request, from the app's call to the wallet's r
 The diagram has five steps. The app calls a BRC-100 method on the wallet, such as `createAction`, `signAction` or `listOutputs`. The wallet selects outputs, signs locally and returns the result. For `createAction`, the transaction can come back as AtomicBEEF. The app never takes custody of the private keys.
 </Visibility>
 
-## Next Steps
+## Next steps
 
 You can send a first transaction on testnet or see how the BSV stack fits together:
 
