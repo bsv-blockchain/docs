@@ -1,0 +1,164 @@
+{
+ "slug": "sample-sequence-request",
+ "alt": "Sequence of a createAction request on desktop. The app calls createAction on WalletClient, which reaches the wallet over a local channel. The wallet may call shared services for proofs and broadcast, signs locally, and the result returns through WalletClient to the app.",
+ "width": 720,
+ "height": 420,
+ "elements": [
+  {
+   "type": "node",
+   "id": "a",
+   "x": 20,
+   "y": 14,
+   "w": 150,
+   "h": 56,
+   "label": "Your app"
+  },
+  {
+   "type": "node",
+   "id": "w",
+   "x": 200,
+   "y": 14,
+   "w": 150,
+   "h": 56,
+   "label": "WalletClient",
+   "sub": "@bsv/sdk"
+  },
+  {
+   "type": "node",
+   "id": "wl",
+   "x": 380,
+   "y": 14,
+   "w": 150,
+   "h": 56,
+   "label": "BSV Desktop",
+   "sub": "the wallet"
+  },
+  {
+   "type": "node",
+   "id": "sv",
+   "x": 560,
+   "y": 14,
+   "w": 150,
+   "h": 56,
+   "label": "Shared services",
+   "sub": "proofs, broadcast"
+  },
+  {
+   "type": "line",
+   "x1": 95,
+   "y1": 70,
+   "x2": 95,
+   "y2": 404,
+   "dashed": true
+  },
+  {
+   "type": "line",
+   "x1": 275,
+   "y1": 70,
+   "x2": 275,
+   "y2": 404,
+   "dashed": true
+  },
+  {
+   "type": "line",
+   "x1": 455,
+   "y1": 70,
+   "x2": 455,
+   "y2": 404,
+   "dashed": true
+  },
+  {
+   "type": "line",
+   "x1": 635,
+   "y1": 70,
+   "x2": 635,
+   "y2": 404,
+   "dashed": true
+  },
+  {
+   "type": "edge",
+   "from": [
+    95,
+    112
+   ],
+   "to": [
+    275,
+    112
+   ],
+   "label": "1  createAction"
+  },
+  {
+   "type": "edge",
+   "from": [
+    275,
+    158
+   ],
+   "to": [
+    455,
+    158
+   ],
+   "label": "2  local channel"
+  },
+  {
+   "type": "edge",
+   "from": [
+    455,
+    204
+   ],
+   "to": [
+    635,
+    204
+   ],
+   "label": "3  proofs, broadcast"
+  },
+  {
+   "type": "edge",
+   "from": [
+    635,
+    244
+   ],
+   "to": [
+    455,
+    244
+   ],
+   "label": "4  response",
+   "dashed": true
+  },
+  {
+   "type": "node",
+   "id": "sg",
+   "x": 375,
+   "y": 266,
+   "w": 160,
+   "h": 38,
+   "label": "5  Sign locally",
+   "role": "accent"
+  },
+  {
+   "type": "edge",
+   "from": [
+    455,
+    338
+   ],
+   "to": [
+    275,
+    338
+   ],
+   "label": "6  result",
+   "dashed": true
+  },
+  {
+   "type": "edge",
+   "from": [
+    275,
+    382
+   ],
+   "to": [
+    95,
+    382
+   ],
+   "label": "7  result",
+   "dashed": true
+  }
+ ]
+}

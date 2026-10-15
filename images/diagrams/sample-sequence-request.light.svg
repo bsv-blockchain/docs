@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="420" viewBox="0 0 720 420" fill="none" role="img" aria-labelledby="t">
+<title id="t">Sequence of a createAction request on desktop. The app calls createAction on WalletClient, which reaches the wallet over a local channel. The wallet may call shared services for proofs and broadcast, signs locally, and the result returns through WalletClient to the app.</title>
+<defs><marker id="arr-5b6475" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5b6475"/></marker></defs>
+<line x1="95" y1="70" x2="95" y2="404" stroke="#c3c9d2" stroke-width="1.25" stroke-dasharray="4 4"/>
+<line x1="275" y1="70" x2="275" y2="404" stroke="#c3c9d2" stroke-width="1.25" stroke-dasharray="4 4"/>
+<line x1="455" y1="70" x2="455" y2="404" stroke="#c3c9d2" stroke-width="1.25" stroke-dasharray="4 4"/>
+<line x1="635" y1="70" x2="635" y2="404" stroke="#c3c9d2" stroke-width="1.25" stroke-dasharray="4 4"/>
+<path d="M95 112 L95 112 L275 112 L275 112" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-5b6475)"/>
+<text x="185" y="105" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">1  createAction</text>
+<path d="M275 158 L275 158 L455 158 L455 158" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-5b6475)"/>
+<text x="365" y="151" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">2  local channel</text>
+<path d="M455 204 L455 204 L635 204 L635 204" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-5b6475)"/>
+<text x="545" y="197" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">3  proofs, broadcast</text>
+<path d="M635 244 L635 244 L455 244 L455 244" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="5 4" marker-end="url(#arr-5b6475)"/>
+<text x="545" y="237" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">4  response</text>
+<path d="M455 338 L455 338 L275 338 L275 338" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="5 4" marker-end="url(#arr-5b6475)"/>
+<text x="365" y="331" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">6  result</text>
+<path d="M275 382 L275 382 L95 382 L95 382" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="5 4" marker-end="url(#arr-5b6475)"/>
+<text x="185" y="375" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">7  result</text>
+<rect x="20" y="14" width="150" height="56" rx="6" fill="#ffffff" stroke="#c3c9d2" stroke-width="1.25"/>
+<text x="95" y="47" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#1f2430">Your app</text>
+<rect x="200" y="14" width="150" height="56" rx="6" fill="#ffffff" stroke="#c3c9d2" stroke-width="1.25"/>
+<text x="275" y="38.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#1f2430">WalletClient</text>
+<text x="275" y="55.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#5b6475">@bsv/sdk</text>
+<rect x="380" y="14" width="150" height="56" rx="6" fill="#ffffff" stroke="#c3c9d2" stroke-width="1.25"/>
+<text x="455" y="38.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#1f2430">BSV Desktop</text>
+<text x="455" y="55.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#5b6475">the wallet</text>
+<rect x="560" y="14" width="150" height="56" rx="6" fill="#ffffff" stroke="#c3c9d2" stroke-width="1.25"/>
+<text x="635" y="38.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#1f2430">Shared services</text>
+<text x="635" y="55.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#5b6475">proofs, broadcast</text>
+<rect x="375" y="266" width="160" height="38" rx="6" fill="#ECF5FF" stroke="#1B1EA9" stroke-width="1.75"/>
+<text x="455" y="290" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#1f2430">5  Sign locally</text>
+</svg>

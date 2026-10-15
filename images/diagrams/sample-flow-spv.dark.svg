@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="230" viewBox="0 0 720 230" fill="none" role="img" aria-labelledby="t">
+<title id="t">SPV verification of a BEEF package in four steps: read the Merkle proofs, check them against block headers, validate the ancestor transactions, then evaluate the transaction. If any check fails, verification stops.</title>
+<defs><marker id="arr-a7afbd" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#a7afbd"/></marker><marker id="arr-ec6b74" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#ec6b74"/></marker></defs>
+<path d="M165 76 L195 76" fill="none" stroke="#a7afbd" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-a7afbd)"/>
+<path d="M345 76 L375 76" fill="none" stroke="#a7afbd" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-a7afbd)"/>
+<path d="M525 76 L555 76" fill="none" stroke="#a7afbd" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-a7afbd)"/>
+<path d="M270 116 L270 170" fill="none" stroke="#ec6b74" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="5 4" marker-end="url(#arr-ec6b74)"/>
+<path d="M450 116 L450 170" fill="none" stroke="#ec6b74" stroke-width="1.5" stroke-linejoin="round" stroke-dasharray="5 4" marker-end="url(#arr-ec6b74)"/>
+<rect x="15" y="36" width="150" height="80" rx="6" fill="#0f1218" stroke="#454d5c" stroke-width="1.25"/>
+<text x="90" y="64" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8ebf0">Read the</text>
+<text x="90" y="81" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8ebf0">Merkle proofs</text>
+<text x="90" y="98" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#a7afbd">BUMPs (BRC-74)</text>
+<rect x="195" y="36" width="150" height="80" rx="6" fill="#0f1218" stroke="#454d5c" stroke-width="1.25"/>
+<text x="270" y="64" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8ebf0">Check against</text>
+<text x="270" y="81" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8ebf0">block headers</text>
+<text x="270" y="98" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#a7afbd">header service</text>
+<rect x="375" y="36" width="150" height="80" rx="6" fill="#0f1218" stroke="#454d5c" stroke-width="1.25"/>
+<text x="450" y="64" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8ebf0">Validate the</text>
+<text x="450" y="81" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8ebf0">ancestors</text>
+<text x="450" y="98" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#a7afbd">in order</text>
+<rect x="555" y="36" width="150" height="80" rx="6" fill="#12291c" stroke="#3fbf73" stroke-width="1.25"/>
+<text x="630" y="72.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#8fe0b0">Evaluate the</text>
+<text x="630" y="89.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#8fe0b0">transaction</text>
+<rect x="190" y="170" width="340" height="46" rx="6" fill="#2e1418" stroke="#ec6b74" stroke-width="1.25"/>
+<text x="360" y="198" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#f6a9ae">Any check fails: verification stops</text>
+</svg>
