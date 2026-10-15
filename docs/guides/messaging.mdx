@@ -3,7 +3,9 @@ title: "Send messages between users"
 description: "Send encrypted messages and payments between users with MessageBox, which holds each message until its recipient reads it."
 ---
 
-**MessageBox** delivers encrypted messages and payments to a user's identity key. A host keeps each one until the recipient reads it, so the two users do not need to be online at the same time, and the client encrypts the body with your wallet before it leaves your app.
+import MessagingFlow from '/snippets/MessagingFlow.jsx';
+
+**MessageBox** delivers encrypted messages and payments between users by their identity key, and a host holds each message until its recipient reads it, so the two users never need to be online at the same time. This fits an app that lets users message or pay each other, and here it runs as a standalone script you can adapt. In this guide you send a message to another user and read it back, then send a payment between the two.
 
 ## Before you begin
 
@@ -13,12 +15,22 @@ You need a funded testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [
 The wallet decides the network. These examples use a testnet wallet. To use mainnet, read [Move your app to mainnet](/docs/guides/go-to-mainnet/).
 </Callout>
 
+## How it works
+
+A message passes through your wallet, the MessageBox host and the recipient's wallet. The client encrypts the body before it sends, so the host only ever holds ciphertext:
+
+<MessagingFlow />
+
+Only the two wallets can read the body. A payment follows the same path, in a box of its own.
+
 ## Connect to your wallet
 
-The first step is to install the packages and connect a client to BSV Desktop:
+The first step is to install the packages and set up a client:
 
 <Steps>
   <Step title="Install the packages">
+
+    Use npm in the project folder to add the message client and the SDK:
 
     ```bash
     npm install @bsv/message-box-client @bsv/sdk
@@ -26,6 +38,8 @@ The first step is to install the packages and connect a client to BSV Desktop:
 
   </Step>
   <Step title="Create the client">
+
+    Create `messaging.ts` in an empty project folder and connect the client to BSV Desktop:
 
     ```ts
     import { MessageBoxClient } from '@bsv/message-box-client'
@@ -43,6 +57,8 @@ The first step is to install the packages and connect a client to BSV Desktop:
   </Step>
   <Step title="Get your identity key">
 
+    Ask the wallet for your identity key in the same file:
+
     ```ts
     const { publicKey: me } = await wallet.getPublicKey({ identityKey: true })
     ```
@@ -58,10 +74,12 @@ With the client ready, you send a message to an identity key and read it from th
 
 ### Send a message
 
-Send a message to your own identity key:
+The first example sends a message to your own key:
 
 <Steps>
   <Step title="Send the message">
+
+    Ask the client to send the message:
 
     ```ts
     const sent = await client.sendMessage({
@@ -69,10 +87,20 @@ Send a message to your own identity key:
       messageBox: 'inbox',
       body: { text: 'Hello from MessageBox' }
     })
-    console.log(sent) // { status: 'success', messageId: '...', message: '...' }
+    console.log(sent)
     ```
 
-    The **`body`** is a string or an object. The **`messageBox`** is free text and belongs to the recipient, so each identity has its own **`inbox`**. Avoid **`notifications`** as a box name, because it is a built-in box that charges the sender a fee.
+    The call prints an object with the status and the id of the message:
+
+    ```text
+    {
+      status: 'success',
+      messageId: '7aa436fb8f662344e9939a65b0a8677cd84d131dfd3747625a5f47c9c373c436',
+      message: 'Your message has been sent to 1 recipient(s).'
+    }
+    ```
+
+    The **`body`** is a string or an object, and the **`messageBox`** is free text that belongs to the recipient, so each identity has its own **`inbox`**. Avoid **`notifications`** as a box name, because it is a built-in box that charges the sender a fee.
 
   </Step>
 </Steps>
@@ -86,6 +114,8 @@ The recipient reads the box with their own wallet and acknowledges each message 
 <Steps>
   <Step title="List the messages">
 
+    Read the box as the recipient, with the same client:
+
     ```ts
     const messages = await client.listMessages({ messageBox: 'inbox' })
     for (const m of messages) {
@@ -93,10 +123,18 @@ The recipient reads the box with their own wallet and acknowledges each message 
     }
     ```
 
-    The client decrypts each body for you. A message has **`messageId`**, **`body`** and **`sender`**, which is the sender's identity key. Its dates are **`createdAt`** and **`updatedAt`**, although the package types declare **`created_at`** and **`updated_at`**.
+    The client decrypts each body for you and the loop prints one line for each message, with the sender's identity key and the body:
+
+    ```text
+    <sender identity key> { text: 'Hello from MessageBox' }
+    ```
+
+    A message has **`messageId`**, **`body`** and **`sender`**, which is the sender's identity key. Its dates are **`createdAt`** and **`updatedAt`**, although the package types declare **`created_at`** and **`updated_at`**.
 
   </Step>
   <Step title="Acknowledge the messages">
+
+    Send the ids back to the host once the app has handled them:
 
     ```ts
     await client.acknowledgeMessage({
@@ -118,6 +156,8 @@ To get a message the moment it is sent, instead of listing the box, the recipien
 <Steps>
   <Step title="Listen for messages">
 
+    Open a second client for the live connection:
+
     ```ts
     const live = new MessageBoxClient({
       walletClient: wallet,
@@ -136,6 +176,8 @@ To get a message the moment it is sent, instead of listing the box, the recipien
   </Step>
   <Step title="Send a live message">
 
+    The **`sender`** is another client built like **`live`**, with the sender's wallet:
+
     ```ts
     await sender.sendLiveMessage({
       recipient: recipientIdentityKey,
@@ -143,8 +185,6 @@ To get a message the moment it is sent, instead of listing the box, the recipien
       body: { text: 'Hello now' }
     })
     ```
-
-    The **`sender`** is a client built like **`live`**, with the sender's wallet.
 
   </Step>
 </Steps>
@@ -157,6 +197,8 @@ A payment travels as a message in the recipient's **`payment_inbox`** box on the
 
 <Steps>
   <Step title="Send the payment">
+
+    Create a payment client with the same wallet:
 
     ```ts
     import { PeerPayClient } from '@bsv/message-box-client'
@@ -174,12 +216,14 @@ A payment travels as a message in the recipient's **`payment_inbox`** box on the
   </Step>
   <Step title="Accept the payment">
 
+    List the incoming payments and accept the first one:
+
     ```ts
     const incoming = await peerPay.listIncomingPayments()
     await peerPay.acceptPayment(incoming[0])
     ```
 
-    Each incoming payment has **`messageId`**, **`sender`** and a **`token`** with the **`amount`**. Accepting it adds the payment to the recipient's wallet and acknowledges the message.
+    Each incoming payment carries a **`token`** with the **`amount`**, plus its **`messageId`** and **`sender`**. Accepting it adds the payment to the recipient's wallet and acknowledges the message.
 
   </Step>
 </Steps>
@@ -189,20 +233,20 @@ The recipient needs a wallet that can internalize payments, such as BSV Desktop.
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title={<>"Identity key retrieval failed"</>} defaultOpen>
-    The client cannot reach BSV Desktop. A Node script needs an originator, as in **`new WalletClient('auto', 'localhost')`**, and BSV Desktop must be open and on testnet.
+  <Accordion title="Client cannot reach the wallet" defaultOpen>
+    The call fails with `Identity key retrieval failed` when the script cannot reach BSV Desktop. Pass an originator, as in `new WalletClient('auto', 'localhost')`, and keep BSV Desktop open and on testnet.
   </Accordion>
-  <Accordion title={<>"WebSocket authentication timed out!"</>}>
-    The default live connection does not work with the default host. Create the client with **`socketOptions: { managerOptions: { transports: ['websocket'] } }`**.
+  <Accordion title="Live connection times out">
+    The default live connection does not work with the default host, so the call times out with `WebSocket authentication timed out!`. Create the client with `socketOptions: { managerOptions: { transports: ['websocket'] } }`.
   </Accordion>
-  <Accordion title={<>"BRC-29 settlement could not be built safely."</>}>
-    The payment could not be built, often because the wallet holds less than the amount plus the fee. Check the balance in BSV Desktop.
+  <Accordion title="Payment cannot be built">
+    The client throws `BRC-29 settlement could not be built safely.` when the wallet holds less than the amount plus the fee. Check the balance in BSV Desktop.
   </Accordion>
 </AccordionGroup>
 
-## See also
+## Next steps
 
-To learn more about messaging and payments in BSV, review these articles:
+With messages and payments working, continue with:
 
 - [Send messages with @bsv/message-box-client](/docs/sdk/packages/message-box-client/)
 - [Gate an API behind payments](/docs/guides/payments/)
