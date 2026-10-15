@@ -10,7 +10,7 @@ import AuthenticationFlow from '/snippets/AuthenticationFlow.jsx';
 
 ## Before you begin
 
-You need Node.js 22 or newer and a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set one up.
+You need Node.js 22 or newer and a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set one up. The BSV Desktop windows in this guide come from version 3.x.
 
 ## How it works
 
@@ -64,6 +64,8 @@ Follow these steps in that folder to build the server and read the caller in a r
     ```
 
     The middleware signs its responses with a wallet that implements `WalletInterface`, and a bare `ProtoWallet` does not qualify. The identity key of this wallet is the identity of your server.
+
+    `Setup` reads only `chain` from `env` when you pass `rootKeyHex`, and the other fields are values that the `SetupEnv` type requires. The file name uses the start of the identity key, so each key gets its own wallet database.
   </Step>
   <Step title="Add the middleware">
     Next, create `server.ts` in the same folder:
@@ -82,7 +84,7 @@ Follow these steps in that folder to build the server and read the caller in a r
     Authentication is required by default, so a request without the authentication headers gets a `401` response.
   </Step>
   <Step title="Read the caller in a route">
-    Add the route in `server.ts`:
+    Add the route in `server.ts`, below the middleware lines:
 
     ```ts server.ts
     app.get('/private', (req: AuthRequest, res) => {
@@ -92,7 +94,7 @@ Follow these steps in that folder to build the server and read the caller in a r
     app.listen(3000, () => console.log('Server on http://localhost:3000'))
     ```
 
-    The value of `req.auth.identityKey` is the identity key of the wallet that signed the request. To also receive certificates the caller holds, the middleware accepts `certificatesToRequest` and `onCertificatesReceived`, described on the [package page on npm](https://www.npmjs.com/package/@bsv/auth-express-middleware).
+    The value of `req.auth.identityKey` is the identity key of the wallet that signed the request. To also receive the <Hint tip="Signed statements about a user, issued by a third party, like a verifiable credential">certificates</Hint> the caller holds, the middleware accepts `certificatesToRequest` and `onCertificatesReceived`, described on the [package page on npm](https://www.npmjs.com/package/@bsv/auth-express-middleware).
   </Step>
 </Steps>
 
@@ -148,7 +150,7 @@ With the server ready, create the client that signs its requests from BSV Deskto
 
 The response also carries the identity key of the server in the `x-bsv-auth-identity-key` header, so the client can tell which server answered.
 
-<Callout type="info">
+<Callout type="note">
   By default BSV Desktop answers these calls without asking. With **Require permission for signature creation**, **Require permission for public key revelation** and **Require permission for identity key revelation** turned on in **Settings**, and the app reloaded, the first call opens two **Protocol Access Request** windows, for **identity key retrieval** and **auth message signature**. Click **Grant Access** to let the call through, and BSV Desktop remembers the choice for the originator.
 </Callout>
 
@@ -176,12 +178,18 @@ To keep one server identity across restarts, create the key once and pass it to 
     node -e "import('@bsv/sdk').then(({ PrivateKey }) => console.log(PrivateKey.fromRandom().toHex()))"
     ```
 
-    Keep the key in a secret store, not in your repository, because anyone who holds it can run a server with your identity.
+    <Callout type="warning">
+      The key is the identity of your server, and anyone who holds it can run a server with your identity. Keep it private, in a secret store, and never paste it into code or commit it.
+    </Callout>
   </Step>
   <Step title="Pass the key to the wallet">
+    Save the key as `SERVER_ROOT_KEY` in a `.env` file that is in your `.gitignore`, and read it in `server.ts`:
+
     ```ts server.ts
     const wallet = await createServerWallet(process.env.SERVER_ROOT_KEY)
     ```
+
+    Start the server with `npx tsx --env-file=.env server.ts`.
   </Step>
 </Steps>
 
@@ -193,7 +201,7 @@ Before the API serves real users, check these points:
 
 - Share the session state across instances. The default session manager lives in the memory of one process, so a service with several instances needs a shared `sessionManager`.
 - Review `transportLimits`. The defaults are a 30 second request timeout, 1,000 pending requests per process and 8 MiB for a signed response, and a request over a limit is rejected with `413` or `503`. Do not set `maxPendingRequests` too low, because each authenticated request can hold more than one pending slot.
-- Move off testnet by following [Go to mainnet](/docs/guides/go-to-mainnet/).
+- Move off testnet by following [Move your app to mainnet](/docs/guides/go-to-mainnet/).
 
 To adopt this in a real API, add `createAuthMiddleware` to the routes you want to protect and keep the server root key in your secret store.
 
