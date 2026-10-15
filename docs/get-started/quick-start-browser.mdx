@@ -4,7 +4,7 @@ sidebarTitle: "Pay from a web app"
 description: Set up a BSV testnet wallet, connect an app to it with the TypeScript SDK, and send a first payment without putting a private key in your code.
 ---
 
-Send your first **BSV** payment from code, using BSV Desktop on testnet. In this tutorial, you:
+Send your first BSV payment from code, using BSV Desktop on testnet. In this tutorial, you:
 
 - Set up a BSV Desktop wallet on testnet and fund it with free coins.
 - Connect an app to the wallet with the TypeScript SDK.
@@ -172,7 +172,7 @@ Take these steps to send 1,000 satoshis to your own testnet address and see the 
 
     Two parts of the script do the work:
 
-    - `new P2PKH().lock(address)` builds the part of the payment that sends the coins to your address.
+    - `new P2PKH().lock(address)` builds the <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> of the payment, which sends the coins to your address. <Hint tip="Pay to Public Key Hash">P2PKH</Hint> is the standard way to lock coins to an address.
     - `createAction` asks the wallet to create the payment. The wallet chooses the coins, adds the fee, and signs, so the script never touches a private key.
   </Step>
   <Step title="Run the script and approve the payment">
@@ -205,7 +205,7 @@ Take these steps to send 1,000 satoshis to your own testnet address and see the 
 </Steps>
 
 <Callout type="note">
-  Use the link the script prints. Transaction links inside BSV Desktop open the mainnet explorer, which does not show testnet transactions.
+  Use the link the script prints. Transaction links inside BSV Desktop open the Mainnet explorer, which does not show testnet transactions.
 </Callout>
 
 BSV Desktop then detects the payment to your own address and imports it within a few minutes, so your balance goes down only by the fee. You have sent a first BSV payment from code, approved it in your wallet, and verified it on the testnet. In your own app, the same `WalletClient` calls stay in your code, and each user approves the payments in their own wallet, as you did in BSV Desktop.
