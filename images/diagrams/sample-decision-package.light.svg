@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="310" viewBox="0 0 720 310" fill="none" role="img" aria-labelledby="t">
+<title id="t">Choosing a package. If you are building a wallet, use @bsv/wallet-toolbox. Otherwise, if the user holds the keys, use @bsv/simple/browser. If your own backend or agent holds the key, use @bsv/simple/server.</title>
+<defs><marker id="arr-5b6475" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#5b6475"/></marker></defs>
+<path d="M110 150 L110 40 L255 40" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-5b6475)"/>
+<text x="122" y="33" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">Yes</text>
+<path d="M205 200 L255 200" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-5b6475)"/>
+<text x="230" y="193" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">No</text>
+<path d="M362.5 150 L362 108 L520 108" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-5b6475)"/>
+<text x="378" y="101" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">Yes</text>
+<path d="M470 200 L495 200 L495 258 L520 258" fill="none" stroke="#5b6475" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-5b6475)"/>
+<text x="476" y="193" text-anchor="start" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#646d7e">No</text>
+<polygon points="110,150 205,200 110,250 15,200" fill="#ECF5FF" stroke="#1B1EA9" stroke-width="1.75"/>
+<text x="110" y="196.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#1f2430">Building</text>
+<text x="110" y="213.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#1f2430">a wallet?</text>
+<polygon points="362.5,150 470,200 362.5,250 255,200" fill="#ECF5FF" stroke="#1B1EA9" stroke-width="1.75"/>
+<text x="362.5" y="196.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#1f2430">Does the user</text>
+<text x="362.5" y="213.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#1f2430">hold the keys?</text>
+<rect x="255" y="12" width="200" height="56" rx="6" fill="#ffffff" stroke="#c3c9d2" stroke-width="1.25"/>
+<text x="355" y="36.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="500" fill="#1f2430">@bsv/wallet-toolbox</text>
+<text x="355" y="53.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#5b6475">build a wallet</text>
+<rect x="520" y="78" width="185" height="60" rx="6" fill="#ffffff" stroke="#c3c9d2" stroke-width="1.25"/>
+<text x="612.5" y="104.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="500" fill="#1f2430">@bsv/simple/browser</text>
+<text x="612.5" y="121.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#5b6475">uses the user's wallet</text>
+<rect x="520" y="228" width="185" height="60" rx="6" fill="#ffffff" stroke="#c3c9d2" stroke-width="1.25"/>
+<text x="612.5" y="254.5" text-anchor="middle" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13" font-weight="500" fill="#1f2430">@bsv/simple/server</text>
+<text x="612.5" y="271.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#5b6475">agent, own key</text>
+</svg>

@@ -1,0 +1,19 @@
+%% Template: API request with async webhook confirmation.
+%% Use for: create/confirm flows, 3DS, payouts, any call whose final result arrives by webhook.
+%% Rules: participants named from the reader's point of view ("Your server"), endpoints in messages,
+%% async messages use --) , number steps so the prose can reference them ("In step 3...").
+sequenceDiagram
+    autonumber
+    actor C as Customer
+    participant S as Your server
+    participant A as Example API
+    participant P as Payment provider
+    C->>S: Checkout
+    S->>A: POST /v1/payments
+    A->>P: Authorize
+    P-->>A: Authorized
+    A-->>S: 201 Created (status: pending)
+    S-->>C: Show processing screen
+    Note over A,P: Capture happens asynchronously
+    A--)S: Webhook payment.succeeded
+    S-->>A: 200 OK

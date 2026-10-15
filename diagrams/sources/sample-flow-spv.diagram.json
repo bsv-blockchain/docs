@@ -1,0 +1,107 @@
+{
+ "slug": "sample-flow-spv",
+ "alt": "SPV verification of a BEEF package in four steps: read the Merkle proofs, check them against block headers, validate the ancestor transactions, then evaluate the transaction. If any check fails, verification stops.",
+ "width": 720,
+ "height": 230,
+ "elements": [
+  {
+   "type": "node",
+   "id": "s1",
+   "x": 15,
+   "y": 36,
+   "w": 150,
+   "h": 80,
+   "label": "Read the\nMerkle proofs",
+   "sub": "BUMPs (BRC-74)"
+  },
+  {
+   "type": "node",
+   "id": "s2",
+   "x": 195,
+   "y": 36,
+   "w": 150,
+   "h": 80,
+   "label": "Check against\nblock headers",
+   "sub": "header service"
+  },
+  {
+   "type": "node",
+   "id": "s3",
+   "x": 375,
+   "y": 36,
+   "w": 150,
+   "h": 80,
+   "label": "Validate the\nancestors",
+   "sub": "in order"
+  },
+  {
+   "type": "node",
+   "id": "s4",
+   "x": 555,
+   "y": 36,
+   "w": 150,
+   "h": 80,
+   "label": "Evaluate the\ntransaction",
+   "role": "success"
+  },
+  {
+   "type": "edge",
+   "from": "s1",
+   "to": "s2"
+  },
+  {
+   "type": "edge",
+   "from": "s2",
+   "to": "s3"
+  },
+  {
+   "type": "edge",
+   "from": "s3",
+   "to": "s4"
+  },
+  {
+   "type": "node",
+   "id": "f",
+   "x": 190,
+   "y": 170,
+   "w": 340,
+   "h": 46,
+   "label": "Any check fails: verification stops",
+   "role": "failure"
+  },
+  {
+   "type": "edge",
+   "from": "s2",
+   "to": "f",
+   "points": [
+    [
+     270,
+     116
+    ],
+    [
+     270,
+     170
+    ]
+   ],
+   "role": "failure",
+   "dashed": true
+  },
+  {
+   "type": "edge",
+   "from": "s3",
+   "to": "f",
+   "points": [
+    [
+     450,
+     116
+    ],
+    [
+     450,
+     170
+    ]
+   ],
+   "role": "failure",
+   "dashed": true
+  }
+ ]
+}

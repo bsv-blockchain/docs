@@ -1,0 +1,204 @@
+{
+ "slug": "sample-architecture-stack",
+ "alt": "The BSV stack as four layers. The application layer (@bsv/simple/browser and @bsv/simple/server) sits above the BRC-100 wallet interface, which sits above the wallet toolkit (@bsv/wallet-toolbox), which sits on @bsv/sdk, the foundation.",
+ "width": 720,
+ "height": 564,
+ "elements": [
+  {
+   "type": "group",
+   "x": 20,
+   "y": 8,
+   "w": 680,
+   "h": 108,
+   "title": "Application layer",
+   "note": "Your app. It never touches a key.",
+   "fill": true
+  },
+  {
+   "type": "node",
+   "id": "c62_0",
+   "x": 161,
+   "y": 62,
+   "w": 200,
+   "h": 34,
+   "label": "@bsv/simple/browser",
+   "size": 13,
+   "weight": 400,
+   "mono": true
+  },
+  {
+   "type": "node",
+   "id": "c62_1",
+   "x": 369,
+   "y": 62,
+   "w": 190,
+   "h": 34,
+   "label": "@bsv/simple/server",
+   "size": 13,
+   "weight": 400,
+   "mono": true
+  },
+  {
+   "type": "edge",
+   "from": [
+    360,
+    116
+   ],
+   "to": [
+    360,
+    142
+   ]
+  },
+  {
+   "type": "node",
+   "id": "if",
+   "x": 50,
+   "y": 142,
+   "w": 620,
+   "h": 58,
+   "label": "BRC-100 wallet interface",
+   "sub": "createAction, signAction, listOutputs, listActions, internalizeAction",
+   "role": "accent",
+   "dashed": true,
+   "mono": true
+  },
+  {
+   "type": "edge",
+   "from": [
+    360,
+    200
+   ],
+   "to": [
+    360,
+    226
+   ]
+  },
+  {
+   "type": "group",
+   "x": 20,
+   "y": 226,
+   "w": 680,
+   "h": 150,
+   "title": "Wallet toolkit",
+   "note": "For developers building a wallet",
+   "fill": true
+  },
+  {
+   "type": "node",
+   "id": "c280_0",
+   "x": 77,
+   "y": 280,
+   "w": 190,
+   "h": 34,
+   "label": "@bsv/wallet-toolbox",
+   "size": 13,
+   "weight": 400,
+   "mono": true
+  },
+  {
+   "type": "node",
+   "id": "c280_1",
+   "x": 275,
+   "y": 280,
+   "w": 160,
+   "h": 34,
+   "label": "Storage providers",
+   "size": 13,
+   "weight": 400,
+   "mono": false
+  },
+  {
+   "type": "node",
+   "id": "c280_2",
+   "x": 443,
+   "y": 280,
+   "w": 200,
+   "h": 34,
+   "label": "Monitor + key managers",
+   "size": 13,
+   "weight": 400,
+   "mono": false
+  },
+  {
+   "type": "node",
+   "id": "c322_0",
+   "x": 250,
+   "y": 322,
+   "w": 220,
+   "h": 34,
+   "label": "WalletSigner + Services",
+   "size": 13,
+   "weight": 400,
+   "mono": false
+  },
+  {
+   "type": "edge",
+   "from": [
+    360,
+    376
+   ],
+   "to": [
+    360,
+    402
+   ]
+  },
+  {
+   "type": "group",
+   "x": 20,
+   "y": 402,
+   "w": 680,
+   "h": 150,
+   "title": "Foundation: @bsv/sdk",
+   "note": "Zero external dependencies, used by every layer above",
+   "fill": true
+  },
+  {
+   "type": "node",
+   "id": "c456_0",
+   "x": 87,
+   "y": 456,
+   "w": 130,
+   "h": 34,
+   "label": "Cryptography",
+   "size": 13,
+   "weight": 400,
+   "mono": false
+  },
+  {
+   "type": "node",
+   "id": "c456_1",
+   "x": 225,
+   "y": 456,
+   "w": 200,
+   "h": 34,
+   "label": "Script and transactions",
+   "size": 13,
+   "weight": 400,
+   "mono": false
+  },
+  {
+   "type": "node",
+   "id": "c456_2",
+   "x": 433,
+   "y": 456,
+   "w": 200,
+   "h": 34,
+   "label": "BEEF and Merkle proofs",
+   "size": 13,
+   "weight": 400,
+   "mono": false
+  },
+  {
+   "type": "node",
+   "id": "c498_0",
+   "x": 245,
+   "y": 498,
+   "w": 230,
+   "h": 34,
+   "label": "Key derivation and network",
+   "size": 13,
+   "weight": 400,
+   "mono": false
+  }
+ ]
+}

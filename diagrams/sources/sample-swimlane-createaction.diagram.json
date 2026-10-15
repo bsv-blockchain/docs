@@ -1,0 +1,179 @@
+{
+ "slug": "sample-swimlane-createaction",
+ "alt": "Swimlane of a createAction call. The app calls createAction. The wallet checks the request. If it can finish alone, it returns the result. If not, it returns a signable transaction, the app signs and calls signAction, and the wallet returns the result.",
+ "width": 720,
+ "height": 350,
+ "elements": [
+  {
+   "type": "group",
+   "x": 8,
+   "y": 8,
+   "w": 704,
+   "h": 106,
+   "label": "Your app",
+   "fill": true
+  },
+  {
+   "type": "group",
+   "x": 8,
+   "y": 122,
+   "w": 704,
+   "h": 220,
+   "label": "User's wallet",
+   "fill": true
+  },
+  {
+   "type": "node",
+   "id": "ask",
+   "x": 22,
+   "y": 38,
+   "w": 170,
+   "h": 60,
+   "label": "Call createAction"
+  },
+  {
+   "type": "node",
+   "id": "sign",
+   "x": 272,
+   "y": 38,
+   "w": 200,
+   "h": 60,
+   "label": "Sign the inputs",
+   "sub": "then call signAction"
+  },
+  {
+   "type": "node",
+   "id": "use",
+   "x": 522,
+   "y": 38,
+   "w": 170,
+   "h": 60,
+   "label": "Use the result"
+  },
+  {
+   "type": "node",
+   "id": "dec",
+   "x": 22,
+   "y": 212,
+   "w": 170,
+   "h": 60,
+   "label": "Check the request",
+   "sub": "can it finish alone?"
+  },
+  {
+   "type": "node",
+   "id": "sbl",
+   "x": 272,
+   "y": 152,
+   "w": 200,
+   "h": 60,
+   "label": "Signable action",
+   "sub": "the app must sign"
+  },
+  {
+   "type": "node",
+   "id": "imm",
+   "x": 272,
+   "y": 268,
+   "w": 200,
+   "h": 60,
+   "label": "Immediate action",
+   "sub": "the wallet finishes alone"
+  },
+  {
+   "type": "node",
+   "id": "ret",
+   "x": 522,
+   "y": 152,
+   "w": 170,
+   "h": 60,
+   "label": "Return the result",
+   "sub": "txid and/or transaction"
+  },
+  {
+   "type": "edge",
+   "from": "ask",
+   "to": "dec",
+   "points": [
+    [
+     165,
+     98
+    ],
+    [
+     165,
+     212
+    ]
+   ]
+  },
+  {
+   "type": "edge",
+   "from": "dec",
+   "to": "sbl"
+  },
+  {
+   "type": "edge",
+   "from": "dec",
+   "to": "imm"
+  },
+  {
+   "type": "edge",
+   "from": "sbl",
+   "to": "sign",
+   "label": "signableTransaction",
+   "labelAt": [
+    364,
+    138
+   ],
+   "labelAnchor": "end"
+  },
+  {
+   "type": "edge",
+   "from": "sign",
+   "to": "ret",
+   "via": [
+    [
+     497,
+     68
+    ],
+    [
+     497,
+     170
+    ]
+   ],
+   "toDy": -12,
+   "label": "signAction",
+   "labelAt": [
+    505,
+    138
+   ],
+   "labelAnchor": "start"
+  },
+  {
+   "type": "edge",
+   "from": "imm",
+   "to": "ret",
+   "via": [
+    [
+     497,
+     298
+    ],
+    [
+     497,
+     194
+    ]
+   ],
+   "toDy": 12
+  },
+  {
+   "type": "edge",
+   "from": "ret",
+   "to": "use",
+   "label": "result",
+   "labelAt": [
+    615,
+    138
+   ],
+   "labelAnchor": "start"
+  }
+ ]
+}

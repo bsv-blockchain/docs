@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="250" viewBox="0 0 720 250" fill="none" role="img" aria-labelledby="t">
+<title id="t">The outcomes of a createAction call. The wallet either finishes alone (immediate action) or returns a signable action. For a signable action, the app signs and calls signAction. Both paths end with a finished transaction.</title>
+<defs><marker id="arr-a7afbd" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#a7afbd"/></marker></defs>
+<path d="M155 128 L180 128 L180 51 L205 51" fill="none" stroke="#a7afbd" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-a7afbd)"/>
+<path d="M155 128 L180 128 L180 205 L205 205" fill="none" stroke="#a7afbd" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-a7afbd)"/>
+<path d="M380 51 L480 51 L480 128 L580 128" fill="none" stroke="#a7afbd" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-a7afbd)"/>
+<path d="M380 205 L410 205" fill="none" stroke="#a7afbd" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-a7afbd)"/>
+<path d="M550 205 L642 205 L642.5 159" fill="none" stroke="#a7afbd" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arr-a7afbd)"/>
+<rect x="15" y="97" width="140" height="62" rx="6" fill="#1b2029" stroke="#6b7486" stroke-width="1.25"/>
+<text x="85" y="124.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8ebf0">createAction</text>
+<text x="85" y="141.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#e8ebf0">called</text>
+<rect x="205" y="20" width="175" height="62" rx="6" fill="#12291c" stroke="#3fbf73" stroke-width="1.25"/>
+<text x="292.5" y="47.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#8fe0b0">Immediate action</text>
+<text x="292.5" y="64.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#8fe0b0">wallet finishes alone</text>
+<rect x="205" y="174" width="175" height="62" rx="6" fill="#2b2410" stroke="#e0b532" stroke-width="1.25"/>
+<text x="292.5" y="201.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#f1d27a">Signable action</text>
+<text x="292.5" y="218.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#f1d27a">app must sign</text>
+<rect x="410" y="174" width="140" height="62" rx="6" fill="#152240" stroke="#6d97ef" stroke-width="1.25"/>
+<text x="480" y="201.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#b4cbfa">Your app signs</text>
+<text x="480" y="218.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="400" fill="#b4cbfa">signAction</text>
+<rect x="580" y="97" width="125" height="62" rx="6" fill="#12291c" stroke="#3fbf73" stroke-width="1.25"/>
+<text x="642.5" y="124.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#8fe0b0">Transaction</text>
+<text x="642.5" y="141.5" text-anchor="middle" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="600" fill="#8fe0b0">finished</text>
+</svg>

@@ -1,0 +1,20 @@
+%% Template: small lifecycle for a single object (refund, payout, dispute).
+%% For lifecycles with substatuses, keep the data in diagrams/data/*.json and run
+%% scripts/state-to-mermaid.mjs instead of writing Mermaid by hand.
+stateDiagram-v2
+    direction LR
+    [*] --> pending
+    state "Pending" as pending
+    state "Succeeded" as succeeded
+    state "Failed" as failed
+    state "Cancelled" as cancelled
+    pending --> succeeded
+    pending --> failed
+    pending --> cancelled : Cancel request
+    succeeded --> [*]
+    failed --> [*]
+    cancelled --> [*]
+    %% Paste classDefs from diagrams/brand/generated/mermaid-classdefs.light.mmd here, then:
+    %% class pending pending
+    %% class succeeded success
+    %% class failed,cancelled failure

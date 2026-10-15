@@ -1,0 +1,94 @@
+{
+ "slug": "sample-lifecycle-createaction",
+ "alt": "The outcomes of a createAction call. The wallet either finishes alone (immediate action) or returns a signable action. For a signable action, the app signs and calls signAction. Both paths end with a finished transaction.",
+ "width": 720,
+ "height": 250,
+ "elements": [
+  {
+   "type": "node",
+   "id": "c",
+   "x": 15,
+   "y": 97,
+   "w": 140,
+   "h": 62,
+   "label": "createAction\ncalled",
+   "role": "neutral"
+  },
+  {
+   "type": "node",
+   "id": "i",
+   "x": 205,
+   "y": 20,
+   "w": 175,
+   "h": 62,
+   "label": "Immediate action",
+   "sub": "wallet finishes alone",
+   "role": "success"
+  },
+  {
+   "type": "node",
+   "id": "s",
+   "x": 205,
+   "y": 174,
+   "w": 175,
+   "h": 62,
+   "label": "Signable action",
+   "sub": "app must sign",
+   "role": "pending"
+  },
+  {
+   "type": "node",
+   "id": "g",
+   "x": 410,
+   "y": 174,
+   "w": 140,
+   "h": 62,
+   "label": "Your app signs",
+   "sub": "signAction",
+   "role": "info"
+  },
+  {
+   "type": "node",
+   "id": "d",
+   "x": 580,
+   "y": 97,
+   "w": 125,
+   "h": 62,
+   "label": "Transaction\nfinished",
+   "role": "success"
+  },
+  {
+   "type": "edge",
+   "from": "c",
+   "to": "i"
+  },
+  {
+   "type": "edge",
+   "from": "c",
+   "to": "s"
+  },
+  {
+   "type": "edge",
+   "from": "i",
+   "to": "d"
+  },
+  {
+   "type": "edge",
+   "from": "s",
+   "to": "g"
+  },
+  {
+   "type": "edge",
+   "from": "g",
+   "to": "d",
+   "fromSide": "r",
+   "toSide": "b",
+   "via": [
+    [
+     642,
+     205
+    ]
+   ]
+  }
+ ]
+}

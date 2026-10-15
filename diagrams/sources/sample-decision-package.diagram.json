@@ -1,0 +1,130 @@
+{
+ "slug": "sample-decision-package",
+ "alt": "Choosing a package. If you are building a wallet, use @bsv/wallet-toolbox. Otherwise, if the user holds the keys, use @bsv/simple/browser. If your own backend or agent holds the key, use @bsv/simple/server.",
+ "width": 720,
+ "height": 310,
+ "elements": [
+  {
+   "type": "node",
+   "id": "q1",
+   "x": 15,
+   "y": 150,
+   "w": 190,
+   "h": 100,
+   "label": "Building\na wallet?",
+   "shape": "diamond",
+   "role": "accent"
+  },
+  {
+   "type": "node",
+   "id": "q2",
+   "x": 255,
+   "y": 150,
+   "w": 215,
+   "h": 100,
+   "label": "Does the user\nhold the keys?",
+   "shape": "diamond",
+   "role": "accent"
+  },
+  {
+   "type": "node",
+   "id": "o1",
+   "x": 255,
+   "y": 12,
+   "w": 200,
+   "h": 56,
+   "label": "@bsv/wallet-toolbox",
+   "mono": true,
+   "sub": "build a wallet"
+  },
+  {
+   "type": "node",
+   "id": "o2",
+   "x": 520,
+   "y": 78,
+   "w": 185,
+   "h": 60,
+   "label": "@bsv/simple/browser",
+   "mono": true,
+   "sub": "uses the user's wallet"
+  },
+  {
+   "type": "node",
+   "id": "o3",
+   "x": 520,
+   "y": 228,
+   "w": 185,
+   "h": 60,
+   "label": "@bsv/simple/server",
+   "mono": true,
+   "sub": "agent, own key"
+  },
+  {
+   "type": "edge",
+   "from": "q1",
+   "to": "o1",
+   "fromSide": "t",
+   "toSide": "l",
+   "via": [
+    [
+     110,
+     40
+    ]
+   ],
+   "label": "Yes",
+   "labelAt": [
+    122,
+    33
+   ],
+   "labelAnchor": "start"
+  },
+  {
+   "type": "edge",
+   "from": "q1",
+   "to": "q2",
+   "label": "No"
+  },
+  {
+   "type": "edge",
+   "from": "q2",
+   "to": "o2",
+   "fromSide": "t",
+   "toSide": "l",
+   "via": [
+    [
+     362,
+     108
+    ]
+   ],
+   "label": "Yes",
+   "labelAt": [
+    378,
+    101
+   ],
+   "labelAnchor": "start"
+  },
+  {
+   "type": "edge",
+   "from": "q2",
+   "to": "o3",
+   "fromSide": "r",
+   "toSide": "l",
+   "via": [
+    [
+     495,
+     200
+    ],
+    [
+     495,
+     258
+    ]
+   ],
+   "label": "No",
+   "labelAt": [
+    476,
+    193
+   ],
+   "labelAnchor": "start"
+  }
+ ]
+}
