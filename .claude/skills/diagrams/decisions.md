@@ -64,6 +64,12 @@ Four layers, because diagram-design is third-party and its output varies:
 4. `check-diagram.mjs --profile <slug>` compares the writer's `~/.diagram-design/profiles/<slug>.md` with the repo profile, because each writer copies the profile once and can keep a stale one.
 Not tested: diagram-design itself (not installed here). The rule is untested end to end until a real run.
 
+**D12. Static layered architecture without diagram-design: inline component.**
+User asked whether the skill could make a layered architecture figure (four stacked layers with chips, arrows, one dashed interface box, per-layer hues, with a title). The kit routed it to diagram-design, which is not installed, and had no template for the fallback. Built `snippets/diagrams/StackLayers.jsx` (HTML/CSS with `--wd-*` colors, data arrays, optional `href`) on `docs/concepts/architecture.mdx`, replacing the hotlinked SVG; agent text block above; verified with `check-page.mjs` (light, dark, wide and phone).
+Differences from the example, by the skill's rules: no title or subtitle; neutral layers with the accent only on the BRC-100 interface instead of four hues; names from the page text (the example image had `@bsv/wallet-helper`, which the page does not mention, so it was left out and should be confirmed).
+Found while testing: the portal restyles `<p>` inside snippets, so the first render had names and notes on one line and uncentered text; fixed with `div`s. The first render was wrong and only the screenshot showed it, which is the case for the verify step.
+Skill changes: `SKILL.md` routing row; `types.md > Static inline component`; `platforms/writedocs.md` gotchas. Clickable links were not added (D10: ask first); the component supports them.
+
 ## Changes to kit files (merge into the central repo)
 
 | File | Change |
