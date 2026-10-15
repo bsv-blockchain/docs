@@ -1,7 +1,7 @@
 // Sequence diagram for "Pay from a web app": how one payment moves between the app, the wallet and the network.
 // Content only: edit actors and messages here. Tested on BSV Desktop 3.1.1, 2026-10-15.
 const actors = [
-  { name: 'Your app', note: <><code>pay.mjs</code> in this tutorial</> },
+  { name: 'Your app', note: <><span className="font-mono">pay.mjs</span> in this tutorial</> },
   { name: 'BSV Desktop', note: 'Holds the private key' },
   { name: 'Testnet', note: 'Records the payment' },
 ];
