@@ -4,7 +4,7 @@ sidebarTitle: "Verify your payment"
 description: Check a BSV testnet payment you already sent on the explorer, from unconfirmed to confirmed, and read the fee it paid.
 ---
 
-At this stage, you already sent a **BSV** testnet payment, from [Pay from a web app](/docs/get-started/quick-start-browser/) or [Pay from a server](/docs/get-started/quick-start-server/), and have its transaction ID (txid). Now check that payment outside your wallet, on the testnet explorer. In this tutorial, you:
+At this stage, you already sent a BSV testnet payment, from [Pay from a web app](/docs/get-started/quick-start-browser/) or [Pay from a server](/docs/get-started/quick-start-server/), and have its transaction ID. Now check that payment outside your wallet, on the testnet explorer. In this tutorial, you:
 
 - Open the payment on the testnet explorer.
 - Follow it from unconfirmed to confirmed.
@@ -17,7 +17,7 @@ Looking up a payment does not change your wallet or your balance.
 
 {/* WRITER: when Pay from a server is written, check where it prints the txid and name it here. */}
 
-Have the txid of your testnet payment. In Pay from a web app, the `pay.mjs` script prints it. In BSV Desktop, click the payment under **Activity**, then **Copy ID**.
+Have the transaction ID of your testnet payment. In Pay from a web app, the `pay.mjs` script prints it. In BSV Desktop, click the payment under **Activity**, then **Copy ID**.
 
 ## How it works
 
@@ -25,14 +25,14 @@ The testnet explorer at [test.whatsonchain.com](https://test.whatsonchain.com/) 
 
 ## Open the payment on the explorer
 
-Follow these steps to open the transaction page from its txid:
+Follow these steps to open the transaction page from its transaction ID:
 
 <Steps>
   <Step title="Open the explorer link">
-    Add your txid to the end of the explorer address and open it in a browser:
+    Add your transaction ID to the end of the explorer address and open it in a browser. Replace `YOUR_TXID` with the transaction ID of your payment:
 
     ```text
-    https://test.whatsonchain.com/tx/<txid>
+    https://test.whatsonchain.com/tx/YOUR_TXID
     ```
 
     In BSV Desktop, click the payment under **Activity**, then **View transaction**, to open the same page.
@@ -51,7 +51,7 @@ Follow these steps to open the transaction page from its txid:
 </Steps>
 
 <Callout type="note">
-  The address without `test.`, `whatsonchain.com`, is the mainnet explorer, which does not show testnet transactions.
+  The explorer at `whatsonchain.com`, without `test.`, is the Mainnet explorer and does not show testnet transactions.
 </Callout>
 
 ## Follow the payment until it is confirmed
@@ -96,10 +96,10 @@ The explorer also answers requests from code, so your app can check a payment wi
 
 <Steps>
   <Step title="Request the transaction">
-    In a terminal, request the transaction from the WhatsOnChain testnet API with your txid:
+    In a terminal, request the transaction from the WhatsOnChain testnet API. Replace `YOUR_TXID` with your transaction ID:
 
     ```bash
-    curl https://api.whatsonchain.com/v1/bsv/test/tx/hash/<txid>
+    curl https://api.whatsonchain.com/v1/bsv/test/tx/hash/YOUR_TXID
     ```
   </Step>
   <Step title="Read the response">
@@ -118,13 +118,13 @@ The explorer also answers requests from code, so your app can check a payment wi
   </Step>
 </Steps>
 
-The same request works from your own app. The `pay.mjs` script of [Pay from a web app](/docs/get-started/quick-start-browser/) shows the simplest form, a link to the explorer built from the txid.
+The same request works from your own app. The `pay.mjs` script of [Pay from a web app](/docs/get-started/quick-start-browser/) shows the simplest form, a link to the explorer built from the transaction ID.
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="Explorer page says it cannot be found">
-    The explorer shows `This page cannot be found. 404` when it has not listed the payment yet, or when the link points to the mainnet explorer. Check that the link starts with `https://test.whatsonchain.com/tx/`, wait a minute, and reload.
+    The explorer shows `This page cannot be found. 404` when it has not listed the payment yet, or when the link points to the Mainnet explorer. Check that the link starts with `https://test.whatsonchain.com/tx/`, wait a minute, and reload.
   </Accordion>
   <Accordion title="Payment stays unconfirmed for a long time">
     The payment confirms with the next testnet block, and the wait for that block can reach about 14 minutes. Wait and reload.
