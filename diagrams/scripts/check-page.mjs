@@ -6,7 +6,7 @@
  * Usage:
  *   node diagrams/scripts/check-page.mjs --url http://localhost:4321/docs/concepts/wallet-model/ \
  *     [--selector ".caf"] [--out /tmp/diagram-check] [--theme-attr data-theme] \
- *     [--desktop-width 1280] [--md http://localhost:4321/docs/concepts/wallet-model.md] [--expect "signAction" --expect "Path 2"]
+ *     [--min-font 12] [--desktop-width 1280] [--md http://localhost:4321/docs/concepts/wallet-model.md] [--expect "signAction" --expect "Path 2"]
  *
  * Needs playwright-core and a Chromium. Set PLAYWRIGHT_CORE to the module folder if it is not installed in the project,
  * and CHROME_PATH to the browser binary if playwright cannot find one.
@@ -27,6 +27,7 @@ const selector = opt("selector", null);
 const themeAttr = opt("theme-attr", "data-theme");
 const mdUrl = opt("md", null);
 const desktopWidth = Number(opt("desktop-width", 1280));
+const minFont = Number(opt("min-font", 12));
 const expects = all("expect");
 
 let pw;
@@ -62,6 +63,43 @@ for (const [vpName, vp] of [["desktop", { width: desktopWidth, height: 900 }], [
     }
     await page.close();
   }
+}
+
+// Rendered font size audit: the size the reader actually sees, after the SVG or image is scaled to the column.
+// Phone width is skipped on purpose (everything shrinks there; readers zoom). Desktop widths are checked.
+for (const w of [768, 1280, 1440]) {
+  const page = await browser.newPage({ viewport: { width: w, height: 900 } });
+  await page.goto(url, { waitUntil: "networkidle" });
+  const found = await page.evaluate(async ({ sel, min }) => {
+    const bad = new Map();
+    const note = (text, px) => { if (px < min - 0.1) bad.set(`${text}|${Math.round(px * 10) / 10}`, { text, px: Math.round(px * 10) / 10 }); };
+    const root = sel ? document.querySelector(sel) : document.querySelector("main") || document.body;
+    if (root) {
+      root.querySelectorAll("svg text").forEach((t) => {
+        if (!t.getClientRects().length || !t.textContent.trim()) return;
+        const ctm = t.getScreenCTM();
+        if (ctm) note(t.textContent.trim().slice(0, 40), parseFloat(getComputedStyle(t).fontSize) * ctm.a);
+      });
+      if (sel) {
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+          const el = n.parentElement;
+          if (!n.textContent.trim() || !el || el.closest("svg") || !el.getClientRects().length) continue;
+          note(n.textContent.trim().slice(0, 40), parseFloat(getComputedStyle(el).fontSize));
+        }
+      }
+    }
+    for (const img of document.querySelectorAll('img[src$=".svg"]')) {
+      if (!img.getClientRects().length || !img.width) continue;
+      const svg = await (await fetch(img.src)).text();
+      const vbw = Number((svg.match(/viewBox="[\d.]+ [\d.]+ ([\d.]+)/) || [])[1]) || img.naturalWidth;
+      const scale = img.getBoundingClientRect().width / vbw;
+      for (const m of svg.matchAll(/<text[^>]*font-size="([\d.]+)"[^>]*>([^<]*)</g)) note(m[2].slice(0, 40), Number(m[1]) * scale);
+    }
+    return [...bad.values()];
+  }, { sel: selector, min: minFont });
+  for (const f of found) problems.push(`[${w}px window] text renders at ${f.px}px, below the ${minFont}px minimum: "${f.text}"`);
+  await page.close();
 }
 await browser.close();
 

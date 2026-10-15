@@ -39,7 +39,7 @@ const css = `
 .sl-note { display: block; margin: 4px 0 0; text-align: center; color: var(--wd-text-muted); }
 .sl-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 12px; }
 .sl-chip { padding: 7px 12px; border: 1px solid var(--wd-border); border-radius: 8px; background: var(--wd-background); color: var(--wd-text-muted); text-align: center; }
-.sl-chip[data-code="true"] { color: var(--wd-text); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; }
+.sl-chip[data-code="true"] { color: var(--wd-text); font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
 a.sl-chip, a.sl-name-link { text-decoration: none; }
 a.sl-chip:hover, a.sl-chip:focus-visible { border-color: var(--wd-primary); color: var(--wd-text); }
 .sl-boundary { width: max-content; max-width: 100%; margin: 0 auto; padding: 10px 16px; border: 2px dashed var(--wd-primary); border-radius: 10px; background: var(--wd-background); text-align: center; }

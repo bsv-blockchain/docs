@@ -63,32 +63,32 @@ const cards = [
 ];
 
 const css = `
-.caf { position: relative; container-type: inline-size; width: 100%; margin: 24px 0; border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); padding: 16px; color: var(--wd-text); font-size: 13px; }
+.caf { position: relative; container-type: inline-size; width: 100%; margin: 24px 0; border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); padding: 16px; color: var(--wd-text); font-size: 14px; }
 .caf-svg { display: block; width: 100%; height: auto; }
 .caf-stack { display: none; flex-direction: column; gap: 8px; }
 .caf-card { padding: 10px 12px; border: 1px solid var(--wd-border); border-radius: 10px; background: var(--wd-background); color: var(--wd-text-muted); }
 .caf-card[data-active="true"] { border: 2px solid var(--wd-primary); padding: 9px 11px; color: var(--wd-text); }
-.caf-card-lane { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
+.caf-card-lane { font-size: 12.5px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; }
 .caf-card-title { margin-top: 2px; font-size: 14px; font-weight: 600; }
 .caf-list { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .caf-list li { display: flex; align-items: center; gap: 8px; margin: 0; }
 .caf-mark { flex: none; width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--wd-text-muted); box-sizing: border-box; }
 .caf-mark[data-state="done"] { background: var(--wd-primary); border-color: var(--wd-primary); }
 .caf-mark[data-state="current"] { background: var(--wd-text); border-color: var(--wd-text); }
-.caf-arrow { text-align: center; font-size: 12px; color: var(--wd-text-muted); }
+.caf-arrow { text-align: center; font-size: 13px; color: var(--wd-text-muted); }
 .caf-panel { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--wd-border); }
 .caf-slides { display: grid; }
 .caf-slide { grid-area: 1 / 1; visibility: hidden; }
 .caf-slide[data-active="true"] { visibility: visible; }
 .caf-sr { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-.caf-step { font-size: 12px; color: var(--wd-text-muted); }
+.caf-step { font-size: 13px; color: var(--wd-text-muted); }
 .caf-title { margin-top: 4px; font-size: 20px; font-weight: 600; line-height: 1.3; }
 .caf-text { margin: 8px 0 0; }
 .caf-note { margin: 10px 0 0; padding-left: 12px; border-left: 3px solid var(--wd-border); color: var(--wd-text-muted); }
 .caf-hint { position: relative; border-bottom: 1px dotted currentColor; cursor: help; }
-.caf-tip { position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); width: max-content; max-width: 240px; padding: 6px 10px; border-radius: 8px; background: var(--wd-text); color: var(--wd-background); font-size: 12px; font-weight: 500; line-height: 1.4; visibility: hidden; opacity: 0; pointer-events: none; z-index: 5; }
+.caf-tip { position: absolute; left: 50%; bottom: calc(100% + 6px); transform: translateX(-50%); width: max-content; max-width: 240px; padding: 6px 10px; border-radius: 8px; background: var(--wd-text); color: var(--wd-background); font-size: 13px; font-weight: 500; line-height: 1.4; visibility: hidden; opacity: 0; pointer-events: none; z-index: 5; }
 .caf-hint:hover .caf-tip { visibility: visible; opacity: 1; }
-.caf-code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.92em; padding: 1px 4px; border: 1px solid var(--wd-border); border-radius: 4px; background: var(--wd-background); }
+.caf-code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 0.95em; padding: 1px 4px; border: 1px solid var(--wd-border); border-radius: 4px; background: var(--wd-background); }
 .caf-actions { display: flex; justify-content: space-between; margin-top: 14px; }
 .caf-btn { font: inherit; padding: 6px 14px; border: 1px solid var(--wd-border); border-radius: 8px; background: var(--wd-background); color: var(--wd-text); cursor: pointer; }
 .caf-btn:disabled { color: var(--wd-text-muted); cursor: default; opacity: 0.6; }
@@ -147,8 +147,8 @@ export default function CreateActionFlow() {
   const box = (id, x, y, w, title, sub) => (
     <g key={id}>
       <rect x={x} y={y} width={w} height="58" rx="10" style={frame(id)} />
-      <text x={x + 16} y={y + 24} fontSize="14" fontWeight="600" style={{ ...font, fill: ink(id) }}>{title}</text>
-      <text x={x + 16} y={y + 42} fontSize="12" style={muted}>{sub}</text>
+      <text x={x + 16} y={y + 24} fontSize="15" fontWeight="600" style={{ ...font, fill: ink(id) }}>{title}</text>
+      <text x={x + 16} y={y + 45} fontSize="14" style={muted}>{sub}</text>
     </g>
   );
 
@@ -170,34 +170,34 @@ export default function CreateActionFlow() {
 
         <rect x="0.5" y="0.5" width="879" height="110" rx="12" style={lane} />
         <rect x="0.5" y="118.5" width="879" height="221" rx="12" style={lane} />
-        <text x="16" y="22" fontSize="11" fontWeight="600" letterSpacing="1" style={muted}>YOUR APP</text>
-        <text x="16" y="140" fontSize="11" fontWeight="600" letterSpacing="1" style={muted}>THE USER'S WALLET</text>
+        <text x="16" y="23" fontSize="14" fontWeight="600" letterSpacing="0.8" style={muted}>YOUR APP</text>
+        <text x="16" y="141" fontSize="14" fontWeight="600" letterSpacing="0.8" style={muted}>USER'S WALLET</text>
 
         {box('ask', 16, 36, 200, 'Call createAction', 'A BRC-100 method')}
         {box('sign', 330, 36, 220, 'Sign the inputs', 'Then call signAction')}
-        {box('use', 650, 36, 214, 'Use the result', 'Comes back from the wallet')}
+        {box('use', 650, 36, 214, 'Use the result', 'Result from the wallet')}
 
         {box('decide', 16, 190, 200, 'Check the request', 'Can it finish alone?')}
         {box('signable', 330, 160, 220, 'Signable action', 'The app must sign')}
-        {box('imm', 330, 252, 220, 'Immediate action', 'The wallet finishes alone')}
+        {box('imm', 330, 252, 220, 'Immediate action', 'Wallet finishes alone')}
         {box('ret', 650, 160, 214, 'Return the result', 'txid and/or transaction')}
 
-        <path d="M 190 94 V 190" style={line} markerEnd="url(#caf-arrow)" />
-        <text x="200" y="150" fontSize="12" style={muted}>Request</text>
+        <path d="M 205 94 V 190" style={line} markerEnd="url(#caf-arrow)" />
+        <text x="212" y="150" fontSize="14" style={muted}>Request</text>
 
         <path d="M 216 219 H 273 V 189 H 330" style={line} markerEnd="url(#caf-arrow)" />
         <path d="M 216 219 H 273 V 281 H 330" style={line} markerEnd="url(#caf-arrow)" />
 
         <path d="M 440 160 V 94" style={line} markerEnd="url(#caf-arrow)" />
-        <text x="450" y="140" fontSize="12" style={muted}>signableTransaction</text>
+        <text x="450" y="141" fontSize="14" style={muted}>signableTransaction</text>
 
         <path d="M 550 65 H 600 V 176 H 650" style={line} markerEnd="url(#caf-arrow)" />
-        <text x="608" y="140" fontSize="12" style={muted}>signAction</text>
+        <text x="612" y="141" fontSize="14" style={muted}>signAction</text>
 
         <path d="M 550 281 H 600 V 202 H 650" style={line} markerEnd="url(#caf-arrow)" />
 
         <path d="M 757 160 V 94" style={line} markerEnd="url(#caf-arrow)" />
-        <text x="767" y="140" fontSize="12" style={muted}>Result</text>
+        <text x="767" y="141" fontSize="14" style={muted}>Result</text>
       </svg>
 
       <div className="caf-stack" aria-hidden="true">
