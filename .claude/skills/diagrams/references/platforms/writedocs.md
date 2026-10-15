@@ -44,6 +44,8 @@ PLAYWRIGHT_CORE=<path to playwright-core> node diagrams/scripts/check-page.mjs \
 Expect the text, not the `<Visibility` tag, in the export. The content column is narrower than the window because of the sidebars: at 1280px wide it can be under 780px, which makes the swimlane show its stacked layout. Use `--desktop-width 1900` to see the SVG layout, and check both.
 
 ## Gotchas found
+- 2026-10-13: `<p>` elements inside a snippet are restyled by the portal (inline, left-aligned, ignoring the snippet's CSS). Use `div` with explicit `display` and `text-align`.
+- 2026-10-13: a snippet inside `<Frame caption="...">` renders fine; the caption stays page text.
 - 2026-10-12: `useEffect is not defined` after removing the `react` import from `StateMachine.jsx`.
 - 2026-10-12: kit StateMachine overlapped edge labels and routed an edge through a box in a 4-column layout; replaced by a custom swimlane.
 - 2026-10-12: StepFlow duplicated the built-in `<Steps>`.

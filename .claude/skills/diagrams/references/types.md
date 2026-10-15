@@ -57,6 +57,18 @@ Best for: a flow with two actors (for example app and wallet) or a branch, where
 5. Provide the stacked layout for narrow containers, the Back/Next buttons, and a live-region announcement for each step.
 6. Add the agent text block above the component (next section).
 
+## Static inline component (architecture, layers)
+
+Best for: layered architecture and box-in-box overviews when diagram-design is not available, on platforms where the project can ship React snippets. First built: `snippets/diagrams/StackLayers.jsx` on `docs/concepts/architecture.mdx`, replacing a hotlinked SVG image.
+
+1. Source of truth for names: the page's own text or the API/SDK docs. Do not copy names from an old image; check each against the source and flag any you cannot confirm.
+2. Build it as HTML and CSS (flex, wrapping chips), not as a fixed-coordinate SVG. It then adapts to any width with no separate mobile layout, and nothing overlaps. Use SVG only when arrows must cross between boxes in two dimensions (then use the swimlane pattern).
+3. Colors only from the platform theme variables (`--wd-*` here). Layers are neutral surfaces; use the accent for at most one or two elements (the interface or boundary). Do not use a different hue per layer: status colors are reserved for states.
+4. Content as arrays at the top of the file. Support an optional `href` on layers and chips, so the "Clickable parts" rule can be applied without changing the layout.
+5. No title or subtitle for the figure (SKILL.md). A layer's own name and one short note are part of the diagram and fine.
+6. Use `div`s with explicit `display` and `text-align`, not `p`: the portal's paragraph styles override them (found on WriteDocs).
+7. Wrap in the platform's figure component with a caption (the caption is page text), put the agent text block above, and run the verify step including a narrow-width screenshot.
+
 ## Clickable parts
 
 For an interactive diagram whose parts match existing pages or sections of the portal (a box named after a concept that has its own page, a step that is explained in a section), offer to make the parts clickable. The skill asks once, in the request step, and suggests the matches it found. Do not add links without the answer.

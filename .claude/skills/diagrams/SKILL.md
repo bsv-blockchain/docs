@@ -45,7 +45,7 @@ Then pick the diagram type. Only use types listed as enabled in `project.md`.
 | Is it a status lifecycle or process readers look up repeatedly and should explore? | React `StateMachine` (data-driven) |
 | Is it an ordered set of steps in a guide, with links to pages? | React `StepFlow`, or Mermaid flowchart if React is disabled |
 | Is it a flow with branches or two actors that readers should step through, and the platform supports custom React? | Custom step-through swimlane (see `types.md`) |
-| Is it a polished static figure (architecture, overview, swimlane, landing-page diagram)? | diagram-design |
+| Is it a polished static figure (architecture, overview, swimlane, landing-page diagram)? | diagram-design. If diagram-design is not enabled in `project.md`: layered architecture or other box-in-box figures use the static inline component (see `types.md`), flows use Mermaid or the custom swimlane |
 | Is it an illustration, concept image, hero image, or annotated product screenshot? | Figma |
 
 When two types fit, prefer the one that keeps a text source in the repo (Mermaid, data JSON) over a drawn file. When React is disabled and the request is a lifecycle, write the data JSON anyway and render it with `state-to-mermaid.mjs`, so it can move to React later.
