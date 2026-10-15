@@ -4,6 +4,8 @@ sidebarTitle: "Pay from a web app"
 description: Set up a BSV testnet wallet, connect an app to it with the TypeScript SDK, and send a first payment without putting a private key in your code.
 ---
 
+import PaymentSequence from '/snippets/PaymentSequence.jsx';
+
 Send your first BSV payment from code, using [BSV Desktop](https://desktop.bsvb.tech/) on testnet. In this tutorial, you:
 
 - Set up a BSV Desktop wallet on testnet and fund it with free coins.
@@ -22,20 +24,7 @@ Your app never holds a private key. In this tutorial, the scripts `connect.mjs` 
 
 The diagram shows who talks to whom, in order:
 
-```mermaid
-sequenceDiagram
-    participant F as Faucet
-    participant S as Your script
-    participant W as BSV Desktop
-    participant N as Testnet
-    F->>W: Sends free testnet coins
-    S->>W: connect.mjs reads the identity key and network
-    S->>W: pay.mjs asks for a payment (createAction)
-    W->>W: You click Authorize, the wallet signs
-    W->>N: Sends the payment
-    W-->>S: Returns the transaction ID
-    S->>N: You open the explorer link to see the payment
-```
+<PaymentSequence />
 
 ## Set up a testnet wallet
 
