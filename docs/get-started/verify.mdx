@@ -25,33 +25,20 @@ The testnet explorer at [test.whatsonchain.com](https://test.whatsonchain.com/) 
 
 ## Open the payment on the explorer
 
-Follow these steps to open the transaction page from its transaction ID:
+Add your transaction ID to the end of the explorer address and open it in a browser. Replace `YOUR_TXID` with the transaction ID of your payment:
 
-<Steps>
-  <Step title="Open the explorer link">
-    Add your transaction ID to the end of the explorer address and open it in a browser. Replace `YOUR_TXID` with the transaction ID of your payment:
+```text
+https://test.whatsonchain.com/tx/YOUR_TXID
+```
 
-    ```text
-    https://test.whatsonchain.com/tx/YOUR_TXID
-    ```
+In BSV Desktop, click the payment under **Activity**, then **View transaction**, to open the same page.
 
-    In BSV Desktop, click the payment under **Activity**, then **View transaction**, to open the same page.
-
-    <Frame>
-      <img src="/images/verify/04-desktop-payment-details.png" alt="The Payment details window of BSV Desktop with the amount, the Accepted status, the transaction ID, and the Copy ID and View transaction links" />
-    </Frame>
-  </Step>
-  <Step title="Wait for the page if it is not there yet">
-    For the first minute or two after a payment, the page can say **This page cannot be found. 404**, because the explorer has not listed the payment yet. Wait a minute and reload.
-
-    <Frame>
-      <img src="/images/verify/03-explorer-404.png" alt="The WhatsOnChain page with the message This page cannot be found. 404" />
-    </Frame>
-  </Step>
-</Steps>
+<Frame>
+  <img src="/images/verify/01-desktop-payment-details.png" alt="The Payment details window of BSV Desktop with the amount, the Accepted status, the transaction ID, and the Copy ID and View transaction links" />
+</Frame>
 
 <Callout type="note">
-  The explorer at `whatsonchain.com`, without `test.`, is the Mainnet explorer and does not show testnet transactions.
+  For the first minute or two after a payment, the page can say **This page cannot be found. 404**, because the explorer has not listed the payment yet. Wait a minute and reload. If it still says so, check that the link starts with `https://test.whatsonchain.com/tx/`: the explorer at `whatsonchain.com`, without `test.`, is the Mainnet explorer and does not show testnet transactions.
 </Callout>
 
 ## Follow the payment until it is confirmed
@@ -63,19 +50,23 @@ The transaction page changes once the payment is in a block. Take these steps to
     Right after the payment, the page shows **Status** as **UNCONFIRMED**, with **Fee offered to miner**, **Fee Rate**, **Size**, and the inputs and outputs. In the outputs, you find the amount you sent and the address it went to.
 
     <Frame>
-      <img src="/images/verify/01-explorer-unconfirmed.png" alt="A WhatsOnChain testnet transaction page with the UNCONFIRMED status, the fee offered to miner, the fee rate and the size" />
+      <img src="/images/verify/02-explorer-unconfirmed.png" alt="A WhatsOnChain testnet transaction page with the UNCONFIRMED status, the fee offered to miner and the size" />
     </Frame>
   </Step>
   <Step title="Reload until the payment is confirmed">
-    Reload the page from time to time. Once the payment is in a block, the page shows **Block** with its number, **Confirmations**, and **Fee Paid** in place of **Fee offered to miner**.
+    Reload the page from time to time. Once the payment is in a block, the **Status** line gives way to **Timestamp (utc)** and **Block** with its number, and the page shows **Confirmations** and **Fee Paid** in place of **Fee offered to miner**.
 
     <Frame>
-      <img src="/images/verify/02-explorer-confirmed.png" alt="The same transaction page after confirmation, with the block number, one confirmation and the fee paid" />
+      <img src="/images/verify/03-explorer-confirmed.png" alt="The same transaction page after confirmation, with the timestamp, the block number, the fee paid, the size and 13 confirmations" />
     </Frame>
   </Step>
 </Steps>
 
 On testnet, the first confirmation can take from under a minute to about 20 minutes, depending on when the next block is mined.
+
+<Callout type="note">
+  BSV Desktop can still show **Accepted** while the explorer already shows confirmations, and changes to **Confirmed** later. The explorer shows the state of the testnet.
+</Callout>
 
 ## Read the fee
 
@@ -83,10 +74,10 @@ The fee on the explorer is the same fee you approved in your wallet:
 
 <Steps>
   <Step title="Read the fee on the explorer">
-    The fee is next to **Fee offered to miner**, or **Fee Paid** once confirmed, in BSV. Multiply it by 100,000,000 to get satoshis, so `0.00000057` BSV is 57 satoshis.
+    The fee is next to **Fee offered to miner**, or **Fee Paid** once confirmed, in BSV. Multiply it by 100,000,000 to get satoshis, so `0.00000116` BSV is 116 satoshis.
   </Step>
   <Step title="Compare it with BSV Desktop">
-    In BSV Desktop, the **Spending Request** you approved showed the total with the fee, for example 1,057 satoshis for a payment of 1,000. The difference is the same fee as on the explorer.
+    In BSV Desktop, the **Spending Request** you approved showed the total with the fee, for example 1,116 satoshis for a payment of 1,000. The difference is the same fee as on the explorer. For a payment to your own address, the balance first goes down by the whole total, and BSV Desktop adds the amount back after you click **Get paid** on the **Wallet** page, then **Check for payments**.
   </Step>
 </Steps>
 
@@ -108,9 +99,9 @@ The explorer also answers requests from code, so your app can check a payment wi
     ```json
     {
       "txid": "<txid>",
-      "size": 226,
-      "blockheight": 1763235,
-      "confirmations": 6
+      "size": 464,
+      "blockheight": 1763389,
+      "confirmations": 13
     }
     ```
 
@@ -119,23 +110,6 @@ The explorer also answers requests from code, so your app can check a payment wi
 </Steps>
 
 The same request works from your own app. The `pay.mjs` script of [Pay from a web app](/docs/get-started/quick-start-browser/) shows the simplest form, a link to the explorer built from the transaction ID.
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="Explorer page says it cannot be found">
-    The explorer shows `This page cannot be found. 404` when it has not listed the payment yet, or when the link points to the Mainnet explorer. Check that the link starts with `https://test.whatsonchain.com/tx/`, wait a minute, and reload.
-  </Accordion>
-  <Accordion title="Payment stays unconfirmed for a long time">
-    The payment confirms with the next testnet block, and the wait for that block can reach about 20 minutes. Wait and reload.
-  </Accordion>
-  <Accordion title="BSV Desktop shows Accepted while the explorer shows a confirmation">
-    BSV Desktop can show **Accepted** while the explorer already shows confirmations, and changes to **Confirmed** later. The explorer shows the state of the testnet.
-  </Accordion>
-  <Accordion title="Balance went down by the whole amount, not only the fee">
-    This comes from the wallet, not from the explorer. For a payment to your own address, BSV Desktop adds the amount back after you click **Get paid** on the **Wallet** page, then **Check for payments**.
-  </Accordion>
-</AccordionGroup>
 
 ## Next steps
 
