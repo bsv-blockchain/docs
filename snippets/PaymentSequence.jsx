@@ -2,7 +2,7 @@
 // Content only: edit the steps here. Tested on BSV Desktop 3.1.1, 2026-10-15.
 const steps = [
   { who: 'Your app', what: <>Asks the wallet for a payment of 1,000 satoshis with <code>createAction</code></> },
-  { who: 'BSV Desktop', what: <>Shows a <strong>Spending Request</strong>. You click <strong>Authorize</strong>, and the wallet signs with the private key</> },
+  { who: 'BSV Desktop', what: <>Shows a <strong>Spending Request</strong>. You click <strong>Authorize</strong>, and the wallet signs with the private key, which never leaves BSV Desktop</> },
   { who: 'Testnet', what: 'Receives the signed transaction from the wallet and records it' },
   { who: 'Your app', what: 'Gets the transaction ID back from the wallet' },
 ];
@@ -33,7 +33,6 @@ export default function PaymentSequence() {
           </li>
         ))}
       </ol>
-      <figcaption className="mt-3 text-center text-xs text-gray-500 dark:text-gray-400">The private key never leaves BSV Desktop.</figcaption>
     </figure>
   );
 }
