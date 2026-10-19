@@ -6,7 +6,7 @@ sidebarTitle: "Track with overlays"
 
 import OverlayFlow from '/snippets/OverlayFlow.jsx';
 
-**Overlays** index the transactions that matter to your app under a topic, so your app can find them again without scanning the chain. This fits an app that queries what it wrote, and here it runs as a standalone Node script with BSV Desktop on testnet that you can adapt. In this guide you send a transaction that carries data to a topic and look it up back.
+Overlays index the transactions that matter to your app under a topic, so your app can find them again without scanning the chain. Use one when your app needs to query what it wrote. The example runs as a standalone Node script with BSV Desktop on testnet, and you can adapt it to your app. In this guide, you send a transaction that carries data to a topic and look the data up again.
 
 ## Before you begin
 
@@ -106,7 +106,7 @@ With the wallet connected, create an output that carries your data.
     })
     ```
 
-    BSV Desktop opens a **Spending Request** window from the originator, `localhost`, showing the amount in satoshis and the action description, and you approve it with **Authorize**. The amount includes the transaction fee, so it is more than the 1 satoshi output. The `basket` keeps the output in your wallet under an app name, and `customInstructions` carries the key ID the output was created with.
+    BSV Desktop opens a **Spending Request** window from the originator, `localhost`, showing the amount in <Hint tip="The unit of BSV: 100,000,000 satoshis make 1 BSV.">satoshis</Hint> and the action description, and you approve it with **Authorize**. The amount includes the transaction fee, so it is more than the 1 satoshi output. The `basket` keeps the output in your wallet under an app name, and `customInstructions` carries the key ID the output was created with.
 
   </Step>
   <Step title="Broadcast to the topic">
@@ -158,7 +158,7 @@ With the output indexed, ask the service for it.
     console.log(JSON.stringify(answer))
     ```
 
-    The service answers with the outputs it admitted:
+    The service answers with the outputs it admitted. The `beef` array is shortened here:
 
     ```json
     {
@@ -173,8 +173,6 @@ With the output indexed, ask the service for it.
     Decode the <Hint tip="Background Evaluation Extended Format (BRC-62): a transaction with the evidence a host needs to verify it.">BEEF</Hint> to get the fields you stored:
 
     ```js
-    import { PushDrop } from '@bsv/sdk'
-
     const output = answer.outputs[0]
     const txFromOverlay = Transaction.fromBEEF(Uint8Array.from(output.beef))
     const decoded = PushDrop.decode(txFromOverlay.outputs[output.outputIndex].lockingScript)
