@@ -67,7 +67,7 @@ The host is a small Node project that runs the `tm_helloworld` topic and the `ls
     server.configurePort(8080)
     await server.configureKnex({
       client: 'better-sqlite3',
-      connection: { filename: './overlay.sqlite' },
+      connection: { filename: ':memory:' },
       useNullAsDefault: true
     })
     await server.configureMongo(mongo.getUri())
@@ -83,7 +83,13 @@ The host is a small Node project that runs the `tm_helloworld` topic and the `ls
     await server.start()
     ```
 
-    The host creates a throwaway key each time it starts, and it holds no funds. The lookup index lives in memory, so it is empty each time you start the host.
+    The host creates a throwaway key each time it starts, and it holds no funds. It keeps everything in memory, so it starts empty each time. These are the lines that do the work:
+
+    - `OverlayExpress` takes a name, the key of the host and the address it announces, here `localhost:8080`
+    - `configureKnex` sets the SQL database of the host, and `':memory:'` keeps it in memory
+    - `configureMongo` connects the MongoDB that the lookup service uses, and `mongodb-memory-server` starts a temporary one
+    - `configureNetwork('test')` runs the host on testnet
+    - `configureTopicManager` and `configureLookupServiceWithMongo` register the topic `tm_helloworld` and the lookup service `ls_helloworld`, both from `@bsv/overlay-topics`
 
   </Step>
   <Step title="Start the host">
@@ -94,7 +100,13 @@ The host is a small Node project that runs the `tm_helloworld` topic and the `ls
     node host.mjs
     ```
 
-    Open `http://localhost:8080/health` to check that it answers.
+    The host prints a long startup log. Near the end it logs `Failed to GASP sync` with `No competent mainnet hosts found by the SLAP trackers for lookup service: ls_ship`. This is harmless here: the host looks for other hosts to sync with, and a local one has none. The host is ready when the last line is:
+
+    ```text
+    local-host is ready and listening on local port 8080
+    ```
+
+    Open `http://localhost:8080/health` to check that it answers. The answer starts with `{"status":"ok","live":true,"ready":true`.
 
   </Step>
 </Steps>
