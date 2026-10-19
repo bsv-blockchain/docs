@@ -120,6 +120,16 @@ With `'auto'`, `WalletClient` looks for a wallet running on the same computer, s
 
 To use the wallet in a component of your own, call `useWallet()` inside it, as `src/bsv/Home.tsx` does with `const { connected } = useWallet()`. The hook also returns `wallet`, the same `WalletClient`, so your component can call any wallet method on it.
 
+The template installs `@bsv/sdk` 2.x, while the guides on this site use 3.x. Keep that in mind when you add code from a guide.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="App cannot find BSV Desktop">
+    After you click **Connect wallet**, the app shows `No desktop wallet found` because BSV Desktop is closed. Open BSV Desktop, check that the balance shows **BSV · TEST**, click **Cancel** and then click **Connect wallet** again.
+  </Accordion>
+</AccordionGroup>
+
 ## Next steps
 
 With the app connected, add features that use the wallet:
