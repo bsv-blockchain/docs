@@ -4,7 +4,7 @@ sidebarTitle: "Start from a template"
 description: Generate a React app with create-bsv-app that already connects to BSV Desktop, run it on testnet, and find the code that makes the connection.
 ---
 
-Start a new BSV app from a working project instead of an empty folder. [`create-bsv-app`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/create-bsv-app) generates a React app with the wallet connection already written, so it connects to BSV Desktop the first time you run it. In this guide, you:
+Start a new BSV app from a working project instead of an empty folder. [`create-bsv-app`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/create-bsv-app) generates a React app with the wallet connection already written, so it connects to [BSV Desktop](https://desktop.bsvb.tech/) the first time you run it. In this guide, you:
 
 - Generate a React app with `create-bsv-app`.
 - Run it on your computer and connect it to BSV Desktop on testnet.
@@ -79,7 +79,7 @@ With the project generated, start it and connect it to BSV Desktop:
   <Step title="Connect the app to BSV Desktop">
     In your browser, open the **Local** address from the terminal. The page shows **BSV app** and a **Connect wallet** button.
 
-    Click **Connect wallet**. The button changes to **Connected:** followed by the first 16 characters of your identity key.
+    Click **Connect wallet**. The button is replaced by **Connected:** followed by the first 16 characters of your identity key.
 
     <Frame>
       <img src="/images/project-starter/01-app-connected.png" alt="The generated app after connecting, with Connected and the start of the identity key, and No capability demos installed under Demos" />
@@ -103,7 +103,7 @@ The connection you just used is ready to build on. It lives in three files under
 
 This is the function that makes the connection, in `src/bsv/walletAcquisition.ts`:
 
-```ts src/bsv/walletAcquisition.ts
+```ts
 export async function connectDesktopWallet (): Promise<{ wallet: WalletInterface, identityKey: string }> {
   const wallet = new WalletClient('auto')
   const { authenticated } = await wallet.isAuthenticated()
@@ -113,7 +113,10 @@ export async function connectDesktopWallet (): Promise<{ wallet: WalletInterface
 }
 ```
 
-With `'auto'`, `WalletClient` looks for a wallet running on the same computer, such as BSV Desktop.
+With `'auto'`, `WalletClient` looks for a wallet running on the same computer, such as BSV Desktop. The other two calls do this:
+
+- `isAuthenticated()` checks that a wallet answers and is ready to use.
+- `getPublicKey({ identityKey: true })` asks for the identity key of the wallet, the key apps use to recognize it.
 
 To use the wallet in a component of your own, call `useWallet()` inside it, as `src/bsv/Home.tsx` does with `const { connected } = useWallet()`. The hook also returns `wallet`, the same `WalletClient`, so your component can call any wallet method on it.
 
