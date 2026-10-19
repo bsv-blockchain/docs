@@ -83,7 +83,7 @@ The host is a small Node project that runs the `tm_helloworld` topic and the `ls
     await server.start()
     ```
 
-    The lookup index lives in memory, so it is empty each time you start the host.
+    The host creates a throwaway key each time it starts, and it holds no funds. The lookup index lives in memory, so it is empty each time you start the host.
 
   </Step>
   <Step title="Start the host">
