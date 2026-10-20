@@ -4,6 +4,8 @@ description: Add a BSV wallet button to a Next.js or React app that connects to 
 sidebarTitle: Use web frameworks
 ---
 
+import AppFrameworksFlow from '/snippets/AppFrameworksFlow.jsx';
+
 Add a **BSV wallet** button to a Next.js or React (Vite) app so a user connects [BSV Desktop](https://desktop.bsvb.tech/), pays 1,000 testnet <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> and calls an Express API that identifies their wallet. Use this when you already have a web project and want the wallet in it, instead of starting from a template. Everything here runs on testnet, and the examples are for the Next.js App Router and for Vite.
 
 ## Before you begin
@@ -17,6 +19,8 @@ The wallet belongs to the user, so your code reaches it from the browser and nev
 - The browser app imports `WalletClient` from `@bsv/sdk`. It finds BSV Desktop on the user's machine, which listens on `localhost`, and asks it for the identity key and for payments.
 - BSV Desktop holds the keys and signs. It shows a **Spending Request** window before it spends, and it shows no window for reads.
 - Your Express API identifies the caller from the identity key of the wallet that signed the request, using the auth middleware from [Authenticate users with their wallet](/docs/guides/identity-auth/).
+
+<AppFrameworksFlow />
 
 <Callout type="warning">
   Code that runs on your server cannot reach the wallet of your users. On your own development machine a server route can reach your own BSV Desktop, which hides the problem until you deploy. Keep `WalletClient` in the browser, and give the server its own wallet or have it verify what the browser signed.
