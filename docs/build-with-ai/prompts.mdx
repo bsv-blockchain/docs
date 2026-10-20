@@ -4,6 +4,8 @@ description: "Have an AI agent build and run a first BSV testnet payment from th
 sidebarTitle: "Pay with an AI agent"
 ---
 
+import AgentPaymentRoles from '/snippets/AgentPaymentRoles.jsx';
+
 Ask an AI agent for your first **BSV payment** and let it read these docs, write the scripts and run them, while you keep the steps that move coins. The agent connects to your testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/), and no private key goes in the code. Use it when you build with [Claude Code](https://code.claude.com/docs/en/overview) and want to see how it handles a payment before you trust it with a real project. The example runs standalone in an empty folder, and at the end you have a testnet payment you approved and its transaction ID on the explorer.
 
 ## Before you begin
@@ -16,10 +18,7 @@ Ask an AI agent for your first **BSV payment** and let it read these docs, write
 
 The agent does the work that happens in code, and you do the work that happens in the wallet:
 
-| Who | What they do |
-|-----|--------------|
-| Agent | Reads these docs, installs `@bsv/sdk`, writes a script that connects to BSV Desktop through `WalletClient`, checks that the wallet is on testnet and runs the payment |
-| You | Get testnet coins if the wallet is empty, give the agent your testnet address and approve the payment in BSV Desktop |
+<AgentPaymentRoles />
 
 The agent reads the docs through the BSV docs server, follows the rules in your project, and stops to ask you for each step on your side.
 
