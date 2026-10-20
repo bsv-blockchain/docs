@@ -6,6 +6,10 @@ sidebarTitle: Permissions and outputs
 
 Group the outputs your app creates with **baskets, tags and labels**, and see which windows BSV Desktop shows the user. At the end, a standalone Node script has created two tagged outputs in a basket and listed them back by basket, tag and label. Use this when your app keeps its own outputs, such as tickets or receipts, and must tell them apart from the rest of the wallet.
 
+## Before you begin
+
+You need Node.js 22 or newer and a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/) with some test coins. [Send a payment from a web app](/docs/get-started/quick-start-browser/) shows how to set one up. The example installs `@bsv/sdk` in its first step and is written against version 3.2.1.
+
 ## How it works
 
 A BRC-100 wallet such as BSV Desktop keeps every <Hint tip="Unspent transaction output">UTXO</Hint> it owns, and an app asks the wallet to create and list them. Three fields let the app organize what it creates:
@@ -21,14 +25,6 @@ A transaction that spends from the wallet also opens a Spending Request.
 <Callout type="info">
   Each basket or label permission the user grants is stored by the wallet as a transaction of its own, which costs the user a network fee of about 120 to 170 satoshis in BSV Desktop 3.1.1.
 </Callout>
-
-## Before you begin
-
-Have these ready before you run the example:
-
-- BSV Desktop on testnet with a balance, set up as in [Send a payment from a web app](/docs/get-started/quick-start-browser/).
-- Node.js 22 or later.
-- `@bsv/sdk`, installed in the first step. The example is written against version 3.2.1.
 
 ## Turn on the basket and label requests
 
