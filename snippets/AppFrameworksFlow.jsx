@@ -5,9 +5,9 @@
 // Source: the guide "Integrate BSV with web frameworks".
 
 const cards = [
-  { who: 'BSV Desktop', text: 'Holds the keys and shows a **Spending Request** before it spends.' },
-  { who: 'Browser app', text: 'Calls the wallet with **WalletClient** and sends the signed request.' },
-  { who: 'Express API', text: 'Reads the **identity key** of the wallet that signed.' },
+  { who: 'BSV Desktop', text: 'Holds the **keys** and signs.' },
+  { who: 'Browser app', text: 'Calls the wallet with **WalletClient**.', hold: true },
+  { who: 'Express API', text: 'Reads the **identity key** of the caller.' },
 ];
 
 const links = ['on localhost', 'signed request'];
@@ -18,7 +18,10 @@ const css = `
 .afw { container-type: inline-size; margin: 24px 0; }
 .afw-row { display: flex; align-items: stretch; gap: 8px; }
 .afw-card { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); color: var(--wd-text); }
+.afw-hold { border-color: var(--wd-primary); border-width: 2px; }
+.afw-head { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
 .afw-who { font-size: 16px; font-weight: 600; line-height: 1.2; }
+.afw-tag { font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--wd-primary); color: var(--wd-background); }
 .afw-text { font-size: 13px; line-height: 1.45; margin: 0; color: var(--wd-text-muted); }
 .afw-text strong { color: var(--wd-text); font-weight: 600; }
 .afw-link { flex: none; align-self: center; display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -44,8 +47,11 @@ export default function AppFrameworksFlow() {
                 <span className="afw-arrow" aria-hidden="true">{i === 1 ? '⇄' : '→'}</span>
               </div>
             ) : null}
-            <div className="afw-card">
-              <div className="afw-who">{c.who}</div>
+            <div className={c.hold ? 'afw-card afw-hold' : 'afw-card'}>
+              <div className="afw-head">
+                <span className="afw-who">{c.who}</span>
+                {c.hold ? <span className="afw-tag">wallet code runs here</span> : null}
+              </div>
               <p className="afw-text">{bold(c.text)}</p>
             </div>
           </div>

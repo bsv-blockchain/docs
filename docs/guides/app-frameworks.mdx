@@ -14,13 +14,11 @@ You need Node.js 22 or newer and an existing Next.js or Vite React project writt
 
 ## How it works
 
-The wallet belongs to the user, so your code reaches it from the browser and never from your server. Three parts take part:
-
-- The browser app imports `WalletClient` from `@bsv/sdk`. It finds BSV Desktop on the user's machine, which listens on `localhost`, and asks it for the identity key and for payments.
-- BSV Desktop holds the keys and signs. It shows a **Spending Request** window before it spends, and it shows no window for reads.
-- Your Express API identifies the caller from the identity key of the wallet that signed the request, using the auth middleware from [Authenticate users with their wallet](/docs/guides/identity-auth/).
+The wallet belongs to the user, so your code reaches it from the browser and never from your server. The browser app sits between the wallet and your API:
 
 <AppFrameworksFlow />
+
+`WalletClient` finds BSV Desktop on the user's machine, which listens on `localhost`, and asks it for the identity key and for payments. BSV Desktop shows a **Spending Request** window before it spends, and no window for reads. Your Express API identifies the caller from the identity key of the wallet that signed the request, using the auth middleware from [Authenticate users with their wallet](/docs/guides/identity-auth/).
 
 <Callout type="warning">
   Code that runs on your server cannot reach the wallet of your users. On your own development machine a server route can reach your own BSV Desktop, which hides the problem until you deploy. Keep `WalletClient` in the browser, and give the server its own wallet or have it verify what the browser signed.
