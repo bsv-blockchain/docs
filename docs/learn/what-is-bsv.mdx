@@ -3,7 +3,7 @@ title: What is BSV
 description: What BSV is and what you can build on it.
 ---
 
-The BSV blockchain implements the original Bitcoin protocol. Forked from Bitcoin Cash in 2018, BSV runs on the <Hint tip="Unspent transaction output">UTXO</Hint> model.
+The BSV blockchain implements the original Bitcoin protocol. BSV is a fork of the Bitcoin blockchain, sharing the ledger history of Bitcoin back to 2009, and runs on the <Hint tip="Unspent transaction output">UTXO</Hint> model.
 
 On BSV, your app can verify transactions without running a node and leave the private keys with the user's wallet.
 
@@ -11,16 +11,39 @@ On BSV, your app can verify transactions without running a node and leave the pr
 
 Apps on BSV put value, ownership or proof in transactions:
 
-- Payments go through the user's wallet, which creates the transaction.
-- Tokens are UTXOs tracked by an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, which applies rules you define, such as for a redeemable voucher.
-- Identity comes from the user's wallet: its identity key and certificates let your app know who it deals with, without accounts or passwords.
-- Data integrity works by putting a hash of your data in a transaction and checking it later against its Merkle path and block header.
+<div className="cards-interactive">
+
+<CardGroup cols={3}>
+  <Card title="Payments">
+    Charge per request, with the user's wallet creating the transaction and your API checking it.
+  </Card>
+  <Card title="Tokens">
+    Issue UTXOs that an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> tracks under rules you define, such as for a redeemable voucher.
+  </Card>
+  <Card title="Identity">
+    Know who calls your API from the user's wallet identity key and certificates, without accounts or passwords.
+  </Card>
+  <Card title="Data integrity">
+    Put a hash of your data in a transaction and check it later against its Merkle path and block header.
+  </Card>
+  <Card title="Smart contracts">
+    Use the original and restored Bitcoin scripting language to build complex smart contracts and programmable money.
+  </Card>
+</CardGroup>
+
+</div>
 
 To add one of these to an app, see the [Guides](/docs/guides/).
 
 ## Packages for building on BSV
 
-BSV has one package per layer. `@bsv/sdk` covers hashing, keys, Script, <Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint> and Merkle paths. `@bsv/simple` adds helpers for payments and tokens. `@bsv/wallet-toolbox` is for building a wallet. To compare them and pick one, see the [SDKs overview](/docs/sdk/).
+BSV has one package per layer:
+
+- `@bsv/sdk` covers hashing, keys, Script, <Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint> and Merkle paths.
+- `@bsv/simple` adds helpers for payments and tokens.
+- `@bsv/wallet-toolbox` is for building a wallet.
+
+To compare them and pick one, see the [SDKs overview](/docs/sdk/).
 
 ## Next steps
 

@@ -11,6 +11,8 @@ On BSV, the app, the wallet and shared services each have one job. Your app asks
 
 Four ideas shape how these parts work together, and each has its own page:
 
+<div className="cards-interactive">
+
 <CardGroup cols={2}>
   <Card title="How transactions and fees work" href="/docs/concepts/transactions/">
     Ownership lives in <Hint tip="Unspent transaction output">UTXOs</Hint>. You can handle each UTXO on its own, without a global account state.
@@ -25,6 +27,8 @@ Four ideas shape how these parts work together, and each has its own page:
     An overlay service tracks your app's own transactions. Topic managers decide which outputs it admits, and lookup services answer queries about them.
   </Card>
 </CardGroup>
+
+</div>
 
 ## How an app talks to the wallet
 

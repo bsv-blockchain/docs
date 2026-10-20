@@ -14,3 +14,28 @@
 [data-theme="dark"] .bsv-hero {
   background: linear-gradient(180deg, #1a1333 0%, #0b1120 100%);
 }
+
+/* Cards: opt in with <div className="cards-interactive"> around a CardGroup (What is BSV, How BSV works).
+   Center the last two cards of a 3 column group of 5. */
+@media (min-width: 768px) {
+  .cards-interactive .wd-card-group[style*="--wd-cols: 3"] { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; }
+  .cards-interactive .wd-card-group[style*="--wd-cols: 3"] > * { grid-column: span 2; }
+  .cards-interactive .wd-card-group[style*="--wd-cols: 3"] > :nth-child(4):nth-last-child(2) { grid-column: 2 / span 2; }
+  .cards-interactive .wd-card-group[style*="--wd-cols: 3"] > :nth-child(5):last-child { grid-column: 4 / span 2; }
+}
+
+/* Cards: hover color, only inside .cards-interactive */
+.cards-interactive .wd-card-group > * {
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+.cards-interactive .wd-card-group > *:hover {
+  border-color: var(--wd-primary);
+  background-color: color-mix(in srgb, var(--wd-primary) 10%, transparent);
+  transform: translateY(-2px);
+}
+.cards-interactive .wd-card-group > *:hover :is(h2, h3, h4, p:first-child, strong, [class*="title"]) {
+  color: var(--wd-primary);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cards-interactive .wd-card-group > * { transition: none; transform: none !important; }
+}
