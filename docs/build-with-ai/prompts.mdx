@@ -20,6 +20,11 @@ The agent does the work that happens in code, and you do the work that happens i
 
 <AgentPaymentRoles />
 
+<Visibility for="agents">
+- Agent, works in the code: reads these docs, installs `@bsv/sdk`, writes a script that connects to BSV Desktop through `WalletClient`, checks that the wallet is on testnet and runs the payment.
+- You, work in the wallet: get testnet coins if the wallet is empty, give the agent your testnet address and approve the payment in BSV Desktop with **Authorize**.
+</Visibility>
+
 The agent reads the docs through the BSV docs server, follows the rules in your project, and stops to ask you for each step on your side.
 
 ## Set up the project
