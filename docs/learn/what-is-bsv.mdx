@@ -3,7 +3,7 @@ title: What is BSV
 description: What BSV is and what you can build on it.
 ---
 
-The BSV blockchain implements the original Bitcoin protocol. Forked from Bitcoin Cash in 2018, BSV runs on the <Hint tip="Unspent transaction output">UTXO</Hint> model.
+The BSV blockchain implements the original Bitcoin protocol. BSV is a fork of the Bitcoin blockchain, sharing the ledger history of Bitcoin back to 2009. BSV runs on the <Hint tip="Unspent transaction output">UTXO</Hint> model.
 
 On BSV, your app can verify transactions without running a node and leave the private keys with the user's wallet.
 
@@ -15,6 +15,7 @@ Apps on BSV put value, ownership or proof in transactions:
 - Tokens are UTXOs tracked by an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, which applies rules you define, such as for a redeemable voucher.
 - Identity comes from the user's wallet: its identity key and certificates let your app know who it deals with, without accounts or passwords.
 - Data integrity works by putting a hash of your data in a transaction and checking it later against its Merkle path and block header.
+- Smart contracts and programmable money are written in Script, the original Bitcoin scripting language that BSV has restored.
 
 To add one of these to an app, see the [Guides](/docs/guides/).
 
