@@ -81,6 +81,10 @@ The agent pays to your own testnet address, so copy it in BSV Desktop and send i
     Select the **BSV ADDRESS** tab and click **Copy address**. A testnet address starts with `m` or `n`.
 
     The **WALLET PAYMENT** tab opens first and copies a `peerpay:` link, not an address.
+
+    <Frame>
+      <img src="/images/pay-with-ai-agent/01-receive-bsv-address.png" alt="The Receive screen of BSV Desktop on Testnet with the BSV ADDRESS tab selected, a blurred QR code and the Copy address button" />
+    </Frame>
   </Step>
   <Step title="Reply to the agent">
     Tell the agent that the wallet has coins and give it the address, in place of `YOUR_TESTNET_ADDRESS`:
@@ -100,7 +104,13 @@ A sent payment cannot be undone, so check the request in BSV Desktop before you 
     The agent runs the payment script, which waits until you answer in BSV Desktop. The wallet opens a **Spending Request** with the app name the script set, the payment description and the total with the fee, for example 1,057 satoshis for a 1,000 satoshi payment. A satoshi is the smallest unit of BSV, and 100,000,000 satoshis make 1 BSV. Check that the wallet shows **Testnet** and that the amount is the one you expect.
   </Step>
   <Step title="Authorize the payment">
-    Click **Authorize**. The script prints the transaction ID and a link to the testnet explorer, [WhatsOnChain](https://test.whatsonchain.com/), for example:
+    Click **Authorize**:
+
+    <Frame>
+      <img src="/images/pay-with-ai-agent/02-spending-request.png" alt="The Spending Request window of BSV Desktop from first-payment.local for a payment named My first BSV payment, with the total of 1,057 satoshis and the Deny and Authorize buttons" />
+    </Frame>
+
+    After you approve, the script prints the transaction ID and a link to the testnet explorer, [WhatsOnChain](https://test.whatsonchain.com/), for example:
 
     ```text
     Requesting a payment of 1000 satoshis to YOUR_TESTNET_ADDRESS on testnet.
