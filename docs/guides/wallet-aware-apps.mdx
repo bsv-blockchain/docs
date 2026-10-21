@@ -4,7 +4,7 @@ description: "Group the outputs your app creates with baskets, tags and labels, 
 sidebarTitle: Permissions and outputs
 ---
 
-Group the outputs your app creates with **baskets, tags and labels**, and see which windows BSV Desktop shows the user. At the end, a standalone Node script has created two tagged outputs in a basket and listed them back by basket, tag and label. Use this when your app keeps its own outputs, such as tickets or receipts, and must tell them apart from the rest of the wallet.
+Group the outputs your app creates with baskets, tags and labels, and see which windows BSV Desktop shows the user. At the end, a standalone Node script has created two tagged outputs in a basket and listed them back by basket, tag and label. Use this when your app keeps its own outputs, such as tickets or receipts, and must tell them apart from the rest of the wallet.
 
 ## Before you begin
 
@@ -183,6 +183,8 @@ With the outputs in the wallet, the next step is to read them back by basket, ta
       tags: ['vip'],
       includeTags: true
     })
+
+    console.log(vip)
     ```
 
     Only Ticket A carries `vip`, so `totalOutputs` is 1. With several tags, `tagQueryMode` decides the match. The value `all` keeps the outputs that carry every tag, and `any`, the default, keeps the outputs that carry at least one.
@@ -195,6 +197,8 @@ With the outputs in the wallet, the next step is to read them back by basket, ta
       labels: ['batch one'],
       includeLabels: true
     })
+
+    console.log(batch)
     ```
 
     The result has one action. Its `satoshis` is negative, because the transaction spent from the wallet, and its `labels` include `batch one`. The wallet adds labels of its own, such as `admin originator tickets.localhost`, and your app sees them. With several labels, `labelQueryMode` takes `all` or `any` and works like `tagQueryMode`.
@@ -262,7 +266,7 @@ An app that needs a basket, several labels and a spending limit can ask for them
     }
     ```
 
-    The `amount` is a monthly spending limit in satoshis. Each entry has a `description`, which the wallet shows as the reason for that item.
+    The `amount` is a monthly spending limit in satoshis, and the window shows only that amount. A `description` on a basket entry appears as the reason for that basket.
   </Step>
   <Step title="Open the app from that domain">
     Load your app from `YOUR_DOMAIN` and make the first call that needs one of the declared permissions. BSV Desktop opens one **Select App Permissions** window with the app name from the manifest. It lists every item that is not yet granted, each with a box that is ticked by default. The user can untick items before approving, and the call goes through only if the permission it needs is approved.
@@ -283,9 +287,6 @@ An app that needs a basket, several labels and a spending limit can ask for them
   </Accordion>
   <Accordion title="Long basket name is rejected">
     A long basket name fails with `The tag parameter must be no more than 300 length.` The usable limit is shorter than the 300 in the message, and the message says tag for a basket. Keep names short.
-  </Accordion>
-  <Accordion title="BSV Desktop shows other windows than this page">
-    The windows follow **Settings** > **Advanced settings** > **Permissions Configuration**, so a user can have the basket and label requests on or off. Write the app so that a denied or missing request leads to the same message to the user.
   </Accordion>
   <Accordion title="Script cannot find BSV Desktop">
     A script that creates `WalletClient` without an originator fails with `No wallet available over any communication substrate.` even while BSV Desktop is open. Pass an originator as the second argument, as in the examples.
