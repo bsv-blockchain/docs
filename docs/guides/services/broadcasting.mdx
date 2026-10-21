@@ -6,7 +6,9 @@ sidebarTitle: "Broadcast with Arcade"
 
 import BroadcastFlow from '/snippets/BroadcastFlow.jsx';
 
-Arcade is the BSV Association's transaction broadcaster. It takes a signed transaction over HTTP, delivers it to the network, follows it until a miner includes it in a block, and returns the merkle path that proves it. Use it when your app or server builds and signs transactions itself and has to send them. An app that uses `WalletClient` does not call Arcade, because the wallet broadcasts the transactions it creates. In this guide you pick an endpoint, check its limits, submit a transaction and read its status.
+Arcade is the BSV Association's transaction broadcaster. It takes a signed transaction over HTTP, delivers it to the network, follows it until a miner includes it in a block, and returns the merkle path that proves it.
+
+Use it when your app or server builds and signs transactions itself and has to send them. An app that uses `WalletClient` does not call Arcade, because the wallet broadcasts the transactions it creates. In this guide you pick an endpoint, check its limits, submit a transaction and read its status.
 
 ## Before you begin
 
@@ -28,11 +30,11 @@ A `202` answer means Arcade checked the transaction and accepted it for delivery
 
 The BSV Association runs two public endpoints and GorillaPool runs a third. All of them are open and need no API key:
 
-| Operator | Region | URL |
-|----------|--------|-----|
-| BSV Association | United States | `https://arcade-us-1.bsvblockchain.tech` |
-| BSV Association | Europe | `https://arcade-eu-1.bsvblockchain.tech` |
-| GorillaPool | | `https://arcade.gorillapool.io` |
+| Operator | URL |
+|----------|-----|
+| BSV Association, United States | `https://arcade-us-1.bsvblockchain.tech` |
+| BSV Association, Europe | `https://arcade-eu-1.bsvblockchain.tech` |
+| GorillaPool | `https://arcade.gorillapool.io` |
 
 Pick the one nearest to you, and check its limits before you build a transaction:
 
@@ -45,7 +47,7 @@ Pick the one nearest to you, and check its limits before you build a transaction
     ```
 
     ```text
-    {"policy":{"miningFee":{"satoshis":100,"bytes":1000},"maxtxsizepolicy":100000000,"maxscriptsizepolicy":100000000,"maxtxsigopscountspolicy":4294967295,"standardFormatSupported":true},"timestamp":"2026-10-21T19:06:54Z"}
+    {"policy":{"miningFee":{"satoshis":100,"bytes":1000},"maxtxsizepolicy":100000000,...},"timestamp":"..."}
     ```
 
     The `miningFee` is the lowest fee rate the endpoint accepts, here 100 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> for each 1,000 bytes. A transaction that pays less is refused.
@@ -103,7 +105,7 @@ curl -s -X POST https://arcade-us-1.bsvblockchain.tech/tx \
 
 The `txid` is the identifier you follow in the next step. Submitting the same transaction again is safe: Arcade answers `202` again, with the status the transaction has reached.
 
-To submit from TypeScript, use the `Teranode` broadcaster of `@bsv/sdk` with the `/tx` address of the endpoint. This example was tested with `@bsv/sdk` 3.2.1. Every input of the transaction needs its `sourceTransaction`, so that the SDK can produce EF:
+To submit from TypeScript, add this to your app after you sign the transaction. Use the `Teranode` broadcaster of `@bsv/sdk` with the `/tx` address of the endpoint. Here `tx` is your signed `Transaction`, and every input of it needs its `sourceTransaction`, so that the SDK can produce EF. This example was tested with `@bsv/sdk` 3.2.1:
 
 ```ts
 import { Transaction, Teranode } from '@bsv/sdk'
@@ -130,13 +132,19 @@ Ask Arcade for the status of the `txid`:
 curl -s https://arcade-us-1.bsvblockchain.tech/tx/TXID
 ```
 
-The `txStatus` field says where the transaction is. These are the ones you will see most:
+The `txStatus` field says where the transaction is. Once it is mined, the answer looks like this:
+
+```text
+{"txid":"9f2b…","txStatus":"MINED","blockHash":"0000…","blockHeight":972090,"merklePath":"BUMP_HEX"}
+```
+
+These are the statuses you will see most:
 
 | Status | What it means |
 |--------|---------------|
 | `RECEIVED` | Arcade checked it and queued it |
-| `SENT_TO_NETWORK` | Delivered to at least one Teranode node |
-| `SEEN_ON_NETWORK` | A miner has it. Safe to treat as an unconfirmed payment of ordinary value |
+| `SENT_TO_NETWORK` | Delivered to at least one <Hint tip="The node software of the BSV network">Teranode</Hint> node |
+| `SEEN_ON_NETWORK` | A miner has it. You can accept it for small amounts before it is mined |
 | `MINED` | In a block. The answer now carries `blockHash`, `blockHeight` and `merklePath` |
 | `PENDING_RETRY` | Delivery failed and Arcade tries again. Read `extraInfo` for the reason |
 | `REJECTED` | The network rejected it. Final |
@@ -144,7 +152,10 @@ The `txStatus` field says where the transaction is. These are the ones you will 
 
 The `merklePath` of a mined transaction is a <Hint tip="BRC-74: a compact merkle path that proves a transaction is in a block">BUMP</Hint>. Keep it, because it is the proof that your app needs to verify the transaction with block headers.
 
-Instead of asking again and again, you can have Arcade tell you. Submit with an `X-CallbackToken` header, then read the events of that token with `curl -N "ENDPOINT/events?callbackToken=YOUR_TOKEN"`, or submit with an `X-CallbackUrl` header to receive a webhook on each change. The callback URL must be reachable from the internet.
+Instead of asking again and again, you can have Arcade tell you. Choose one of two ways when you submit:
+
+- Events: send an `X-CallbackToken` header with a token you choose, then read the events of that token with `curl -N "ENDPOINT/events?callbackToken=YOUR_TOKEN"`
+- Webhook: send an `X-CallbackUrl` header, and Arcade posts each change to that address, which must be reachable from the internet
 
 ## Handle failures
 
