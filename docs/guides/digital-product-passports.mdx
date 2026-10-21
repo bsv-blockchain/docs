@@ -6,7 +6,7 @@ sidebarTitle: Digital product passports
 
 import DppFlow from '/snippets/DppFlow.jsx';
 
-A digital product passport connects a product to a record of its history. On BSV, each change to that record is a signed transaction, so anyone can check the history without trusting the application that shows it.
+A digital product passport connects a product to a record of its history. On BSV, each change to that record is a signed transaction, so anyone can check the history without trusting the application that shows it. A passport rests on two things: identity, which key signed each record, and traceability, a history in one order that cannot be quietly rewritten.
 
 Use this guide when you are evaluating BSV for passports or planning to add them to an application. You learn how the pieces fit, check a test passport on your own machine and read its verification report. Building and operating a passport platform is covered by the DPP docs, which this guide links to.
 
@@ -27,6 +27,8 @@ A passport keeps two separate chains of transactions, called rails. The passport
 The index and the registry only find and keep records. A reader checks the signatures, the links between states and the proof that each transaction is in a block, using block headers from a source it chooses. The index is an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, as in [Track transactions with overlays](/docs/guides/overlays/). The proofs work like the ones in [BEEF (BRC-62)](/docs/concepts/spv/), and identity keys work as in [Authenticate users with their wallet](/docs/guides/identity-auth/).
 
 A passport is named by a web address, commonly `https://HOST/01/GTIN/21/SERIAL`, where `GTIN` is the <Hint tip="Global Trade Item Number">GTIN</Hint> of the product and `SERIAL` identifies the item.
+
+The record carries product data, and a profile chooses its fields. The standard has a general profile and profiles for batteries and textiles.
 
 ## What a signature proves
 
@@ -92,7 +94,7 @@ Decide what to trust by naming the checks your use needs, and show each finding 
 The DPP team runs a hosted demonstration with a [sample passport](https://dpp.bsvb.net/01/09522156492290/21/792B7797E3D8) and a [verifier](https://dpp.bsvb.net/verify), where you can check a passport by its identifier.
 
 <Callout type="warning">
-The demonstration uses sample data only. Its three open sample brands write nothing to the blockchain. A signed-in user who creates a brand writes real BSV mainnet transactions that cost satoshis, so do not create a brand just to try the page.
+The demonstration uses sample data only. Its three open sample brands write nothing to the blockchain. A signed-in user who creates a brand writes real BSV Mainnet transactions that cost <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint>, and a blockchain transaction cannot be reversed, so do not create a brand just to try the page.
 </Callout>
 
 ## Troubleshooting
@@ -112,5 +114,6 @@ With the model and the report clear, continue in the DPP docs:
 
 - [Verify your first passport](https://dpp.bsvb.net/docs/build-and-integrate/quick-start)
 - [Build or integrate](https://dpp.bsvb.net/docs/build-and-integrate)
+- [Product data profiles](https://dpp.bsvb.net/docs/build-and-integrate/profiles)
 - [Plan your platform](https://dpp.bsvb.net/docs/readme/plan-your-platform)
 - [Known limitations and open questions](https://dpp.bsvb.net/docs/overview/production-readiness/limitations)
