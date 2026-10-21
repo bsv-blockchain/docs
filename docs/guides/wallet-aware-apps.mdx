@@ -187,7 +187,18 @@ With the outputs in the wallet, the next step is to read them back by basket, ta
     console.log(vip)
     ```
 
-    Only Ticket A carries `vip`, so `totalOutputs` is 1. With several tags, `tagQueryMode` decides the match. The value `all` keeps the outputs that carry every tag, and `any`, the default, keeps the outputs that carry at least one.
+    Only Ticket A carries `vip`, so `totalOutputs` is 1. Each output returns its own `tags`, shortened here:
+
+    ```text
+    {
+      totalOutputs: 1,
+      outputs: [
+        { satoshis: 1, spendable: true, outpoint: '777a…d73b.1', tags: ['vip', 'row a'] }
+      ]
+    }
+    ```
+
+    With several tags, `tagQueryMode` decides the match. The value `all` keeps the outputs that carry every tag, and `any`, the default, keeps the outputs that carry at least one.
   </Step>
   <Step title="Filter by label">
     Labels belong to the transaction, so read them with `listActions`. With `includeLabels` set, each action returns its labels:
@@ -201,7 +212,22 @@ With the outputs in the wallet, the next step is to read them back by basket, ta
     console.log(batch)
     ```
 
-    The result has one action. Its `satoshis` is negative, because the transaction spent from the wallet, and its `labels` include `batch one`. The wallet adds labels of its own, such as `admin originator tickets.localhost`, and your app sees them. With several labels, `labelQueryMode` takes `all` or `any` and works like `tagQueryMode`.
+    The result has one action. Its `satoshis` is negative, because the transaction spent from the wallet, and its `labels` include `batch one`. The wallet adds labels of its own, such as `admin originator tickets.localhost`, and your app sees them. The result, shortened:
+
+    ```text
+    {
+      totalActions: 1,
+      actions: [
+        {
+          txid: '777a…d73b',
+          satoshis: -55,
+          labels: ['batch one', 'admin originator tickets.localhost', …]
+        }
+      ]
+    }
+    ```
+
+    With several labels, `labelQueryMode` takes `all` or `any` and works like `tagQueryMode`.
   </Step>
 </Steps>
 
