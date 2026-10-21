@@ -6,7 +6,9 @@ sidebarTitle: Digital product passports
 
 import DppFlow from '/snippets/DppFlow.jsx';
 
-A digital product passport connects a product to a record of its history. On BSV, each change to that record is a signed transaction, so anyone can check the history without trusting the application that shows it. Use this guide when you are evaluating BSV for passports or planning to add them to an application. You learn how the pieces fit, check a test passport on your own machine and read its verification report. Building and operating a passport platform is covered by the DPP docs, which this guide links to.
+A digital product passport connects a product to a record of its history. On BSV, each change to that record is a signed transaction, so anyone can check the history without trusting the application that shows it.
+
+Use this guide when you are evaluating BSV for passports or planning to add them to an application. You learn how the pieces fit, check a test passport on your own machine and read its verification report. Building and operating a passport platform is covered by the DPP docs, which this guide links to.
 
 ## Before you begin
 
@@ -54,15 +56,15 @@ The checkout includes a five state test passport. You check it offline, from its
     node examples/verify-passport.mjs --fixture --version=2 --report
     ```
 
-    The first lines name the five states and the result:
+    The first lines name the five states and the result, with long lines shortened here:
 
     ```text
-    Fixture chain (record version 2): 5 states, verified from raw transaction hex, no header source.
+    Fixture chain (record version 2): 5 states, verified from raw transaction hex, ...
     Operations, genesis to tip: ISSUE -> UPDATE -> TRANSFER -> UPDATE -> RETIRE.
     State 1 (ISSUE, a39a87ffca41): user signature verifies; linkage holds; inclusion pending.
     ...
     The chain as a whole is valid.
-    Inclusion across the chain: pending (a proof the verifier could not evaluate is evidence of nothing, never a failure).
+    Inclusion across the chain: pending (a proof the verifier could not evaluate ...)
     ```
 
     The output goes on with the refusal cases and the report cases of the test passport. Those lines start with `ok:`, and the command ends with exit status 0.
