@@ -6,7 +6,7 @@ sidebarTitle: Use web frameworks
 
 import AppFrameworksFlow from '/snippets/AppFrameworksFlow.jsx';
 
-Add a **BSV wallet** button to a Next.js or React (Vite) app so a user connects [BSV Desktop](https://desktop.bsvb.tech/), pays 1,000 testnet <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> and calls an Express API that identifies their wallet. Use this when you already have a web project and want the wallet in it, instead of starting from a template. Everything here runs on testnet, and the examples are for the Next.js App Router and for Vite.
+Add a BSV wallet button to a Next.js or React (Vite) app so a user connects [BSV Desktop](https://desktop.bsvb.tech/), pays 1,000 testnet <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> and calls an Express API that identifies their wallet. Use this when you already have a web project and want the wallet in it, instead of starting from a template. Everything here runs on testnet, and the examples are for the Next.js App Router and for Vite.
 
 ## Before you begin
 
@@ -98,7 +98,7 @@ Add a button to your Next.js app that connects to the wallet and sends a payment
     }
     ```
 
-    Three parts do the work with the wallet:
+    Four parts do the work with the wallet:
 
     - `new WalletClient('auto', 'localhost')` finds the wallet on the user's machine. The second value is the originator, the name of your app that BSV Desktop shows in its windows. Use `localhost` while you develop and the host name of your app in production.
     - `getPublicKey({ identityKey: true })` returns the <Hint tip="The public key that identifies a wallet to an app. The private key never leaves the wallet">identity key</Hint> of the wallet, and `getNetwork()` returns the network the wallet is on.
@@ -132,7 +132,7 @@ Add a button to your Next.js app that connects to the wallet and sends a payment
 
 ### Send a payment from the page
 
-With the page connected, send 1,000 satoshis to an address of your own wallet and see the transaction on the explorer, checking the address first because a blockchain transaction cannot be reversed:
+With the page connected, send 1,000 satoshis to an address of your own wallet, then see the transaction on the explorer. Check the address first, because a blockchain transaction cannot be reversed:
 
 <Steps>
   <Step title="Copy your testnet address">
