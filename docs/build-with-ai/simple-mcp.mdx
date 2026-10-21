@@ -6,11 +6,11 @@ sidebarTitle: "Connect with MCP"
 
 import McpServers from '/snippets/McpServers.jsx';
 
-Connect [Claude Code](https://code.claude.com/docs/en/overview) to the BSV docs through **MCP**, the [Model Context Protocol](https://modelcontextprotocol.io/) an AI tool uses to call an outside server for information. With it, your agent searches and reads these pages before it writes BSV code. Use it when an AI agent builds your BSV app. Without a source, the agent can pick the wrong network or put a private key in your code. At the end, the docs server is connected to your project, and you know what Simple MCP adds and where its code needs care.
+Connect [Claude Code](https://code.claude.com/docs/en/overview) to the BSV docs through MCP, the [Model Context Protocol](https://modelcontextprotocol.io/) an AI tool uses to call an outside server for information. With it, your agent searches and reads these pages before it writes BSV code. Use it when an AI agent builds your BSV app. Without a source, the agent can pick the wrong network or put a private key in your code. At the end, the docs server is connected to your project, and you know what Simple MCP adds and where its code needs care.
 
 ## Before you begin
 
-- [Claude Code](https://code.claude.com/docs/en/overview) installed.
+- [Claude Code](https://code.claude.com/docs/en/overview) installed. This guide was tested with Claude Code 2.1.286.
 - Node.js 18 or newer, only for Simple MCP, which runs through `npx`.
 
 ## How it works
@@ -73,7 +73,7 @@ Ask Claude Code a BSV question in the same project, and it calls `search_docs` a
 
 ## Add Simple MCP
 
-[Simple MCP](https://github.com/bsv-blockchain/simple-mcp) is a separate server for `@bsv/simple`, a library built on top of the BSV SDK. This section uses version 0.0.2 of the `@bsv/simple-mcp` package, which writes code for `@bsv/simple` 0.2.x, while npm has 0.7.0. Its server wallet setup creates a new private key each time it runs. Its payment code failed in our test on testnet with `@bsv/simple` 0.7.0, since the payment was sent but never reached the recipient.
+[Simple MCP](https://github.com/bsv-blockchain/simple-mcp) is a separate server for `@bsv/simple`, a library built on top of the BSV SDK. This section uses version 0.0.2 of the `@bsv/simple-mcp` package, which writes code for `@bsv/simple` 0.2.x, while npm has 0.7.0. Its server wallet setup uses a random private key when the `SERVER_PRIVATE_KEY` variable is not set. Its payment code failed in our test on testnet with `@bsv/simple` 0.7.0, since the payment was sent but never reached the recipient.
 
 <Callout type="warning">
   Simple MCP writes Mainnet code only, so a payment it generates spends real BSV and cannot be undone. Read and adapt anything it generates before you run it.
