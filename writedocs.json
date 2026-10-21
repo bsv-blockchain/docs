@@ -74,7 +74,8 @@
               "docs/guides/identity-auth",
               "docs/guides/data-storage",
               "docs/guides/messaging",
-              "docs/guides/overlays"
+              "docs/guides/overlays",
+              "docs/guides/digital-product-passports"
             ]
           },
           {
