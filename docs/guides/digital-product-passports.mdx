@@ -75,7 +75,7 @@ The checkout includes a five state test passport. You check it offline, from its
     Inclusion across the chain: pending (a proof the verifier could not evaluate ...)
     ```
 
-    The output goes on with the refusal cases and the report cases of the test passport. Those lines start with `ok:`, and the command ends with exit status 0.
+    The output goes on with the refusal cases and the report cases of the test passport, and the command ends with exit status 0.
   </Step>
   <Step title="Read the result">
     Each state shows that its signature verifies and that it links to the state before it. Inclusion is `pending` because the test transactions are not on the chain, so there is no proof to check. That is missing evidence, not a failed check.
@@ -108,9 +108,6 @@ The demonstration uses sample data only. Its three open sample brands write noth
 <AccordionGroup>
   <Accordion title="Cannot find module">
     The build did not finish. Run `npm run build` again in the `dpp` folder and read the first error it prints.
-  </Accordion>
-  <Accordion title="FAIL: or FAILS: in the output">
-    A check did not hold, and the command exits with a non-zero status. Investigate the check before using the result, and do not ignore the exit status.
   </Accordion>
 </AccordionGroup>
 
