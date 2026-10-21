@@ -1,0 +1,124 @@
+---
+title: Digital product passports on BSV
+description: Learn how a digital product passport maps onto BSV, check a test passport offline and read its verification report, then continue in the DPP docs to build one.
+sidebarTitle: Digital product passports
+---
+
+import DppFlow from '/snippets/DppFlow.jsx';
+
+A **digital product passport** links a product to a signed record of its history. On BSV, each change to the record is a transaction, so anyone can check the history without trusting the application that shows it. This fits an application that must prove who signed each record and in what order. In this guide you learn how the pieces fit, check a test passport on your own machine and read its verification report.
+
+## Before you begin
+
+You need Node.js 22 or newer, npm and git. This guide needs no wallet, no testnet coins and no transaction.
+
+<Callout type="note">
+The DPP standard is a working draft before version 1.0, so its packages and details can change. This guide explains the model and links to the [DPP docs](https://dpp.bsvb.net/docs) for each detail. The commands were tested with the DPP source at commit `243c060`.
+</Callout>
+
+## How it works
+
+A passport keeps two separate chains of transactions, called rails. The passport rail holds the passport's own states, and each new state spends the one before it, so the history has one order. The claim rail holds anchors for claims, such as a repair or a recycling, which a party signs away from the chain and commits to with a small transaction:
+
+<DppFlow />
+
+### What a reader checks
+
+The index and the registry only find and keep records. A reader checks the signatures, the links between states and the proof that each transaction is in a block, using block headers from a source it chooses. The index is an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, as in [Track transactions with overlays](/docs/guides/overlays/). The proofs work like the ones in [<Hint tip="Background Evaluation Extended Format, the binary format that sends a transaction together with its proof">BEEF</Hint> (BRC-62)](/docs/concepts/spv/), and identity keys work as in [Authenticate users with their wallet](/docs/guides/identity-auth/).
+
+### Address and product data
+
+A passport is named by a web address, commonly `https://HOST/01/GTIN/21/SERIAL`, where `GTIN` is the <Hint tip="Global Trade Item Number">GTIN</Hint> of the product and `SERIAL` identifies the item.
+
+The record carries product data, and a profile chooses its fields. The standard has a general profile and profiles for batteries and textiles.
+
+## What a signature proves
+
+A valid signature is narrower evidence than it looks. Two limits matter when you show a passport to a user.
+
+### Identity
+
+A valid signature shows which key signed a state or a claim. It does not show who holds the key, that the signer may make the statement, or that the product is genuine. Today the application that registers a signer is the only party vouching for who the signer is, which the DPP docs call [Ring 0](https://dpp.bsvb.net/docs/readme/architecture/identity-and-authority). Show a brand or issuer name as that application's statement, not as a checked fact.
+
+### Regulation
+
+The standard also does not claim conformity with any regulation. Its battery and textile profiles map fields to the EU Batteries Regulation and the Ecodesign for Sustainable Products Regulation, and those mappings have not been assessed.
+
+## Check a test passport
+
+The DPP repository includes a five state test passport. In these steps you check it offline, from its raw transactions.
+
+<Steps>
+  <Step title="Get the code">
+    Clone the DPP repository and build it:
+
+    ```bash
+    git clone https://github.com/bsv-blockchain/dpp.git
+    cd dpp
+    npm ci
+    npm run build
+    ```
+  </Step>
+  <Step title="Run the check">
+    Run the check from the root of the `dpp` folder. It verifies the passport from its raw transactions:
+
+    ```bash
+    node examples/verify-passport.mjs --fixture --version=2 --report
+    ```
+
+    The first lines name the five states and the result, with long lines shortened here:
+
+    ```text
+    Fixture chain (record version 2): 5 states, verified from raw transaction hex, ...
+    Operations, genesis to tip: ISSUE -> UPDATE -> TRANSFER -> UPDATE -> RETIRE.
+    State 1 (ISSUE, a39a87ffca41): user signature verifies; linkage holds; inclusion pending.
+    ...
+    The chain as a whole is valid.
+    Inclusion across the chain: pending (a proof the verifier could not evaluate ...)
+    ```
+
+    The output goes on with the refusal cases and the report cases of the test passport, and the command ends with exit status 0.
+  </Step>
+  <Step title="Read the result">
+    Each state shows that its signature verifies and that it links to the state before it. Inclusion is `pending` because the test transactions are not on the chain, so there is no proof to check. That is missing evidence, not a failed check.
+
+    The `ok:` lines for refusals are checks that held: the verifier refused a deliberately broken input, as it should. A line that starts with `FAIL:` or `FAILS:` means something is wrong, and the command then exits with a non-zero status.
+  </Step>
+</Steps>
+
+## Read the verification report
+
+A verification report has sixteen checks and no single yes or no. Each check answers with one of four statuses:
+
+- `pass`: the check ran on the evidence and held
+- `fail`: the check ran and did not hold
+- `unknown`: the evidence, source or policy needed to finish the check was missing, and the reason code says which
+- `not-applicable`: the profile or policy says the check does not apply
+
+Decide what to trust by naming the checks your use needs, and show each finding instead of one badge. [Read the verification report](https://dpp.bsvb.net/docs/build-and-integrate/evidence-and-freshness) explains every check.
+
+## See it in a browser
+
+The DPP team runs a hosted demonstration with a [sample passport](https://dpp.bsvb.net/01/09522156492290/21/792B7797E3D8) and a [verifier](https://dpp.bsvb.net/verify), where you can check a passport by its identifier.
+
+<Callout type="warning">
+The demonstration uses sample data only. Its three open sample brands write nothing to the blockchain. A signed-in user who creates a brand writes real BSV Mainnet transactions that cost <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint>, and a blockchain transaction cannot be reversed, so do not create a brand just to try the page.
+</Callout>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Cannot find module">
+    The build did not finish. Run `npm run build` again in the `dpp` folder and read the first error it prints.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+With the model and the report clear, continue in the DPP docs:
+
+- [Verify your first passport](https://dpp.bsvb.net/docs/build-and-integrate/quick-start)
+- [Build or integrate](https://dpp.bsvb.net/docs/build-and-integrate)
+- [Product data profiles](https://dpp.bsvb.net/docs/build-and-integrate/profiles)
+- [Plan your platform](https://dpp.bsvb.net/docs/readme/plan-your-platform)
+- [Known limitations and open questions](https://dpp.bsvb.net/docs/overview/production-readiness/limitations)
