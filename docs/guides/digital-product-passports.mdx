@@ -24,7 +24,11 @@ A passport keeps two separate chains of transactions, called rails. The passport
 
 <DppFlow />
 
+### How a reader checks a passport
+
 The index and the registry only find and keep records. A reader checks the signatures, the links between states and the proof that each transaction is in a block, using block headers from a source it chooses. The index is an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, as in [Track transactions with overlays](/docs/guides/overlays/). The proofs work like the ones in [<Hint tip="Background Evaluation Extended Format, the binary format that sends a transaction together with its proof">BEEF</Hint> (BRC-62)](/docs/concepts/spv/), and identity keys work as in [Authenticate users with their wallet](/docs/guides/identity-auth/).
+
+### How a passport is named and what it carries
 
 A passport is named by a web address, commonly `https://HOST/01/GTIN/21/SERIAL`, where `GTIN` is the <Hint tip="Global Trade Item Number">GTIN</Hint> of the product and `SERIAL` identifies the item.
 
@@ -32,7 +36,11 @@ The record carries product data, and a profile chooses its fields. The standard 
 
 ## What a signature proves
 
+### Identity
+
 A valid signature shows which key signed a state or a claim. It does not show who holds the key, that the signer may make the statement, or that the product is genuine. Today the application that registers a signer is the only party vouching for who the signer is, which the DPP docs call [Ring 0](https://dpp.bsvb.net/docs/readme/architecture/identity-and-authority). Show a brand or issuer name as that application's statement, not as a checked fact.
+
+### Regulation
 
 The standard also does not claim conformity with any regulation. Its battery and textile profiles map fields to the EU Batteries Regulation and the Ecodesign for Sustainable Products Regulation, and those mappings have not been assessed.
 
