@@ -5,7 +5,7 @@ description: Switch BSV Desktop and your server wallet from testnet to Mainnet, 
 
 import NetworkChoice from '/snippets/NetworkChoice.jsx';
 
-Move a working testnet app to **Mainnet**, the live BSV network, and end with an empty Mainnet wallet that your app can read and is ready to fund. Do this once the app runs end to end on testnet, since a payment on Mainnet spends real BSV and cannot be undone. The steps apply to any app from Build your app.
+Move a working testnet app to Mainnet, the live BSV network, and end with an empty Mainnet wallet that your app can read and is ready to fund. Do this once the app runs end to end on testnet, since a payment on Mainnet spends real BSV and cannot be undone. The steps apply to any app from Build your app.
 
 ## Before you begin
 
@@ -64,7 +64,7 @@ Before the app spends anything, ask the wallet which network it is on. Read it f
     console.log(network)
     ```
 
-    With BSV Desktop open, run the file with your usual TypeScript runner. The output is the network of the wallet.
+    With BSV Desktop open, run it with `npx tsx check-network.ts`. The output is the network of the wallet.
 
     ```text
     mainnet
@@ -84,7 +84,7 @@ A server wallet decides the network in its own code, so a testnet app has to cha
   <Step title="Set the network and the storage">
     In the file that creates the wallet, change `network` to `'main'` and `storageUrl` to a Mainnet storage server:
 
-    ```typescript wallet.ts
+    ```ts wallet.ts
     import { ServerWallet } from '@bsv/simple/server'
 
     const wallet = await ServerWallet.create({
@@ -96,7 +96,7 @@ A server wallet decides the network in its own code, so a testnet app has to cha
 
     Set `SERVER_PRIVATE_KEY` to the new Mainnet key and `STORAGE_URL` to your Mainnet storage server. Both values are read from the environment. The `!` tells TypeScript the value is set.
 
-    The testnet URL from the examples serves testnet only. The [SDK page](/docs/sdk/) lists the public Wallet Infra endpoints that store Mainnet wallets, and BSV recommends local storage when you can.
+    The testnet URL from the examples serves testnet only. The [SDK page](/docs/sdk/) lists the public Wallet Infra endpoints that store Mainnet wallets.
   </Step>
 </Steps>
 
@@ -158,9 +158,6 @@ The page has two cards. The **Recovery phrase** card holds 24 words that bring t
 ## Troubleshooting
 
 <AccordionGroup>
-  <Accordion title="Server app sends to Mainnet by mistake">
-    A server wallet created without `network` runs on Mainnet, because `'main'` is the default. Pass `network: 'testnet'` in every testnet config.
-  </Accordion>
   <Accordion title={<>Payment fails with `WERR_INSUFFICIENT_FUNDS`</>}>
     The wallet on the network you are on has no funds for the amount and the fee. The message reads `Insufficient funds in the available inputs to cover the cost of the required outputs and the transaction fee` and names the satoshis needed, not the network. Read the network with `getNetwork`, then check the balance in BSV Desktop.
   </Accordion>
