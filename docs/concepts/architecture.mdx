@@ -5,6 +5,7 @@ description: How an app, a wallet and the services behind it work together on BS
 ---
 
 import StackOverview from '/snippets/StackOverview.jsx';
+import StackLayers from '/snippets/StackLayers.jsx';
 
 **BSV** apps are built from a small set of components. Your app asks for something to be done, a wallet decides whether and how, and a few services behind the wallet broadcast the transaction, check it against block headers and store what the app needs.
 
@@ -39,7 +40,11 @@ The interfaces between these parts are published as BRC standards, such as BRC-1
 
 The packages of the TypeScript stack follow the same shape, as roles rather than as an npm dependency chain. There are three main layers, plus a set of capabilities that connect to them from the side.
 
-<img src="https://bsv-blockchain.github.io/ts-stack/assets/diagrams/stack-layers.svg" alt="The stack layers: application APIs above the BRC-100 wallet boundary, the wallet toolkit below it, and @bsv/sdk as the foundation" />
+<StackLayers />
+
+<Visibility for="agents">
+The diagram has three layers. The application layer is `@bsv/simple`. The wallet toolkit is `@bsv/wallet-toolbox`. The foundation is `@bsv/sdk`. The BRC-100 interface sits between the application and the wallet. Beside the layers are overlays (`@bsv/overlay`, `@bsv/overlay-express`), messaging (`@bsv/message-box-client`, `@bsv/authsocket`), identity (`@bsv/auth-express-middleware`), monetization (`@bsv/402-pay`, `@bsv/payment-express-middleware`) and tokens (`@bsv/btms`).
+</Visibility>
 
 ### The foundation, @bsv/sdk
 
