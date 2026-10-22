@@ -92,7 +92,11 @@ Arcade does not accept BEEF. Convert it to EF before you submit. A body can be u
 
 ## Submit a transaction
 
-With a signed transaction in hand, send it to the endpoint you picked. Replace `YOUR_SIGNED_TX_HEX` with the hex of your transaction:
+With a signed transaction in hand, send it to the endpoint you picked.
+
+### Submit with curl
+
+Replace `YOUR_SIGNED_TX_HEX` with the hex of your transaction:
 
 ```bash
 curl -s -X POST https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx \
@@ -104,9 +108,11 @@ curl -s -X POST https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx \
 {"txid":"9f2b…","status":202,"txStatus":"RECEIVED"}
 ```
 
-The `txid` is the identifier you follow in the next step. Submitting the same transaction again is safe: Arcade answers `202` again, with the status the transaction has reached.
+The `txid` is the identifier you follow in the next section. Submitting the same transaction again is safe: Arcade answers `202` again, with the status the transaction has reached.
 
-To submit from TypeScript, add this to your app after you sign the transaction. Use the `Teranode` broadcaster of `@bsv/sdk` with the `/tx` address of the endpoint. Here `tx` is your signed `Transaction`, and every input of it needs its `sourceTransaction`, so that the SDK can produce EF. This example was tested with `@bsv/sdk` 3.2.1:
+### Submit with TypeScript
+
+To submit from your app, add this after you sign the transaction. Use the `Teranode` broadcaster of `@bsv/sdk` with the `/tx` address of the endpoint. Here `tx` is your signed `Transaction`, and every input of it needs its `sourceTransaction`, so that the SDK can produce EF. This example was tested with `@bsv/sdk` 3.2.1:
 
 ```ts
 import { Transaction, Teranode } from '@bsv/sdk'
@@ -127,6 +133,8 @@ Do not point the `ARC` class of the SDK at Arcade, it calls a path Arcade does n
 
 ## Follow the transaction
 
+### Read the status
+
 Ask Arcade for the status of the `txid`:
 
 ```bash
@@ -138,6 +146,8 @@ The `txStatus` field says where the transaction is. Once it is mined, the answer
 ```text
 {"txid":"9f2b…","txStatus":"MINED","blockHash":"0000…","blockHeight":972090,"merklePath":"BUMP_HEX"}
 ```
+
+### Statuses
 
 These are the statuses you will see most:
 
@@ -152,6 +162,8 @@ These are the statuses you will see most:
 | `DOUBLE_SPEND_ATTEMPTED` | Another transaction spends the same output. Final |
 
 The `merklePath` of a mined transaction is a <Hint tip="BRC-74: a compact merkle path that proves a transaction is in a block">BUMP</Hint>. Keep it, because it is the proof that your app needs to verify the transaction with block headers.
+
+### Get notified instead of polling
 
 Instead of asking again and again, you can have Arcade tell you. Choose one of two ways when you submit:
 
