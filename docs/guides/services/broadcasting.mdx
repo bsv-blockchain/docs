@@ -20,7 +20,7 @@ Arcade has public endpoints for testnet and for Mainnet. This guide uses testnet
 
 ## How it works
 
-Your app submits the transaction and then follows it. Arcade answers right away that it accepted the transaction, and reports each later step as it happens:
+Your app submits the transaction and then follows it. Arcade reports each step as it happens:
 
 <BroadcastFlow />
 
@@ -37,11 +37,11 @@ The public endpoints are open and need no API key:
 | Mainnet | BSV Association, Europe | `https://arcade-eu-1.bsvblockchain.tech` |
 | Mainnet | GorillaPool | `https://arcade.gorillapool.io` |
 
-This guide uses the testnet endpoint. To go live, change the address to a Mainnet endpoint and read [Move your app to mainnet](/docs/guides/go-to-mainnet/). Check the limits of the endpoint before you build a transaction:
+To go live, change the address to a Mainnet endpoint and read [Move your app to mainnet](/docs/guides/go-to-mainnet/). Check the limits of the endpoint before you build a transaction:
 
 <Steps>
   <Step title="Read the policy">
-    Each endpoint publishes the fee and the sizes it accepts, and they differ by operator:
+    Each endpoint publishes the fee and the sizes it accepts:
 
     ```bash
     curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/policy
@@ -54,7 +54,7 @@ This guide uses the testnet endpoint. To go live, change the address to a Mainne
     The `miningFee` is the lowest fee rate the endpoint accepts, here 1 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshi</Hint> for each 1,000 bytes. A transaction that pays less is refused. At the time of writing the Mainnet endpoints ask for 100 satoshis for each 1,000 bytes, so read the policy of the endpoint you use.
   </Step>
   <Step title="Check that it is healthy">
-    Ask the endpoint whether it is connected to the network:
+    Ask the endpoint for its status:
 
     ```bash
     curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/health
@@ -79,7 +79,7 @@ This guide uses the testnet endpoint. To go live, change the address to a Mainne
     {"error":"failed to parse transaction"}
     ```
 
-    The answer is a `400`. Arcade answers `400` whenever the transaction itself is wrong, and sending the same bytes to another service does not help.
+    The answer is a `400`, which Arcade gives whenever the transaction itself is wrong.
   </Step>
 </Steps>
 
@@ -114,7 +114,7 @@ The `txid` is the identifier you follow in the next section. Submitting the same
 
 ### Submit with TypeScript
 
-To submit from your app, add this after you sign the transaction. Use the `Teranode` broadcaster of `@bsv/sdk` with the `/tx` address of the endpoint. Here `tx` is your signed `Transaction`, and every input of it needs its `sourceTransaction`, so that the SDK can produce EF. This example was tested with `@bsv/sdk` 3.2.1:
+To submit from your app, use the `Teranode` broadcaster of `@bsv/sdk` with the `/tx` address of the endpoint. Here `tx` is your signed `Transaction`, and every input of it needs its `sourceTransaction`, so that the SDK can produce EF. This example was tested with `@bsv/sdk` 3.2.1:
 
 ```ts
 import { Transaction, Teranode } from '@bsv/sdk'
