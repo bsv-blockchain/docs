@@ -6,37 +6,34 @@ description: How an app, a wallet and the services behind it work together on BS
 
 import StackOverview from '/snippets/StackOverview.jsx';
 
-**BSV** apps are built from a small set of open components. Your app asks for something to be done, a wallet decides whether and how, and a few services behind the wallet broadcast the transaction, prove it and store what the app needs. You can use all of them, or pick only the ones your app needs.
+**BSV** apps are built from a small set of components. Your app asks for something to be done, a wallet decides whether and how, and a few services behind the wallet broadcast the transaction, check it against block headers and store what the app needs.
 
 ## How the pieces fit
 
 <StackOverview />
 
-Your app talks to the wallet through <Hint tip="The standard interface between app code and wallet code">BRC-100</Hint>. The app asks, the wallet decides, and the keys never leave the wallet. Because the interface is a standard, any BRC-100 wallet can take the place of another one without a change in your app. BSV Desktop runs on desktop and BSV Browser runs on mobile, and both are built on wallet toolbox, which stores transactions, outputs and their metadata.
+Your app talks to the wallet through <Hint tip="The standard interface between app code and wallet code">BRC-100</Hint>. The app asks, the wallet decides, and the keys never leave the wallet. Because the interface is a standard, any BRC-100 wallet can take the place of another one without a change in your app. BSV Desktop runs on desktop and BSV Browser runs on mobile, and both are built on wallet toolbox, the package that handles wallet storage and signing.
 
 There are no accounts on BSV. Every payment is an unspent output locked to a rule, usually a key, and a signature spends it and creates new outputs. A balance is the outputs the wallet can unlock.
 
 ## What sits behind the wallet
 
-Each service below does one job, and the wallet or your app calls it directly when it needs it:
+Each service below does one job:
 
-- Broadcast service. The broadcast service, Arcade, delivers each transaction to block producing nodes. It reports back when the transaction is accepted and again when it is mined, with a proof of inclusion.
-- Block header service. It gives the wallet the block headers it checks proofs against. A payment carries its own proof, so the receiving wallet verifies it against the headers without asking a third party. A header is 80 bytes, so a wallet can keep all of them.
-- Message box. An asynchronous channel between people and apps. A payment sent to someone who is offline waits in the message box until the recipient connects.
-- Overlays. An overlay adds an application layer on top of the chain, with shared context for several apps. A topic manager decides which outputs belong to a topic, and a lookup service answers questions with proofs attached. What one app writes to a topic, every app that reads the topic can see.
-- File storage. Content addressed storage names each public file by its hash. A host keeps the file at a URL and the hash is committed on chain. Hosting is paid and limited in time, and renewing it is another payment. Anyone can download the file from any host and check it against the hash.
+- Broadcast service. The broadcast service, Arcade, takes a transaction and delivers it to block producing nodes, and your app or wallet can ask it for the status of a transaction.
+- Block header service. It gives the wallet the block headers it checks proofs against. A block header is 80 bytes. Arcade serves headers too, and wallet toolbox includes a Chaintracks client for the same job.
+- Message box. A store and forward channel for encrypted messages between people and apps, so the recipient does not have to be online when the message is sent.
+- Overlays. An overlay indexes the transactions that matter to an app. A topic manager decides which outputs belong to a topic, and a lookup service answers queries about them.
+- File storage. UHRP stores public files by their hash, so a file is found by what it is and not by where it lives.
 
 ## How an API charges for a request
 
-HTTP 402 lets an API ask for payment in the request itself. The client asks for a resource, the server answers 402 with a price, the wallet pays, and the same request goes again with the payment attached. There are no accounts and no API keys, only two requests. A browser extension can catch the 402 and hand it to the local wallet on desktop.
-
-For endpoints where both sides must prove who they are, mutual authentication middleware adds a signature to every request.
+HTTP 402 lets an API ask for payment in the request itself. The client asks for a resource, the server answers 402 with the price in the `x-bsv-sats` header, the wallet pays, and the same request goes again with the payment attached. The `@bsv/402-pay` package implements this flow, which is specified in BRC-121.
 
 ## Open standards
 
-Every component here is open source, and the interfaces between them are open standards, so no single vendor sits in the middle. You can swap the wallet, the storage host or the message box host and the app keeps working, and you can run your own services or use someone else's. Shared test vectors let any implementation check that it matches the others. The SDKs are available in TypeScript, Go, Python and Rust.
+The interfaces between these parts are published as BRC standards, such as BRC-100 for the wallet and BRC-121 for 402 payments, so a wallet or a service can be built by anyone against the same specification. SDKs are available for TypeScript, Go, Python and Rust.
 
-An autonomous agent can also get a wallet with a limited budget and make paid API calls on its own.
 
 ## Layers and packages
 

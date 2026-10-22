@@ -6,11 +6,11 @@
 // Source: Darren's architecture video (2026-10-16) and the ts-stack Stack Layers page.
 
 const services = [
-  { fn: 'Broadcast service', name: 'Arcade', text: 'Sends each transaction to block producing nodes and reports back with a proof.' },
+  { fn: 'Broadcast service', name: 'Arcade', text: 'Delivers each transaction to block producing nodes and reports its status.' },
   { fn: 'Block header service', name: 'Chaintracks', text: 'Gives the wallet the block headers it checks proofs against.' },
-  { fn: 'Message box', name: '@bsv/message-box-client', text: 'Holds a message or payment until the recipient connects.' },
-  { fn: 'Overlays', name: '@bsv/overlay', text: 'A topic manager admits outputs, a lookup service answers with proofs.' },
-  { fn: 'File storage', name: 'UHRP', text: 'Addresses each public file by its hash, so any host can serve it.' },
+  { fn: 'Message box', name: '@bsv/message-box-client', text: 'Stores encrypted messages until the recipient picks them up.' },
+  { fn: 'Overlays', name: '@bsv/overlay', text: 'A topic manager admits outputs, a lookup service answers queries.' },
+  { fn: 'File storage', name: 'UHRP', text: 'Stores public files by their hash, not by where they live.' },
 ];
 
 const css = `
@@ -58,7 +58,7 @@ export default function StackOverview() {
           <span className="sov-tag">BSV Desktop</span>
           <span className="sov-tag">BSV Browser</span>
         </div>
-        <p className="sov-text">Holds the keys, signs, and stores transactions, outputs and their metadata with wallet toolbox. Any BRC-100 wallet can take its place.</p>
+        <p className="sov-text">Holds the keys and signs, using wallet toolbox for storage and signing. Any BRC-100 wallet can take its place.</p>
       </div>
 
       <div className="sov-band">
@@ -81,7 +81,7 @@ export default function StackOverview() {
           <span className="sov-who">Foundation</span>
           <span className="sov-tag">@bsv/sdk</span>
         </div>
-        <p className="sov-text">Keys, scripts, transactions and proofs, in TypeScript, Go, Python and Rust.</p>
+        <p className="sov-text">Keys, scripts, transactions and proofs, with SDKs for TypeScript, Go, Python and Rust.</p>
       </div>
     </div>
   );
