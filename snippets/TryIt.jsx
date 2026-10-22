@@ -16,6 +16,20 @@ async function get(url, as) {
   return as === 'json' ? response.json() : (await response.text()).trim();
 }
 
+// Builds the BEEF from documented WhatsOnChain endpoints: the raw transaction and its merkle proof (TSC format), converted to a MerklePath.
+async function beefFor(sdk, id) {
+  const info = await get(`${WOC}/tx/hash/${id}`, 'json');
+  if (!info.blockheight) throw new Error('This transaction is not in a block yet. Try again after its first confirmation.');
+  const tx = sdk.Transaction.fromHex(await get(`${WOC}/tx/${id}/hex`));
+  const [proof] = await get(`${WOC}/tx/${id}/proof/tsc`, 'json');
+  tx.merklePath = new sdk.MerklePath(info.blockheight, proof.nodes.map((hash, level) => {
+    const offset = (proof.index >> level) ^ 1;
+    const sibling = hash === '*' ? { offset, duplicate: true } : { offset, hash };
+    return level === 0 ? [{ offset: proof.index, hash: id, txid: true }, sibling].sort((x, y) => x.offset - y.offset) : [sibling];
+  }));
+  return tx.toHexBEEF();
+}
+
 function Rows({ rows }) {
   return (
     <dl className="m-0 grid grid-cols-1 gap-x-4 gap-y-1 text-sm sm:grid-cols-[11rem_1fr]">
@@ -51,7 +65,8 @@ export default function TryIt() {
   });
 
   const inspect = run(async (id) => {
-    const [sdk, hex] = await Promise.all([loadSdk(), get(`${WOC}/tx/${id}/beef`)]);
+    const sdk = await loadSdk();
+    const hex = await beefFor(sdk, id);
     const parsed = sdk.Transaction.fromHexBEEF(hex);
     let check;
     try {

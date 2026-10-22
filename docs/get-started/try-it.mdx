@@ -42,10 +42,19 @@ To run the check yourself, open the developer console of your browser on any pag
 
 ```javascript
 const sdk = await import('https://esm.sh/@bsv/sdk@3.2.1')
+const WOC = 'https://api.whatsonchain.com/v1/bsv/test'
 const txid = 'ec987d5123479405a00ff0e0c0583d2ae8339c62871dc6ca5a467cd234ae7716'
-const beefHex = (await (await fetch(`https://api.whatsonchain.com/v1/bsv/test/tx/${txid}/beef`)).text()).trim()
+const get = async (path) => (await fetch(`${WOC}${path}`)).text()
 
-const tx = sdk.Transaction.fromHexBEEF(beefHex)
+const info = JSON.parse(await get(`/tx/hash/${txid}`))
+const tx = sdk.Transaction.fromHex((await get(`/tx/${txid}/hex`)).trim())
+const [proof] = JSON.parse(await get(`/tx/${txid}/proof/tsc`))
+tx.merklePath = new sdk.MerklePath(info.blockheight, proof.nodes.map((hash, level) => {
+  const offset = (proof.index >> level) ^ 1
+  const sibling = hash === '*' ? { offset, duplicate: true } : { offset, hash }
+  return level === 0 ? [{ offset: proof.index, hash: txid, txid: true }, sibling].sort((a, b) => a.offset - b.offset) : [sibling]
+}))
+
 let valid = false
 try {
   valid = (await tx.verify(new sdk.WhatsOnChain('test'))) === true
@@ -57,6 +66,7 @@ console.log(tx.id('hex'), tx.outputs.map((o) => o.satoshis), valid)
 
 The console prints the transaction ID, the outputs `[1000, 477]` and `true`.
 
+- WhatsOnChain returns the merkle proof in the TSC format, a list of hashes from the transaction up to the block. The `MerklePath` built from it, with the raw transaction, is what the SDK reads as BEEF.
 - `new sdk.WhatsOnChain('test')` checks the proof against testnet. With no argument, it checks against Mainnet and throws `Invalid merkle path` for a testnet transaction.
 - `verify()` returns `true` for a valid BEEF and throws on a wrong proof or script, so the `try` and `catch` read both failures as not valid.
 
