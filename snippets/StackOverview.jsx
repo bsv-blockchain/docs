@@ -1,87 +1,66 @@
-// The BSV stack as four bands, top to bottom: your app, the wallet boundary, the wallet,
-// and the services behind it, with the SDK as the foundation under all of them.
-// Each service is named by what it does first, then by its product name.
-// Readable on its own: a reader sees who asks and who decides, a developer sees the BRC-100 line and the packages.
+// The whole picture in three boxes: your app asks, the wallet decides, the services do the rest.
+// Readable on its own: no package names here, those are in the layers diagram further down.
 // Edit the text below; the layout does not need to change.
 // Source: Darren's architecture video (2026-10-16) and the ts-stack Stack Layers page.
 
-const services = [
-  { fn: 'Broadcast service', name: 'Arcade', text: 'Delivers each transaction to block producing nodes and reports its status.' },
-  { fn: 'Block header service', name: 'Chaintracks', text: 'Gives the wallet the block headers it checks proofs against.' },
-  { fn: 'Message box', name: '@bsv/message-box-client', text: 'Stores encrypted messages until the recipient picks them up.' },
-  { fn: 'Overlays', name: '@bsv/overlay', text: 'A topic manager admits outputs, a lookup service answers queries.' },
-  { fn: 'File storage', name: 'UHRP', text: 'Stores public files by their hash, not by where they live.' },
-];
+const services = ['Broadcast', 'Block headers', 'Message box', 'Overlays', 'File storage'];
 
 const css = `
-.sov { container-type: inline-size; margin: 24px 0; display: flex; flex-direction: column; gap: 10px; color: var(--wd-text); }
-.sov-band { padding: 16px; border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); }
-.sov-label { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 6px; }
-.sov-who { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--wd-text-muted); }
-.sov-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; font-weight: 700; padding: 2px 8px; border-radius: 6px; background: var(--wd-primary); color: var(--wd-background); }
-.sov-text { font-size: 13.5px; line-height: 1.5; margin: 0; }
+.sov { container-type: inline-size; margin: 24px 0; display: grid; grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr) 76px minmax(0, 1fr); align-items: stretch; gap: 8px; color: var(--wd-text); }
+.sov-box { display: flex; flex-direction: column; gap: 8px; padding: 18px; border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); }
 .sov-wallet { border-color: var(--wd-primary); border-width: 2px; }
-.sov-line { display: flex; align-items: center; gap: 10px; padding: 0 4px; }
-.sov-rule { flex: 1; height: 0; border-top: 2px dashed var(--wd-primary); }
-.sov-pill { font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; background: var(--wd-primary); color: var(--wd-background); text-align: center; }
-.sov-grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
-.sov-card { display: flex; flex-direction: column; gap: 6px; padding: 12px; border: 1px solid var(--wd-border); border-radius: 12px; background: var(--wd-background); }
-.sov-fn { font-size: 13px; font-weight: 700; }
-.sov-name { align-self: flex-start; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 6px; border: 1px solid var(--wd-primary); color: var(--wd-primary); overflow-wrap: anywhere; }
-.sov-card .sov-text { font-size: 12.5px; }
-.sov-sdk { border-style: dashed; text-align: center; }
-@container (max-width: 760px) { .sov-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@container (max-width: 460px) { .sov-grid { grid-template-columns: 1fr; } }
+.sov-who { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--wd-text-muted); }
+.sov-title { font-size: 16px; font-weight: 700; margin: 0; }
+.sov-text { font-size: 13.5px; line-height: 1.5; margin: 0; }
+.sov-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.sov-chip { font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--wd-primary); color: var(--wd-primary); }
+.sov-link { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; color: var(--wd-primary); }
+.sov-verb { font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; }
+.sov-arrow { font-size: 22px; line-height: 1; }
+@container (max-width: 700px) {
+  .sov { grid-template-columns: 1fr; gap: 6px; }
+  .sov-link { flex-direction: row; gap: 8px; padding: 2px 0; }
+  .sov-arrow { transform: rotate(90deg); }
+}
 `;
 
 export default function StackOverview() {
   return (
-    <div className="sov" role="group" aria-label="The BSV stack: your app asks through the BRC-100 interface, the wallet decides, and the broadcast service, block header service, message box, overlays and file storage sit behind the wallet, all built on the SDK">
+    <div className="sov" role="group" aria-label="Your app asks the wallet through BRC-100, and the wallet uses the services: broadcast, block headers, message box, overlays and file storage">
       <style>{css}</style>
 
-      <div className="sov-band">
-        <div className="sov-label">
-          <span className="sov-who">Your app</span>
-        </div>
-        <p className="sov-text">Asks for what it wants done. It never holds a key.</p>
+      <div className="sov-box">
+        <span className="sov-who">1</span>
+        <p className="sov-title">Your app</p>
+        <p className="sov-text">Asks for what it wants done, such as a payment. It never holds a key.</p>
       </div>
 
-      <div className="sov-line" aria-hidden="true">
-        <span className="sov-rule" />
-        <span className="sov-pill">BRC-100: the app asks, the wallet decides</span>
-        <span className="sov-rule" />
+      <div className="sov-link" aria-hidden="true">
+        <span className="sov-verb">asks</span>
+        <span className="sov-arrow">→</span>
+        <span className="sov-verb">BRC-100</span>
       </div>
 
-      <div className="sov-band sov-wallet">
-        <div className="sov-label">
-          <span className="sov-who">Wallet</span>
-          <span className="sov-tag">BSV Desktop</span>
-          <span className="sov-tag">BSV Browser</span>
-        </div>
-        <p className="sov-text">Holds the keys and signs, using wallet toolbox for storage and signing. Any BRC-100 wallet can take its place.</p>
+      <div className="sov-box sov-wallet">
+        <span className="sov-who">2</span>
+        <p className="sov-title">The wallet</p>
+        <p className="sov-text">Holds the keys and decides whether and how to do it. BSV Desktop and BSV Browser are wallets.</p>
       </div>
 
-      <div className="sov-band">
-        <div className="sov-label">
-          <span className="sov-who">Services behind the wallet</span>
-        </div>
-        <div className="sov-grid">
+      <div className="sov-link" aria-hidden="true">
+        <span className="sov-verb">uses</span>
+        <span className="sov-arrow">→</span>
+      </div>
+
+      <div className="sov-box">
+        <span className="sov-who">3</span>
+        <p className="sov-title">Services</p>
+        <p className="sov-text">Each does one job, as the table below explains.</p>
+        <div className="sov-chips">
           {services.map((s) => (
-            <div className="sov-card" key={s.fn}>
-              <span className="sov-fn">{s.fn}</span>
-              <span className="sov-name">{s.name}</span>
-              <p className="sov-text">{s.text}</p>
-            </div>
+            <span className="sov-chip" key={s}>{s}</span>
           ))}
         </div>
-      </div>
-
-      <div className="sov-band sov-sdk">
-        <div className="sov-label" style={{ justifyContent: 'center' }}>
-          <span className="sov-who">Foundation</span>
-          <span className="sov-tag">@bsv/sdk</span>
-        </div>
-        <p className="sov-text">Keys, scripts, transactions and proofs, with SDKs for TypeScript, Go, Python and Rust.</p>
       </div>
     </div>
   );
