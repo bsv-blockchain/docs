@@ -35,9 +35,9 @@ const css = `
 .bfl-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--wd-border); }
 .bfl-label { font-size: 15px; font-weight: 600; margin: 0; color: var(--wd-text); }
 .bfl-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--wd-primary); color: var(--wd-primary); }
-.bfl-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.bfl-side { display: flex; flex-direction: column; gap: 4px; padding: 14px 18px; }
-.bfl-side + .bfl-side { border-left: 1px solid var(--wd-border); }
+.bfl-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 12px; }
+.bfl-side { display: flex; flex-direction: column; gap: 4px; padding: 13px 16px; border: 1px solid var(--wd-border); border-radius: 10px; background: var(--wd-background); }
+.bfl-side + .bfl-side { border: 2px solid var(--wd-primary); padding: 12px 15px; }
 .bfl-who { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--wd-text-muted); }
 .bfl-text { font-size: 13.5px; line-height: 1.55; margin: 0; color: var(--wd-text); }
 @container (max-width: 560px) {
@@ -45,7 +45,6 @@ const css = `
   .bfl-num { width: 30px; height: 30px; font-size: 13px; }
   .bfl-step:not(:last-child)::before { left: 14px; top: 30px; }
   .bfl-body { grid-template-columns: 1fr; }
-  .bfl-side + .bfl-side { border-left: 0; border-top: 1px solid var(--wd-border); }
 }
 `;
 
