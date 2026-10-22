@@ -15,7 +15,7 @@ Use it when your app or server builds and signs transactions itself and has to s
 You need `curl`, and for the SDK example Node.js 22 or newer. To submit a transaction you also need a fully signed one, as hex.
 
 <Callout type="warning">
-The public Arcade endpoints run on Mainnet. A valid transaction you submit spends real BSV, and a blockchain transaction cannot be reversed. The checks in this guide only read from Arcade, or send input that Arcade refuses. To test on testnet, [run your own Arcade](https://docs.bsvblockchain.org/broadcasting/run-your-own-arcade).
+Arcade has public endpoints for testnet and for Mainnet. This guide uses testnet, where the coins have no value. A valid transaction you submit to a Mainnet endpoint spends real BSV, and a blockchain transaction cannot be reversed.
 </Callout>
 
 ## How it works
@@ -28,37 +28,38 @@ A `202` answer means Arcade checked the transaction and accepted it for delivery
 
 ## Check an endpoint
 
-The BSV Association runs two public endpoints and GorillaPool runs a third. All of them are open and need no API key:
+The public endpoints are open and need no API key:
 
-| Operator | URL |
-|----------|-----|
-| BSV Association, United States | `https://arcade-us-1.bsvblockchain.tech` |
-| BSV Association, Europe | `https://arcade-eu-1.bsvblockchain.tech` |
-| GorillaPool | `https://arcade.gorillapool.io` |
+| Network | Operator | URL |
+|---------|----------|-----|
+| testnet | BSV Association | `https://arcade-v2-testnet-us-1.bsvblockchain.tech` |
+| Mainnet | BSV Association, United States | `https://arcade-us-1.bsvblockchain.tech` |
+| Mainnet | BSV Association, Europe | `https://arcade-eu-1.bsvblockchain.tech` |
+| Mainnet | GorillaPool | `https://arcade.gorillapool.io` |
 
-Pick the one nearest to you, and check its limits before you build a transaction:
+This guide uses the testnet endpoint. To go live, change the address to a Mainnet endpoint and read [Move your app to mainnet](/docs/guides/go-to-mainnet/). Check the limits of the endpoint before you build a transaction:
 
 <Steps>
   <Step title="Read the policy">
     Each endpoint publishes the fee and the sizes it accepts, and they differ by operator:
 
     ```bash
-    curl -s https://arcade-us-1.bsvblockchain.tech/policy
+    curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/policy
     ```
 
     ```text
-    {"policy":{"miningFee":{"satoshis":100,"bytes":1000},"maxtxsizepolicy":100000000,...},"timestamp":"..."}
+    {"policy":{"miningFee":{"satoshis":1,"bytes":1000},"maxtxsizepolicy":100000000,...},"timestamp":"..."}
     ```
 
-    The `miningFee` is the lowest fee rate the endpoint accepts, here 100 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> for each 1,000 bytes. A transaction that pays less is refused.
+    The `miningFee` is the lowest fee rate the endpoint accepts, here 1 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshi</Hint> for each 1,000 bytes. A transaction that pays less is refused. The Mainnet endpoints asked for 100 satoshis for each 1,000 bytes when we checked, so read the policy of the endpoint you use.
   </Step>
   <Step title="Check that it is healthy">
     ```bash
-    curl -s https://arcade-us-1.bsvblockchain.tech/health
+    curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/health
     ```
 
     ```text
-    {"healthy":true,"version":"v0.16.0","status":"ok","blockHeight":972078,"datahub_urls":[...]}
+    {"healthy":true,"version":"v0.16.0","status":"ok","blockHeight":1764512,"datahub_urls":[...]}
     ```
 
     `healthy` is `true` when the endpoint is connected to the network, and `blockHeight` is the block it has reached.
@@ -67,7 +68,7 @@ Pick the one nearest to you, and check its limits before you build a transaction
     Send input that is not a transaction, to see how Arcade refuses it. Nothing is broadcast:
 
     ```bash
-    curl -s -X POST https://arcade-us-1.bsvblockchain.tech/tx \
+    curl -s -X POST https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx \
       -H "Content-Type: text/plain" \
       --data "00"
     ```
@@ -87,14 +88,14 @@ Arcade takes the transaction in two formats:
 - Raw: the transaction as it appears on the chain
 - <Hint tip="Extended Format (BRC-30): the raw transaction plus the satoshis and locking script of every output it spends">EF</Hint>: preferred, because Arcade can check the fee and the scripts without looking up the outputs the transaction spends
 
-Arcade does not accept BEEF. Convert it to EF before you submit. The body can be hex with `Content-Type: text/plain`, raw bytes with `application/octet-stream`, or JSON as `{ "rawTx": "HEX" }` with `application/json`.
+Arcade does not accept BEEF. Convert it to EF before you submit. A body can be up to 32 MiB, and it can be hex with `Content-Type: text/plain`, raw bytes with `application/octet-stream`, or JSON as `{ "rawTx": "HEX" }` with `application/json`.
 
 ## Submit a transaction
 
 With a signed transaction in hand, send it to the endpoint you picked. Replace `YOUR_SIGNED_TX_HEX` with the hex of your transaction:
 
 ```bash
-curl -s -X POST https://arcade-us-1.bsvblockchain.tech/tx \
+curl -s -X POST https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx \
   -H "Content-Type: text/plain" \
   --data "YOUR_SIGNED_TX_HEX"
 ```
@@ -110,7 +111,7 @@ To submit from TypeScript, add this to your app after you sign the transaction. 
 ```ts
 import { Transaction, Teranode } from '@bsv/sdk'
 
-const arcade = new Teranode('https://arcade-us-1.bsvblockchain.tech/tx')
+const arcade = new Teranode('https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx')
 
 const result = await tx.broadcast(arcade)
 console.log(result)
@@ -129,7 +130,7 @@ Do not point the `ARC` class of the SDK at Arcade, it calls a path Arcade does n
 Ask Arcade for the status of the `txid`:
 
 ```bash
-curl -s https://arcade-us-1.bsvblockchain.tech/tx/TXID
+curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx/TXID
 ```
 
 The `txStatus` field says where the transaction is. Once it is mined, the answer looks like this:
@@ -161,14 +162,14 @@ Instead of asking again and again, you can have Arcade tell you. Choose one of t
 
 - Keep the signed transaction until you have seen it on the network
 - After a timeout, a `5xx` or a `503`, send the same bytes again. Do not build a new transaction from the same inputs, or you can double spend against your own first attempt
-- A `400` is final. Fix the transaction before you send it again
-- Have a second endpoint ready, from the table above, for when the first is unreachable
+- A `400` is final. Fix the transaction before you send it again. The one exception is code 476, a locktime that has not passed yet: send the same transaction again after it passes
+- Have a second route ready, for when the endpoint is unreachable
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="400 failed to parse transaction">
-    The body is not a complete transaction. Check that the hex has no spaces or line breaks, and that `Content-Type` matches the body: `text/plain` for hex.
+    The body is not a complete transaction. Check that the hex is complete, and that `Content-Type` matches the body: `text/plain` for hex.
   </Accordion>
   <Accordion title="404 transaction not found">
     `{"error":"transaction not found"}` means this endpoint has never seen the `txid`. Ask the same endpoint you submitted to, because each one keeps its own records.
