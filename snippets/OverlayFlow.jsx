@@ -1,11 +1,11 @@
-// The overlay flow as two numbered steps, Send and Look up. Each step is one card:
-// the name of the part it uses on top, then your app and the overlay host side by side.
-// The tag carries the name the host uses in that step (tm_ topic, ls_ lookup service).
+// The overlay flow as two phases, Send and Look up. Each phase is one row:
+// your app on the left, the overlay host on the right, and a labelled arrow between them.
+// The label on the arrow is the name the host uses in that phase (tm_ topic, ls_ lookup service).
 // Readable on its own: a reader sees two steps, a developer sees the topic and the lookup service.
 // Edit the text below; the layout does not need to change.
 // Source: the guide "Track with overlays" and @bsv/sdk (TopicBroadcaster and LookupResolver).
 
-const steps = [
+const phases = [
   {
     label: 'Send',
     tag: 'tm_ topic',
@@ -21,54 +21,51 @@ const steps = [
 ];
 
 const css = `
-.ofl { container-type: inline-size; margin: 28px 0; padding: 0; list-style: none; display: flex; flex-direction: column; color: var(--wd-text); }
-.ofl-step { position: relative; display: grid; grid-template-columns: 36px minmax(0, 1fr); column-gap: 16px; padding-bottom: 20px; margin: 0; }
-.ofl-step:last-child { padding-bottom: 0; }
-.ofl-step:not(:last-child)::before { content: ''; position: absolute; left: 17px; top: 36px; bottom: 0; width: 2px; background: var(--wd-border); }
-.ofl-num { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; border: 1.5px solid var(--wd-primary); background: var(--wd-background); color: var(--wd-primary); font-size: 14px; font-weight: 600; }
-.ofl-card { border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); overflow: hidden; }
-.ofl-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--wd-border); }
-.ofl-label { font-size: 15px; font-weight: 600; margin: 0; color: var(--wd-text); }
-.ofl-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--wd-primary); color: var(--wd-primary); }
-.ofl-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
-.ofl-side { display: flex; flex-direction: column; gap: 4px; padding: 14px 18px; }
-.ofl-side + .ofl-side { border-left: 1px solid var(--wd-border); }
+.ofl { container-type: inline-size; margin: 28px 0; display: flex; flex-direction: column; gap: 28px; color: var(--wd-text); }
+.ofl-phase { display: flex; flex-direction: column; gap: 12px; }
+.ofl-label { display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--wd-text-muted); }
+.ofl-label::after { content: ''; flex: 1; height: 1px; background: var(--wd-border); }
+.ofl-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(112px, 148px) minmax(0, 1fr); align-items: center; }
+.ofl-card { display: flex; flex-direction: column; gap: 6px; padding: 18px 20px; border: 1px solid var(--wd-border); border-radius: 16px; background: var(--wd-surface); }
+.ofl-host { position: relative; padding-left: 24px; }
+.ofl-host::before { content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 3px; border-radius: 0 3px 3px 0; background: var(--wd-primary); }
 .ofl-who { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--wd-text-muted); }
-.ofl-text { font-size: 13.5px; line-height: 1.55; margin: 0; color: var(--wd-text); }
-@container (max-width: 560px) {
-  .ofl-step { grid-template-columns: 30px minmax(0, 1fr); column-gap: 12px; }
-  .ofl-num { width: 30px; height: 30px; font-size: 13px; }
-  .ofl-step:not(:last-child)::before { left: 14px; top: 30px; }
-  .ofl-body { grid-template-columns: 1fr; }
-  .ofl-side + .ofl-side { border-left: 0; border-top: 1px solid var(--wd-border); }
+.ofl-text { font-size: 14px; line-height: 1.55; margin: 0; color: var(--wd-text); }
+.ofl-link { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 0 10px; }
+.ofl-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; text-align: center; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--wd-primary); color: var(--wd-primary); }
+.ofl-line { position: relative; align-self: stretch; height: 1px; background: var(--wd-primary); }
+.ofl-line::after { content: ''; position: absolute; right: 0; top: -4px; border: solid var(--wd-primary); border-width: 1px 1px 0 0; width: 8px; height: 8px; transform: rotate(45deg); transform-origin: center; }
+@container (max-width: 620px) {
+  .ofl-row { grid-template-columns: 1fr; row-gap: 8px; }
+  .ofl-link { flex-direction: row; justify-content: center; padding: 2px 0; }
+  .ofl-line { align-self: center; width: 1px; height: 22px; }
+  .ofl-line::after { right: auto; left: -4px; top: auto; bottom: 0; transform: rotate(135deg); }
 }
 `;
 
 export default function OverlayFlow() {
   return (
-    <ol className="ofl" aria-label="Your app sends a transaction to an overlay topic and reads it back through the lookup service">
+    <div className="ofl" role="group" aria-label="Your app sends a transaction to an overlay topic and reads it back through the lookup service">
       <style>{css}</style>
-      {steps.map((s, i) => (
-        <li className="ofl-step" key={s.label}>
-          <span className="ofl-num" aria-hidden="true">{i + 1}</span>
-          <div className="ofl-card">
-            <div className="ofl-top">
-              <p className="ofl-label">{s.label}</p>
-              <span className="ofl-tag">{s.tag}</span>
+      {phases.map((p) => (
+        <div className="ofl-phase" key={p.label}>
+          <div className="ofl-label">{p.label}</div>
+          <div className="ofl-row">
+            <div className="ofl-card">
+              <span className="ofl-who">Your app</span>
+              <p className="ofl-text">{p.app}</p>
             </div>
-            <div className="ofl-body">
-              <div className="ofl-side">
-                <span className="ofl-who">Your app</span>
-                <p className="ofl-text">{s.app}</p>
-              </div>
-              <div className="ofl-side">
-                <span className="ofl-who">Overlay host</span>
-                <p className="ofl-text">{s.host}</p>
-              </div>
+            <div className="ofl-link">
+              <span className="ofl-tag">{p.tag}</span>
+              <span className="ofl-line" aria-hidden="true" />
+            </div>
+            <div className="ofl-card ofl-host">
+              <span className="ofl-who">Overlay host</span>
+              <p className="ofl-text">{p.host}</p>
             </div>
           </div>
-        </li>
+        </div>
       ))}
-    </ol>
+    </div>
   );
 }
