@@ -1,6 +1,6 @@
 // Try BSV in your browser: look up a testnet transaction and inspect its BEEF, with nothing installed and no wallet.
 // @bsv/sdk loads from a CDN on the first click (a runtime import, never at build time). Data comes from the WhatsOnChain testnet API.
-// Tested with @bsv/sdk 3.2.1 and Chrome 155, 2026-10-22 (bsv-testing study try-it).
+// Tested with @bsv/sdk 3.2.1 and Chrome 155, 2026-10-22.
 import { useState } from 'react';
 
 const SDK_URL = 'https://esm.sh/@bsv/sdk@3.2.1';
