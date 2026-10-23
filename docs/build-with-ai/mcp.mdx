@@ -1,0 +1,281 @@
+---
+title: "Connect your AI tool with MCP"
+description: "Give Claude Code the BSV docs and the @bsv/mcp tools through MCP servers, so your agent reads these pages, checks Arcade and reviews your project on testnet."
+sidebarTitle: "Connect with MCP"
+---
+
+import McpServers from '/snippets/McpServers.jsx';
+
+Connect [Claude Code](https://code.claude.com/docs/en/overview) to the BSV docs and to the BSV tools through MCP, the [Model Context Protocol](https://modelcontextprotocol.io/) an AI tool uses to call an outside server for information. With them, your agent searches and reads these pages before it writes BSV code, and checks transactions and projects with BSV tools. Use it when an AI agent builds your BSV app. Without a source, the agent can pick the wrong network or put a private key in your code. At the end, the docs server and `@bsv/mcp` are connected to your project, and the agent has checked a project against the BSV guardrails.
+
+## Before you begin
+
+- [Claude Code](https://code.claude.com/docs/en/overview) installed. This guide was tested with Claude Code 2.1.303.
+- Node.js 22 or newer, for `@bsv/mcp`, which runs through `npx`.
+
+## How it works
+
+Two MCP servers give the agent BSV knowledge in different ways. The BSV docs server runs at `https://bsv.writedocs.io/mcp`, and `@bsv/mcp` is a package that runs on your machine:
+
+<McpServers />
+
+<Visibility for="agents">
+- BSV docs server: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides, starting on testnet.
+- `@bsv/mcp`: gives tools for Arcade, a guardrail check, BRC and docs lookup, and dated facts. Use it for actions and live values, on testnet by default.
+</Visibility>
+
+Claude Code adds each server to the current project only, so run the commands in your project folder.
+
+## Connect the BSV docs server
+
+The docs server runs on this site and needs no login or API key:
+
+<Steps>
+  <Step title="Add the server">
+    Add the server under the name `bsv-docs`:
+
+    ```bash
+    claude mcp add --transport http bsv-docs https://bsv.writedocs.io/mcp
+    ```
+
+    ```text
+    Added HTTP MCP server bsv-docs with URL: https://bsv.writedocs.io/mcp to local config
+    File modified: /Users/you/.claude.json [project: /Users/you/my-app]
+    ```
+
+    The name is the one Claude Code shows for the server. Keep `bsv-docs`, since the BSV rules and the skill refer to the server by that name.
+  </Step>
+  <Step title="Check the connection">
+    List the servers in the project:
+
+    ```bash
+    claude mcp list
+    ```
+
+    ```text
+    Checking MCP server health…
+
+    bsv-docs: https://bsv.writedocs.io/mcp (HTTP) - ✔ Connected
+    ```
+  </Step>
+</Steps>
+
+The agent now has three tools to read the docs:
+
+| Tool | What it does |
+|------|--------------|
+| `list_docs` | Lists every page with its title, path, address and description |
+| `search_docs` | Searches the docs by keywords and returns the best matching pages with a snippet of each, 5 by default and up to 20 |
+| `get_doc` | Returns one or more pages in full, as Markdown, by path or address |
+
+Ask Claude Code a BSV question in the same project, and it calls `search_docs` and `get_doc` before it answers. For a first payment, the docs lead the agent to [Send a payment from a web app](/docs/get-started/quick-start-browser/), where a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/) approves the payment and no private key goes in your code.
+
+<Callout type="note">
+  The page addresses in the results use `docs.bsvblockchain.org`. To read a page, the agent passes its path to `get_doc`, which works with or without the site address.
+</Callout>
+
+## Add @bsv/mcp
+
+`@bsv/mcp` is the BSV Association's MCP server for building apps, testnet first. Its source is in [bsv-blockchain/bsv-mcp](https://github.com/bsv-blockchain/bsv-mcp). It replaces `@bsv/simple-mcp`, which is deprecated, as described in [Where Simple MCP went](#where-simple-mcp-went). This section uses `@bsv/mcp` 2.0.0.
+
+<Steps>
+  <Step title="Add the server">
+    Add the server under the name `bsv-mcp`, on testnet:
+
+    ```bash
+    claude mcp add bsv-mcp -e BSV_NETWORK=testnet -- npx -y @bsv/mcp
+    ```
+
+    ```text
+    Added stdio MCP server bsv-mcp with command: npx -y @bsv/mcp to local config
+    File modified: /Users/you/.claude.json [project: /Users/you/my-app]
+    ```
+
+    Testnet is the default, and `BSV_NETWORK=testnet` keeps the network visible in the configuration. Claude Code starts the server through `npx`, which downloads the package the first time.
+  </Step>
+  <Step title="Check the connection">
+    List the servers again:
+
+    ```bash
+    claude mcp list
+    ```
+
+    ```text
+    Checking MCP server health…
+
+    bsv-docs: https://bsv.writedocs.io/mcp (HTTP) - ✔ Connected
+    bsv-mcp: npx -y @bsv/mcp - ✔ Connected
+    ```
+  </Step>
+</Steps>
+
+The agent now has ten tools:
+
+| Tool | What it does |
+|------|--------------|
+| `arcade_submit` | Broadcasts a signed transaction, as raw or <Hint tip="Extended Format (BRC-30): the raw transaction plus the satoshis and locking script of every output it spends">EF</Hint> hex, to Arcade and reads its status back. It refuses <Hint tip="Background Evaluation Extended Format (BRC-62): a transaction with the evidence a host needs to verify it">BEEF</Hint>. On Mainnet it also needs `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` |
+| `arcade_status` | Reads the status of a transaction from Arcade and says whether it is final for an app: `SEEN_ON_NETWORK` or later with no competing transaction |
+| `arcade_policy` | Reads the fee rate and the size limits of an Arcade endpoint |
+| `arcade_health` | Reads the version, block height and upstream nodes of an Arcade endpoint |
+| `check_guardrails` | Checks a project against the BSV guardrails `G-01` to `G-34` and lists each finding with its fix. It reads the project and changes nothing |
+| `brc_lookup` | Returns a BRC as Markdown, by number |
+| `versions_check` | Compares the pinned package versions, the Rúnar commit and the Arcade version of each known endpoint with the latest ones |
+| `docs_url` | Finds the live address of a page of these docs from its id |
+| `code_search`, `find_function_definition` | Search local clones of the BSV repositories, made with `setup.sh` from the repository, in the folder set in `BSV_REPOS_DIR` |
+
+The server also has resources for the agent to read: dated facts as `bsv://facts/*`, on networks, Arcade, fees, WhatsOnChain, wallet limits, consensus, Rúnar, 1Color tokens and versions; the guardrails as `bsv://guardrails`; the custody shapes, the threat model and the docs index; the `@bsv/simple` 0.7 API and its traps; and any BRC as `bsv://brc/{id}`. Each fact starts with the date it was verified, so the agent can tell how current it is.
+
+It also has five prompts: `review_against_guardrails` runs the guardrail check and fixes the errors, `tokenize_with_1color` gives the encoding of 1Color token outputs, and `integrate_simple`, `add_simple_feature` and `debug_simple` work with `@bsv/simple`.
+
+<Callout type="warning">
+  Mainnet needs two switches. `BSV_NETWORK=mainnet` picks the Mainnet Arcade, and `arcade_submit` also needs `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` in the shell that starts the agent. Without it, the tool refuses before it contacts Arcade. A Mainnet broadcast spends real BSV and cannot be undone.
+</Callout>
+
+## Check a project against the guardrails
+
+The guardrails are the rules a BSV app follows, such as broadcasting through Arcade and keeping keys in the wallet. `check_guardrails` is the quickest tool to try, since it needs no wallet and no coins:
+
+<Steps>
+  <Step title="Ask for the check">
+    In Claude Code, in your project folder, type the request:
+
+    ```text
+    Check this project against the BSV guardrails.
+    ```
+
+    The agent calls `check_guardrails` with the absolute path of the project. The tool refuses a relative path.
+  </Step>
+  <Step title="Read the report">
+    The report starts with the number of errors and warnings, then lists each finding with its guardrail, file and line, the fix, and a reference to the guardrail. For a project that broadcasts through the `ARC` class of the SDK, it looks like this, shortened:
+
+    ```text
+    check_guardrails: 15 errors, 5 warnings, shape A
+    ...
+    error G-09 src/broadcast.ts:6  export const arc = new ARC('https://arc.taal.com', { deploymentId: 'tipjar' })
+      fix: Broadcast only through Arcade (`POST /tx`, text/plain, EF when sources are attached, never BEEF); never the SDK `ARC` class or `/v1/tx`; `ARCADE_URL` configurable with the public instance per network as default. (bsv://guardrails#G-09)
+    ...
+    passed: G-04
+    not applicable: G-17, G-18, G-19, G-23, G-24
+    manual checklist: G-05, G-07, G-08, G-11, G-13, G-20, G-22, G-26, G-27, G-28, G-29, G-30, G-32, G-33
+    ```
+
+    G-09 is the rule to broadcast only through Arcade, and the `ARC` class calls a path Arcade does not serve. An `error` is a finding to fix, and a `warn` is one to check. `shape A` means the user's wallet holds the keys. The tool cannot check the guardrails in the manual checklist from the code, so the agent reviews those by hand.
+  </Step>
+</Steps>
+
+A project is ready when the report shows 0 errors. The repository's tipping sample, [`samples/tipping-shape-a`](https://github.com/bsv-blockchain/bsv-mcp/tree/main/samples/tipping-shape-a), reports `0 errors, 0 warnings`. To keep a finding that you checked and accept, add `// bsv-guardrail-ignore G-xx reason` on the flagged line or the line above. Every guardrail is listed in [`content/guardrails.yaml`](https://github.com/bsv-blockchain/bsv-mcp/blob/main/content/guardrails.yaml).
+
+## Set the environment
+
+`@bsv/mcp` reads these variables, which you pass with `-e` in `claude mcp add`:
+
+| Variable | Default | What it does |
+|----------|---------|--------------|
+| `BSV_NETWORK` | `testnet` | `testnet` or `mainnet`. Picks the default Arcade and gates Mainnet broadcasts. Any other value stops the server |
+| `ARCADE_URL` | Per network | Arcade base URL. Default on testnet `https://arcade-testnet-us-1.bsvblockchain.tech`, on Mainnet `https://arcade-us-1.bsvblockchain.tech`. A host that belongs to the other network stops the server |
+| `BSV_MCP_ALLOW_MAINNET_BROADCAST` | Not set | `1` lets `arcade_submit` broadcast on Mainnet |
+| `BSV_REPOS_DIR` | Not set | The folder of BSV repository clones made with `setup.sh`, for `code_search` and `find_function_definition` |
+
+Both testnet hosts, `arcade-testnet-us-1` and `arcade-v2-testnet-us-1`, are live. [Broadcast transactions with Arcade](/docs/guides/services/broadcasting/) uses the second; set `ARCADE_URL` to use it here.
+
+## Use another AI tool
+
+Cursor, Windsurf and VS Code take the same two servers as JSON. Each configuration adds both servers; remove the `bsv-mcp` entry if you want only the docs:
+
+<AccordionGroup>
+  <Accordion title="Cursor">
+    Add to `.cursor/mcp.json`:
+
+    ```json .cursor/mcp.json
+    {
+      "mcpServers": {
+        "bsv-mcp": {
+          "command": "npx",
+          "args": ["-y", "@bsv/mcp"],
+          "env": { "BSV_NETWORK": "testnet" }
+        },
+        "bsv-docs": {
+          "url": "https://bsv.writedocs.io/mcp"
+        }
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="Windsurf">
+    Add to the MCP configuration of Windsurf, which names the URL field `serverUrl`:
+
+    ```json
+    {
+      "mcpServers": {
+        "bsv-mcp": {
+          "command": "npx",
+          "args": ["-y", "@bsv/mcp"],
+          "env": { "BSV_NETWORK": "testnet" }
+        },
+        "bsv-docs": {
+          "serverUrl": "https://bsv.writedocs.io/mcp"
+        }
+      }
+    }
+    ```
+  </Accordion>
+  <Accordion title="VS Code">
+    Add to `.vscode/mcp.json`. VS Code uses a top-level `servers` key instead of `mcpServers`:
+
+    ```json .vscode/mcp.json
+    {
+      "servers": {
+        "bsv-mcp": {
+          "command": "npx",
+          "args": ["-y", "@bsv/mcp"],
+          "env": { "BSV_NETWORK": "testnet" }
+        },
+        "bsv-docs": {
+          "type": "http",
+          "url": "https://bsv.writedocs.io/mcp"
+        }
+      }
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+These configurations come from the install notes of `@bsv/mcp` and were not run for this guide.
+
+## Remove a server
+
+Run the command with the name you gave the server:
+
+```bash
+claude mcp remove bsv-mcp -s local
+```
+
+```text
+Removed MCP server bsv-mcp from local config
+File modified: /Users/you/.claude.json [project: /Users/you/my-app]
+```
+
+## Where Simple MCP went
+
+`@bsv/simple-mcp` is deprecated, and its content moved to `@bsv/mcp`. If your project still has it, remove it with `claude mcp remove simple-mcp -s local` and add `@bsv/mcp` as above.
+
+<Accordion title="Resources and prompts that moved">
+  | `@bsv/simple-mcp` 0.0.2 | `@bsv/mcp` 2.0.0 |
+  |---|---|
+  | `simple://api/*`, `simple://guide/nextjs`, `simple://guide/patterns` | Resource `bsv://simple/api` |
+  | `simple://guide/gotchas` | Resource `bsv://simple/gotchas` |
+  | Prompt `integrate_simple` | Prompt `integrate_simple` |
+  | Prompt `add_bsv_feature` | Prompt `add_simple_feature` |
+  | Prompt `debug_simple` | Prompt `debug_simple` |
+  | `scaffold_nextjs_config` and the `generate_*` tools | None |
+</Accordion>
+
+The code generators have no replacement. The prompts guide the agent to write the code itself, testnet first.
+
+## Next steps
+
+With both servers connected, give the agent the BSV playbook, then let it build a first payment:
+
+- [Install the BSV agent skill](/docs/build-with-ai/skill/)
+- [Send a payment with an AI agent](/docs/build-with-ai/prompts/)
+- [Broadcast transactions with Arcade](/docs/guides/services/broadcasting/)

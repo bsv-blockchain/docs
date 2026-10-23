@@ -54,7 +54,7 @@
             "group": "Set up your AI",
             "pages": [
               "docs/build-with-ai/index",
-              "docs/build-with-ai/simple-mcp",
+              "docs/build-with-ai/mcp",
               "docs/build-with-ai/prompts",
               "docs/build-with-ai/llm-resources",
               "docs/build-with-ai/skill"
@@ -557,6 +557,10 @@
     {
       "source": "/docs/concepts/paymail",
       "destination": "/docs/standards/paymail"
+    },
+    {
+      "source": "/docs/build-with-ai/simple-mcp",
+      "destination": "/docs/build-with-ai/mcp"
     }
   ]
 }
