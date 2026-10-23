@@ -1,15 +1,15 @@
 // How a tip moves in the tipping sample, as four numbered steps: Tip, Relay, Track, Collect.
-// Each step is one card: the call on top, then the two parts that act in it side by side.
+// Each step is one card: the call on top, then the two parts that act in it side by side. A wallet card has the primary border.
 // Readable on its own: a reader sees who does what, a developer sees the calls.
 // Edit the text below; the layout does not need to change.
-// Source: samples/tipping-shape-a (README.md, TRUST.md, GUARDRAILS.md) in bsv-blockchain/bsv-mcp at 9320b9a. Tested with @bsv/mcp 2.0.0, 2026-10-22.
+// Source: samples/tipping-shape-a (README.md, TRUST.md, GUARDRAILS.md) in bsv-blockchain/bsv-mcp at f49c46c. The wallet steps were not run.
 
 const steps = [
   {
     label: 'Tip',
     tag: 'createAction',
     a: { who: 'Tipper page', text: 'Picks a BRC-29 derivation for the creator and saves it in the browser.' },
-    b: { who: "Tipper's wallet", text: "Derives the creator's key, then signs and broadcasts the payment to it, with the tipper's approval when it asks." },
+    b: { who: "Tipper's wallet", wallet: true, text: "Derives the creator's key, then signs and broadcasts the payment to it, with the tipper's approval when it asks." },
   },
   {
     label: 'Relay',
@@ -27,7 +27,7 @@ const steps = [
     label: 'Collect',
     tag: 'internalizeAction',
     a: { who: 'Creator page', text: 'Collects the tip once Arcade has seen it, retrying after 10, 30 and 60 seconds.' },
-    b: { who: "Creator's wallet", text: 'Derives the key from the derivation, and adds the tip only if it is its own.' },
+    b: { who: "Creator's wallet", wallet: true, text: 'Derives the key from the derivation, and adds the tip only if it is its own.' },
   },
 ];
 
@@ -43,7 +43,7 @@ const css = `
 .tfl-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--wd-primary); color: var(--wd-primary); }
 .tfl-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 12px; }
 .tfl-side { display: flex; flex-direction: column; gap: 4px; padding: 13px 16px; border: 1px solid var(--wd-border); border-radius: 10px; background: var(--wd-background); }
-.tfl-side + .tfl-side { border: 2px solid var(--wd-primary); padding: 12px 15px; }
+.tfl-wallet { border: 2px solid var(--wd-primary); padding: 12px 15px; }
 .tfl-who { font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--wd-text-muted); }
 .tfl-text { font-size: 13.5px; line-height: 1.55; margin: 0; color: var(--wd-text); }
 @container (max-width: 560px) {
@@ -67,14 +67,12 @@ export default function TippingFlow() {
               <span className="tfl-tag">{s.tag}</span>
             </div>
             <div className="tfl-body">
-              <div className="tfl-side">
-                <span className="tfl-who">{s.a.who}</span>
-                <p className="tfl-text">{s.a.text}</p>
-              </div>
-              <div className="tfl-side">
-                <span className="tfl-who">{s.b.who}</span>
-                <p className="tfl-text">{s.b.text}</p>
-              </div>
+              {[s.a, s.b].map((side) => (
+                <div className={side.wallet ? 'tfl-side tfl-wallet' : 'tfl-side'} key={side.who}>
+                  <span className="tfl-who">{side.who}</span>
+                  <p className="tfl-text">{side.text}</p>
+                </div>
+              ))}
             </div>
           </div>
         </li>
