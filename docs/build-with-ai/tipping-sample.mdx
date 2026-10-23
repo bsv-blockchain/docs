@@ -11,7 +11,7 @@ The tipping sample is the BSV Association's reference app for a user-side <Hint 
 ## Before you begin
 
 - Node.js 22.9 or newer.
-- pnpm. Run `corepack enable` once, and corepack picks the pnpm version the repository pins. Node.js 25 and newer no longer include corepack: there, or wherever corepack is missing, install pnpm with `npm install -g pnpm@11.22.0`. This guide was tested with Node.js 25.5.0 and pnpm 11.22.0.
+- pnpm. Run `corepack enable` once, and corepack picks the pnpm version the repository pins. On Node.js 25 and newer, which no longer include corepack, or wherever corepack is missing, install pnpm with `npm install -g pnpm@11.22.0`. This guide was tested with Node.js 25.5.0 and pnpm 11.22.0.
 - [BSV Desktop](https://desktop.bsvb.tech/) on testnet with free testnet coins. If you do not have it yet, follow [Set up a testnet wallet](/docs/get-started/quick-start-browser/#set-up-a-testnet-wallet) and [Get free testnet coins](/docs/get-started/quick-start-browser/#get-free-testnet-coins) in the web app guide.
 - Two wallet identities, one for the creator and one for the tipper: two browser profiles, each connected to a different wallet, or two wallets.
 - A clone of [bsv-blockchain/bsv-mcp](https://github.com/bsv-blockchain/bsv-mcp), where the sample is in `samples/tipping-shape-a`.
@@ -90,7 +90,7 @@ Install the sample, then tip from one wallet to the other:
     The page asks the wallet for the payment. The wallet adds the network fee, and it can ask you to approve the payment. A sent payment cannot be undone, so check the amount before you approve.
   </Step>
   <Step title="Watch the tip arrive">
-    On the creator page, the tip appears in the list as pending. Once Arcade reports it as `SEEN_ON_NETWORK` or later with no competing transaction, which takes a few seconds, it shows as seen on network. The page then collects it into the creator's wallet with <Hint tip="The BRC-100 wallet call that takes a transaction paid to the wallet and adds its outputs to the balance">internalizeAction</Hint>, and the tip shows as received.
+    On the creator page, the tip appears once Arcade has seen it, usually within a few seconds, and shows as seen on network. If Arcade takes longer, it shows as pending first. The page then collects it with <Hint tip="The BRC-100 wallet call that takes a transaction paid to the wallet and adds its outputs to the balance">internalizeAction</Hint>, and the tip shows as received.
 
     The app does not wait for the transaction to be mined. At `SEEN_ON_NETWORK` or later with no competing transaction, a payment of this size is final for the app.
   </Step>
