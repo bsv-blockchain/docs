@@ -14,7 +14,7 @@ The tipping sample is the BSV Association's reference app for a user-side <Hint 
 - pnpm. Run `corepack enable` once, and corepack picks the pnpm version the repository pins. On Node.js 25 and newer, which no longer include corepack, or wherever corepack is missing, install pnpm with `npm install -g pnpm@11.22.0`. This guide was tested with Node.js 25.5.0 and pnpm 11.22.0.
 - [BSV Desktop](https://desktop.bsvb.tech/) on testnet with free testnet coins. If you do not have it yet, follow [Set up a testnet wallet](/docs/get-started/quick-start-browser/#set-up-a-testnet-wallet) and [Get free testnet coins](/docs/get-started/quick-start-browser/#get-free-testnet-coins) in the web app guide.
 - Two wallet identities, one for the creator and one for the tipper: two browser profiles, each connected to a different wallet, or two wallets.
-- A clone of [bsv-blockchain/bsv-mcp](https://github.com/bsv-blockchain/bsv-mcp), where the sample is in `samples/tipping-shape-a`.
+- A clone of [bsv-blockchain/bsv-ai-toolkit](https://github.com/bsv-blockchain/bsv-ai-toolkit), where the sample is in `samples/tipping-shape-a`.
 
 ## How it works
 
@@ -29,7 +29,7 @@ A tip goes from the tipper's wallet through the relay to Arcade, and the creator
 4. Collect, `internalizeAction`: the creator page collects the tip once Arcade has seen it, retrying after 10, 30 and 60 seconds. The creator's wallet derives the key from the derivation, and adds the tip only if it is its own.
 </Visibility>
 
-The wallet shows the app under its origin and reads the app's permissions from `manifest.json` there. The relay cannot spend, redirect or forge a tip. [`TRUST.md`](https://github.com/bsv-blockchain/bsv-mcp/blob/main/samples/tipping-shape-a/TRUST.md) in the sample states what users trust and the risks that remain.
+The wallet shows the app under its origin and reads the app's permissions from `manifest.json` there. The relay cannot spend, redirect or forge a tip. [`TRUST.md`](https://github.com/bsv-blockchain/bsv-ai-toolkit/blob/main/samples/tipping-shape-a/TRUST.md) in the sample states what users trust and the risks that remain.
 
 ## Run the sample
 
@@ -114,14 +114,14 @@ passed: G-01, G-02, G-03, G-04, G-06, G-09, G-10, G-12, G-14, G-15, G-16, G-21, 
 manual checklist: G-05, G-07, G-08, G-11, G-13, G-17, G-18, G-19, G-20, G-22, G-23, G-24, G-26, G-27, G-28, G-29, G-30, G-32, G-33
 ```
 
-Shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. The report says `shape A+B` because the sample's testnet gate, a test script, uses `@bsv/wallet-toolbox` for its headless test wallets. The app itself is shape A. [`GUARDRAILS.md`](https://github.com/bsv-blockchain/bsv-mcp/blob/main/samples/tipping-shape-a/GUARDRAILS.md) maps each guardrail that applies to the file that meets it, including the manual ones.
+Shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. The report says `shape A+B` because the sample's testnet gate, a test script, uses `@bsv/wallet-toolbox` for its headless test wallets. The app itself is shape A. [`GUARDRAILS.md`](https://github.com/bsv-blockchain/bsv-ai-toolkit/blob/main/samples/tipping-shape-a/GUARDRAILS.md) maps each guardrail that applies to the file that meets it, including the manual ones.
 
 ## Ask your agent to adapt it
 
 With the [BSV agent skill](/docs/build-with-ai/skill/) installed, point your agent at the sample, for example:
 
 ```text
-Read samples/tipping-shape-a in bsv-blockchain/bsv-mcp, then add the same tipping flow to my React app on BSV, on testnet.
+Read samples/tipping-shape-a in bsv-blockchain/bsv-ai-toolkit, then add the same tipping flow to my React app on BSV, on testnet.
 ```
 
 ```text

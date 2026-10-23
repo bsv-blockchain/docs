@@ -57,13 +57,13 @@ claude mcp add bsv-mcp -e BSV_NETWORK=testnet -- npx -y @bsv/mcp
 In Claude Code, install the plugin. It holds the skill and both servers, so it replaces the two commands above:
 
 ```bash
-claude plugin marketplace add bsv-blockchain/bsv-mcp && claude plugin install bsv-dev@bsv
+claude plugin marketplace add bsv-blockchain/bsv-ai-toolkit && claude plugin install bsv-dev@bsv
 ```
 
 In any other agent that reads Agent Skills, install the skill on its own:
 
 ```bash
-npx skills add bsv-blockchain/bsv-mcp
+npx skills add bsv-blockchain/bsv-ai-toolkit
 ```
 
 <CardGroup cols={2}>
@@ -77,9 +77,9 @@ npx skills add bsv-blockchain/bsv-mcp
 
 ## Skills library
 
-The official skill is `bsv-dev`, maintained by the BSV Association in [bsv-blockchain/bsv-mcp](https://github.com/bsv-blockchain/bsv-mcp).
+The official skill is `bsv-dev`, maintained by the BSV Association in [bsv-blockchain/bsv-ai-toolkit](https://github.com/bsv-blockchain/bsv-ai-toolkit).
 
-Skills from other authors are listed in [`community-skills.yaml`](https://github.com/bsv-blockchain/bsv-mcp/blob/main/community-skills.yaml) in the same repository. Each one is added by pull request, with every link pinned to the commit that was reviewed. The list is empty today.
+Skills from other authors are listed in [`community-skills.yaml`](https://github.com/bsv-blockchain/bsv-ai-toolkit/blob/main/community-skills.yaml) in the same repository. Each one is added by pull request, with every link pinned to the commit that was reviewed. The list is empty today.
 
 ## Next steps
 

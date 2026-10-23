@@ -1,5 +1,5 @@
 // What the bsv-dev skill decides and what stays yours, in "Install the BSV agent skill": two boxes of the same size, side by side.
-// Content only: edit the texts here. Keep each item short. Tested with Claude Code 2.1.303 and bsv-dev 0.1.0 (bsv-blockchain/bsv-mcp 2291251), 2026-10-22.
+// Content only: edit the texts here. Keep each item short. Tested with Claude Code 2.1.303 and bsv-dev 0.1.0 (bsv-blockchain/bsv-ai-toolkit 2291251), 2026-10-22.
 
 const roles = [
   {
