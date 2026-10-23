@@ -8,7 +8,7 @@ import BroadcastFlow from '/snippets/BroadcastFlow.jsx';
 
 Arcade is the BSV Association's transaction broadcaster. It takes a signed transaction over HTTP, delivers it to the network, follows it until a miner includes it in a block, and returns the merkle path that proves it.
 
-Use it when your app or server builds and signs transactions itself and has to send them. An app that uses `WalletClient` does not call Arcade, because the wallet broadcasts the transactions it creates. In this guide you pick an endpoint, check its limits, submit a transaction and read its status.
+Use it when your app or server builds and signs transactions itself and has to send them. An app that uses `WalletClient` does not need Arcade to broadcast, because the wallet broadcasts the transactions it creates. When the app acts on a payment, for example to deliver an order or collect a tip, it also submits the same transaction to Arcade and reads its status there. Submitting a transaction Arcade already has is safe. In this guide you pick an endpoint, check its limits, submit a transaction and read its status.
 
 ## Before you begin
 
