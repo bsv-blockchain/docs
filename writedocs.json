@@ -55,9 +55,9 @@
             "pages": [
               "docs/build-with-ai/index",
               "docs/build-with-ai/mcp",
+              "docs/build-with-ai/skill",
               "docs/build-with-ai/prompts",
-              "docs/build-with-ai/llm-resources",
-              "docs/build-with-ai/skill"
+              "docs/build-with-ai/llm-resources"
             ]
           }
         ]
