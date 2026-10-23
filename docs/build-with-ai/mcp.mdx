@@ -21,7 +21,7 @@ Two MCP servers give the agent BSV knowledge in different ways. The BSV docs ser
 
 <Visibility for="agents">
 - BSV docs server: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides, starting on testnet.
-- `@bsv/mcp`: gives tools for Arcade, a guardrail check, BRC and docs lookup, and dated facts. Use it for actions and live values, on testnet by default.
+- `@bsv/mcp`: gives tools for Arcade, a guardrail check, BRCs and versions, with dated facts. Use it for actions and live values, on testnet by default.
 </Visibility>
 
 Claude Code adds each server to the current project only, so run the commands in your project folder.
@@ -43,7 +43,7 @@ The docs server runs on this site and needs no login or API key:
     File modified: /Users/you/.claude.json [project: /Users/you/my-app]
     ```
 
-    The name is the one Claude Code shows for the server. Keep `bsv-docs`, since the BSV rules and the skill refer to the server by that name.
+    The name is the one Claude Code shows for the server. Keep `bsv-docs`, since the BSV rules and the skill look for the server under that name.
   </Step>
   <Step title="Check the connection">
     List the servers in the project:
@@ -76,7 +76,7 @@ Ask Claude Code a BSV question in the same project, and it calls `search_docs` a
 
 ## Add @bsv/mcp
 
-`@bsv/mcp` is the BSV Association's MCP server for building apps, testnet first. Its source is in [bsv-blockchain/bsv-mcp](https://github.com/bsv-blockchain/bsv-mcp). It replaces `@bsv/simple-mcp`, which is deprecated, as described in [Where Simple MCP went](#where-simple-mcp-went). This section uses `@bsv/mcp` 2.0.0.
+`@bsv/mcp` is the BSV Association's MCP server for building apps, testnet first. Its source is in [bsv-blockchain/bsv-mcp](https://github.com/bsv-blockchain/bsv-mcp). It replaces `@bsv/simple-mcp`, as described in [Where Simple MCP went](#where-simple-mcp-went). This section uses `@bsv/mcp` 2.0.0.
 
 <Steps>
   <Step title="Add the server">
@@ -123,12 +123,12 @@ The agent now has ten tools:
 | `docs_url` | Finds the live address of a page of these docs from its id |
 | `code_search`, `find_function_definition` | Search local clones of the BSV repositories, made with `setup.sh` from the repository, in the folder set in `BSV_REPOS_DIR` |
 
-The server also has resources for the agent to read: dated facts as `bsv://facts/*`, on networks, Arcade, fees, WhatsOnChain, wallet limits, consensus, Rúnar, 1Color tokens and versions; the guardrails as `bsv://guardrails`; the custody shapes, the threat model and the docs index; the `@bsv/simple` 0.7 API and its traps; and any BRC as `bsv://brc/{id}`. Each fact starts with the date it was verified, so the agent can tell how current it is.
+The server also has resources for the agent to read. The dated facts are `bsv://facts/*`, on networks, Arcade, fees, WhatsOnChain, wallet limits, consensus, Rúnar, 1Color tokens and versions. Each fact starts with the date it was verified, so the agent can tell how current it is. The other resources are the guardrails, `bsv://guardrails`, the custody shapes, the threat model, the docs index, the `@bsv/simple` 0.7 API and its traps, and any BRC as `bsv://brc/{id}`.
 
 It also has five prompts: `review_against_guardrails` runs the guardrail check and fixes the errors, `tokenize_with_1color` gives the encoding of 1Color token outputs, and `integrate_simple`, `add_simple_feature` and `debug_simple` work with `@bsv/simple`.
 
 <Callout type="warning">
-  Mainnet needs two switches. `BSV_NETWORK=mainnet` picks the Mainnet Arcade, and `arcade_submit` also needs `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` in the shell that starts the agent. Without it, the tool refuses before it contacts Arcade. A Mainnet broadcast spends real BSV and cannot be undone.
+  A Mainnet broadcast through `arcade_submit` needs `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` in the shell that starts the agent, whether the network comes from `BSV_NETWORK=mainnet` or from the call itself. Without it, the tool refuses before it contacts Arcade. A Mainnet broadcast spends real BSV and cannot be undone.
 </Callout>
 
 ## Check a project against the guardrails
@@ -175,6 +175,8 @@ A project is ready when the report shows 0 errors. The repository's tipping samp
 | `ARCADE_URL` | Per network | Arcade base URL. Default on testnet `https://arcade-testnet-us-1.bsvblockchain.tech`, on Mainnet `https://arcade-us-1.bsvblockchain.tech`. A host that belongs to the other network stops the server |
 | `BSV_MCP_ALLOW_MAINNET_BROADCAST` | Not set | `1` lets `arcade_submit` broadcast on Mainnet |
 | `BSV_REPOS_DIR` | Not set | The folder of BSV repository clones made with `setup.sh`, for `code_search` and `find_function_definition` |
+
+Set `BSV_NETWORK=mainnet` for any Mainnet Arcade, including your own. The server goes by the network you set, not by the address: it refuses the known Mainnet hosts on testnet, but it cannot tell where an unknown host belongs, so it treats an unknown Mainnet Arcade under `BSV_NETWORK=testnet` as testnet.
 
 Both testnet hosts, `arcade-testnet-us-1` and `arcade-v2-testnet-us-1`, are live. [Broadcast transactions with Arcade](/docs/guides/services/broadcasting/) uses the second; set `ARCADE_URL` to use it here.
 
@@ -244,7 +246,7 @@ These configurations come from the install notes of `@bsv/mcp` and were not run 
 
 ## Remove a server
 
-Run the command with the name you gave the server:
+Run the command with the name of the server, here `bsv-mcp`:
 
 ```bash
 claude mcp remove bsv-mcp -s local
@@ -257,7 +259,7 @@ File modified: /Users/you/.claude.json [project: /Users/you/my-app]
 
 ## Where Simple MCP went
 
-`@bsv/simple-mcp` is deprecated, and its content moved to `@bsv/mcp`. If your project still has it, remove it with `claude mcp remove simple-mcp -s local` and add `@bsv/mcp` as above.
+`@bsv/mcp` replaces `@bsv/simple-mcp` and carries its resources and prompts. If your project still has `@bsv/simple-mcp`, remove it with `claude mcp remove simple-mcp -s local` and add `@bsv/mcp` as above.
 
 <Accordion title="Resources and prompts that moved">
   | `@bsv/simple-mcp` 0.0.2 | `@bsv/mcp` 2.0.0 |
