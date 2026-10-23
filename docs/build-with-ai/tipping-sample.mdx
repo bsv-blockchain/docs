@@ -1,0 +1,139 @@
+---
+title: "Start from the tipping sample"
+description: "Run the BSV Association's tipping sample on testnet, where each user's BRC-100 wallet holds the keys, a relay with no key passes tips to Arcade and the creator collects at zero-confirmation."
+sidebarTitle: "Tipping sample"
+---
+
+import TippingFlow from '/snippets/TippingFlow.jsx';
+
+The tipping sample is the BSV Association's reference app for a user-side <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet: each user's wallet holds the keys, and a small relay with no key passes each tip to Arcade. Use it when you want a working app for your agent to copy or adapt, one that already passes the BSV guardrails. At the end, the sample runs on your machine on testnet, and a tip has gone from one wallet to another.
+
+## Before you begin
+
+- Node.js 22.9 or newer.
+- pnpm. Run `corepack enable` once, and corepack picks the pnpm version the repository pins. The commands in this guide were tested with pnpm 11.22.0.
+- [BSV Desktop](https://desktop.bsvb.tech/) on testnet with free testnet coins. If you do not have it yet, follow [Set up a testnet wallet](/docs/get-started/quick-start-browser/#set-up-a-testnet-wallet) and [Get free testnet coins](/docs/get-started/quick-start-browser/#get-free-testnet-coins) in the web app guide.
+- Two wallet identities, one for the creator and one for the tipper: two browser profiles, each connected to a different wallet, or two wallets.
+- A clone of [bsv-blockchain/bsv-mcp](https://github.com/bsv-blockchain/bsv-mcp), where the sample is in `samples/tipping-shape-a`.
+
+## How it works
+
+A tip goes from the tipper's wallet through the relay to Arcade, and the creator's wallet collects it:
+
+<TippingFlow />
+
+<Visibility for="agents">
+1. Tip, `createAction`: the tipper page picks a BRC-29 derivation for the creator and saves it in the browser. The tipper's wallet derives the creator's key, then signs and broadcasts the payment to it, with the tipper's approval when it asks.
+2. Relay, `POST /api/tips`: the tipper page posts the transaction and the derivation to the relay. The relay checks the transaction against its BEEF and submits it to its own Arcade, as EF. It holds no key.
+3. Track, `GET /tx/TXID`: the relay reads the status from Arcade and tells the creator page over server-sent events. Arcade reports `SEEN_ON_NETWORK` or later, with no competing transaction.
+4. Collect, `internalizeAction`: the creator page collects the tip once Arcade has seen it, retrying after 10, 30 and 60 seconds. The creator's wallet derives the key from the derivation, and adds the tip only if it is its own.
+</Visibility>
+
+Built and started with `pnpm start`, one Node.js process serves the web app, its `manifest.json`, the relay API and `/health` on one origin, which is the name the wallet shows for the app. The relay cannot spend, redirect or forge a tip. [`TRUST.md`](https://github.com/bsv-blockchain/bsv-mcp/blob/main/samples/tipping-shape-a/TRUST.md) in the sample states what users trust and the risks that remain.
+
+## Run the sample
+
+Install the sample, then tip from one wallet to the other:
+
+<Steps>
+  <Step title="Install and start the sample">
+    In the clone, install the dependencies from the root of the repository:
+
+    ```bash
+    pnpm install
+    ```
+
+    ```text
+    Scope: all 5 workspace projects
+    Lockfile is up to date, resolution step is skipped
+    Packages: +331
+    ...
+    Done in 8.1s using pnpm v11.22.0
+    ```
+
+    Then start the sample from its folder. The settings in `env.example` are for testnet, and `pnpm dev` reads them from `.env`:
+
+    ```bash
+    cd samples/tipping-shape-a
+    cp env.example .env
+    pnpm dev
+    ```
+
+    ```text
+    [web]   VITE v7.3.7  ready in 642 ms
+    [web]
+    [web]   ➜  Local:   http://localhost:5173/
+    [web]   ➜  Network: use --host to expose
+    [relay] bsv-tipping-demo relay on :8080 network=testnet arcade=https://arcade-testnet-us-1.bsvblockchain.tech origin=http://localhost:5173
+    ```
+
+    The web app runs on port 5173 and the relay on port 8080. In a second terminal, check the relay:
+
+    ```bash
+    curl -s http://localhost:8080/health
+    ```
+
+    ```text
+    {"ok":true,"network":"testnet","arcadeOrigin":"https://arcade-testnet-us-1.bsvblockchain.tech","version":"0.1.0"}
+    ```
+
+    The relay is on testnet and uses the public testnet Arcade.
+  </Step>
+  <Step title="Open the creator page">
+    In the browser profile of the creator, open `http://localhost:5173/creator` and click **Connect wallet**. The wallet asks once for the permissions the app lists in its `manifest.json`.
+
+    The first wallet that connects to this page becomes the creator. To choose the creator yourself, set `CREATOR_IDENTITY_KEY` in `.env` to the identity key of the creator's wallet. Keep the page open, since it collects tips only while it is open.
+  </Step>
+  <Step title="Send a tip">
+    In the browser profile of the tipper, open `http://localhost:5173/` and click **Connect wallet**. Enter an amount of at least 546 satoshis, click **Tip**, check the summary and click **Send tip**.
+
+    The wallet adds the network fee, and it can ask you to approve the payment. A sent payment cannot be undone, so check the amount before you approve.
+  </Step>
+  <Step title="Watch the tip arrive">
+    On the creator page, the tip appears in the list once Arcade reports it as `SEEN_ON_NETWORK` or later with no competing transaction, which takes a few seconds. The page then collects it into the creator's wallet with `internalizeAction`, and the tip shows as received.
+
+    The app does not wait for the transaction to be mined. At `SEEN_ON_NETWORK` or later with no competing transaction, a payment of this size is final for the app.
+  </Step>
+</Steps>
+
+## Check it against the guardrails
+
+The sample reports zero errors in the guardrail check. In Claude Code with `@bsv/mcp` connected, ask `Check samples/tipping-shape-a against the BSV guardrails.`, or run the check from the terminal. Build `@bsv/mcp` once at the root of the repository, then run the check in the sample folder:
+
+```bash
+pnpm -F @bsv/mcp build
+cd samples/tipping-shape-a
+pnpm guardrails
+```
+
+The command prints the report as JSON and ends with this summary:
+
+```text
+check_guardrails: 0 errors, 0 warnings, shape A+B
+passed: G-01, G-02, G-03, G-04, G-06, G-09, G-10, G-12, G-14, G-15, G-16, G-21, G-25, G-31, G-34
+manual checklist: G-05, G-07, G-08, G-11, G-13, G-17, G-18, G-19, G-20, G-22, G-23, G-24, G-26, G-27, G-28, G-29, G-30, G-32, G-33
+```
+
+The report says `shape A+B` because the sample's testnet gate, a test script, uses `@bsv/wallet-toolbox` for its headless test wallets. The app itself is shape A. [`GUARDRAILS.md`](https://github.com/bsv-blockchain/bsv-mcp/blob/main/samples/tipping-shape-a/GUARDRAILS.md) maps each guardrail that applies to the file that meets it, including the manual ones.
+
+## Ask your agent to adapt it
+
+With the [BSV agent skill](/docs/build-with-ai/skill/) installed, point your agent at the sample, for example:
+
+```text
+Read samples/tipping-shape-a in bsv-blockchain/bsv-mcp, then add the same tipping flow to my React app on BSV, on testnet.
+```
+
+```text
+Change the tipping sample to a fixed tip of 1,000 satoshis, then run check_guardrails and fix every error.
+```
+
+The agent keeps the sample's defaults: testnet, the user's wallet for every key, and Arcade for every broadcast and status read.
+
+## Next steps
+
+With the sample running, give your agent the tools it uses, or read how the relay broadcasts:
+
+- [Install the BSV agent skill](/docs/build-with-ai/skill/)
+- [Connect your AI tool with MCP](/docs/build-with-ai/mcp/)
+- [Broadcast transactions with Arcade](/docs/guides/services/broadcasting/)
