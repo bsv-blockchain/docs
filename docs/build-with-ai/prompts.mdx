@@ -33,7 +33,7 @@ Create an empty folder for the agent and open it in the terminal, then complete 
 
 <Steps>
   <Step title="Connect the BSV docs server">
-    Add the docs server, as in [Connect your AI tool with MCP](/docs/build-with-ai/simple-mcp/):
+    Add the docs server, as in [Connect your AI tool with MCP](/docs/build-with-ai/mcp/):
 
     ```bash
     claude mcp add --transport http bsv-docs https://bsv.writedocs.io/mcp
@@ -44,7 +44,7 @@ Create an empty folder for the agent and open it in the terminal, then complete 
     ```
   </Step>
   <Step title="Add the BSV rules">
-    Create `CLAUDE.md` in the folder and paste the BSV rules from [Give agents the docs in Markdown](/docs/build-with-ai/llm-resources/). Claude Code reads this file at the start of every session. The rules tell the agent to read the BSV docs, build on testnet, keep private keys out of the code and ask you for the coins and the approval.
+    Create `CLAUDE.md` in the folder and paste the BSV rules from [Give agents the docs in Markdown](/docs/build-with-ai/llm-resources/), or install the `bsv-dev` skill, which carries the same rules ([Install the BSV agent skill](/docs/build-with-ai/skill/)). Claude Code reads this file at the start of every session. The rules tell the agent to read the BSV docs, build on testnet, connect to the wallet with `WalletClient` and keep private keys out of the code.
   </Step>
 </Steps>
 
