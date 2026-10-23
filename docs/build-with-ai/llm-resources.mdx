@@ -36,28 +36,36 @@ For an agent that reads web addresses, such as [Claude Code](https://code.claude
 Read https://bsv.writedocs.io/llms.txt, then read the .md copies of the pages you need before you write BSV code. The links in llms.txt use docs.bsvblockchain.org, so open the same path on bsv.writedocs.io instead.
 ```
 
-To give the agent search across all pages instead, use **Copy MCP server URL**, **Connect to Cursor** or **Connect to VS Code** in the same menu, as in [Connect your AI tool with MCP](/docs/build-with-ai/simple-mcp/).
+To give the agent search across all pages instead, use **Copy MCP server URL**, **Connect to Cursor** or **Connect to VS Code** in the same menu, as in [Connect your AI tool with MCP](/docs/build-with-ai/mcp/).
 
 ## Add the rules to your project
 
-Add these rules to the instructions file your agent reads in every session, such as `CLAUDE.md` at the root of the project for Claude Code:
+Add these nine rules to the instructions file your agent reads in every session, such as `CLAUDE.md` at the root of the project for Claude Code:
 
 ```markdown CLAUDE.md
-## BSV rules
-
-- Read the BSV docs at https://bsv.writedocs.io/llms.txt before you write BSV code, and follow their guides. Open each page link on bsv.writedocs.io, not docs.bsvblockchain.org.
-- Build on testnet. Before a payment, check that the `network` field returned by `wallet.getNetwork()` is `testnet`.
-- In an app, connect to the user's wallet with `WalletClient` from `@bsv/sdk`, so no private key goes in the code.
-- Never ask the user for a private key or a recovery phrase.
-- Ask the user to get testnet coins from the faucet at https://bsvfaucet.com and to approve each payment in BSV Desktop. These steps need a person.
-- Never send a payment on Mainnet unless the user asks for it, since a payment cannot be undone.
+<!-- bsv-dev rules: begin -->
+1. Read https://bsv.writedocs.io/llms.txt first, then fetch only the pages the task needs. Its page links point at docs.bsvblockchain.org; open the same path on bsv.writedocs.io instead.
+2. When the `bsv-docs` and `bsv-mcp` MCP servers are connected, use their tools before relying on memory for BSV APIs, versions, limits or fees.
+3. Work on testnet unless `BSV_NETWORK=mainnet` is set on purpose by the operator. Before a payment, check that `wallet.getNetwork()` returns `testnet`.
+4. For the user's wallet, connect with `@bsv/sdk` 3.x `new WalletClient('auto', originator)`, from the browser or a local script.
+5. Never hold, ask for, print or generate for production use a private key, WIF or recovery phrase; the user's wallet (shape A) or an operator-set variable outside the repo (shape B) holds it.
+6. Testnet coins come from https://bsvfaucet.com and wallet approvals come from the user: ask the user for both, and never work around either.
+7. Use Arcade for every broadcast and every txid state read; never the legacy ARC API, and never WhatsOnChain as the truth for a known txid.
+8. A transaction is final at `SEEN_ON_NETWORK` or later with no competing transaction; never wait for confirmations or `MINED`.
+9. If `bsv-mcp` is connected, run `check_guardrails` with the project's absolute path and fix every error before calling the work done.
+<!-- bsv-dev rules: end -->
 ```
 
-These rules come from [Send a payment from a web app](/docs/get-started/quick-start-browser/). In that guide, the wallet in [BSV Desktop](https://desktop.bsvb.tech/) holds the keys, chooses the coins and signs, and a person signs in to the faucet and approves the payment.
+These rules are the ones the `bsv-dev` skill ships, as `CLAUDE.md.snippet`, `AGENTS.md.snippet` and `bsv.mdc` for Cursor. In rule 5, shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. The begin and end lines let you or a tool find the block and update it. With the skill installed, the agent offers to add these rules to your project, and leaves the choice to you: see [Install the BSV agent skill](/docs/build-with-ai/skill/).
+
+<Callout type="note">
+  Rules 2 and 9 apply when the `bsv-docs` and `bsv-mcp` servers are connected. Without `bsv-mcp`, the agent cannot run `check_guardrails`, so connect both servers as in [Connect your AI tool with MCP](/docs/build-with-ai/mcp/).
+</Callout>
 
 ## Next steps
 
-With the docs and the rules in place, your agent can build a first payment from the Quick Start or search the docs through MCP:
+With the docs and the rules in place, your agent can build a first payment from the Quick Start, search the docs through MCP or load the skill:
 
 - [Send a payment from a web app](/docs/get-started/quick-start-browser/)
-- [Connect your AI tool with MCP](/docs/build-with-ai/simple-mcp/)
+- [Connect your AI tool with MCP](/docs/build-with-ai/mcp/)
+- [Install the BSV agent skill](/docs/build-with-ai/skill/)
