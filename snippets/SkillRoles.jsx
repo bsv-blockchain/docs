@@ -1,5 +1,5 @@
 // What the bsv-dev skill decides and what stays yours, in "Install the BSV agent skill": two boxes of the same size, side by side.
-// Content only: edit the texts here. Keep each item short. Tested with Claude Code 2.1.303 and bsv-dev 0.1.0, 2026-10-22.
+// Content only: edit the texts here. Keep each item short. Tested with Claude Code 2.1.303 and bsv-dev 0.1.0 (bsv-blockchain/bsv-mcp f49c46c), 2026-10-22.
 
 const roles = [
   {
@@ -10,7 +10,7 @@ const roles = [
       'Who holds the keys, per money path',
       <>Arcade for every broadcast and status read, final at <code>SEEN_ON_NETWORK</code> or later with no competing transaction</>,
       <><code>WalletClient('auto', originator)</code> from <code>@bsv/sdk</code> 3.x</>,
-      'Testnet, with fees at 100 sat/kB on both networks',
+      'Testnet, with fees at 100 sat/kB on both networks, never below the Arcade /policy',
       'Rúnar for contracts, 1Color for tokens',
     ],
   },
@@ -19,7 +19,7 @@ const roles = [
     where: 'Keep these steps',
     items: [
       'Run the install commands, since the skill never edits your agent configuration',
-      'Get testnet coins and approve each payment in BSV Desktop',
+      "Get testnet coins and approve the wallet's prompts in BSV Desktop",
       'Say yes before any broadcast, after the agent shows the outputs, total, fee and network',
       <>Set <code>BSV_NETWORK=mainnet</code> yourself</>,
     ],
