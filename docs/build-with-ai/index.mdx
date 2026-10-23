@@ -16,11 +16,11 @@ Each piece gives the agent something different:
 
 <Visibility for="agents">
 - BSV docs server, `bsv-docs`: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides.
-- `bsv-dev` skill: gives the decisions, as a playbook the agent loads for BSV work: who holds the keys, wallet login, payments, Arcade and when a payment is final, testnet to mainnet, the guardrail review. Use it for building the way these docs do.
+- `bsv-dev` skill: gives the decisions, as a playbook the agent loads for BSV work: who holds the keys, wallet login, payments, Arcade and when a payment is final, testnet to Mainnet, the guardrail review. Use it for building the way these docs do.
 - `@bsv/mcp`, `bsv-mcp`: gives tools that act and read live data: broadcast and status on Arcade, a guardrail check of a project, BRCs and versions, plus dated facts. Use it for actions and live values, on testnet unless you configure Mainnet.
 </Visibility>
 
-Everything starts on testnet, where the coins have no value and come free from the faucet. The apps the agent writes ask the user's <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet, such as [BSV Desktop](https://desktop.bsvb.tech/), to sign, so a person approves each spend. No tool takes a private key, and the skill never asks for one.
+Everything starts on testnet, where the coins have no value and come free from the faucet. Where the wallet lives is the app's choice, and the skill makes it per payment. In shape A, the app asks the user's <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet, such as [BSV Desktop](https://desktop.bsvb.tech/), to sign. The wallet signs within the small monthly allowance the user granted to the app, and prompts for anything above it. In shape B, the app runs its own server wallet, which pays with no user present. No tool takes a private key, and the skill never asks for one.
 
 ## What you can ask
 
@@ -83,7 +83,8 @@ Skills from other authors are listed in [`community-skills.yaml`](https://github
 
 ## Next steps
 
-With the agent set up, let it send a first testnet payment, or read the docs the way it does:
+With the agent set up, start from a working app, let the agent send a first testnet payment, or read the docs the way it does:
 
+- [Start from the tipping sample](/docs/build-with-ai/tipping-sample/)
 - [Send a payment with an AI agent](/docs/build-with-ai/prompts/)
 - [Give agents the docs in Markdown](/docs/build-with-ai/llm-resources/)

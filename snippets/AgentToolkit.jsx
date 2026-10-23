@@ -1,5 +1,5 @@
 // The three pieces in "Coding with agents": three boxes of the same size, side by side.
-// Content only: edit the texts here. Keep each text short and about the same length. Tested with Claude Code 2.1.303 and @bsv/mcp 2.0.0, 2026-10-22.
+// Content only: edit the texts here. Keep each text short and about the same length. Tested with Claude Code 2.1.303 and @bsv/mcp 2.0.0 (bsv-blockchain/bsv-mcp f49c46c), 2026-10-22.
 
 const pieces = [
   {
@@ -9,7 +9,7 @@ const pieces = [
   },
   {
     name: 'bsv-dev skill',
-    gives: 'The decisions: who holds the keys, payments, Arcade and finality, testnet to mainnet, the guardrail review',
+    gives: 'The decisions: who holds the keys, payments, Arcade and finality, testnet to Mainnet, the guardrail review',
     use: 'Building the way these docs do',
   },
   {
