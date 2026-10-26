@@ -4,7 +4,11 @@ description: "Look up a BSV term in one line, with a link to the page that expla
 sidebarTitle: "Glossary"
 ---
 
+import GlossaryTable from '/snippets/GlossaryTable.jsx';
+
 Look up a **BSV** term you meet while building on BSV, in one line. When a page explains the term in depth, the term links to it.
+
+<GlossaryTable>
 
 | Term | Meaning |
 |------|---------|
@@ -47,6 +51,8 @@ Look up a **BSV** term you meet while building on BSV, in one line. When a page 
 | UTXO | Unspent transaction output: a coin that can still be spent. BSV runs on the UTXO model. |
 | [wallet](/docs/concepts/wallet-model/) | Holds the user's keys, chooses the coins and signs transactions. Apps ask it to pay, and the user approves. |
 | `WalletClient` | The `@bsv/sdk` class an app uses to talk to the user's wallet, such as BSV Desktop. |
+
+</GlossaryTable>
 
 ## Related articles
 
