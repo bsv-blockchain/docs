@@ -7,7 +7,7 @@ description: "BSV Desktop is the BRC-100 wallet for macOS, Windows and Linux tha
 
 ## Versions
 
-Download BSV Desktop from [desktop.bsvb.tech](https://desktop.bsvb.tech/), which links to the [release files on GitHub](https://github.com/bsv-blockchain/bsv-desktop/releases/latest) for each system. The current version is 3.1.1, and the bottom of **Settings** shows the installed one next to **Check for updates**.
+Download BSV Desktop from [desktop.bsvb.tech](https://desktop.bsvb.tech/), which links to the [release files on GitHub](https://github.com/bsv-blockchain/bsv-desktop/releases/latest) for each system. The current version is 3.3.1. The bottom of **Settings** shows the installed version next to **Check for updates**, and BSV Desktop also offers a new version on its own, with **Download Update**.
 
 <Callout type="warning">
   Version 3 drops the phone number and password login and the built-in STAS tokens of version 2. If you sign in to version 2 that way or hold STAS tokens, stay on version 2, or create a new wallet in version 3 and send your funds to it. Before any upgrade, back up your recovery phrase or private key. To restore a version 2 wallet in version 3, choose **Import an existing wallet** and enter its 24-word phrase or 64-character hex private key. The [release notes](https://github.com/bsv-blockchain/bsv-desktop/releases/latest) list every change.
@@ -61,15 +61,16 @@ BSV Desktop sets the fee from a rate in satoshis per kilobyte, so a larger trans
 
 ## Receive and send payments
 
-The **Payments** screen has three tabs:
+The **Payments** screen has two tabs:
 
-- **Send** pays a wallet identity, a payment link or a BSV address. Enter it in **Recipient**, add the **Amount** in satoshis and choose **Review payment**.
-- **Receive** opens on **WALLET PAYMENT**, which copies a `peerpay:` payment link for another BRC-100 wallet. The **BSV ADDRESS** tab shows an address any BSV wallet or faucet can pay, with **Copy address**. A testnet address starts with `m` or `n`, and the address can change from one session to the next. While this tab is open, BSV Desktop adds payments to the address on its own, and **Check for payments** checks again.
-- **Nearby** exchanges encrypted QR codes with another wallet in front of you, with **RECEIVE NEARBY** and **PAY NEARBY**. Both wallets must be on the same network.
+- **Send** pays a name, an identity key, a payment link or a BSV address. Enter it in **Recipient**, add the **Amount** in satoshis and choose **Review payment**. The review shows the amount plus "network fee" without the fee itself, which appears in **Activity** after **Pay**, added to the amount. The wallet has no option to send the whole balance, so a payment of the full balance fails with **Insufficient funds**: send the balance minus the fee.
+- **Receive** opens on **WALLET PAYMENT**, with **Copy identity key** and **Copy payment link** for another BRC-100 wallet. While this tab is open, **Open to live payments** lets another wallet pay you directly. The **BSV ADDRESS** tab shows an address any BSV wallet or faucet can pay, with **Copy address**. A testnet address starts with `m` or `n`.
+
+The BSV address changes every day, by the UTC date, and the old ones keep working. While the **BSV ADDRESS** tab is open, BSV Desktop adds payments to the address on its own, and **Check for payments** checks the addresses of the last four days and every address this device has shown. For a payment to an older address, enter the day you shared it in **Recover a payment sent to an older address**.
 
 ## Back up your wallet
 
-The recovery phrase restores your wallet and its coins on another device. **Settings**, **Back up & recover** shows it and can split it into three backup shares, any two of which restore it. **Wallet data files** exports your wallet data in an encrypted file, without the keys.
+The recovery phrase restores your wallet's keys on another device. **Settings**, **Back up & recover** shows it and can split it into three backup shares, any two of which restore it. The balance and history come back with a wallet data file, which **Wallet data files** exports encrypted with a passphrase, without the keys. Keep both, as in [Back up and recover a wallet](/docs/wallets/backup-recovery/).
 
 <Callout type="warning">
   Anyone with your recovery phrase can spend your coins. Keep it offline, never paste it into code or a website, and never share it.
