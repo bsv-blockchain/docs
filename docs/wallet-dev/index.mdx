@@ -3,7 +3,9 @@ title: "Build a wallet"
 description: "Follow the path for building a BRC-100 wallet: the interface, wallet-toolbox, storage, permissions, conformance tests and backend services."
 ---
 
-A BRC-100 wallet is the program on the other side of every app request. Apps call methods such as `createAction` through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>, and the wallet carries them out. It holds the keys, chooses which coins fund each transaction, signs, stores the outputs it tracks and applies permissions before an app spends or uses a protected protocol. BSV Desktop and BSV Browser are two of these wallets, both built on the `@bsv/wallet-toolbox` packages, the TypeScript reference implementation. Build one when you are making a wallet product, a wallet-like service or a port of the wallet to another language. An app that only uses a wallet starts from the [SDKs overview](/docs/sdk/) instead.
+import BlueTable from '/snippets/BlueTable.jsx';
+
+A BRC-100 wallet is the program on the other side of every app request. Apps call methods such as `createAction` through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>, and the wallet carries them out. It holds the keys, chooses which coins fund each transaction, signs, stores the outputs it tracks and applies permissions before an app spends or uses a protected protocol. [BSV Desktop](/docs/wallets/bsv-desktop/) and BSV Browser are two of these wallets, both built on the `@bsv/wallet-toolbox` packages, the TypeScript reference implementation. Build one when you are making a wallet product, a wallet-like service or a port of the wallet to another language. An app that only uses a wallet starts from the [SDKs overview](/docs/sdk/) instead.
 
 ## The path to a BRC-100 wallet
 
@@ -15,7 +17,9 @@ Start with [BRC-100 Wallet Interface](/docs/concepts/wallet-model/). It lists th
 
 ### Start from wallet-toolbox
 
-`@bsv/wallet-toolbox` connects the `@bsv/sdk` primitives to the parts a wallet needs:
+`@bsv/wallet-toolbox` connects the `@bsv/sdk` primitives to the parts a wallet needs. This page was written against `@bsv/wallet-toolbox` 2.14.
+
+<BlueTable>
 
 | Part | What it does |
 | --- | --- |
@@ -28,17 +32,23 @@ Start with [BRC-100 Wallet Interface](/docs/concepts/wallet-model/). It lists th
 | `WalletPermissionsManager` | Checks permissions around wallet methods |
 | `MockChain` | Runs wallet tests without a live network |
 
+</BlueTable>
+
 The `Setup` class builds a wallet with its storage, services and monitor in one call, and the object it returns exposes each part so you can inspect or replace it. [Send a payment from a server](/docs/get-started/quick-start-server/) builds a wallet this way on testnet, with `Setup.createWalletSQLite`.
 
 ### Choose the platform and storage
 
 The toolbox ships in three packages, one per platform, and each supports different storage:
 
+<BlueTable>
+
 | Package | Platform | Storage |
 | --- | --- | --- |
 | `@bsv/wallet-toolbox` | Node.js | SQLite, MySQL or another database that Knex supports |
 | `@bsv/wallet-toolbox-client` | Browser | IndexedDB on the device, or remote |
 | `@bsv/wallet-toolbox-mobile` | React Native | Remote |
+
+</BlueTable>
 
 Remote storage keeps the records on a Wallet Infra server that the wallet calls over HTTPS. The records hold the derivation data of each output, so recovering a wallet needs both the root key material and these records. A seed alone cannot rebuild every output.
 
@@ -59,9 +69,10 @@ Two ts-stack servers run only when the wallet needs them:
 - Wallet Infra serves the toolbox storage over JSON-RPC, backed by MySQL, with mutual authentication and records scoped to each user. Wallets reach it with `StorageClient`. Run it to host remote storage for many wallet clients.
 - The <Hint tip="Wallet Authentication Backend">WAB</Hint> verifies a user's phone number and stores the key shares that let the user sign in and recover the wallet on a new device. Run it when your wallet offers phone-based sign-in and recovery.
 
-## Next steps
+## Related articles
 
-Start with the interface your wallet implements, then build a first wallet with the toolbox:
+To learn more about building a BRC-100 wallet, review these articles:
 
 - [BRC-100 Wallet Interface](/docs/concepts/wallet-model/)
 - [Send a payment from a server](/docs/get-started/quick-start-server/)
+- [BSV Desktop](/docs/wallets/bsv-desktop/)
