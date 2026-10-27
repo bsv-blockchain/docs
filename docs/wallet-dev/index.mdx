@@ -1,9 +1,9 @@
 ---
 title: "Build a wallet"
-description: "A BRC-100 wallet holds the keys, funds and signs transactions, stores the outputs it tracks and gates what apps may do, with @bsv/wallet-toolbox as the TypeScript reference to build one."
+description: "Follow the path for building a BRC-100 wallet: the interface, wallet-toolbox, storage, permissions, conformance tests and backend services."
 ---
 
-A **BRC-100 wallet** is the program on the other side of every app request. Apps call methods such as `createAction` through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>, and the wallet carries them out. It holds the keys, chooses which coins fund each transaction, signs, stores the outputs it tracks and applies permissions before an app spends or uses a protected protocol. BSV Desktop and BSV Browser are two of these wallets, both built on the `@bsv/wallet-toolbox` packages, the TypeScript reference implementation. Build one when you are making a wallet product, a wallet-like service or a port of the wallet to another language. An app that only uses a wallet starts from the [SDKs overview](/docs/sdk/) instead.
+A BRC-100 wallet is the program on the other side of every app request. Apps call methods such as `createAction` through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>, and the wallet carries them out. It holds the keys, chooses which coins fund each transaction, signs, stores the outputs it tracks and applies permissions before an app spends or uses a protected protocol. BSV Desktop and BSV Browser are two of these wallets, both built on the `@bsv/wallet-toolbox` packages, the TypeScript reference implementation. Build one when you are making a wallet product, a wallet-like service or a port of the wallet to another language. An app that only uses a wallet starts from the [SDKs overview](/docs/sdk/) instead.
 
 ## The path to a BRC-100 wallet
 
@@ -65,4 +65,3 @@ Start with the interface your wallet implements, then build a first wallet with 
 
 - [BRC-100 Wallet Interface](/docs/concepts/wallet-model/)
 - [Send a payment from a server](/docs/get-started/quick-start-server/)
-- [BSV Desktop](/docs/wallets/bsv-desktop/)
