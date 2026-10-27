@@ -87,27 +87,10 @@
             ]
           },
           {
-            "group": "Run your own services",
+            "group": "Services and infrastructure",
             "pages": [
               "docs/guides/services/index",
-              "docs/guides/services/broadcasting",
-              {
-                "group": "Run ts-stack services",
-                "page": "docs/guides/services/stack-services/index",
-                "pages": [
-                  "docs/guides/services/stack-services/overlay-server",
-                  "docs/guides/services/stack-services/message-box-server"
-                ]
-              },
-              {
-                "group": "Run in production",
-                "page": "docs/guides/services/operations/index",
-                "pages": [
-                  "docs/guides/services/operations/edge-security",
-                  "docs/guides/services/operations/scaling"
-                ]
-              },
-              "docs/guides/services/local-stack"
+              "docs/guides/services/broadcasting"
             ]
           },
           {
@@ -522,6 +505,34 @@
     ]
   },
   "redirects": [
+    {
+      "source": "/docs/guides/services/stack-services",
+      "destination": "/docs/guides/services"
+    },
+    {
+      "source": "/docs/guides/services/stack-services/overlay-server",
+      "destination": "/docs/guides/services"
+    },
+    {
+      "source": "/docs/guides/services/stack-services/message-box-server",
+      "destination": "/docs/guides/services"
+    },
+    {
+      "source": "/docs/guides/services/operations",
+      "destination": "/docs/guides/services"
+    },
+    {
+      "source": "/docs/guides/services/operations/edge-security",
+      "destination": "/docs/guides/services"
+    },
+    {
+      "source": "/docs/guides/services/operations/scaling",
+      "destination": "/docs/guides/services"
+    },
+    {
+      "source": "/docs/guides/services/local-stack",
+      "destination": "/docs/guides/services"
+    },
     {
       "source": "/docs/get-started/quick-start",
       "destination": "/docs/get-started/quick-start-browser"
