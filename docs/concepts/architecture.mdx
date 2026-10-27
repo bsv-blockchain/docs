@@ -28,19 +28,18 @@ The wallet and your app use five services, and each one does a single job:
 | Service | What it does for your app | Product or package |
 | --- | --- | --- |
 | Broadcast | Sends your transaction to the network and tells you its status. | Arcade |
-| Block headers | Provides the block headers that a wallet checks a transaction's proof against. | Arcade, or a Chaintracks client in wallet toolbox |
+| Block headers | Provides the block headers that a wallet checks a transaction's proof against. | Arcade, or a <Hint tip="A block header service. A wallet uses it to check Merkle paths against the block headers.">Chaintracks</Hint> client in wallet toolbox |
 | Message box | Keeps encrypted messages for a recipient who is offline. | `@bsv/message-box-client` |
 | Overlays | Index the transactions your app cares about, so it can look them up later without scanning the chain. | `@bsv/overlay` |
-| File storage | Stores public files and finds them by their hash. | UHRP |
+| File storage | Stores public files and finds them by their hash. | <Hint tip="Universal Hash Resolution Protocol (BRC-26): file storage where a file is found by the hash of its content">UHRP</Hint> |
 
 ### How an API charges for a request
 
-HTTP 402 lets an API ask for payment in the request itself. The client asks for a resource, the server answers 402 with the price in the `x-bsv-sats` header, the wallet pays, and the same request goes again with the payment attached. The `@bsv/402-pay` package implements this flow, which is specified in BRC-121.
+HTTP 402 lets an API ask for payment in the request itself. The client asks for a resource, the server answers 402 with the price in the `x-bsv-sats` header, the wallet pays, and the same request goes again with the payment attached. BRC-121 specifies this flow, and the `@bsv/402-pay` package is built for it.
 
 ## Open standards
 
-The interfaces between these parts are published as BRC standards, such as BRC-100 for the wallet and BRC-121 for 402 payments, so a wallet or a service can be built by anyone against the same specification. SDKs are available for TypeScript, Go, Python and Rust.
-
+The interfaces between these parts are published as BRC standards, such as BRC-100 for the wallet and BRC-121 for 402 payments, so a wallet or a service can be built by anyone against the same specification. SDKs are available for TypeScript, Go and Python, and a Rust SDK is in development.
 
 ## Layers and packages
 
