@@ -4,11 +4,11 @@ description: "Run a BSV server wallet with local storage on testnet, fund it onc
 sidebarTitle: "Pay from a server"
 ---
 
-Send a **BSV** payment from a Node.js script that holds its own wallet, so a backend, a scheduled job or an agent can pay with no person approving each payment. The server wallet keeps its keys in a `.env` file and its coins in a local SQLite file, and BSV Desktop funds it once on testnet. Use it when your code runs where no one can click **Authorize**, and follow [Send a payment from a web app](/docs/get-started/quick-start-browser/) instead when a person pays from an app. The example runs on its own in an empty folder and ends with 1,000 testnet satoshis sent from the server to your BSV Desktop wallet, with the transaction ID on the explorer.
+Send a BSV payment from a Node.js script that holds its own wallet, so a backend, a scheduled job or an agent can pay with no person approving each payment. The server wallet keeps its keys in a `.env` file and its coins in a local SQLite file, and BSV Desktop funds it once on testnet. Use it when your code runs where no one can click **Authorize**, and follow [Send a payment from a web app](/docs/get-started/quick-start-browser/) instead when a person pays from an app. The example runs on its own in an empty folder and ends with 1,000 testnet satoshis sent from the server to your BSV Desktop wallet, with the transaction ID on the explorer.
 
 ## Before you begin
 
-- Node.js 24 or newer.
+- Node.js 22 or newer, which `@bsv/sdk` and `@bsv/wallet-toolbox` require. This page was tested on Node.js 24.
 - BSV Desktop on testnet with free testnet coins. If you do not have it yet, follow [Set up a testnet wallet](/docs/get-started/quick-start-browser/#set-up-a-testnet-wallet) and [Get free testnet coins](/docs/get-started/quick-start-browser/#get-free-testnet-coins) in the web app guide.
 
 ## How it works
@@ -45,6 +45,10 @@ The first step is to create a project folder with the server wallet and its keys
     ```
   </Step>
   <Step title="Generate the keys">
+    <Callout type="warning">
+      The `.env` file holds the private keys of the server wallet. Keep it private, never print it, paste it into code or commit it, and never share it. Anyone with this file can spend the coins of the server wallet.
+    </Callout>
+
     Write the keys of the server wallet to `.env` with `Setup.makeEnv()`. Save this script as `create-env.mjs` in the same folder:
 
     ```javascript create-env.mjs
@@ -60,10 +64,6 @@ The first step is to create a project folder with the server wallet and its keys
     ```
 
     The script never prints the keys. It checks first that `.env` does not exist, so running it again does not replace the keys of a wallet that already has coins.
-
-    <Callout type="warning">
-      The `.env` file holds the private keys of the server wallet. Keep it private, never print it, paste it into code or commit it, and never share it. Anyone with this file can spend the coins of the server wallet.
-    </Callout>
 
     Run it once:
 
