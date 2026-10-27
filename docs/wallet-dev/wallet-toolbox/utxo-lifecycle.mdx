@@ -23,7 +23,7 @@ They advance together, but they do not use the same set of values.
 
 ### Planning
 
-The wallet funds a transaction only from managed change, the <Hint tip="Pay to Public Key Hash, the standard script that locks an output to a key">P2PKH</Hint> outputs in the `default` <Hint tip="A named group of outputs the wallet tracks">basket</Hint> that carry the wallet's own <Hint tip="BRC-29, the key derivation scheme for payments between two parties">BRC-29</Hint> derivation data. Outputs that an app files in its own basket are custom outputs. They are not part of the wallet balance and are never picked to pay a fee.
+The wallet funds a transaction only from managed change, the <Hint tip="Pay to Public Key Hash, the standard script that locks an output to a key">P2PKH</Hint> outputs in the `default` <Hint tip="A named group of outputs the wallet tracks">basket</Hint> that carry the wallet's own <Hint tip="BRC-29, the payment protocol between a sender and a recipient, with keys derived by BRC-42">BRC-29</Hint> derivation data. Outputs that an app files in its own basket are custom outputs. They are not part of the wallet balance and are never picked to pay a fee.
 
 The candidates must be spendable and not reserved, and their parent transaction must have a status the planner accepts. The planner tries `completed` parents first, then adds `unproven`, then `sending`. For each set, `CanonicalChangeSelector` picks the inputs in this order:
 
