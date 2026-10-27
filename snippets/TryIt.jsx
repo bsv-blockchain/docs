@@ -1,6 +1,6 @@
 // Try BSV in your browser: look up a testnet transaction and inspect its BEEF, with nothing installed and no wallet.
 // @bsv/sdk loads from a CDN on the first click (a runtime import, never at build time). Data comes from the WhatsOnChain testnet API.
-// Tested with @bsv/sdk 3.2.1 and Chrome 155, 2026-10-22.
+// Tested with @bsv/sdk 3.2.1 and Chrome 155, 2026-10-22; request spacing tested 2026-10-27.
 import { useState } from 'react';
 
 const SDK_URL = 'https://esm.sh/@bsv/sdk@3.2.1';
@@ -10,7 +10,11 @@ const EXAMPLE = 'ec987d5123479405a00ff0e0c0583d2ae8339c62871dc6ca5a467cd234ae771
 let sdkPromise;
 const loadSdk = () => (sdkPromise ??= import(/* @vite-ignore */ SDK_URL));
 
+// WhatsOnChain allows 3 requests per second without an API key, so each request waits 400 ms first.
+const pause = () => new Promise((resolve) => setTimeout(resolve, 400));
+
 async function get(url, as) {
+  await pause();
   const response = await fetch(url);
   if (!response.ok) throw new Error(`WhatsOnChain answered ${response.status}. Check that the ID is a testnet transaction.`);
   return as === 'json' ? response.json() : (await response.text()).trim();
@@ -71,12 +75,13 @@ export default function TryIt() {
     let check;
     try {
       // verify() returns true, and throws on a bad merkle proof or script, so both failures read as "Not valid".
+      await pause();
       check = (await parsed.verify(new sdk.WhatsOnChain('test'))) === true ? 'Valid' : 'Not valid';
     } catch (e) {
       check = `Not valid (${e.message})`;
     }
     setBeef([
-      ['BEEF', `${sdk.Beef.fromString(hex, 'hex').version === 0xefbe0001 ? 'Version 1 (BRC-62)' : 'Version 2 (BRC-95)'}, ${hex.length / 2} bytes`],
+      ['BEEF', `${sdk.Beef.fromString(hex, 'hex').version === 0xefbe0001 ? 'Version 1 (BRC-62)' : 'Version 2 (BRC-96)'}, ${hex.length / 2} bytes`],
       ['Transaction ID', <code key="id">{parsed.id('hex')}</code>],
       ['Inputs', parsed.inputs.map((i) => <code key={i.sourceTXID} className="block">{`${i.sourceTXID ?? i.sourceTransaction.id('hex')}:${i.sourceOutputIndex}`}</code>)],
       ['Outputs (satoshis)', parsed.outputs.map((o) => o.satoshis).join(', ')],
