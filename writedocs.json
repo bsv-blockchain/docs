@@ -87,7 +87,7 @@
             ]
           },
           {
-            "group": "Broadcasters, nodes and overlays",
+            "group": "Services and infrastructure",
             "pages": [
               "docs/guides/services/index",
               "docs/guides/services/broadcasting"
