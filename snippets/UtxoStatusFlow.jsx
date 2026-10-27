@@ -18,7 +18,7 @@ const side = [
 
 function Chip({ item }) {
   return (
-    <div className={`flex flex-col gap-1 rounded-xl border p-3 ${item.final ? 'border-2 border-[#1B1EA9] dark:border-[#8C9BFF]' : 'border-gray-200 dark:border-gray-700'}`}>
+    <div className={`flex h-full flex-col gap-1 rounded-xl border p-3 ${item.final ? 'border-2 border-[#1B1EA9] dark:border-[#8C9BFF]' : 'border-gray-200 dark:border-gray-700'}`}>
       <span className="font-mono text-sm font-semibold text-[#1B1EA9] dark:text-[#8C9BFF]">{item.status}</span>
       <p className="m-0 text-xs leading-relaxed text-gray-700 dark:text-gray-300">{item.what}</p>
     </div>
@@ -28,16 +28,24 @@ function Chip({ item }) {
 export default function UtxoStatusFlow() {
   return (
     <figure className="not-prose my-8 flex flex-col gap-5">
-      <ol className="m-0 grid list-none grid-cols-1 gap-2 p-0 lg:grid-cols-[repeat(5,minmax(0,1fr))]" aria-label="The usual path of a transaction status">
-        {path.map((item) => (
-          <li key={item.status} className="m-0"><Chip item={item} /></li>
+      <ol className="m-0 grid list-none grid-cols-1 gap-2 p-0 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] lg:items-stretch" aria-label="The usual path of a transaction status">
+        {path.map((item, i) => (
+          <Fragment key={item.status}>
+            <li className="m-0 h-full"><Chip item={item} /></li>
+            {i < path.length - 1 && (
+              <li aria-hidden="true" className="m-0 flex items-center justify-center text-[#1B1EA9] dark:text-[#8C9BFF]">
+                <span className="text-xl leading-none lg:hidden">↓</span>
+                <span className="hidden text-xl leading-none lg:inline">→</span>
+              </li>
+            )}
+          </Fragment>
         ))}
       </ol>
       <div>
         <p className="m-0 mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">Off the usual path</p>
-        <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-3" aria-label="Statuses off the usual path">
+        <ul className="m-0 grid list-none grid-cols-1 gap-2 p-0 sm:grid-cols-3 sm:items-stretch" aria-label="Statuses off the usual path">
           {side.map((item) => (
-            <li key={item.status} className="m-0"><Chip item={item} /></li>
+            <li key={item.status} className="m-0 h-full"><Chip item={item} /></li>
           ))}
         </ul>
       </div>
