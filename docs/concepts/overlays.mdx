@@ -3,7 +3,8 @@ title: "How overlays work"
 description: "Overlays track the transactions of one app or protocol, so the app can look them up later without scanning the chain."
 ---
 
-import BlueTable from '/snippets/BlueTable.jsx';
+import OverlayCompare from '/snippets/OverlayCompare.jsx';
+import OverlayParts from '/snippets/OverlayParts.jsx';
 
 An overlay is a service that tracks the transactions of one app or protocol. Your app sends it the transactions it creates, the overlay keeps the outputs that follow your rules, and your app queries it later to read them back. It is how a BSV app keeps track of its own data, such as tokens, records or file references, without indexing every block on the chain. This page was written against `@bsv/sdk` 3.2.1.
 
@@ -11,31 +12,15 @@ An overlay is a service that tracks the transactions of one app or protocol. You
 
 A node keeps the whole chain, but it does not know which transactions belong to your app. An overlay starts from the other end: your app already has its transactions, because its wallet created them.
 
-<BlueTable>
-
-| | Index the chain yourself | Use an overlay |
-| --- | --- | --- |
-| What you process | Every transaction on the network | Only the transactions your app sends |
-| How you check them | You run the indexer, or trust someone else's | Checked by the overlay, usually with <Hint tip="Simplified Payment Verification, which checks a transaction against block headers instead of the full chain">SPV</Hint> |
-| What you trust | That the index left nothing out | Your own rules, applied by the overlay |
-| Cost at high volume | Grows with the whole network | Grows with your app |
-
-</BlueTable>
+<OverlayCompare />
 
 The state of a BSV app lives in <Hint tip="Unspent transaction output">UTXOs</Hint>, not in an account that a node updates. An output can be spent only once, and the miners reject a second spend. So when the overlay sees that an output it tracks was spent, it knows the state changed, and an app that holds an old copy finds out as soon as it tries to spend that output.
 
 ## The two parts of an overlay
 
-An <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> pairs a topic manager with a lookup service. Their names follow <Hint tip="BSV Request for Comments 87, the naming rules for topic managers and lookup services">BRC-87</Hint>, and one overlay host can run many pairs:
+An <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> pairs a topic manager with a lookup service, and one overlay host can run many pairs. Their names start with `tm_` and `ls_`, as set by <Hint tip="BSV Request for Comments 87, the naming rules for topic managers and lookup services">BRC-87</Hint>:
 
-<BlueTable>
-
-| Part | Prefix | What it does |
-| --- | --- | --- |
-| Topic manager | `tm_` | Applies the rules of your protocol, for example that an output holds a token with a valid format, and admits only the outputs that pass |
-| Lookup service | `ls_` | Indexes the admitted outputs and answers queries about them, in a format the service defines, for example all the tokens of one asset |
-
-</BlueTable>
+<OverlayParts />
 
 ## How a transaction goes through an overlay
 
@@ -61,16 +46,20 @@ A transaction goes through an overlay in five steps. The submission side is defi
 
 ## How your app finds an overlay host
 
-An overlay is shared infrastructure, and only a host that runs your topic can track it. Your app does not need the address of that host in advance: hosts announce what they run with two kinds of advertisement, defined in BRC-88.
+An overlay is shared infrastructure, and only a host that runs your topic can track it. Your app does not need the address of that host in advance: hosts announce what they run with two kinds of advertisement, defined in BRC-88:
 
-<BlueTable>
+<Tabs>
+<Tab title="SHIP">
 
-| Advertisement | What it says | Used by, in `@bsv/sdk` |
-| --- | --- | --- |
-| <Hint tip="Services Host Interconnect Protocol">SHIP</Hint> | A host runs a topic, so a transaction can be sent to every host that tracks it | `TopicBroadcaster`, which sends a transaction to the hosts of its topics |
-| <Hint tip="Services Lookup Availability Protocol">SLAP</Hint> | A host runs a lookup service, so a query can find a host that answers it | `LookupResolver`, which sends a query to a host of the service |
+A <Hint tip="Services Host Interconnect Protocol">SHIP</Hint> advertisement says that a host runs a topic, so a transaction can be sent to every host that tracks it. In `@bsv/sdk`, `TopicBroadcaster` uses it to send a transaction to the hosts of its topics.
 
-</BlueTable>
+</Tab>
+<Tab title="SLAP">
+
+A <Hint tip="Services Lookup Availability Protocol">SLAP</Hint> advertisement says that a host runs a lookup service, so a query can find a host that answers it. In `@bsv/sdk`, `LookupResolver` uses it to send a query to a host of the service.
+
+</Tab>
+</Tabs>
 
 Both classes find the hosts through SLAP trackers, the hosts that keep the list of advertisements for a network. Each network has its own trackers, so your app looks on the network where its host runs.
 
