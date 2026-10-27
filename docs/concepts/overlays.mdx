@@ -39,7 +39,7 @@ An overlay is shared infrastructure, and only a host that runs your topic can tr
 - A <Hint tip="Services Host Interconnect Protocol">SHIP</Hint> advertisement says that a host runs a topic, so a transaction can be sent to every host that tracks it.
 - A <Hint tip="Services Lookup Availability Protocol">SLAP</Hint> advertisement says that a host runs a lookup service, so a query can find a host that answers it.
 
-In `@bsv/sdk`, `TopicBroadcaster` sends a transaction to the hosts of its topics, and `LookupResolver` sends a query to a host of the service. Both find the hosts through SLAP trackers, the hosts that keep the list of advertisements for a network. Each network has its own trackers, so the app has to look on the network where its host runs. This page was written against `@bsv/sdk` 3.x.
+In `@bsv/sdk`, `TopicBroadcaster` sends a transaction to the hosts of its topics, and `LookupResolver` sends a query to a host of the service. Both find the hosts through SLAP trackers, the hosts that keep the list of advertisements for a network. Each network has its own trackers, so the app has to look on the network where its host runs. This page was written against `@bsv/sdk` 3.2.1.
 
 When no public host runs your topic, you run one. `@bsv/overlay-express` runs a host as a Node server, and `@bsv/overlay-topics` has ready topic managers and lookup services, for tokens, identity certificates, key-value storage and file references, among others.
 
