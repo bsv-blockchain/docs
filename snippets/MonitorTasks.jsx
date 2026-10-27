@@ -16,7 +16,7 @@ export default function MonitorTasks() {
       <ul className="m-0 grid list-none grid-cols-1 gap-3 p-0 sm:grid-cols-2" aria-label="The Monitor tasks">
         {tasks.map((task) => (
           <li key={task.name} className="m-0 rounded-xl border-l-4 border-[#1B1EA9] bg-[#1B1EA9]/5 px-4 py-3 dark:border-[#8C9BFF] dark:bg-[#8C9BFF]/10">
-            <code className="text-sm font-semibold text-[#1B1EA9] dark:text-[#8C9BFF]">{task.name}</code>
+            <span className="font-mono text-sm font-semibold text-[#1B1EA9] dark:text-[#8C9BFF]">{task.name}</span>
             <p className="m-0 mt-1 text-sm leading-relaxed text-gray-700 dark:text-gray-300">{task.what}</p>
           </li>
         ))}

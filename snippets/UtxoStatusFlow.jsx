@@ -19,7 +19,7 @@ const side = [
 function Chip({ item }) {
   return (
     <div className={`flex flex-col gap-1 rounded-xl border p-3 ${item.final ? 'border-2 border-[#1B1EA9] dark:border-[#8C9BFF]' : 'border-gray-200 dark:border-gray-700'}`}>
-      <code className="text-sm font-semibold text-[#1B1EA9] dark:text-[#8C9BFF]">{item.status}</code>
+      <span className="font-mono text-sm font-semibold text-[#1B1EA9] dark:text-[#8C9BFF]">{item.status}</span>
       <p className="m-0 text-xs leading-relaxed text-gray-700 dark:text-gray-300">{item.what}</p>
     </div>
   );
