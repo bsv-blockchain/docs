@@ -4,7 +4,7 @@ description: "A BSV Desktop backup keeps the keys in a recovery phrase or backup
 sidebarTitle: "Back up a wallet"
 ---
 
-Back up a **BSV Desktop** wallet and restore it on another device with the same keys, balance and history. Do it before the wallet holds coins you care about and before you move to a new computer, since a lost device with no backup means lost coins. The steps use testnet and work the same on Mainnet. At the end, the other device shows the same identity key, balance and **Activity** as the first one, and can spend the coins.
+Back up a BSV Desktop wallet and restore it on another device with the same keys, balance and history. Do it before the wallet holds coins you care about and before you move to a new computer, since a lost device with no backup means lost coins. The steps use testnet and were not tested on Mainnet. This page was written against BSV Desktop 3.3.1. At the end, the other device shows the same identity key, balance and **Activity** as the first one, and can spend the coins.
 
 ## How it works
 
@@ -51,7 +51,7 @@ On the other device, install [BSV Desktop](/docs/wallets/bsv-desktop/) and resto
 
 <Steps>
   <Step>On the welcome screen, choose **Import an existing wallet**.</Step>
-  <Step>In the **Recovery phrase** tab, enter the 12 words in **Recovery phrase or private key** and choose **Restore wallet**. To use shares instead, open the **Backup shares** tab, enter two shares in **Backup share 1** and **Backup share 2**, and choose **Restore wallet**.</Step>
+  <Step>In the **Recovery phrase** tab, enter the 12 words in **Recovery phrase or private key** and choose **Restore wallet**. If the screen shows **Created in BSV Desktop 2**, leave it unticked: it is only for a phrase from a version 2 wallet. To use shares instead, open the **Backup shares** tab, enter two shares in **Backup share 1** and **Backup share 2**, and choose **Restore wallet**.</Step>
   <Step>Set a password for this device in **Device password** and **Confirm device password**, then choose **Protect my wallet**.</Step>
   <Step>Switch to the network of the backup with the network button at the top right, since a restored wallet opens on Mainnet.</Step>
 </Steps>
