@@ -6,7 +6,7 @@ sidebarTitle: "Glossary"
 
 import GlossaryTable from '/snippets/GlossaryTable.jsx';
 
-Look up a **BSV** term you meet while building on BSV, in one line. When a page explains the term in depth, the term links to it.
+Look up a BSV term you meet while building on BSV, in one line. When a page explains the term in depth, the term links to it.
 
 <GlossaryTable>
 
@@ -17,14 +17,17 @@ Look up a **BSV** term you meet while building on BSV, in one line. When a page 
 | basket | A named group of outputs in a wallet, so an app can list them later. |
 | [BEEF](/docs/concepts/spv/) | Background Evaluation Extended Format (BRC-62): a transaction with the proof a host needs to verify it, without running a node. |
 | BRC | BSV Request for Comments: a numbered BSV standard, such as BRC-100. |
+| BRC-29 | The payment protocol between a sender and a recipient: the sender derives the recipient's key with BRC-42 and sends the transaction as BEEF. |
+| BRC-42 | BSV Key Derivation Scheme: two parties derive new keys for each other from their keys and an invoice number, without sharing a private key. |
 | [BRC-100](/docs/concepts/wallet-model/) | The standard interface between an app and a wallet. |
 | BSV | The blockchain that implements the original Bitcoin protocol, and its native coin. |
 | `@bsv/sdk` | The base package for building on BSV: hashing, keys, Script, BEEF and Merkle paths, and `WalletClient`. |
 | `@bsv/simple` | A package with helpers for payments and tokens. |
 | `@bsv/wallet-toolbox` | A package for building a wallet. |
-| [BSV Desktop](/docs/get-started/quick-start-browser/) | A desktop wallet for BSV. It holds the keys, chooses the coins, signs, and asks the user to approve each payment. |
+| [BSV Desktop](/docs/wallets/bsv-desktop/) | A desktop wallet for BSV. It holds the keys, chooses the coins, signs, and asks the user to approve each payment. |
 | BUMP | BSV Unified Merkle Path (BRC-74): a compact Merkle path that proves a transaction is in a block. |
 | [certificate](/docs/guides/identity-auth/) | A signed statement about a user, issued by a third party, like a verifiable credential. |
+| Chaintracks | A block header service. A wallet uses it to check Merkle paths against the block headers. |
 | [EF](/docs/guides/services/broadcasting/) | Extended Format (BRC-30): the raw transaction plus the satoshis and locking script of every output it spends. |
 | [faucet](/docs/get-started/quick-start-browser/) | A site that sends free testnet coins, such as bsvfaucet.com. |
 | [identity key](/docs/guides/identity-auth/) | The public key that identifies a wallet to an app. The private key never leaves the wallet. |
@@ -33,12 +36,13 @@ Look up a **BSV** term you meet while building on BSV, in one line. When a page 
 | lookup service | The part of an overlay service that answers queries about what its topic managers admitted. |
 | [Mainnet](/docs/guides/go-to-mainnet/) | The live BSV network, where coins have real value and a payment cannot be undone. |
 | Merkle path | The proof that a transaction is in a block, checked against the block header. |
+| [MessageBox](/docs/guides/messaging/) | A service that delivers encrypted messages and payments between users by their identity key. A host holds each message until its recipient reads it. |
 | originator | The name of your app, passed as the second argument of `WalletClient`, that BSV Desktop shows in its windows. |
 | [overlay service](/docs/guides/overlays/) | A service that tracks the transactions of a topic: topic managers decide what is admitted, and lookup services query it. |
 | P2PKH | Pay to Public Key Hash: the locking script that pays to an address. |
 | [Paymail](/docs/standards/paymail/) | A handle that resolves to a user's identity key. Its domain lists the Paymail services it supports. |
 | private key | The secret key that signs transactions. It stays in the wallet and never goes in app code. |
-| recovery phrase | The twelve words that restore a wallet's keys. Anyone who has them can access the wallet. |
+| recovery phrase | The words that restore a wallet's keys, twelve in BSV Desktop 3. Anyone who has them can access the wallet. |
 | satoshi | The smallest unit of BSV. 100,000,000 satoshis make 1 BSV. |
 | [`SEEN_ON_NETWORK`](/docs/guides/services/broadcasting/) | The Arcade status of a transaction seen in a miner's subtree. Safe to treat as zero-confirmation, before it is mined. |
 | Spending Request | The BSV Desktop window where the user checks a payment an app asks for, then approves it with **Authorize** or refuses it with **Deny**. |
@@ -48,6 +52,7 @@ Look up a **BSV** term you meet while building on BSV, in one line. When a page 
 | [testnet](/docs/get-started/quick-start-browser/) | The BSV test network, where coins are free from a faucet, for building and testing. |
 | topic manager | The part of an overlay service that decides which transactions are admitted. |
 | [transaction ID](/docs/get-started/verify/) | The 64-character ID of a transaction, used to look it up. Written `txid` in code. |
+| UHRP | Universal Hash Resolution Protocol (BRC-26): file storage where a file is found by the hash of its content. |
 | UTXO | Unspent transaction output: a coin that can still be spent. BSV runs on the UTXO model. |
 | [wallet](/docs/concepts/wallet-model/) | Holds the user's keys, chooses the coins and signs transactions. Apps ask it to pay, and the user approves. |
 | `WalletClient` | The `@bsv/sdk` class an app uses to talk to the user's wallet, such as BSV Desktop. |
