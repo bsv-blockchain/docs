@@ -3,14 +3,14 @@ title: "BSV Desktop"
 description: "BSV Desktop is the BRC-100 wallet for macOS, Windows and Linux that keeps your keys on your device and signs what your apps request."
 ---
 
-**BSV Desktop** is the BSV Association's desktop wallet for macOS, Windows and Linux. It keeps your keys and your coins on your device, and apps on the same computer ask it to sign through the <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> interface, so no private key goes in your code. You approve each payment in the wallet. These docs use it on testnet for every example, as in [Send a payment from a web app](/docs/get-started/quick-start-browser/).
+BSV Desktop is the BSV Association's desktop wallet for macOS, Windows and Linux. It keeps your keys and your coins on your device, and apps on the same computer ask it to sign through the <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> interface, so no private key goes in your code. You approve each payment in the wallet. These docs use it on testnet for every example, as in [Send a payment from a web app](/docs/get-started/quick-start-browser/).
 
 ## Versions
 
-Download BSV Desktop from [desktop.bsvb.tech](https://desktop.bsvb.tech/), which links to the [release files on GitHub](https://github.com/bsv-blockchain/bsv-desktop/releases/latest) for each system. The current version is 3.3.1. The bottom of **Settings** shows the installed version next to **Check for updates**, and BSV Desktop also offers a new version on its own, with **Download Update**.
+Download BSV Desktop from [desktop.bsvb.tech](https://desktop.bsvb.tech/), which links to the [release files on GitHub](https://github.com/bsv-blockchain/bsv-desktop/releases/latest) for each system. This page was written against BSV Desktop 3.3.1. The bottom of **Settings** shows the installed version next to **Check for updates**, and BSV Desktop also offers a new version on its own, with **Download Update**.
 
 <Callout type="warning">
-  Version 3 drops the phone number and password login and the built-in STAS tokens of version 2. If you sign in to version 2 that way or hold STAS tokens, stay on version 2, or create a new wallet in version 3 and send your funds to it. Before any upgrade, back up your recovery phrase or private key. To restore a version 2 wallet in version 3, choose **Import an existing wallet** and enter its 24-word phrase or 64-character hex private key. The [release notes](https://github.com/bsv-blockchain/bsv-desktop/releases/latest) list every change.
+  Version 3 drops the phone number and password login and the built-in STAS tokens of version 2. If you sign in to version 2 that way or hold STAS tokens, stay on version 2, or create a new wallet in version 3 and send your funds to it. Before any upgrade, back up your recovery phrase or private key. To restore a version 2 wallet in version 3, choose **Import an existing wallet**, enter its 24-word recovery phrase or 64-character hex private key, and check that **Created in BSV Desktop 2** is ticked. The [release notes](https://github.com/bsv-blockchain/bsv-desktop/releases/latest) list every change.
 </Callout>
 
 ## Networks
@@ -58,6 +58,7 @@ BSV Desktop sets the fee from a rate in satoshis per kilobyte, so a larger trans
 - **Configured rate** is the rate in use, 250 sats/kB by default, where 1 kB is 1,000 bytes.
 - **Advertised Arcade floor** is the lowest rate the network accepts, read from the policy address below it.
 - A custom rate applies to wallets stored on this device, for the current network only, and takes effect after you restart BSV Desktop. The wallet checks the floor again when you save it.
+- The rate is fixed: it adds no extra fee for unconfirmed parent transactions that paid too little, and lowering it may affect transactions that depend on them.
 
 ## Receive and send payments
 
@@ -70,7 +71,7 @@ The BSV address changes every day, by the UTC date, and the old ones keep workin
 
 ## Back up your wallet
 
-The recovery phrase restores your wallet's keys on another device. **Settings**, **Back up & recover** shows it and can split it into three backup shares, any two of which restore it. The balance and history come back with a wallet data file, which **Wallet data files** exports encrypted with a passphrase, without the keys. Keep both, as in [Back up and recover a wallet](/docs/wallets/backup-recovery/).
+The recovery phrase, twelve words for a wallet created in version 3, restores your wallet's keys on another device. **Settings**, **Back up & recover** shows it and can split it into three backup shares, any two of which restore it. The balance and history come back with a wallet data file, which **Wallet data files** exports encrypted with a passphrase, without the keys. Keep both, as in [Back up and recover a wallet](/docs/wallets/backup-recovery/).
 
 <Callout type="warning">
   Anyone with your recovery phrase can spend your coins. Keep it offline, never paste it into code or a website, and never share it.
