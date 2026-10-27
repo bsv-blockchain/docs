@@ -133,7 +133,7 @@ With the server wallet ready, the next step is to move testnet coins into it fro
     import { env, openWallet } from './server-wallet.mjs'
 
     const amount = 1500
-    const desktop = new WalletClient('auto', 'server-payment.local')
+    const desktop = new WalletClient('auto', 'example.com')
     const { network } = await desktop.getNetwork({})
     if (network !== 'testnet') throw new Error(`BSV Desktop is on ${network}. Switch it to testnet.`)
 
@@ -184,10 +184,10 @@ With the server wallet ready, the next step is to move testnet coins into it fro
     node fund.mjs
     ```
 
-    BSV Desktop opens a **Spending Request** from `server-payment.local` for "Fund server wallet (1500 sats)", with the total including the fee. The fee depends on the size of the transaction, so the total changes from one payment to the next, for example 1,594 or 1,668 satoshis. A sent payment cannot be undone, so check the app name and the amount, then click **Authorize**:
+    BSV Desktop opens a **Spending Request** from `example.com` for "Fund server wallet (1500 sats)", with the total including the fee. The fee depends on the size of the transaction, so the total changes from one payment to the next, for example 1,594 or 1,668 satoshis. A sent payment cannot be undone, so check the app name and the amount, then click **Authorize**:
 
     <Frame>
-      <img src="/images/pay-from-a-server/01-spending-request.png" alt="The Spending Request window of BSV Desktop from server-payment.local for Fund server wallet (1500 sats), with the total of 1,668 satoshis and the Deny and Authorize buttons" />
+      <img src="/images/pay-from-a-server/01-spending-request.png" alt="The Spending Request window of BSV Desktop from example.com for Fund server wallet (1500 sats), with the total of 1,594 satoshis and the Deny and Authorize buttons" />
     </Frame>
 
     The script ends with the new balance:
