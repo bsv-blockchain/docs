@@ -16,7 +16,7 @@ A node keeps the whole chain, but it does not know which transactions belong to 
 | | Index the chain yourself | Use an overlay |
 | --- | --- | --- |
 | What you process | Every transaction on the network | Only the transactions your app sends |
-| How you check them | You run the indexer, or trust someone else's | The overlay verifies each one, usually with <Hint tip="Simplified Payment Verification, which checks a transaction against block headers instead of the full chain">SPV</Hint> |
+| How you check them | You run the indexer, or trust someone else's | Checked by the overlay, usually with <Hint tip="Simplified Payment Verification, which checks a transaction against block headers instead of the full chain">SPV</Hint> |
 | What you trust | That the index left nothing out | Your own rules, applied by the overlay |
 | Cost at high volume | Grows with the whole network | Grows with your app |
 
@@ -30,7 +30,7 @@ An <Hint tip="Built from topic managers, which decide what is admitted, and look
 
 <BlueTable>
 
-| Part | Name starts with | What it does |
+| Part | Prefix | What it does |
 | --- | --- | --- |
 | Topic manager | `tm_` | Applies the rules of your protocol, for example that an output holds a token with a valid format, and admits only the outputs that pass |
 | Lookup service | `ls_` | Indexes the admitted outputs and answers queries about them, in a format the service defines, for example all the tokens of one asset |
@@ -39,7 +39,7 @@ An <Hint tip="Built from topic managers, which decide what is admitted, and look
 
 ## How a transaction goes through an overlay
 
-The submission side is defined in BRC-22 and the query side in BRC-24:
+A transaction goes through an overlay in five steps. The submission side is defined in BRC-22 and the query side in BRC-24.
 
 <Steps>
   <Step title="Your app sends the transaction">
