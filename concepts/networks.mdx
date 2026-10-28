@@ -25,8 +25,8 @@ Testnet and teratestnet each have their own <Hint tip="A site that sends free te
 
 A transaction exists only on the network that accepted it. When the wallet, your code and the services it calls point at different networks, the error rarely names the network:
 
-- Coins from a testnet faucet do not show in [BSV Desktop](/docs/wallets/bsv-desktop/) while it is on **TeraTestNet**, since the wallet keeps a separate balance on each network.
-- A proof check against the wrong network fails. `new WhatsOnChain()` with no argument checks the <Hint tip="The proof that a transaction is in a block">Merkle path</Hint> against Mainnet, so a testnet transaction throws `Invalid merkle path`, as in [Try BSV in your browser](/docs/get-started/try-it/).
+- Coins from a testnet faucet do not show in [BSV Desktop](/wallets/bsv-desktop/) while it is on **TeraTestNet**, since the wallet keeps a separate balance on each network.
+- A proof check against the wrong network fails. `new WhatsOnChain()` with no argument checks the <Hint tip="The proof that a transaction is in a block">Merkle path</Hint> against Mainnet, so a testnet transaction throws `Invalid merkle path`, as in [Try BSV in your browser](/get-started/try-it/).
 - An explorer for one network does not find a transaction from another. A testnet transaction shows on the testnet explorer of WhatsOnChain, not on its Mainnet explorer.
 
 ## Where each package names the network
@@ -58,11 +58,11 @@ An app that uses `WalletClient` does not set the network. It follows the wallet,
 
 Keys are not tied to a network. BSV Desktop keeps the same <Hint tip="The public key that identifies a wallet to an app">identity key</Hint> on every network. The same key gives a Mainnet address that starts with `1` and a testnet address that starts with `m` or `n`.
 
-The address format only shows how the address was encoded. `toAddress()` in `@bsv/sdk` uses the Mainnet format unless you pass `'testnet'`, so code can print a Mainnet-format address for a key it uses on testnet. To know the network, ask the wallet with `getNetwork` and stop when the answer differs from the network you intend, as in [Check the network from your app](/docs/guides/go-to-mainnet/#check-the-network-from-your-app).
+The address format only shows how the address was encoded. `toAddress()` in `@bsv/sdk` uses the Mainnet format unless you pass `'testnet'`, so code can print a Mainnet-format address for a key it uses on testnet. To know the network, ask the wallet with `getNetwork` and stop when the answer differs from the network you intend, as in [Check the network from your app](/guides/go-to-mainnet/#check-the-network-from-your-app).
 
 ## Related articles
 
 To learn more about building on testnet in BSV, review these articles:
 
-- [Send a payment from a web app](/docs/get-started/quick-start-browser/)
-- [Send a payment from a server](/docs/get-started/quick-start-server/)
+- [Send a payment from a web app](/get-started/quick-start-browser/)
+- [Send a payment from a server](/get-started/quick-start-server/)
