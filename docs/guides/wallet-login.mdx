@@ -135,7 +135,7 @@ The login component holds the decisions from the table above. Run these steps in
     Create `src/Login.tsx`:
 
     ```tsx src/Login.tsx
-    import { useEffect, useState } from 'react'
+    import { useEffect, useRef, useState } from 'react'
     import { WalletClient, type WalletInterface } from '@bsv/sdk'
     import type { WalletMethodName } from '@bsv/wallet-relay/client'
     import { QRDisplay, useWalletRelayClient } from '@bsv/wallet-relay/react'
@@ -155,29 +155,35 @@ The login component holds the decisions from the table above. Run these steps in
       const [status, setStatus] = useState<Status>('start')
       const [message, setMessage] = useState('')
       const relay = useWalletRelayClient({ autoCreate: false })
+      const attempt = useRef(0)
 
       async function findComputerWallet() {
+        const thisAttempt = ++attempt.current
+        const stillCurrent = () => attempt.current === thisAttempt
         setMessage('')
         setStatus('looking')
         const local = new WalletClient('auto')
         try {
           await local.connectToSubstrate()
         } catch {
-          setStatus('none')
+          if (stillCurrent()) setStatus('none')
           return
         }
+        if (!stillCurrent()) return
         setStatus('waiting')
         try {
           await local.waitForAuthentication()
           const { publicKey } = await local.getPublicKey({ identityKey: true })
-          onLogin({ wallet: local, identityKey: publicKey, via: 'this computer', logOut: () => {} })
+          if (stillCurrent()) onLogin({ wallet: local, identityKey: publicKey, via: 'this computer', logOut: () => {} })
         } catch (e) {
+          if (!stillCurrent()) return
           setMessage(`The wallet did not log you in: ${String(e)}`)
           setStatus('none')
         }
       }
 
       function startPhoneLogin() {
+        attempt.current++
         setMessage('')
         setStatus('pairing')
         void relay.createSession()
@@ -212,7 +218,7 @@ The login component holds the decisions from the table above. Run these steps in
           )}
           {status === 'none' && (
             <>
-              <p>No wallet found on this computer.</p>
+              {!message && <p>No wallet found on this computer.</p>}
               <button onClick={startPhoneLogin}>Log in with your phone</button>
               <button onClick={() => void findComputerWallet()}>Look again</button>
               <a href="https://desktop.bsvb.tech" target="_blank" rel="noreferrer">Install BSV Desktop</a>
@@ -230,7 +236,7 @@ The login component holds the decisions from the table above. Run these steps in
     }
     ```
 
-    `connectToSubstrate` looks for a wallet on this computer and fails if none answers. `waitForAuthentication` then waits until the wallet is unlocked, which is the waiting state. On the phone path, `autoCreate: false` creates a backend session only when the user chooses the phone, and `cancelSession` ends it and closes the connection to the phone. When the phone approves, `relay.wallet` stops being `null` and forwards each call to the phone.
+    `connectToSubstrate` looks for a wallet on this computer and fails if none answers. `waitForAuthentication` then waits until the wallet is unlocked, which is the waiting state. If the user chooses the phone while the wallet is still locked, `attempt` makes the computer path stop, so unlocking the wallet later does not log the user in with it or take away the QR code. On the phone path, `autoCreate: false` creates a backend session only when the user chooses the phone, and `cancelSession` ends it and closes the connection to the phone. When the phone approves, `relay.wallet` stops being `null` and forwards each call to the phone.
   </Step>
   <Step title="Show the login">
     Replace `src/App.tsx` so it shows the login until the user is logged in, and then which wallet is connected:
