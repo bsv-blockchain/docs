@@ -11,6 +11,7 @@ const roles = [
       <>BSV Broadcaster for every broadcast and status read, final at <code>SEEN_ON_NETWORK</code> or later with no competing transaction</>,
       <><code>WalletClient('auto', originator)</code> from <code>@bsv/sdk</code> 3.x</>,
       'Testnet, with fees at 100 sat/kB on both networks, never below the BSV Broadcaster /policy',
+      'One transaction per payment, a payment channel only for many updates between two parties',
       'Rúnar for contracts, 1Color for tokens',
     ],
   },

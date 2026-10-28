@@ -16,7 +16,7 @@ Each piece gives the agent something different:
 
 <Visibility for="agents">
 - BSV docs server, `bsv-docs`: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides.
-- `bsv-dev` skill: gives the decisions, as a playbook the agent loads for BSV work: who holds the keys, wallet login, payments, BSV Broadcaster (formerly Arcade) and when a payment is final, testnet to Mainnet, the guardrail review. Use it for building the way these docs do.
+- `bsv-dev` skill: gives the decisions, as a playbook the agent loads for BSV work: who holds the keys, wallet login, payments and payment channels, BSV Broadcaster (formerly Arcade) and when a payment is final, testnet to Mainnet, the guardrail review. Use it for building the way these docs do.
 - `@bsv/mcp`, `bsv-mcp`: gives tools that act and read live data: broadcast and status on BSV Broadcaster, a guardrail check of a project, BRCs and versions, plus dated facts. Use it for actions and live values, on testnet unless you configure Mainnet.
 </Visibility>
 
@@ -30,6 +30,7 @@ With the pieces set up, try requests like these:
 - `Check the status of transaction <txid> and tell me whether it is final.`
 - `Review this project against the BSV guardrails and fix every error.`
 - `Which wallet shape fits an app that pays creators automatically every night?`
+- `Should my game use a payment channel or one payment per move?`
 - `Send my first BSV payment from a small Node.js script. Build it and run it.` [Send a payment with an AI agent](/build-with-ai/prompts/) walks through this one.
 
 ## Set up your agent

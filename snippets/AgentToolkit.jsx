@@ -9,7 +9,7 @@ const pieces = [
   },
   {
     name: 'bsv-dev skill',
-    gives: 'The decisions: who holds the keys, payments, BSV Broadcaster and finality, testnet to Mainnet, the guardrail review',
+    gives: 'The decisions: who holds the keys, payments and channels, BSV Broadcaster and finality, testnet to Mainnet, the guardrail review',
     use: 'Building the way these docs do',
   },
   {
