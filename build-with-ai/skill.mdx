@@ -56,17 +56,17 @@ The plugin holds the skill, the two commands and both MCP servers:
     The plugin installs for your user, so it works in every project.
   </Step>
   <Step title="Set the network and the BSV Broadcaster URL">
-    The plugin has two settings: `bsv_network`, which is `testnet` or `mainnet`, and `arcade_url`, which you leave empty for the public BSV Broadcaster endpoint of the network. Set both, for testnet and the public endpoint:
+    The plugin has two settings: `bsv_network`, which is `testnet` or `mainnet`, and `broadcaster_url`, which you leave empty for the public BSV Broadcaster endpoint of the network. Set both, for testnet and the public endpoint:
 
     ```bash
-    echo '{"bsv_network":"testnet","arcade_url":""}' | claude plugin configure bsv-dev@bsv --values-stdin
+    echo '{"bsv_network":"testnet","broadcaster_url":""}' | claude plugin configure bsv-dev@bsv --values-stdin
     ```
 
     ```text
     Configuration saved. Restart Claude Code to apply it.
     ```
 
-    `claude plugin configure bsv-dev@bsv` then lists `bsv_network` as set and `arcade_url`, which is empty, as not set. In Claude Code, `/plugin configure bsv-dev@bsv` sets the same values.
+    `claude plugin configure bsv-dev@bsv` then lists `bsv_network` as set and `broadcaster_url`, which is empty, as not set. In Claude Code, `/plugin configure bsv-dev@bsv` sets the same values.
   </Step>
   <Step title="Check what it installed">
     Show the parts of the plugin:
@@ -77,7 +77,7 @@ The plugin holds the skill, the two commands and both MCP servers:
 
     ```text
     BSV Dev (bsv-dev) 0.1.0
-      Description: Official BSV Association skill, commands and MCP bundle for building BSV apps on BRC-100 wallets, Arcade and Rúnar
+      Description: Official BSV Association skill, commands and MCP bundle for building BSV apps on BRC-100 wallets, BSV Broadcaster (formerly Arcade) and Rúnar
       Source: bsv-dev@bsv
 
     Component inventory

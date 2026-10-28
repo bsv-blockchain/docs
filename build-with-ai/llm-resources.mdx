@@ -50,13 +50,13 @@ Add these nine rules to the instructions file your agent reads in every session,
 4. For the user's wallet, connect with `@bsv/sdk` 3.x `new WalletClient('auto', originator)`, from the browser or a local script.
 5. Never hold, ask for, print or generate for production use a private key, WIF or recovery phrase; the user's wallet (shape A) or an operator-set variable outside the repo (shape B) holds it.
 6. Testnet coins come from https://bsvfaucet.com and wallet approvals come from the user: ask the user for both, and never work around either.
-7. Use Arcade for every broadcast and every txid state read; never the legacy ARC API, and never WhatsOnChain as the truth for a known txid.
+7. Use BSV Broadcaster (formerly Arcade) for every broadcast and every txid state read; never the legacy ARC API, and never WhatsOnChain as the truth for a known txid.
 8. A transaction is final at `SEEN_ON_NETWORK` or later with no competing transaction; never wait for confirmations or `MINED`.
 9. If `bsv-mcp` is connected, run `check_guardrails` with the project's absolute path and fix every error before calling the work done.
 <!-- bsv-dev rules: end -->
 ```
 
-These rules are the ones the `bsv-dev` skill ships, as `CLAUDE.md.snippet`, `AGENTS.md.snippet` and `bsv.mdc` for Cursor. In rule 5, shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. Rule 7 calls BSV Broadcaster by its former name, Arcade. The begin and end lines let you or a tool find the block and update it. With the skill installed, the agent offers you these rules for your project, and you add them yourself: see [Install the BSV agent skill](/build-with-ai/skill/).
+These rules are the ones the `bsv-dev` skill ships, as `CLAUDE.md.snippet`, `AGENTS.md.snippet` and `bsv.mdc` for Cursor. In rule 5, shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. The begin and end lines let you or a tool find the block and update it. With the skill installed, the agent offers you these rules for your project, and you add them yourself: see [Install the BSV agent skill](/build-with-ai/skill/).
 
 <Callout type="note">
   Rules 2 and 9 apply when the `bsv-docs` and `bsv-mcp` servers are connected. Without `bsv-mcp`, the agent cannot run `check_guardrails`, so connect both servers as in [Connect your AI tool with MCP](/build-with-ai/mcp/).
