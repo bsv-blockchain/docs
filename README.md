@@ -9,7 +9,7 @@ This file is for contributors and for AI agents that read the repo or review pul
 | | |
 |---|---|
 | Platform | Writedocs, which builds the site from this repo |
-| Page format | `.mdx` files in `docs/`, with frontmatter and components |
+| Page format | `.mdx` files in one folder per section, with frontmatter and components |
 | Configuration | `writedocs.json`: navigation, variables, redirects, theme |
 | Node.js | 22.12.0 or newer, from `engines` in `package.json` |
 | Language | English |
@@ -51,19 +51,19 @@ Run `npm run check` before you open a pull request.
 
 | Path | What it holds |
 |---|---|
-| `docs/get-started/` | The Quick Start paths: web app, server, verify, project starter, try it |
-| `docs/build-with-ai/` | The Set up your AI pages: MCP, the agent skill, prompts |
-| `docs/guides/` | Task guides for app developers, such as payments, data storage, identity, messaging, overlays and Mainnet |
-| `docs/concepts/` | How things work: architecture, transactions, SPV, the wallet model, scripts, keys |
-| `docs/learn/` | What is BSV, the glossary, the wiki, and the BSV Academy courses in `docs/learn/academy/` |
-| `docs/sdk/` | The SDK pages: TypeScript, Go, Python, `@bsv/simple`, packages and the API |
-| `docs/wallets/` | The wallets for users: BSV Desktop, BSV Browser, backup and recovery |
-| `docs/wallet-dev/` | Building a wallet |
-| `docs/standards/` | BRC standards and Paymail |
-| `docs/reference/` | Reference pages: errors, networks, script opcodes and the HTTP APIs |
-| `docs/nodes/` | Node operator content, in a hidden tab |
-| `docs/showcase/` | The example apps: BEEF Inspector, P2P Medical and Time Anchor |
-| `docs/changelog/` | The changelog, one page per product |
+| `get-started/` | The Quick Start paths: web app, server, verify, project starter, try it |
+| `build-with-ai/` | The Set up your AI pages: MCP, the agent skill, prompts |
+| `guides/` | Task guides for app developers, such as payments, data storage, identity, messaging, overlays and Mainnet |
+| `concepts/` | How things work: architecture, transactions, SPV, the wallet model, scripts, keys |
+| `learn/` | What is BSV, the glossary, the wiki, and the BSV Academy courses in `learn/academy/` |
+| `sdk/` | The SDK pages: TypeScript, Go, Python, `@bsv/simple`, packages and the API |
+| `wallets/` | The wallets for users: BSV Desktop, BSV Browser, backup and recovery |
+| `wallet-dev/` | Building a wallet |
+| `standards/` | BRC standards and Paymail |
+| `reference/` | Reference pages: errors, networks, script opcodes and the HTTP APIs |
+| `nodes/` | Node operator content, in a hidden tab |
+| `showcase/` | The example apps: BEEF Inspector, P2P Medical and Time Anchor |
+| `changelog/` | The changelog, one page per product |
 | `snippets/` | React components used by the pages, mostly the diagrams |
 | `images/` | Screenshots and logos, one folder per page |
 | `openapi/` | OpenAPI specs for the HTTP services |
@@ -79,7 +79,8 @@ Run `npm run check` before you open a pull request.
 - `variables` holds values shared by the site: the network, the faucet and explorer URLs, the wallet name and the Node version
 - `mcp` turns on the docs MCP server, and `contextMenu` turns on the page context menu
 - Any `.css` file in the repo loads on every page, so keep unfinished drafts out of it
-- An internal link has the form `/docs/section/page/`, with a trailing slash. It resolves to `docs/section/page.mdx` or to `docs/section/page/index.mdx`
+- An internal link has the form `/section/page/`, with a trailing slash. It resolves to `section/page.mdx` or to `section/page/index.mdx`
+- The site is served at `bsvblockchain.org/docs`: `basePath` in `writedocs.json` is `/docs`, and the main site passes every request under `/docs` to this build. Writedocs adds `/docs` to every link, image and asset address, so never write it yourself: `/docs/guides/payments/` comes out as `/docs/docs/guides/payments/` and `npm run broken-links` reports it. The same goes for `redirects`. An address computed in a React snippet is the exception, because Writedocs does not change it: write `/docs` into that one
 
 ## Anatomy of a page
 
@@ -194,7 +195,7 @@ When you review a pull request, check these in order, and say which ones fail.
 10. The change touches only what the pull request is about
 11. A page that is meant to be final has no `ia-scaffold` marker
 
-The BSV Academy courses in `docs/learn/academy/` come from the previous BSV Academy and are being migrated. Review them for migration problems, such as broken links and formatting, not for the writing rules above.
+The BSV Academy courses in `learn/academy/` come from the previous BSV Academy and are being migrated. Review them for migration problems, such as broken links and formatting, not for the writing rules above.
 
 ## Where facts come from
 

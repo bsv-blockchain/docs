@@ -1,0 +1,307 @@
+---
+title: "Track transactions with overlays"
+description: "Index your app's transactions in an overlay and look them up by service, instead of scanning the chain."
+sidebarTitle: "Track with overlays"
+---
+
+import OverlayFlow from '/snippets/OverlayFlow.jsx';
+
+**Overlays** index the transactions that matter to your app under a topic, so your app can find them again without scanning the chain. Use one when your app needs to query what it wrote. The example runs as a standalone Node script with BSV Desktop on testnet, and you can adapt it to your app. In this guide, you send a transaction that carries data to a topic and look the data up again.
+
+## Before you begin
+
+You need a funded testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/) and Node.js 22 or newer. The BSV Desktop window described in this guide is from version 3.1.1. [Send a payment from a web app](/get-started/quick-start-browser/) shows how to set up the wallet.
+
+An overlay is shared infrastructure, so only a host that runs your topic tracks it. There is no public overlay on testnet that runs every topic, so this guide starts a local host for development.
+
+<Callout type="note">
+The wallet decides the network. These examples use a testnet wallet and a local overlay.
+</Callout>
+
+## How it works
+
+An <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> pairs a topic with a lookup service. Your app sends a transaction to the topic, and the host keeps it so the lookup service can find it again:
+
+<OverlayFlow />
+
+A topic name starts with `tm_`, and a lookup service name starts with `ls_`.
+
+## Set up the host and the wallet
+
+The example needs two things running: an overlay host to send to, and a wallet to sign with.
+
+### Run a local overlay host
+
+The host is a small Node project that runs the `tm_helloworld` topic and the `ls_helloworld` lookup service on `localhost:8080`. Use it for development only.
+
+<Steps>
+  <Step title="Install the host packages">
+
+    In a separate folder, create a project and install the packages:
+
+    ```bash
+    npm init -y
+    npm install @bsv/overlay-express @bsv/overlay-topics @bsv/sdk mongodb-memory-server better-sqlite3 knex
+    ```
+
+    Set `"type": "module"` in the `package.json` it creates.
+
+  </Step>
+  <Step title="Create the host script">
+
+    Create `host.mjs`:
+
+    ```js host.mjs
+    import OverlayExpress from '@bsv/overlay-express'
+    import { HelloWorldTopicManager, createHelloWorldLookupService } from '@bsv/overlay-topics'
+    import { MongoMemoryServer } from 'mongodb-memory-server'
+    import { PrivateKey } from '@bsv/sdk'
+
+    const mongo = await MongoMemoryServer.create()
+    const server = new OverlayExpress(
+      'local-host',
+      PrivateKey.fromRandom().toHex(),
+      'localhost:8080'
+    )
+
+    server.configurePort(8080)
+    await server.configureKnex({
+      client: 'better-sqlite3',
+      connection: { filename: ':memory:' },
+      useNullAsDefault: true
+    })
+    await server.configureMongo(mongo.getUri())
+    server.configureNetwork('test')
+
+    server.configureTopicManager('tm_helloworld', new HelloWorldTopicManager())
+    await server.configureLookupServiceWithMongo(
+      'ls_helloworld',
+      db => createHelloWorldLookupService(db)
+    )
+
+    await server.configureEngine()
+    await server.start()
+    ```
+
+    The host creates a throwaway key each time it starts, and it holds no funds. It keeps everything in memory, so it starts empty each time. These are the lines that do the work:
+
+    - `OverlayExpress` takes a name, the key of the host and the address it announces, here `localhost:8080`
+    - `configureKnex` sets the SQL database of the host, and `':memory:'` keeps it in memory
+    - `configureMongo` connects the MongoDB that the lookup service uses, and `mongodb-memory-server` starts a temporary one
+    - `configureNetwork('test')` runs the host on testnet
+    - `configureTopicManager` and `configureLookupServiceWithMongo` register the topic `tm_helloworld` and the lookup service `ls_helloworld`, both from `@bsv/overlay-topics`
+
+  </Step>
+  <Step title="Start the host">
+
+    Run it and leave it open while you follow the rest of the guide:
+
+    ```bash
+    node host.mjs
+    ```
+
+    The host prints a long startup log. Near the end it logs `Failed to GASP sync` with `No competent mainnet hosts found by the SLAP trackers for lookup service: ls_ship`. This is harmless here: the host looks for other hosts to sync with, and a local one has none. The host is ready when the last line is:
+
+    ```text
+    local-host is ready and listening on local port 8080
+    ```
+
+    Open `http://localhost:8080/health` to check that it answers. The answer starts with `{"status":"ok","live":true,"ready":true`.
+
+  </Step>
+</Steps>
+
+### Connect to your wallet
+
+The first step is to install the SDK and connect a script to BSV Desktop.
+
+<Steps>
+  <Step title="Install the SDK">
+
+    Use npm in your project folder:
+
+    ```bash
+    npm install @bsv/sdk
+    ```
+
+    This guide is written against `@bsv/sdk` 3.x.
+
+  </Step>
+  <Step title="Create the script">
+
+    Create `overlay.mjs` and connect to the wallet:
+
+    ```js overlay.mjs
+    import { WalletClient } from '@bsv/sdk'
+
+    const wallet = new WalletClient('auto', 'localhost')
+    const networkPreset = 'local'
+    ```
+
+    This file holds every example in the guide, one after another, and you run it with `node overlay.mjs` while BSV Desktop is open. The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without it. The `networkPreset` is the network the overlay discovery uses: `mainnet`, `testnet`, or `local` for an overlay on `localhost`.
+
+  </Step>
+</Steps>
+
+## Track a transaction with an overlay
+
+The host keeps the transaction under the topic, and the lookup service returns it.
+
+### Send it to a topic
+
+With the wallet connected, create an output that carries your data.
+
+<Steps>
+  <Step title="Build the output">
+
+    Add a `PushDrop` with your data to `overlay.mjs`:
+
+    ```js
+    import { PushDrop, SecurityLevels, Utils } from '@bsv/sdk'
+
+    const pushdrop = new PushDrop(wallet)
+    const keyID = Date.now().toString()
+    const lockingScript = await pushdrop.lock(
+      [Utils.toArray('Hello overlay', 'utf8')],
+      [SecurityLevels.Silent, 'my app'],
+      keyID,
+      'self'
+    )
+    ```
+
+    The <Hint tip="The part of a transaction output that sets the condition to spend it.">locking script</Hint> from `PushDrop` stores one or more data fields, here a short message.
+
+  </Step>
+  <Step title="Create the transaction">
+
+    Ask the wallet to create the action with the output:
+
+    ```js
+    const action = await wallet.createAction({
+      description: 'my app output',
+      outputs: [
+        {
+          satoshis: 1,
+          lockingScript: lockingScript.toHex(),
+          basket: 'my app',
+          outputDescription: 'my app output',
+          customInstructions: keyID
+        }
+      ]
+    })
+    ```
+
+    BSV Desktop opens a **Spending Request** window from the originator, `localhost`, showing the amount in <Hint tip="The unit of BSV: 100,000,000 satoshis make 1 BSV.">satoshis</Hint> and the action description, and you approve it with **Authorize**. The amount includes the transaction fee, so it is more than the 1 satoshi output. The `basket` keeps the output in your wallet under an app name, and `customInstructions` carries the key ID the output was created with.
+
+  </Step>
+  <Step title="Broadcast to the topic">
+
+    Use a topic broadcaster to send it:
+
+    ```js
+    import { TopicBroadcaster, Transaction } from '@bsv/sdk'
+
+    const tx = Transaction.fromAtomicBEEF(action.tx)
+    const result = await tx.broadcast(
+      new TopicBroadcaster(['tm_helloworld'], { networkPreset })
+    )
+    console.log(result)
+    ```
+
+    The host answers with a <Hint tip="Submitted Transaction Execution AcKnowledgment: which outputs each topic admitted.">STEAK</Hint> for the topics it accepted. A success looks like this:
+
+    ```text
+    {
+      status: 'success',
+      txid: '0a01336a34810b3706a0b419f3417bfce959f75187ecc9913203e4bac6cc8e39',
+      message: 'Sent to 1 Overlay Services host.'
+    }
+    ```
+
+    The topic must be one the host runs. A transaction cannot be undone once it is broadcast to the network.
+
+  </Step>
+</Steps>
+
+### Look up the output
+
+With the output indexed, ask the service for it.
+
+<Steps>
+  <Step title="Query the lookup service">
+
+    Call the resolver with the service name:
+
+    ```js
+    import { LookupResolver } from '@bsv/sdk'
+
+    const resolver = new LookupResolver({ networkPreset })
+    const answer = await resolver.query(
+      { service: 'ls_helloworld', query: { limit: 10, skip: 0 } },
+      10000
+    )
+    console.log(JSON.stringify(answer))
+    ```
+
+    The service answers with the outputs it admitted. The `beef` array is shortened here:
+
+    ```json
+    {
+      "type": "output-list",
+      "outputs": [{ "outputIndex": 1, "beef": [1, 1, 1, 1, 111, 0] }]
+    }
+    ```
+
+  </Step>
+  <Step title="Decode the fields">
+
+    Decode the <Hint tip="Background Evaluation Extended Format (BRC-62): a transaction with the evidence a host needs to verify it.">BEEF</Hint> to get the fields you stored:
+
+    ```js
+    const output = answer.outputs[0]
+    const txFromOverlay = Transaction.fromBEEF(Uint8Array.from(output.beef))
+    const decoded = PushDrop.decode(txFromOverlay.outputs[output.outputIndex].lockingScript)
+    const message = Buffer.from(decoded.fields[0]).toString('utf8')
+    console.log(message)
+    ```
+
+    The decoded field is the message you wrote, `Hello overlay`, and the last field is the `PushDrop` signature.
+
+  </Step>
+</Steps>
+
+## Adapt the example to your app
+
+To use this in a real app, apply these points:
+
+- Replace `tm_helloworld` and `ls_helloworld` with your own topic and lookup service names, and run a host that has them. The local host above only runs the HelloWorld pair
+- Set the originator to your app name, because BSV Desktop shows it in its permission windows
+- Point `networkPreset` at the network where your host runs, because discovery only queries the trackers of that network
+- Decode the fields in the order your app wrote them, because the lookup returns the raw transaction
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Lookup fails with no competent hosts">
+
+    The resolver found no overlay host for the service, with a message such as `No competent testnet hosts found by the SLAP trackers for lookup service: ls_helloworld`. The service name has no host behind it on that network. Run an overlay that has the service and set `networkPreset` to match where it runs.
+
+  </Accordion>
+  <Accordion title="Script cannot reach BSV Desktop">
+
+    The script throws `No wallet available over any communication substrate. Install a BSV wallet today!` when the wallet client has no originator. Create it as `new WalletClient('auto', 'localhost')`, with `localhost` as the originator, and keep BSV Desktop open.
+
+  </Accordion>
+  <Accordion title="Host rejects the transaction">
+
+    The topic manager returned no admitted outputs, so the broadcast answers `ERR_ALL_HOSTS_REJECTED` or `No host acknowledged the required topics.` The output does not match the topic format, or the topic is not one the host runs. Check the topic name and that the host has it registered.
+
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+With the flow working, continue with:
+
+- [BEEF (BRC-62)](/concepts/spv/)
+- [SDKs overview](/sdk/)
