@@ -3,7 +3,7 @@ title: "Time Anchor"
 description: "A desktop app that records the SHA-256 hash of a file in a BSV transaction, finds it again through an overlay service and can keep an encrypted copy with UHRP."
 ---
 
-The **Time Anchor** demo is a desktop app that records the SHA-256 hash of a file in a BSV transaction, so you can later check whether a file matches what was recorded. A <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet creates the transaction, an <Hint tip="A service built from topic managers and lookup services, which tracks the outputs of a topic">overlay service</Hint> finds it again by its hash, and <Hint tip="Universal Hash Resolution Protocol, content storage addressed by the hash of the file">UHRP</Hint> can keep an encrypted copy of the file. The source code is in [bsv-blockchain-demos/desktop-integrity-app](https://github.com/bsv-blockchain-demos/desktop-integrity-app).
+Run the Time Anchor on your computer to record the SHA-256 hash of a file in a BSV transaction, find it again through an <Hint tip="A service built from topic managers and lookup services, which tracks the outputs of a topic">overlay service</Hint> and, if you want, keep an encrypted copy with <Hint tip="Universal Hash Resolution Protocol, content storage addressed by the hash of the file">UHRP</Hint>. A <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet creates the transaction, and you can later check whether a file matches what you recorded. The source code is in [bsv-blockchain-demos/desktop-integrity-app](https://github.com/bsv-blockchain-demos/desktop-integrity-app).
 
 ## When to use it
 
@@ -52,15 +52,15 @@ The app has no network setting, and it creates the transaction on the network of
 The app keeps the addresses in local storage and clears it when you quit, so set them again after each restart.
 
 <Callout type="info">
-  The overlay and the UHRP host must accept the network of your wallet. When one of them does not, the transaction is still created, but the **UHRP URL** column of the **Status** table shows **Failed** and **Verify Files** shows **File is not verified**.
+  The overlay and the UHRP host must accept the network of your wallet, and the transaction is created either way. When the UHRP host does not accept it, the **UHRP URL** column of the **Status** table shows **Failed**. When the overlay does not, **Verify Files** shows **File is not verified**.
 </Callout>
 
 ## Run it locally
 
-The app needs Node.js 22.12 or newer, npm and a BRC-100 wallet that is running, unlocked and funded. This page uses [BSV Desktop](/wallets/bsv-desktop/).
+The app needs Node.js 22.12 or newer, npm and a BRC-100 wallet that is running, unlocked and funded. This page uses [BSV Desktop](/wallets/bsv-desktop/) set to testnet.
 
 <Callout type="warning">
-  Use a small file with nothing sensitive in it. The hash is recorded on the blockchain, and a transaction cannot be undone. On Mainnet, the transaction and the storage cost real satoshis. The app shows the content of the file in a preview, and in development mode it also writes the content to its console.
+  Use a small file with nothing sensitive in it. The hash is recorded on the blockchain, and a transaction cannot be undone. The app shows the content of the file in a preview, and in development mode it also writes the content to its console.
 </Callout>
 
 <Steps>
