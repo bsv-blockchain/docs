@@ -5,9 +5,11 @@ description: "Follow the path for building a BRC-100 wallet: the interface, wall
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-A BRC-100 wallet answers the requests of apps. Apps call methods such as `createAction` through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>, and the wallet carries them out. It holds the keys, chooses the coins, signs, stores its outputs and checks permissions.
+Follow the six stages below to build a <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet on `@bsv/wallet-toolbox`, from the interface to the backend services.
 
-[BSV Desktop](/docs/wallets/bsv-desktop/) and BSV Browser are two of these wallets. Both are built on `@bsv/wallet-toolbox`, the TypeScript reference implementation. Build a wallet when you make a wallet product, a wallet-like service or a port to another language. If your app only uses a wallet, start from the [SDKs overview](/docs/sdk/) instead.
+A BRC-100 wallet answers the requests of apps. Apps call methods such as `createAction` through BRC-100, and the wallet carries them out. It holds the keys, chooses the coins, signs, stores its outputs and checks permissions.
+
+[BSV Desktop](/docs/wallets/bsv-desktop/) and [BSV Browser](/docs/wallets/bsv-browser/) are two of these wallets. Both are built on `@bsv/wallet-toolbox`, the TypeScript reference implementation. Build a wallet when you make a wallet product, a wallet-like service or a port to another language. If your app only uses a wallet, start from the [SDKs overview](/docs/sdk/) instead.
 
 ## The path to a BRC-100 wallet
 
@@ -28,7 +30,7 @@ Start with [BRC-100 Wallet Interface](/docs/concepts/wallet-model/). It lists th
 | `Wallet` | Implements the BRC-100 methods |
 | `WalletStorageManager` and storage providers | Keep the wallet's records in an active store, with optional backup stores |
 | `WalletSigner` | Brings the wallet's keys into the SDK signing flow |
-| Key managers | Derive keys with BRC-42 and BRC-43, manage privileged keys and run Shamir-based recovery |
+| Key managers | Derive keys with <Hint tip="BSV Key Derivation Scheme">BRC-42</Hint> and <Hint tip="Security levels, protocol IDs, key IDs and counterparties">BRC-43</Hint>, manage privileged keys and run Shamir-based recovery |
 | `Services` | Connect the wallet to broadcast, chain tracking and proof lookup |
 | `Monitor` | Tracks confirmations, gathers Merkle proofs and rebroadcasts stalled transactions in the background |
 | `WalletPermissionsManager` | Checks permissions around wallet methods |
@@ -56,7 +58,7 @@ Remote storage keeps the records on a Wallet Infra server that the wallet calls 
 
 ### Add permissions
 
-`WalletPermissionsManager` sits in front of the wallet and decides what each app may do. A spending authorization covers an amount: the app can spend until it reaches that amount, and then the wallet asks the user again. Permission modules take over the protocols, baskets and labels reserved by BRC-98, BRC-99 and BRC-111, so a module can add its own rules for one kind of asset. For example, `@bsv/btms-permission-module` lets the spend prompt show a token's value, such as \$1.00 USD, instead of the 1 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV.">satoshi</Hint> that typically funds the token output.
+`WalletPermissionsManager` sits in front of the wallet and decides what each app may do. A spending authorization covers an amount: the app can spend until it reaches that amount, and then the wallet asks the user again. Permission modules take over the protocols, baskets and labels reserved by <Hint tip="P Protocols, the wallet permission scheme for protocols">BRC-98</Hint>, <Hint tip="P Baskets, the wallet permission scheme for baskets">BRC-99</Hint> and <Hint tip="P Labels, the wallet permission scheme for action labels">BRC-111</Hint>, so a module can add its own rules for one kind of asset. For example, `@bsv/btms-permission-module` lets the spend prompt show a token's value, such as \$1.00 USD, instead of the 1 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV.">satoshi</Hint> that typically funds the token output.
 
 ### Test conformance
 
