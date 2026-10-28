@@ -5,7 +5,9 @@ description: "Follow the path for building a BRC-100 wallet: the interface, wall
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-A BRC-100 wallet is the program on the other side of every app request. Apps call methods such as `createAction` through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>, and the wallet carries them out. It holds the keys, chooses which coins fund each transaction, signs, stores the outputs it tracks and applies permissions before an app spends or uses a protected protocol. [BSV Desktop](/docs/wallets/bsv-desktop/) and BSV Browser are two of these wallets, both built on the `@bsv/wallet-toolbox` packages, the TypeScript reference implementation. Build one when you are making a wallet product, a wallet-like service or a port of the wallet to another language. An app that only uses a wallet starts from the [SDKs overview](/docs/sdk/) instead.
+A BRC-100 wallet answers the requests of apps. Apps call methods such as `createAction` through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>, and the wallet carries them out. It holds the keys, chooses the coins, signs, stores its outputs and checks permissions.
+
+[BSV Desktop](/docs/wallets/bsv-desktop/) and BSV Browser are two of these wallets. Both are built on `@bsv/wallet-toolbox`, the TypeScript reference implementation. Build a wallet when you make a wallet product, a wallet-like service or a port to another language. If your app only uses a wallet, start from the [SDKs overview](/docs/sdk/) instead.
 
 ## The path to a BRC-100 wallet
 
@@ -54,11 +56,11 @@ Remote storage keeps the records on a Wallet Infra server that the wallet calls 
 
 ### Add permissions
 
-`WalletPermissionsManager` sits in front of the wallet and decides what each app may do. Every spending approval covers one operation and is never cached. Permission modules take over the protocols, baskets and labels reserved by BRC-98, BRC-99 and BRC-111, so a module can add its own rules for one kind of asset. For example, `@bsv/btms-permission-module` lets the spend prompt show a token's value, such as \$1.00 USD, instead of the 1 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV.">satoshi</Hint> that typically funds the token output.
+`WalletPermissionsManager` sits in front of the wallet and decides what each app may do. A spending authorization covers an amount: the app can spend until it reaches that amount, and then the wallet asks the user again. Permission modules take over the protocols, baskets and labels reserved by BRC-98, BRC-99 and BRC-111, so a module can add its own rules for one kind of asset. For example, `@bsv/btms-permission-module` lets the spend prompt show a token's value, such as \$1.00 USD, instead of the 1 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV.">satoshi</Hint> that typically funds the token output.
 
 ### Test conformance
 
-The ts-stack repository turns BRC-100 behavior into JSON test vectors, each with its inputs and the expected outputs, under `conformance/vectors/wallet/brc100/`. A wallet in any language reads the same files and compares its own results. Coverage is strongest for the deterministic crypto and key methods. Stateful cases carry an explicit classification instead of counting as passes, so a vector count alone does not prove a wallet passes every case.
+The ts-stack repository turns BRC-100 behavior into JSON test vectors, each with its inputs and the expected outputs, under [`conformance/vectors/wallet/brc100/`](https://github.com/bsv-blockchain/ts-stack/tree/main/conformance/vectors/wallet/brc100). A wallet in any language reads the same files and compares its own results. Coverage is strongest for the deterministic crypto and key methods. Stateful cases carry an explicit classification instead of counting as passes, so a vector count alone does not prove a wallet passes every case.
 
 The same vectors are how a port proves it matches the TypeScript reference. [go-wallet-toolbox](https://github.com/bsv-blockchain/go-wallet-toolbox) and [py-wallet-toolbox](https://github.com/bsv-blockchain/py-wallet-toolbox) bring the toolbox to Go and Python, and the [porting guide](https://github.com/bsv-blockchain/ts-stack/blob/main/conformance/PORTING_GUIDE.md) covers aligning another language.
 
