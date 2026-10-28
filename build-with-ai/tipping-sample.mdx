@@ -1,12 +1,12 @@
 ---
 title: "Start from the tipping sample"
-description: "Run the BSV Association's tipping sample on testnet: each user's wallet holds the keys, and a relay with no key passes tips to Arcade."
+description: "Run the BSV Association's tipping sample on testnet: each user's wallet holds the keys, and a relay with no key passes tips to BSV Broadcaster."
 sidebarTitle: "Tipping sample"
 ---
 
 import TippingFlow from '/snippets/TippingFlow.jsx';
 
-The tipping sample is the BSV Association's reference app for a user-side <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet: each user's wallet holds the keys, and a small relay with no key passes each tip to Arcade. Use it when you want a working app for your agent to copy or adapt, one that already passes the BSV guardrails. At the end, the sample runs on your machine on testnet, and a tip has gone from one wallet to another.
+The tipping sample is the BSV Association's reference app for a user-side <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet: each user's wallet holds the keys, and a small relay with no key passes each tip to BSV Broadcaster (formerly Arcade). Use it when you want a working app for your agent to copy or adapt, one that already passes the BSV guardrails. At the end, the sample runs on your machine on testnet, and a tip has gone from one wallet to another.
 
 ## Before you begin
 
@@ -18,15 +18,15 @@ The tipping sample is the BSV Association's reference app for a user-side <Hint 
 
 ## How it works
 
-A tip goes from the tipper's wallet through the relay to Arcade, and the creator's wallet collects it:
+A tip goes from the tipper's wallet through the relay to BSV Broadcaster, and the creator's wallet collects it:
 
 <TippingFlow />
 
 <Visibility for="agents">
 1. Tip, `createAction`: the tipper page picks a BRC-29 derivation for the creator and saves it in the browser. The tipper's wallet derives the creator's key, then signs and broadcasts the payment to it, with the tipper's approval when it asks.
-2. Relay, `POST /api/tips`: the tipper page posts the transaction and the derivation to the relay. The relay checks the transaction against its BEEF and submits it to its own Arcade, as EF. It holds no key.
-3. Track, `GET /tx/TXID`: the relay reads the status from Arcade and tells the creator page over server-sent events. Arcade reports `SEEN_ON_NETWORK` or later, with no competing transaction.
-4. Collect, `internalizeAction`: the creator page collects the tip once Arcade has seen it, retrying after 10, 30 and 60 seconds. The creator's wallet derives the key from the derivation, and adds the tip only if it is its own.
+2. Relay, `POST /api/tips`: the tipper page posts the transaction and the derivation to the relay. The relay checks the transaction against its BEEF and submits it to its own BSV Broadcaster endpoint, as EF. It holds no key.
+3. Track, `GET /tx/TXID`: the relay reads the status from BSV Broadcaster and tells the creator page over server-sent events. BSV Broadcaster reports `SEEN_ON_NETWORK` or later, with no competing transaction.
+4. Collect, `internalizeAction`: the creator page collects the tip once BSV Broadcaster has seen it, retrying after 10, 30 and 60 seconds. The creator's wallet derives the key from the derivation, and adds the tip only if it is its own.
 </Visibility>
 
 The wallet shows the app under its origin and reads the app's permissions from `manifest.json` there. The relay cannot spend, redirect or forge a tip. [`TRUST.md`](https://github.com/bsv-blockchain/bsv-ai-toolkit/blob/main/samples/tipping-shape-a/TRUST.md) in the sample states what users trust and the risks that remain.
@@ -51,7 +51,7 @@ Install the sample, then tip from one wallet to the other:
     Done in 8.1s using pnpm v11.22.0
     ```
 
-    Then start the sample from its folder. Without a `.env`, it runs on testnet with the public testnet Arcade. To change a setting, copy `env.example` to `.env` first, since `pnpm dev` reads `.env` when it exists:
+    Then start the sample from its folder. Without a `.env`, it runs on testnet with the public testnet BSV Broadcaster endpoint. To change a setting, copy `env.example` to `.env` first, since `pnpm dev` reads `.env` when it exists:
 
     ```bash
     cd samples/tipping-shape-a
@@ -77,7 +77,7 @@ Install the sample, then tip from one wallet to the other:
     {"ok":true,"network":"testnet","arcadeOrigin":"https://arcade-testnet-us-1.bsvblockchain.tech","version":"0.1.0"}
     ```
 
-    The relay is on testnet and uses the public testnet Arcade.
+    The relay is on testnet and uses the public testnet BSV Broadcaster endpoint, whose hostname still contains `arcade`.
   </Step>
   <Step title="Open the creator page">
     In the browser profile of the creator, open `http://localhost:5173/creator` and click **Connect wallet**. At this first connection, the page asks the wallet once for the permissions the app lists in its `manifest.json`.
@@ -90,7 +90,7 @@ Install the sample, then tip from one wallet to the other:
     The page asks the wallet for the payment. The wallet adds the network fee, and it can ask you to approve the payment. A sent payment cannot be undone, so check the amount before you approve.
   </Step>
   <Step title="Watch the tip arrive">
-    On the creator page, the tip appears once Arcade has seen it, usually within a few seconds, and shows as seen on network. If Arcade takes longer, it shows as pending first. The page then collects it with <Hint tip="The BRC-100 wallet call that takes a transaction paid to the wallet and adds its outputs to the balance">internalizeAction</Hint>, and the tip shows as received.
+    On the creator page, the tip appears once BSV Broadcaster has seen it, usually within a few seconds, and shows as seen on network. If BSV Broadcaster takes longer, it shows as pending first. The page then collects it with <Hint tip="The BRC-100 wallet call that takes a transaction paid to the wallet and adds its outputs to the balance">internalizeAction</Hint>, and the tip shows as received.
 
     The app does not wait for the transaction to be mined. At `SEEN_ON_NETWORK` or later with no competing transaction, a payment of this size is final for the app.
   </Step>
@@ -128,7 +128,7 @@ Read samples/tipping-shape-a in bsv-blockchain/bsv-ai-toolkit, then add the same
 Change the tipping sample to a fixed tip of 1,000 satoshis, then run check_guardrails and fix every error.
 ```
 
-The skill tells the agent to keep the same defaults as the sample: testnet, the user's wallet for every key, and Arcade for every broadcast and status read.
+The skill tells the agent to keep the same defaults as the sample: testnet, the user's wallet for every key, and BSV Broadcaster for every broadcast and status read.
 
 ## Next steps
 
@@ -136,4 +136,4 @@ With the sample running, give your agent the tools it uses, or read how the rela
 
 - [Install the BSV agent skill](/build-with-ai/skill/)
 - [Connect your AI tool with MCP](/build-with-ai/mcp/)
-- [Broadcast transactions with Arcade](/guides/services/broadcasting/)
+- [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/)

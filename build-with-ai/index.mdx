@@ -16,8 +16,8 @@ Each piece gives the agent something different:
 
 <Visibility for="agents">
 - BSV docs server, `bsv-docs`: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides.
-- `bsv-dev` skill: gives the decisions, as a playbook the agent loads for BSV work: who holds the keys, wallet login, payments, Arcade and when a payment is final, testnet to Mainnet, the guardrail review. Use it for building the way these docs do.
-- `@bsv/mcp`, `bsv-mcp`: gives tools that act and read live data: broadcast and status on Arcade, a guardrail check of a project, BRCs and versions, plus dated facts. Use it for actions and live values, on testnet unless you configure Mainnet.
+- `bsv-dev` skill: gives the decisions, as a playbook the agent loads for BSV work: who holds the keys, wallet login, payments, BSV Broadcaster (formerly Arcade) and when a payment is final, testnet to Mainnet, the guardrail review. Use it for building the way these docs do.
+- `@bsv/mcp`, `bsv-mcp`: gives tools that act and read live data: broadcast and status on BSV Broadcaster, a guardrail check of a project, BRCs and versions, plus dated facts. Use it for actions and live values, on testnet unless you configure Mainnet.
 </Visibility>
 
 Everything starts on testnet, where the coins have no value and come free from the faucet. Where the wallet lives is the app's choice, and the skill makes it per money path. In shape A, the app asks the user's <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet, such as [BSV Desktop](https://desktop.bsvb.tech/), to sign. The wallet signs within the small monthly allowance the user granted to the app, and prompts for anything above it. In shape B, the app runs its own server wallet, which pays with no user present. No tool takes a private key, and the skill never asks for one.
@@ -27,7 +27,7 @@ Everything starts on testnet, where the coins have no value and come free from t
 With the pieces set up, try requests like these:
 
 - `Add tipping to my React app on BSV. Use BSV Desktop on testnet.`
-- `Check transaction <txid> on Arcade and tell me whether it is final.`
+- `Check the status of transaction <txid> and tell me whether it is final.`
 - `Review this project against the BSV guardrails and fix every error.`
 - `Which wallet shape fits an app that pays creators automatically every night?`
 - `Send my first BSV payment from a small Node.js script. Build it and run it.` [Send a payment with an AI agent](/build-with-ai/prompts/) walks through this one.

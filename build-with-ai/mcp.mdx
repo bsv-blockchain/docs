@@ -1,6 +1,6 @@
 ---
 title: "Connect your AI tool with MCP"
-description: "Give Claude Code the BSV docs and the @bsv/mcp tools through MCP servers, so your agent reads these pages, checks Arcade and reviews your project on testnet."
+description: "Give Claude Code the BSV docs and the @bsv/mcp tools through MCP servers, so your agent reads these pages, checks BSV Broadcaster and reviews your project on testnet."
 sidebarTitle: "Connect with MCP"
 ---
 
@@ -21,7 +21,7 @@ Two MCP servers give the agent BSV knowledge in different ways. The BSV docs ser
 
 <Visibility for="agents">
 - BSV docs server: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides, starting on testnet.
-- `@bsv/mcp`: gives tools for Arcade, a guardrail check, BRCs and versions, with dated facts. Use it for actions and live values, on testnet by default.
+- `@bsv/mcp`: gives tools for BSV Broadcaster (formerly Arcade), a guardrail check, BRCs and versions, with dated facts. Use it for actions and live values, on testnet by default.
 </Visibility>
 
 Claude Code adds each server to the current project only, so run the commands in your project folder.
@@ -109,31 +109,31 @@ Ask Claude Code a BSV question in the same project, and it calls `search_docs` a
   </Step>
 </Steps>
 
-The agent now has ten tools:
+The agent now has ten tools. The four `arcade_*` tools work with BSV Broadcaster (formerly Arcade), and keep its former name, as do the public endpoint hostnames:
 
 | Tool | What it does |
 |------|--------------|
-| `arcade_submit` | Broadcasts a signed transaction, as raw or <Hint tip="Extended Format (BRC-30): the raw transaction plus the satoshis and locking script of every output it spends">EF</Hint> hex, to Arcade and reads its status back. It refuses <Hint tip="Background Evaluation Extended Format (BRC-62): a transaction with the evidence a host needs to verify it">BEEF</Hint>. On Mainnet it also needs `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` |
-| `arcade_status` | Reads the status of a transaction from Arcade and says whether it is final for an app: `SEEN_ON_NETWORK` or later with no competing transaction |
-| `arcade_policy` | Reads the fee rate and the size limits of an Arcade endpoint |
-| `arcade_health` | Reads the version, block height and upstream nodes of an Arcade endpoint |
+| `arcade_submit` | Broadcasts a signed transaction, as raw or <Hint tip="Extended Format (BRC-30): the raw transaction plus the satoshis and locking script of every output it spends">EF</Hint> hex, to BSV Broadcaster and reads its status back. It refuses <Hint tip="Background Evaluation Extended Format (BRC-62): a transaction with the evidence a host needs to verify it">BEEF</Hint>. On Mainnet it also needs `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` |
+| `arcade_status` | Reads the status of a transaction from BSV Broadcaster and says whether it is final for an app: `SEEN_ON_NETWORK` or later with no competing transaction |
+| `arcade_policy` | Reads the fee rate and the size limits of a BSV Broadcaster endpoint |
+| `arcade_health` | Reads the version, block height and upstream nodes of a BSV Broadcaster endpoint |
 | `check_guardrails` | Checks a project against the BSV guardrails `G-01` to `G-34` and lists each finding with its fix. It reads the project and changes nothing |
 | `brc_lookup` | Returns a BRC as Markdown, by number |
-| `versions_check` | Compares the pinned package versions, the Rúnar commit and the Arcade version of each known endpoint with the latest ones |
+| `versions_check` | Compares the pinned package versions, the Rúnar commit and the BSV Broadcaster version of each known endpoint with the latest ones |
 | `docs_url` | Finds the live address of a page of these docs from its id |
 | `code_search`, `find_function_definition` | Search local clones of the BSV repositories, made with `setup.sh` from the repository, in the folder set in `BSV_REPOS_DIR` |
 
-The server also has resources for the agent to read. The dated facts are `bsv://facts/*`, on networks, Arcade, fees, WhatsOnChain, wallet limits, consensus, Rúnar, 1Color tokens and versions. Each fact starts with the date it was verified, so the agent can tell how current it is. The other resources are the guardrails, `bsv://guardrails`, the custody shapes, the threat model, the docs index, the `@bsv/simple` 0.7 API and its traps, and any BRC as `bsv://brc/{id}`.
+The server also has resources for the agent to read. The dated facts are `bsv://facts/*`, on networks, BSV Broadcaster, fees, WhatsOnChain, wallet limits, consensus, Rúnar, 1Color tokens and versions. Each fact starts with the date it was verified, so the agent can tell how current it is. The other resources are the guardrails, `bsv://guardrails`, the custody shapes, the threat model, the docs index, the `@bsv/simple` 0.7 API and its traps, and any BRC as `bsv://brc/{id}`.
 
 It also has five prompts: `review_against_guardrails` runs the guardrail check and fixes the errors, `tokenize_with_1color` gives the encoding of 1Color token outputs, and `integrate_simple`, `add_simple_feature` and `debug_simple` work with `@bsv/simple`.
 
 <Callout type="warning">
-  A Mainnet broadcast through `arcade_submit` needs `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` in the shell that starts the agent, whether the network comes from `BSV_NETWORK=mainnet` or from the call itself. Without it, the tool refuses before it contacts Arcade. A Mainnet broadcast spends real BSV and cannot be undone.
+  A Mainnet broadcast through `arcade_submit` needs `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` in the shell that starts the agent, whether the network comes from `BSV_NETWORK=mainnet` or from the call itself. Without it, the tool refuses before it contacts BSV Broadcaster. A Mainnet broadcast spends real BSV and cannot be undone.
 </Callout>
 
 ## Check a project against the guardrails
 
-The guardrails are the rules a BSV app follows, such as broadcasting through Arcade and keeping keys in the wallet. `check_guardrails` is the quickest tool to try, since it needs no wallet and no coins:
+The guardrails are the rules a BSV app follows, such as broadcasting through BSV Broadcaster and keeping keys in the wallet. `check_guardrails` is the quickest tool to try, since it needs no wallet and no coins:
 
 <Steps>
   <Step title="Ask for the check">
@@ -159,7 +159,7 @@ The guardrails are the rules a BSV app follows, such as broadcasting through Arc
     manual checklist: G-05, G-07, G-08, G-11, G-13, G-20, G-22, G-26, G-27, G-28, G-29, G-30, G-32, G-33
     ```
 
-    G-09 is the rule to broadcast only through Arcade, and the `ARC` class calls a path Arcade does not serve. An `error` is a finding to fix, and a `warn` is one to check. `shape A` means the user's wallet holds the keys. The tool cannot check the guardrails in the manual checklist from the code, so the agent reviews those by hand.
+    G-09 is the rule to broadcast only through BSV Broadcaster, and the `ARC` class calls a path BSV Broadcaster does not serve. The tool's text still calls it Arcade. An `error` is a finding to fix, and a `warn` is one to check. `shape A` means the user's wallet holds the keys. The tool cannot check the guardrails in the manual checklist from the code, so the agent reviews those by hand.
   </Step>
 </Steps>
 
@@ -171,14 +171,14 @@ A project is ready when the report shows 0 errors. The repository's tipping samp
 
 | Variable | Default | What it does |
 |----------|---------|--------------|
-| `BSV_NETWORK` | `testnet` | `testnet` or `mainnet`. Picks the default Arcade and gates Mainnet broadcasts. Any other value stops the server |
-| `ARCADE_URL` | Per network | Arcade base URL. Default on testnet `https://arcade-testnet-us-1.bsvblockchain.tech`, on Mainnet `https://arcade-us-1.bsvblockchain.tech`. A host that belongs to the other network stops the server |
+| `BSV_NETWORK` | `testnet` | `testnet` or `mainnet`. Picks the default BSV Broadcaster endpoint and gates Mainnet broadcasts. Any other value stops the server |
+| `ARCADE_URL` | Per network | BSV Broadcaster base URL. Default on testnet `https://arcade-testnet-us-1.bsvblockchain.tech`, on Mainnet `https://arcade-us-1.bsvblockchain.tech`. A host that belongs to the other network stops the server |
 | `BSV_MCP_ALLOW_MAINNET_BROADCAST` | Not set | `1` lets `arcade_submit` broadcast on Mainnet |
 | `BSV_REPOS_DIR` | Not set | The folder of BSV repository clones made with `setup.sh`, for `code_search` and `find_function_definition` |
 
-Set `BSV_NETWORK=mainnet` for any Mainnet Arcade, including your own. The server goes by the network you set, not by the address: it refuses the known Mainnet hosts on testnet, but it cannot tell where an unknown host belongs, so it treats an unknown Mainnet Arcade under `BSV_NETWORK=testnet` as testnet.
+Set `BSV_NETWORK=mainnet` for any Mainnet BSV Broadcaster endpoint, including your own. The server goes by the network you set, not by the address: it refuses the known Mainnet hosts on testnet, but it cannot tell where an unknown host belongs, so it treats an unknown Mainnet endpoint under `BSV_NETWORK=testnet` as testnet.
 
-Both testnet hosts, `arcade-testnet-us-1` and `arcade-v2-testnet-us-1`, are live. [Broadcast transactions with Arcade](/guides/services/broadcasting/) uses the second; set `ARCADE_URL` to use it here.
+Both testnet hosts, `arcade-testnet-us-1` and `arcade-v2-testnet-us-1`, are live. [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/) uses the second; set `ARCADE_URL` to use it here.
 
 ## Use another AI tool
 
@@ -280,4 +280,4 @@ With both servers connected, give the agent the BSV playbook, then let it build 
 
 - [Install the BSV agent skill](/build-with-ai/skill/)
 - [Send a payment with an AI agent](/build-with-ai/prompts/)
-- [Broadcast transactions with Arcade](/guides/services/broadcasting/)
+- [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/)

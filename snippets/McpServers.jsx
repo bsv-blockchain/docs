@@ -9,7 +9,7 @@ const servers = [
   },
   {
     name: '@bsv/mcp',
-    gives: 'Tools for Arcade, a guardrail check, BRCs and versions, with dated facts',
+    gives: 'Tools for BSV Broadcaster, a guardrail check, BRCs and versions, with dated facts',
     use: 'Actions and live values, on testnet by default',
   },
 ];

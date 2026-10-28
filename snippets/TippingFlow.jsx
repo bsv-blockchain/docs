@@ -15,18 +15,18 @@ const steps = [
     label: 'Relay',
     tag: 'POST /api/tips',
     a: { who: 'Tipper page', text: 'Posts the transaction and the derivation to the relay.' },
-    b: { who: 'Relay', text: 'Checks the transaction against its BEEF and submits it to its own Arcade, as EF. It holds no key.' },
+    b: { who: 'Relay', text: 'Checks the transaction against its BEEF and submits it to its own BSV Broadcaster endpoint, as EF. It holds no key.' },
   },
   {
     label: 'Track',
     tag: 'GET /tx/TXID',
     a: { who: 'Relay', text: 'Reads the status and tells the creator page over server-sent events.' },
-    b: { who: 'Arcade', text: 'Reports SEEN_ON_NETWORK or later, with no competing transaction.' },
+    b: { who: 'BSV Broadcaster', text: 'Reports SEEN_ON_NETWORK or later, with no competing transaction.' },
   },
   {
     label: 'Collect',
     tag: 'internalizeAction',
-    a: { who: 'Creator page', text: 'Collects the tip once Arcade has seen it, retrying after 10, 30 and 60 seconds.' },
+    a: { who: 'Creator page', text: 'Collects the tip once BSV Broadcaster has seen it, retrying after 10, 30 and 60 seconds.' },
     b: { who: "Creator's wallet", wallet: true, text: 'Derives the key from the derivation, and adds the tip only if it is its own.' },
   },
 ];
@@ -56,7 +56,7 @@ const css = `
 
 export default function TippingFlow() {
   return (
-    <ol className="tfl" aria-label="A tip goes from the tipper's wallet to the relay and Arcade, and the creator's wallet collects it once Arcade has seen it with no competing transaction">
+    <ol className="tfl" aria-label="A tip goes from the tipper's wallet to the relay and BSV Broadcaster, and the creator's wallet collects it once BSV Broadcaster has seen it with no competing transaction">
       <style>{css}</style>
       {steps.map((s, i) => (
         <li className="tfl-step" key={s.label}>

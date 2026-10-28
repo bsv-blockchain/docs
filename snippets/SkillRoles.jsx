@@ -8,9 +8,9 @@ const roles = [
     items: [
       'A BRC-100 wallet for users, with the identity key as their id',
       'Who holds the keys, per money path',
-      <>Arcade for every broadcast and status read, final at <code>SEEN_ON_NETWORK</code> or later with no competing transaction</>,
+      <>BSV Broadcaster for every broadcast and status read, final at <code>SEEN_ON_NETWORK</code> or later with no competing transaction</>,
       <><code>WalletClient('auto', originator)</code> from <code>@bsv/sdk</code> 3.x</>,
-      'Testnet, with fees at 100 sat/kB on both networks, never below the Arcade /policy',
+      'Testnet, with fees at 100 sat/kB on both networks, never below the BSV Broadcaster /policy',
       'Rúnar for contracts, 1Color for tokens',
     ],
   },

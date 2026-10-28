@@ -9,12 +9,12 @@ const pieces = [
   },
   {
     name: 'bsv-dev skill',
-    gives: 'The decisions: who holds the keys, payments, Arcade and finality, testnet to Mainnet, the guardrail review',
+    gives: 'The decisions: who holds the keys, payments, BSV Broadcaster and finality, testnet to Mainnet, the guardrail review',
     use: 'Building the way these docs do',
   },
   {
     name: '@bsv/mcp',
-    gives: 'Tools for Arcade, a guardrail check, BRCs and versions, with dated facts',
+    gives: 'Tools for BSV Broadcaster, a guardrail check, BRCs and versions, with dated facts',
     use: 'Actions and live values, on testnet by default',
   },
 ];
