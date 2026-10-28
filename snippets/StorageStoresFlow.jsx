@@ -2,6 +2,8 @@
 // A simple picture of how WalletStorageManager uses its stores: two rows, Use and Back up, three nodes each. Edit the text below, the layout does not need to change.
 // Source: the guide "Plug in your own storage" (@bsv/wallet-toolbox WalletStorageManager, updateBackups and setActive).
 
+import { Fragment } from 'react';
+
 const rows = [
   {
     label: 'Use',
@@ -50,13 +52,13 @@ export default function StorageStoresFlow() {
           <div className="ssf-label">{r.label}</div>
           <ol className="ssf-nodes">
             {r.nodes.map((n, i) => (
-              <>
-                <li className={n.end ? 'ssf-node ssf-end' : 'ssf-node'} key={n.who + n.text}>
+              <Fragment key={n.who + n.text}>
+                <li className={n.end ? 'ssf-node ssf-end' : 'ssf-node'}>
                   <div className="ssf-who">{n.who}</div>
                   <p className="ssf-text">{mono(n.text)}</p>
                 </li>
-                {i < r.nodes.length - 1 ? <li className="ssf-arrow" key={`a${i}`} aria-hidden="true">→</li> : null}
-              </>
+                {i < r.nodes.length - 1 ? <li className="ssf-arrow" aria-hidden="true">→</li> : null}
+              </Fragment>
             ))}
           </ol>
         </div>

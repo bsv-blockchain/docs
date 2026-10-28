@@ -11,7 +11,7 @@ Choose where a `@bsv/wallet-toolbox` wallet keeps its records, then copy them to
 
 ## Before you begin
 
-You need Node.js 22 or newer. Every script runs on testnet. This page was written against `@bsv/wallet-toolbox` 2.15.1, `@bsv/sdk` 4.0.1, `knex` 3.3.0 and `better-sqlite3` 13.0.3.
+You need Node.js 22 or newer. The examples were tested with `@bsv/wallet-toolbox` 2.15.1, `@bsv/sdk` 4.0.1, `knex` 3.3.0 and `better-sqlite3` 13.0.3.
 
 ## How it works
 
@@ -23,19 +23,19 @@ A <Hint tip="BSV Request for Comments 100, the standard interface between apps a
 How WalletStorageManager uses its stores. Use: the Wallet runs a BRC-100 method such as createAction or listOutputs, WalletStorageManager sends every read and write to the active store, and the active store holds the records the wallet works on. Back up: the active store holds the current state of the wallet, WalletStorageManager copies the changes with updateBackups or setActive, and the backup stores hold a copy, on the same machine or on your own server.
 </Visibility>
 
-The records hold the derivation data of each output, so recovering a wallet needs both its root key and these records. A store is any object that implements the `WalletStorageProvider` interface, and the toolbox ships three:
+A store is any object that implements the `WalletStorageProvider` interface, and the toolbox ships three:
 
 <BlueTable>
 
 | Provider | Where the records live | Use it for |
 | --- | --- | --- |
 | `StorageKnex` | A SQL database reached through [Knex](https://knexjs.org/): SQLite, MySQL or Postgres | A wallet in Node.js, on your own database |
-| `StorageIdb` | IndexedDB in the browser | A wallet that keeps its records on the user's device |
+| `StorageIdb` | IndexedDB in the browser, from the `@bsv/wallet-toolbox-client` package | A wallet that keeps its records on the user's device |
 | `StorageClient` | A `StorageServer` reached over <Hint tip="A remote procedure call protocol that sends JSON over HTTP">JSON-RPC</Hint>, with <Hint tip="Mutual authentication, where the wallet and the server prove their identity keys to each other">BRC-103</Hint> mutual authentication | A wallet whose records live on a server you run |
 
 </BlueTable>
 
-Only the active store takes writes. A store that was never synced starts as a conflicting store, and the manager refuses writes until `setActive` merges it and makes it a backup. The example on this page uses SQLite for every store. Another database in the table changes only the Knex configuration.
+Only the active store takes writes. `StorageKnex` supports SQLite, MySQL and Postgres through Knex, and the example on this page uses SQLite for every store.
 
 ## Set up the project
 
@@ -50,7 +50,7 @@ The first step is to set up a Node.js project folder with the packages and a tes
     npm install @bsv/wallet-toolbox @bsv/sdk knex better-sqlite3
     ```
 
-    `knex` and `better-sqlite3` are the driver of the SQLite stores. For MySQL or Postgres, install `mysql2` or `pg` in place of `better-sqlite3`.
+    `knex` and `better-sqlite3` are the driver of the SQLite stores.
   </Step>
   <Step title="Keep secrets out of git">
     Create `.gitignore` in the project folder before any key exists:
@@ -86,7 +86,7 @@ The first step is to set up a Node.js project folder with the packages and a tes
     Wrote the test wallet keys to .env.
     ```
 
-    The script never prints the keys, and it does not replace an existing `.env`. The file holds two test identities, one for the wallet and one for the storage server later on this page.
+    The script does not replace an existing `.env`. The file holds two test identities, one for the wallet and one for the storage server later on this page. `Setup.makeEnv()` also writes two mainnet identities and placeholder API keys, which this page does not use.
   </Step>
 </Steps>
 
@@ -119,7 +119,7 @@ With the keys in place, build the wallet by hand, so you choose each store inste
     }
     ```
 
-    - `knex` takes any Knex configuration. For MySQL, pass `client: 'mysql2'` and its connection, and the rest of the file stays the same.
+    - `knex` is the Knex instance the store works on, here a SQLite file opened with `better-sqlite3`.
     - `StorageKnex.defaultOptions()` sets the fee model and turns commission fees off.
     - `migrate` creates or updates the tables. It writes the storage name and the random storage identity key on the first run only, and later runs keep them.
   </Step>
@@ -169,10 +169,9 @@ With the keys in place, build the wallet by hand, so you choose each store inste
     }
     ```
 
-    - `Setup.getEnv('test')` reads the keys from `.env` and puts the wallet on testnet.
+    - `process.loadEnvFile` loads `.env`, and `Setup.getEnv('test')` picks the testnet identities and their keys.
     - The second argument of `WalletStorageManager` is the active store, and the third is the list of backups.
-    - On the first run, `backup` is a new store and shows up as conflicting. `setActive` on the current active store merges it and turns it into a backup.
-    - `showStores` and `printSync` print the state of the stores for the next steps.
+    - A store that was never synced starts as a conflicting store, and the manager refuses writes until the conflict is resolved. On the first run `backup` is one, so `setActive` on the current active store merges it and turns it into a backup.
   </Step>
   <Step title="Check the stores">
     Print the stores the wallet opened with `check.mjs`, then run it with `node check.mjs`:
@@ -229,6 +228,9 @@ A new wallet has nothing to copy yet, so the first step adds one record to the a
     console.log('Certificates in the active store:', totalCertificates)
     await wallet.destroy()
     ```
+
+    - The certificate `type` must be 32 bytes in base64, so the script hashes a label. The last argument of `issueCertificateForSubject` returns a placeholder revocation outpoint, so the certificate needs no transaction on chain.
+    - `keyringRevealer: 'certifier'` tells the wallet that the certifier encrypted `keyringForSubject`, the keys that open the certificate fields.
 
     Run it with `node add-certificate.mjs`:
 
@@ -316,7 +318,7 @@ The same wallet can also keep a copy on a server you run. `StorageServer` puts a
       services
     })
 
-    const server = new StorageServer(storage, { port: 8100, wallet, monetize: false })
+    const server = new StorageServer(storage, { host: 'localhost', port: 8100, wallet, monetize: false })
     server.start()
     ```
 
@@ -328,7 +330,7 @@ The same wallet can also keep a copy on a server you run. `StorageServer` puts a
 
     - The server's own wallet answers the BRC-103 handshake. Each client proves its identity key, and the server checks that every request asks only for that client's records.
     - `monetize: false` lets clients call the server without paying per request.
-    - The example serves plain HTTP on localhost. Put the server behind HTTPS before another machine reaches it.
+    - `host: 'localhost'` keeps the server off the network, and without it the server listens on every interface. The example serves plain HTTP, so put the server behind HTTPS before another machine reaches it.
   </Step>
   <Step title="Add the server as a backup">
     Back in the first terminal, create `remote-backup.mjs`. It adds a `StorageClient` for the server to the wallet's stores and merges it the same way as the local backup:
@@ -350,8 +352,7 @@ The same wallet can also keep a copy on a server you run. `StorageServer` puts a
 
     - `StorageClient` signs each request with the wallet's identity key, so the wallet must exist before the client.
     - `addWalletStorageProvider` adds a store to a manager that is already open. In your own wallet, add the client in `openWallet` to keep the server on every run.
-  </Step>
-  <Step title="Sync to the server">
+
     Run `node remote-backup.mjs`:
 
     ```text
@@ -378,33 +379,22 @@ When none of the built-in providers fits, such as a database that Knex does not 
 
 <BlueTable>
 
-| Route | What you implement | What the toolbox runs for you | Example in the toolbox |
-| --- | --- | --- | --- |
-| Extend `StorageProvider` | More than 80 abstract methods, mostly table level: `find`, `count`, `insert` and `update` for each table, plus `transaction`, `migrate`, `readSettings`, `dropAllData`, `allocateChangeInput`, `listActions` and `listOutputs` | The wallet logic on top, including `createAction`, `processAction`, `internalizeAction` and sync, and the background tasks of the <Hint tip="The toolbox component that broadcasts queued transactions, gathers proofs and repairs wallet state in the background">Monitor</Hint> | `StorageKnex`, `StorageIdb` |
-| Implement `WalletStorageProvider` | 35 wallet level methods, plus 7 optional ones, with `isStorageProvider()` returning `false` | The routing and sync of `WalletStorageManager` only. Your code does the wallet logic or forwards it elsewhere | `StorageClient` |
-
-</BlueTable>
-
-`WalletStorageProvider` is built in four layers, and a provider implements all of them:
-
-<BlueTable>
-
-| Interface | What it adds | Methods |
+| Route | What you implement | Example in the toolbox |
 | --- | --- | --- |
-| `WalletStorageReader` | Reads, such as `listActions`, `listOutputs`, `listCertificates` and `findOutputsAuth`, plus `getSettings` and `isAvailable` | 10 |
-| `WalletStorageWriter` | Writes, such as `createAction`, `processAction`, `abortAction`, `internalizeAction`, `relinquishOutput` and the action batch methods, plus `makeAvailable`, `migrate` and `destroy` | 19, plus 6 optional |
-| `WalletStorageSync` | Sync between stores: `getSyncChunk`, `processSyncChunk`, `findOrInsertSyncStateAuth` and `setActive` | 4, plus 1 optional |
-| `WalletStorageProvider` | `isStorageProvider` and `setServices` | 2 |
+| Extend `StorageProvider` | Table level methods such as `find`, `insert` and `update`, and the toolbox runs the wallet logic on top | `StorageKnex`, `StorageIdb` |
+| Implement `WalletStorageProvider` | Every wallet level method, with `isStorageProvider()` returning `false` | `StorageClient` |
 
 </BlueTable>
 
-The full signatures are in [`WalletStorage.interfaces.ts`](https://github.com/bsv-blockchain/ts-stack/blob/main/packages/wallet/wallet-toolbox/src/sdk/WalletStorage.interfaces.ts), and the abstract methods are in [`StorageProvider.ts`](https://github.com/bsv-blockchain/ts-stack/blob/main/packages/wallet/wallet-toolbox/src/storage/StorageProvider.ts) and the classes it extends. For a new database, extending `StorageProvider` keeps the wallet logic of the toolbox, and [`StorageIdb.ts`](https://github.com/bsv-blockchain/ts-stack/blob/main/packages/wallet/wallet-toolbox/src/storage/StorageIdb.ts) shows a store that is not SQL. The choice also decides whether the Monitor can run. Its tasks run only when the active store is a full `StorageProvider`, and they fail when the active store returns `false` from `isStorageProvider()`. Either kind of provider plugs into `WalletStorageManager` like the SQLite stores above, as the active store, as a backup, or through `addWalletStorageProvider`.
+The methods to implement are in [`WalletStorage.interfaces.ts`](https://github.com/bsv-blockchain/ts-stack/blob/main/packages/wallet/wallet-toolbox/src/sdk/WalletStorage.interfaces.ts) and, for the first route, in [`StorageProvider.ts`](https://github.com/bsv-blockchain/ts-stack/blob/main/packages/wallet/wallet-toolbox/src/storage/StorageProvider.ts) and the classes it extends. [`StorageIdb.ts`](https://github.com/bsv-blockchain/ts-stack/blob/main/packages/wallet/wallet-toolbox/src/storage/StorageIdb.ts) shows a store that is not SQL. Either kind of provider plugs into `WalletStorageManager` like the SQLite stores above.
+
+The route also decides whether the Monitor can run. Its tasks run only when the active store is a full `StorageProvider`, and they fail when `isStorageProvider()` returns `false`. For what those tasks do, see [What the Monitor settles in the background](/wallet-dev/wallet-toolbox/utxo-lifecycle/#what-the-monitor-settles-in-the-background).
 
 ## Troubleshooting
 
 <AccordionGroup>
   <Accordion title="Wallet refuses to write after a new store is added">
-    The wallet throws `WERR_NOT_ACTIVE: WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.` A store that was never synced counts as a conflicting active store, and the manager allows reads but refuses writes until the conflict is resolved. Before the first write, call `setActive` with the identity key of the store you want active, as `openWallet` does with `storage.getActiveStore()`.
+    The wallet throws `WERR_NOT_ACTIVE: WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.` A store that was never synced starts as a conflicting store, and the manager allows reads but refuses writes until the conflict is resolved. Before the first write, call `setActive` with the identity key of the store you want active, as `openWallet` does with `storage.getActiveStore()`.
   </Accordion>
 </AccordionGroup>
 
