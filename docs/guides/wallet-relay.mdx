@@ -42,10 +42,10 @@ The backend creates the pairing sessions and runs the relay. Run these steps in 
       The relay key is a private key. Keep it in `.env` and never commit it. It does not hold funds, but anyone who has it can act as your backend in a pairing.
     </Callout>
 
-    The phone checks the identity key of your backend, which is in the QR code, so the backend must keep the same key across restarts. Create the key once and save it to `.env`:
+    The phone checks the identity key of your backend, which is in the QR code, so the backend must keep the same key across restarts. Add a key to `.env`. The command skips this if `.env` already has one, so running it again never replaces the key:
 
     ```bash
-    node --input-type=commonjs -e "const {PrivateKey}=require('@bsv/sdk'); console.log('WALLET_PRIVATE_KEY=' + PrivateKey.fromRandom().toHex())" > .env
+    grep -q WALLET_PRIVATE_KEY .env 2>/dev/null || node --input-type=commonjs -e "const {PrivateKey}=require('@bsv/sdk'); console.log('WALLET_PRIVATE_KEY=' + PrivateKey.fromRandom().toHex())" >> .env
     echo .env >> .gitignore
     ```
   </Step>
@@ -132,22 +132,36 @@ The login component tries the desktop wallet, then offers the phone. Run these s
 
     export function Login({ onLogin }: LoginProps) {
       const [showQR, setShowQR] = useState(false)
+      const [loginError, setLoginError] = useState('')
       const { session, wallet, error, createSession } = useWalletRelayClient({ autoCreate: false })
 
-      async function useLocalWallet(local: WalletClient) {
-        const { publicKey } = await local.getPublicKey({ identityKey: true })
-        onLogin(local, publicKey)
+      function showPhoneLogin() {
+        setShowQR(true)
+        void createSession()
+      }
+
+      async function loginWithLocalWallet(local: WalletClient) {
+        try {
+          const { publicKey } = await local.getPublicKey({ identityKey: true })
+          onLogin(local, publicKey)
+        } catch (e) {
+          setLoginError(`BSV Desktop did not log you in: ${String(e)}`)
+          showPhoneLogin()
+        }
       }
 
       useEffect(() => {
         if (session?.status !== 'connected' || !wallet) return
-        void wallet.getPublicKey({ identityKey: true }).then(({ publicKey }) => onLogin(wallet, publicKey))
-      }, [session?.status, wallet])
+        wallet
+          .getPublicKey({ identityKey: true })
+          .then(({ publicKey }) => onLogin(wallet, publicKey))
+          .catch(e => setLoginError(`The phone did not log you in: ${String(e)}`))
+      }, [session?.status, wallet, onLogin])
 
       if (showQR) {
         return (
           <div>
-            {error && <p>{error}</p>}
+            {(loginError || error) && <p>{loginError || error}</p>}
             <QRDisplay session={session} onRefresh={createSession} />
           </div>
         )
@@ -155,18 +169,15 @@ The login component tries the desktop wallet, then offers the phone. Run these s
 
       return (
         <WalletConnectionModal
-          onLocalWallet={wallet => void useLocalWallet(wallet)}
-          onMobileQR={() => {
-            setShowQR(true)
-            void createSession()
-          }}
+          onLocalWallet={local => void loginWithLocalWallet(local)}
+          onMobileQR={showPhoneLogin}
           mobileLabel="Log in with your phone"
         />
       )
     }
     ```
 
-    `WalletConnectionModal` looks for a wallet on the computer when it loads. If it finds one, it calls `onLocalWallet` and shows nothing. If not, it shows a link to install BSV Desktop and the **Log in with your phone** button. `autoCreate: false` creates a backend session only when the user selects that button. When the phone approves, `wallet` stops being `null` and forwards each call to the phone. The identity key of the wallet is the user's ID in both paths.
+    `WalletConnectionModal` looks for a wallet on the computer when it loads. If it finds one, it calls `onLocalWallet` and shows nothing. If not, it shows an **Install BSV Wallet** link to BSV Desktop and the **Log in with your phone** button. `autoCreate: false` creates a backend session only when the user selects that button. When the phone approves, `wallet` stops being `null` and forwards each call to the phone. The identity key of the wallet is the user's ID in both paths. If BSV Desktop is found but refuses the identity key, for example because it is locked, the login shows the error and offers the phone instead.
   </Step>
   <Step title="Show the login">
     Render the login in `src/App.tsx` until the user is logged in:
@@ -197,16 +208,39 @@ The login component tries the desktop wallet, then offers the phone. Run these s
 
 ## Log in with a phone
 
-A phone wallet connects only to an app served over HTTPS, so the phone path needs a public address. Point an HTTPS development tunnel at port 5173, add its domain to `server.allowedHosts` in `vite.config.ts`, and set two variables in the `.env` of the backend:
+A phone wallet connects only to an app served over HTTPS, so the phone path needs a public address. Point an HTTPS development tunnel at port 5173, add its domain to `server.allowedHosts` in `vite.config.ts`, and add two lines to the `.env` of the backend, below `WALLET_PRIVATE_KEY`:
 
-```bash .env
+```text
 RELAY_URL=wss://YOUR_DOMAIN
 ORIGIN=https://YOUR_DOMAIN
 ```
 
 Replace `YOUR_DOMAIN` with the domain of the tunnel. `ORIGIN` is the address that the QR code points the phone to, and the phone adds `/ws` to `RELAY_URL` to reach the relay through the Vite proxy. Restart the backend after you change them.
 
-To log in, close BSV Desktop, open the app at `https://YOUR_DOMAIN` and select **Log in with your phone**. The page shows the QR code and `Waiting for mobile...`. Scan the code with the camera of a phone that has BSV Browser. BSV Browser opens on **Connect Wallet** and shows the address of your app under **Origin**. Select **Approve**, and the page shows the identity key of the phone wallet.
+Then log in from the phone:
+
+<Steps>
+  <Step title="Put BSV Browser on testnet">
+    In BSV Browser, open **Wallet**, **Settings**, **BSV Network** and choose **Testnet**. The relay does not carry `getNetwork`, so your app cannot check which network the phone wallet is on. Check it yourself before you log in.
+  </Step>
+  <Step title="Open the phone login">
+    Close BSV Desktop, open the app at `https://YOUR_DOMAIN` and select **Log in with your phone**.
+
+    <Frame>
+      <img src="/images/wallet-relay/02-log-in-with-phone.png" alt="The login page with an Install BSV Wallet link and the Log in with your phone button highlighted" />
+    </Frame>
+  </Step>
+  <Step title="Scan the QR code">
+    The page shows a QR code and `Waiting for mobile...`. Scan the code with the camera of the phone.
+
+    <Frame>
+      <img src="/images/wallet-relay/03-scan-qr-code.png" alt="The login page showing a blurred QR code highlighted, with the status Waiting for mobile" />
+    </Frame>
+  </Step>
+  <Step title="Approve the connection">
+    BSV Browser opens on **Connect Wallet** and shows the address of your app under **Origin**. Check it, then select **Approve**. The page shows the identity key of the phone wallet.
+  </Step>
+</Steps>
 
 <Callout type="note">
   The QR code is a short-lived invitation, and the first wallet to scan it pairs with the page. Do not show it in a screen share or save it in a log.
