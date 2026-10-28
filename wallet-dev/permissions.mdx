@@ -46,6 +46,15 @@ The first step is to set up one Node.js project folder with the packages, a test
 
     The two modules list `@bsv/btms`, `@bsv/wallet-toolbox-client` and `@bsv/sdk` as peer dependencies, so they are installed together.
   </Step>
+  <Step title="Keep the keys out of git">
+    Create `.gitignore` in the project folder, so the keys and the wallet file never reach a repository:
+
+    ```text .gitignore
+    .env
+    test-wallet.sqlite
+    node_modules/
+    ```
+  </Step>
   <Step title="Generate the keys">
     <Callout type="warning">
       The `.env` file holds the private keys of the test wallet. Keep it out of git, never print it or paste it into code, and use this wallet only on testnet.
@@ -63,6 +72,12 @@ The first step is to set up one Node.js project folder with the packages, a test
       writeFileSync('.env', Setup.makeEnv(), { mode: 0o600 })
       console.log('Wrote the test wallet keys to .env.')
     }
+    ```
+
+    The script prints one line:
+
+    ```text
+    Wrote the test wallet keys to .env.
     ```
 
     The script never prints the keys, and it does not replace an existing `.env`.
@@ -149,28 +164,33 @@ Each module goes in a new file, `permissions.mjs`, which exports the wrapped wal
       A request routed to a module skips the standard permission checks and tokens. Your module alone decides, so throw an error to deny, and never let the request through by default.
     </Callout>
 
-    Below the ECPM module, write a module for a scheme of your own, `receipts`, that asks the user once per app before it may use a `p receipts` basket:
+    Below the ECPM module, write a module for a scheme of your own, `receipts`, that asks the user once per app and per method before the app may use a `p receipts` basket:
 
     ```javascript permissions.mjs
     const approved = new Set()
     const receipts = {
       async onRequest ({ method, args, originator }) {
-        if (!approved.has(originator)) {
+        const grant = `${originator} ${method}`
+        if (!approved.has(grant)) {
           const ok = await askUser(originator, { method, basket: args.basket })
           if (ok !== true) throw new Error('The user denied access to receipts.')
-          approved.add(originator)
+          approved.add(grant)
         }
         return { args }
       },
       async onResponse (result) {
         return result
+      },
+      dispose () {
+        approved.clear()
       }
     }
     ```
 
     - `onRequest` returns `{ args }`, the arguments the wallet runs the call with. Return them unchanged or adjusted.
     - `onResponse` receives the wallet's result and returns what the app gets.
-    - The `approved` set keeps approvals in memory only, so they end when the wallet stops.
+    - Each approval covers one app and one method, so an app approved to list outputs still needs a new approval to spend them.
+    - The `approved` set keeps approvals in memory only. `dispose()` clears them, as the two published modules do.
     - A module can also define `handleRequest` to answer the call itself instead of passing it to the wallet. The ECPM module does this for `getPublicKey`.
   </Step>
   <Step title="Register the modules in the manager">
@@ -184,14 +204,14 @@ Each module goes in a new file, `permissions.mjs`, which exports the wrapped wal
     export async function closeWallet () {
       btms.dispose()
       ecpm.dispose()
-      approved.clear()
+      receipts.dispose()
       await setup.activeStorage.destroy()
     }
     ```
 
     - Each key of `permissionModules` is the scheme ID the module answers for.
     - `'admin.wallet.local'` is the admin originator, the name your wallet uses for its own calls. The standard checks always allow it, so never give an app this name.
-    - `dispose()` clears the approvals the two published modules hold in memory. Call it when the user logs out or the wallet shuts down.
+    - `dispose()` clears the approvals each module holds in memory. Call it on every module when the user logs out or the wallet shuts down.
   </Step>
 </Steps>
 
@@ -280,7 +300,7 @@ Your wallet now answers `p btms`, `p ecpm` and `p receipts` requests through its
 
 ## Related articles
 
-To learn more about how apps ask a BRC-100 wallet for permissions, review these articles:
+To learn more about how apps ask a <Hint tip="BSV Request for Comments 100, the standard wallet interface for applications">BRC-100</Hint> wallet for permissions, review these articles:
 
 - [Request permissions and organize outputs](/guides/wallet-aware-apps/)
 - [BRC-100 Wallet Interface](/concepts/wallet-model/)
