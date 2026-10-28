@@ -83,7 +83,7 @@
             "pages": [
               "docs/guides/app-frameworks",
               "docs/guides/wallet-aware-apps",
-              "docs/guides/wallet-relay",
+              "docs/guides/wallet-login",
               "docs/guides/go-to-mainnet"
             ]
           },
