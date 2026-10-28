@@ -110,11 +110,12 @@ The command prints the report as JSON and ends with this summary:
 
 ```text
 check_guardrails: 0 errors, 0 warnings, shape A+B
-passed: G-01, G-02, G-03, G-04, G-06, G-09, G-10, G-12, G-14, G-15, G-16, G-21, G-25, G-31, G-34
-manual checklist: G-05, G-07, G-08, G-11, G-13, G-17, G-18, G-19, G-20, G-22, G-23, G-24, G-26, G-27, G-28, G-29, G-30, G-32, G-33
+passed: G-01, G-02, G-03, G-04, G-06, G-08, G-09, G-10, G-12, G-14, G-15, G-16, G-21, G-25, G-31, G-34
+not applicable: G-36
+manual checklist: G-05, G-07, G-11, G-13, G-17, G-18, G-19, G-20, G-22, G-23, G-24, G-26, G-27, G-28, G-29, G-30, G-32, G-33, G-35, G-37, G-38
 ```
 
-Shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. The report says `shape A+B` because the sample's testnet gate, a test script, uses `@bsv/wallet-toolbox` for its headless test wallets. The app itself is shape A. [`GUARDRAILS.md`](https://github.com/bsv-blockchain/bsv-ai-toolkit/blob/main/samples/tipping-shape-a/GUARDRAILS.md) maps each guardrail that applies to the file that meets it, including the manual ones.
+Shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. The report says `shape A+B` because the sample's testnet gate, a test script, uses `@bsv/wallet-toolbox` for its headless test wallets. The app itself is shape A. G-36, the lock-time rule, does not apply, since the sample sets no lock time. [`GUARDRAILS.md`](https://github.com/bsv-blockchain/bsv-ai-toolkit/blob/main/samples/tipping-shape-a/GUARDRAILS.md) maps each guardrail that applies to the file that meets it, including the manual ones.
 
 ## Ask your agent to adapt it
 
