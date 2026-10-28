@@ -1,6 +1,6 @@
 ---
 title: "How BSV networks differ"
-description: "BSV has a live network, Mainnet, and test networks whose coins have no value, and each keeps its own coins and history, so a wallet and the code that uses it must be on the same one."
+description: "Understand Mainnet, testnet and teratestnet, and why the wallet and your code must be on the same network."
 sidebarTitle: "BSV networks"
 ---
 
@@ -44,7 +44,7 @@ Each package and BSV Desktop name the same network in their own way:
 | Where | Mainnet | Testnet | Teratestnet | Default |
 | --- | --- | --- | --- | --- |
 | BSV Desktop, network button | **Mainnet** | **Testnet** | **TeraTestNet** | **Mainnet** for a new wallet |
-| `getNetwork` in `@bsv/sdk` | `mainnet` | `testnet` | No value | Reads the wallet |
+| `getNetwork` in `@bsv/sdk` | `mainnet` | `testnet` | None of its own | Reads the wallet |
 | `ServerWallet.create` in `@bsv/simple` | `'main'` | `'testnet'` | Not accepted | `'main'` |
 | `chain` in `@bsv/wallet-toolbox` | `'main'` | `'test'` | `'ttn'` | None, you pass it |
 | `WhatsOnChain` in `@bsv/sdk` | `'main'` | `'test'` | Not accepted | `'main'` |
@@ -52,7 +52,7 @@ Each package and BSV Desktop name the same network in their own way:
 
 </BlueTable>
 
-An app that uses `WalletClient` does not set the network. It follows the wallet, and `getNetwork` reads which network that is. For a server wallet on teratestnet, use `@bsv/wallet-toolbox` with the chain `'ttn'`, since `ServerWallet` does not accept it. This page was written against `@bsv/sdk` 4.0.1, `@bsv/simple` 0.7.2, `@bsv/wallet-toolbox` 2.15.1 and BSV Desktop 3.3.1.
+An app that uses `WalletClient` does not set the network. It follows the wallet, and `getNetwork` reads which network that is. `getNetwork` returns only `mainnet` or `testnet`, so it cannot tell teratestnet apart from them. For a server wallet on teratestnet, use `@bsv/wallet-toolbox` with the chain `'ttn'`, since `ServerWallet` does not accept it. This page was written against `@bsv/sdk` 4.0.1, `@bsv/simple` 0.7.2, `@bsv/wallet-toolbox` 2.15.1 and BSV Desktop 3.3.1.
 
 ## How to tell which network you are on
 
