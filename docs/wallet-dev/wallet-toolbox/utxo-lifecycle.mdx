@@ -67,7 +67,7 @@ Both paths end in `processAction`, which checks the signed transaction against t
 <UtxoCards set="broadcast" />
 
 <Visibility for="agents">
-There are three broadcast options. Immediate broadcast: the wallet broadcasts before createAction returns, and a successful broadcast moves the proof request to unmined and the transaction to unproven. acceptDelayedBroadcast: the proof request starts as unsent and the transaction as unprocessed, and the Monitor broadcasts it later. noSend without sendWith: both start as nosend, the transaction is not broadcast, and it waits for a later sendWith batch.
+There are three broadcast options. acceptDelayedBroadcast set to false: the wallet broadcasts before createAction returns, and a successful broadcast moves the proof request to unmined and the transaction to unproven. acceptDelayedBroadcast set to true, the default when the option is omitted: the proof request starts as unsent and the transaction as unprocessed, and the Monitor broadcasts it later. noSend without sendWith: both start as nosend, the transaction is not broadcast, and it waits for a later sendWith batch.
 </Visibility>
 
 When a broadcast happens, its result sets both statuses:
@@ -77,7 +77,7 @@ When a broadcast happens, its result sets both statuses:
 | Broadcast result | Proof request | Transaction |
 | --- | --- | --- |
 | Success | `unmined` | `unproven` |
-| Double spend | `doubleSpend` | `failed` |
+| <Hint tip="Two transactions that spend the same output, where only the first one the network saw is valid">Double spend</Hint> | `doubleSpend` | `failed` |
 | Invalid transaction | `invalid` | `failed` |
 | Service error | `sending` | `sending`, retried later |
 
@@ -143,7 +143,7 @@ Releasing the inputs is optimistic, since most failures are temporary. When the 
 There are two internalizeAction protocols. wallet payment counts in the balance: the wallet checks the BRC-29 derivation of the output, then stores it as managed change in the default basket, where it can fund the next transaction. basket insertion stays out of the balance: the wallet stores the output as a custom output in a named basket, with the app's own instructions and tags, and an insertion into default is rejected.
 </Visibility>
 
-A transaction that arrives with a Merkle proof is stored as `completed`. Without one, it is stored as `unproven`.
+A transaction that arrives with a <Hint tip="The proof that a transaction is in a block, checked against the block header">Merkle proof</Hint> is stored as `completed`. Without one, it is stored as `unproven`.
 
 ## What the Monitor settles in the background
 
