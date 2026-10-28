@@ -9,8 +9,8 @@ const roles = [
       'A BRC-100 wallet for users, and who holds the keys, per money path',
       'A login that offers BSV Desktop and a phone wallet over Wallet Relay',
       <>BSV Broadcaster for every broadcast and status read, final at <code>SEEN_ON_NETWORK</code> or later with no competing transaction</>,
-      'Testnet, with fees at 100 sat/kB, never below the BSV Broadcaster /policy',
-      'One transaction per payment, a payment channel only for many updates, Rúnar for contracts, 1Color for tokens',
+      'Testnet, with fees at 100 sat/kB on both networks, never below the BSV Broadcaster /policy',
+      'One transaction per payment, a payment channel only for many updates between two parties, Rúnar for contracts, 1Color for tokens',
     ],
   },
   {
