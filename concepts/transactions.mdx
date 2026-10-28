@@ -55,7 +55,7 @@ A change to a covered part after signing makes the signature invalid. You choose
 
 ## How the fee is computed
 
-No part of a transaction states the fee. It is the satoshis of the inputs minus the satoshis of the outputs, and it goes to the miner who includes the transaction in a block. Whoever builds the transaction sets the fee by what the outputs leave out. To see this on a real transaction, read [Understand how your transaction worked](/docs/concepts/how-your-payment-worked/).
+No part of a transaction states the fee. It is the satoshis of the inputs minus the satoshis of the outputs, and it goes to the miner who includes the transaction in a block. Whoever builds the transaction sets the fee by what the outputs leave out. To see this on a real transaction, read [Understand how your transaction worked](/concepts/how-your-payment-worked/).
 
 The fee follows from the size of the transaction in bytes and a rate in satoshis per kilobyte. The fee model of `@bsv/sdk` rounds up, so the miner gets the extra satoshi:
 
@@ -82,7 +82,7 @@ This page was written against `@bsv/sdk` 4.0.1.
 
 ## Who sets the rate
 
-Two sides set the rate. Each broadcast endpoint publishes the lowest rate it accepts, as `miningFee` in its policy, and refuses a transaction that pays less. The rate differs by network and by endpoint, and [Broadcast transactions with Arcade](/docs/guides/services/broadcasting/) shows how to read it.
+Two sides set the rate. Each broadcast endpoint publishes the lowest rate it accepts, as `miningFee` in its policy, and refuses a transaction that pays less. The rate differs by network and by endpoint, and [Broadcast transactions with Arcade](/guides/services/broadcasting/) shows how to read it.
 
 The side that builds the transaction picks the rate it pays, at or above that minimum. When your app asks a wallet for a transaction, the wallet picks it, so the app does not set a fee. When your code builds the transaction with `@bsv/sdk`, the fee model you pass to `tx.fee()` picks it.
 
@@ -111,5 +111,5 @@ A blockchain transaction cannot be reversed, so check the outputs and the amount
 
 To learn more about verifying and requesting transactions in BSV, review these articles:
 
-- [BEEF (BRC-62)](/docs/concepts/spv/)
-- [BRC-100 Wallet Interface](/docs/concepts/wallet-model/)
+- [BEEF (BRC-62)](/concepts/spv/)
+- [BRC-100 Wallet Interface](/concepts/wallet-model/)
