@@ -22,6 +22,10 @@ BSV Browser starts as a normal web browser, with tabs, bookmarks and history, an
 
 ## Where things are
 
+<Callout type="warning">
+  Creating a wallet makes a recovery phrase that anyone can use to spend your coins. Keep it offline and never share it. Check **BSV Network** in **Wallet**, **Settings** before you receive or send coins: Mainnet moves real BSV, and testnet is for learning.
+</Callout>
+
 Open the menu with the three dots at the bottom right of the screen, then choose **Wallet**.
 
 | To do this | Go to |
@@ -44,10 +48,10 @@ Open the menu with the three dots at the bottom right of the screen, then choose
 
 BSV Browser gives you four ways to back up. Use more than one.
 
-- The recovery phrase: 12 words that restore your keys on any compatible device. Find it in **Backup Wallet Keys**
-- Recovery shares: **Print Recovery Shares** splits the key into three printed pages, and any two of them restore the wallet. To restore, choose **Import from backup**, then **Scan Backup Shares**, and scan two pages
-- Wallet data: **Export Wallet Data** saves the wallet database as a `.db` file, with the transaction history, the coins and the certificates. The phrase and the shares restore only the keys, so the history comes back only with this file
-- Private backup: by default, BSV Browser uploads an encrypted copy of the wallet database to a BSV Association server, and it cannot read it. You can turn it off or delete it in **Wallet**, **Settings**, **Private backup**
+- The recovery phrase: 12 words that restore your keys on any compatible device. Find it in **Backup Wallet Keys**. It restores only the keys, not the history
+- Recovery shares: **Print Recovery Shares** splits the key into three printed pages, and any two of them restore the wallet. To restore, choose **Import from backup**, then **Scan Backup Shares**, and scan two pages. Like the phrase, they restore only the keys
+- Wallet data: **Export Wallet Data** saves the wallet database as a `.db` file, with the transaction history, the coins and the certificates. To restore it, choose **Wallet**, **Settings**, **Import Wallet Data** and pick the file
+- Private backup: by default, BSV Browser keeps an encrypted copy of the wallet database on a BSV Association server. It brings back the history on a new phone after you restore the keys with the phrase or the shares. The copy is encrypted on your device with a key that your phrase restores, so BSV Association cannot read it and cannot restore it for you. Turn it off or delete it in **Wallet**, **Settings**, **Private backup**. With it off, the phrase alone may not recover all of your funds on a new device
 
 ## Related articles
 
@@ -55,5 +59,5 @@ To learn more about wallets in BSV, review these articles:
 
 - [Wallets overview](/docs/wallets/)
 - [BSV Desktop](/docs/wallets/bsv-desktop/)
-- [Back up and recover a wallet](/docs/wallets/backup-recovery/)
+- [Back up and recover a BSV Desktop wallet](/docs/wallets/backup-recovery/)
 - [How wallets and BRC-100 work](/docs/concepts/wallet-model/)
