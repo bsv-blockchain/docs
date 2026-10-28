@@ -9,7 +9,7 @@ Register permission modules in your wallet so it can answer app requests that th
 
 ## Before you begin
 
-You need Node.js 22 or newer and a wallet built with `@bsv/wallet-toolbox`. The example runs on testnet and creates a throwaway wallet, so no coins are needed. This page was written against `@bsv/wallet-toolbox` 2.15.1, `@bsv/btms-permission-module` 1.2.4 and `@bsv/ecpm-permission-module` 0.1.4.
+You need Node.js 22 or newer and a wallet built with `@bsv/wallet-toolbox`. The example runs on testnet with a test wallet that holds no coins. This page was written against `@bsv/wallet-toolbox` 2.15.1, `@bsv/btms-permission-module` 1.2.4 and `@bsv/ecpm-permission-module` 0.1.4.
 
 ## How it works
 
@@ -46,36 +46,40 @@ The first step is to set up one Node.js project folder with the packages, a test
 
     The two modules list `@bsv/btms`, `@bsv/wallet-toolbox-client` and `@bsv/sdk` as peer dependencies, so they are installed together.
   </Step>
-  <Step title="Create a test wallet">
+  <Step title="Generate the keys">
     <Callout type="warning">
-      This file creates a random private key and throws it away when the script ends. Use it only on testnet, never send coins to it, and never paste a real key into a file like this one.
+      The `.env` file holds the private keys of the test wallet. Keep it out of git, never print it or paste it into code, and use this wallet only on testnet.
     </Callout>
 
-    Create `wallet.mjs` in the project folder. It builds a testnet wallet that keeps its records in a local SQLite file:
+    Write the keys of a test wallet to `.env` with `Setup.makeEnv()`. Save this script as `create-env.mjs` and run it once with `node create-env.mjs`:
 
-    ```javascript wallet.mjs
-    import { PrivateKey } from '@bsv/sdk'
+    ```javascript create-env.mjs
+    import { existsSync, writeFileSync } from 'node:fs'
     import { Setup } from '@bsv/wallet-toolbox'
 
-    const rootKey = PrivateKey.fromRandom()
-    const identityKey = rootKey.toPublicKey().toString()
-
-    export const setup = await Setup.createWalletSQLite({
-      env: {
-        chain: 'test',
-        identityKey,
-        identityKey2: identityKey,
-        filePath: undefined,
-        taalApiKey: '',
-        devKeys: { [identityKey]: rootKey.toHex() },
-        mySQLConnection: ''
-      },
-      filePath: './test-wallet.sqlite',
-      databaseName: 'testwallet'
-    })
+    if (existsSync('.env')) {
+      console.log('.env already exists, nothing was written.')
+    } else {
+      writeFileSync('.env', Setup.makeEnv(), { mode: 0o600 })
+      console.log('Wrote the test wallet keys to .env.')
+    }
     ```
 
-    - `chain: 'test'` puts the wallet on testnet.
+    The script never prints the keys, and it does not replace an existing `.env`.
+  </Step>
+  <Step title="Create a test wallet">
+    Create `wallet.mjs` in the project folder. It opens a testnet wallet with the keys from `.env` and keeps its records in a local SQLite file:
+
+    ```javascript wallet.mjs
+    import { Setup } from '@bsv/wallet-toolbox'
+
+    process.loadEnvFile('.env')
+    const env = Setup.getEnv('test')
+
+    export const setup = await Setup.createWalletSQLite({ env, filePath: './test-wallet.sqlite', databaseName: 'testwallet' })
+    ```
+
+    - `Setup.getEnv('test')` reads the keys and puts the wallet on testnet.
     - `setup.wallet` is the wallet the modules wrap, and `setup.keyDeriver` derives its keys. If your wallet is built another way, use your own `Wallet` instance and its key deriver in the next steps.
   </Step>
   <Step title="Add the approval window">
