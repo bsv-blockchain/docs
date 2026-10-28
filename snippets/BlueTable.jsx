@@ -1,7 +1,8 @@
 // Blue frame for a Markdown table, in the colors of the other boxes. Shared by every page with a table (glossary, Build a wallet, ...).
+// Pass nowrapFirst to keep the first column on one line (the glossary does).
 // The rows stay in the Markdown table of the page, so search and the Markdown copy for agents keep them.
 
-export default function BlueTable({ children }) {
+export default function BlueTable({ children, nowrapFirst = false }) {
   return (
     <div
       className={[
@@ -12,7 +13,8 @@ export default function BlueTable({ children }) {
         '[&_td]:border-t [&_td]:border-gray-200 [&_td]:px-4 [&_td]:py-3 [&_td]:align-top dark:[&_td]:border-gray-700',
         '[&_tbody_tr:nth-child(even)]:bg-[#1B1EA9]/5 dark:[&_tbody_tr:nth-child(even)]:bg-[#8C9BFF]/10',
         '[&_td:first-child]:font-semibold [&_td:first-child]:text-[#1B1EA9] dark:[&_td:first-child]:text-[#8C9BFF]',
-      ].join(' ')}
+        nowrapFirst ? '[&_td:first-child]:whitespace-nowrap' : '',
+      ].filter(Boolean).join(' ')}
     >
       {children}
     </div>
