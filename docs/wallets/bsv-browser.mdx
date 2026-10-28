@@ -20,6 +20,12 @@ Download BSV Browser from the [App Store](https://apps.apple.com/app/bsv-browser
 
 BSV Browser starts as a normal web browser, with tabs, bookmarks and history, and no wallet. When you create or import a wallet, the browser switches to Web3 mode, and BSV web apps can request payments, identity and certificates from it. A permission sheet shows each request, and you approve or reject it.
 
+## Connect to a web app on your computer
+
+BSV Browser can also be the wallet for a BSV web app that you open on your computer. When the app shows a QR code to connect a phone wallet, scan it with the camera of your phone. BSV Browser opens on **Connect Wallet** and shows the address of the app, so you can check it before you approve. After that, the app sends its wallet requests to your phone, and your keys stay on the phone.
+
+The connection uses <Hint tip="An encrypted connection between a web app and a phone wallet, through a relay server that cannot read the messages">Wallet Relay</Hint>. Any mobile BRC-100 wallet can implement Wallet Relay with the `@bsv/wallet-relay` package, and a web app adds it as a way to log in next to BSV Desktop.
+
 ## Where things are
 
 <Callout type="warning">
