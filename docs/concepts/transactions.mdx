@@ -14,12 +14,14 @@ Read a BSV transaction part by part, see how it spends earlier outputs, and know
 A transaction has four parts, serialized in this order, as [BRC-12](https://bsv.brc.dev/transactions/0012) specifies:
 
 <BlueTable>
+
 | Part | What it holds |
 |------|---------------|
 | Version | A 4-byte version number |
 | Inputs | One entry per output being spent, with the source transaction ID, the output index, an unlocking script and a sequence number |
 | Outputs | One entry per new output, with an amount in <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> and a locking script |
 | Lock time | When not zero, the earliest time or block height at which the transaction can go in a block |
+
 </BlueTable>
 
 The scripts hold the rules. The <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> of an output sets the condition to spend it, and the unlocking script of the input that spends it meets that condition.
@@ -46,6 +48,8 @@ For a <Hint tip="Pay to Public Key Hash, an output that only the key behind one 
 - `SIGHASH_NONE` covers the inputs and no output.
 - `SIGHASH_SINGLE` covers the inputs and the output at the same index as the signed input.
 - `SIGHASH_ANYONECANPAY`, combined with one of the three, covers only the signed input, so others can add inputs.
+
+`@bsv/sdk` always adds `SIGHASH_FORKID` to the flag, so your code only picks the scope.
 
 A change to a covered part after signing makes the signature invalid. You choose a flag only when your code signs with `@bsv/sdk`, for example when several parties sign one transaction.
 
