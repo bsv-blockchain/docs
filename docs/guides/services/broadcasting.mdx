@@ -56,7 +56,7 @@ To go live, change the address to a Mainnet endpoint and read [Move your app to 
     {"policy":{"miningFee":{"satoshis":1,"bytes":1000},"maxtxsizepolicy":100000000,...},"timestamp":"..."}
     ```
 
-    The `miningFee` is the lowest fee rate the endpoint accepts, here 1 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshi</Hint> for each 1,000 bytes. A transaction that pays less is refused. The Mainnet endpoints differ by operator: on 28 October 2026 the BSV Association endpoints asked for 1 satoshi and GorillaPool for 100 satoshis for each 1,000 bytes, so read the policy of the endpoint you use.
+    The `miningFee` is the lowest fee rate the endpoint accepts, here 1 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshi</Hint> for each 1,000 bytes. A transaction that pays less is refused. At the time of writing the Mainnet endpoints ask for 100 satoshis for each 1,000 bytes, so read the policy of the endpoint you use.
   </Step>
   <Step title="Check that it is healthy">
     Ask the endpoint for its status:
