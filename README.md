@@ -11,7 +11,6 @@ This file is for contributors and for AI agents that read the repo or review pul
 | Platform | Writedocs, which builds the site from this repo |
 | Page format | `.mdx` files in `docs/`, with frontmatter and components |
 | Configuration | `writedocs.json`: navigation, variables, redirects, theme |
-| Domain | `docs.bsvblockchain.org`, set in `writedocs.json`. The site is not live there yet: on 2026-10-28 the domain still served the previous site |
 | Node.js | 22.12.0 or newer, from `engines` in `package.json` |
 | Language | English |
 | Reader | An app developer, new to BSV or coming from another chain |
