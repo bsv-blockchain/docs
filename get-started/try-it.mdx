@@ -1,0 +1,81 @@
+---
+title: "Try BSV in your browser"
+description: "Look up a BSV testnet transaction and inspect its BEEF on this page, with nothing to install and no wallet."
+---
+
+import TryIt from '/snippets/TryIt.jsx';
+
+Look up a BSV testnet transaction and inspect its BEEF on this page, with nothing to install and no wallet. Use it to see what a transaction holds before you set up a wallet or write any code. The tool below reads public testnet data, so it cannot spend or change anything. At the end, you have seen a transaction's block, size and outputs, its BEEF and the result of its SPV check.
+
+## How it works
+
+The tool runs in your browser. It reads the transaction from the [WhatsOnChain](https://test.whatsonchain.com/) testnet API and loads [`@bsv/sdk`](/sdk/) from a CDN on your first click. The SDK reads the <Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint>, the format that carries a transaction together with the proof that it is in a block, and runs an <Hint tip="Simplified Payment Verification">SPV</Hint> check, which compares that proof with the block header on testnet.
+
+The example ID is a testnet payment of 1,000 satoshis sent from a server wallet in [Send a payment from a server](/get-started/quick-start-server/). A satoshi is the smallest unit of BSV, and 100,000,000 satoshis make 1 BSV.
+
+<TryIt />
+
+## Look up a transaction
+
+The first step is to read the transaction as the explorer stores it:
+
+<Steps>
+  <Step>Keep the example ID in **Testnet transaction ID**, or paste the ID of your own testnet transaction.</Step>
+  <Step>Click **Look up**.</Step>
+</Steps>
+
+The tool shows the block the transaction is in and its confirmations, its size, and the amount of each output in satoshis. A transaction that is not in a block yet shows **Not in a block yet**.
+
+## Inspect the BEEF
+
+With the same ID in the field, read the transaction as a wallet receives it:
+
+<Steps>
+  <Step>Click **Inspect BEEF**.</Step>
+</Steps>
+
+The tool shows the BEEF version and size, the transaction ID, each input as the ID and output index of the transaction it spends, and the outputs. The **SPV check** row reads **Valid** when the proof matches the testnet block header. A BEEF with a wrong proof reads **Not valid**, with the reason.
+
+## Run the same check in your browser console
+
+To run the check yourself, open a blank tab (`about:blank`), open the developer console of your browser and paste this code. A blank tab has no content security policy that could block the import. The first time you paste in the Chrome console, Chrome shows a warning and asks you to type `allow pasting` and press Enter before it accepts the code.
+
+```javascript
+const sdk = await import('https://esm.sh/@bsv/sdk@3.2.1')
+const WOC = 'https://api.whatsonchain.com/v1/bsv/test'
+const txid = 'ec987d5123479405a00ff0e0c0583d2ae8339c62871dc6ca5a467cd234ae7716'
+const pause = () => new Promise((resolve) => setTimeout(resolve, 400))
+const get = async (path) => { await pause(); return (await fetch(`${WOC}${path}`)).text() }
+
+const info = JSON.parse(await get(`/tx/hash/${txid}`))
+const tx = sdk.Transaction.fromHex((await get(`/tx/${txid}/hex`)).trim())
+const [proof] = JSON.parse(await get(`/tx/${txid}/proof/tsc`))
+tx.merklePath = new sdk.MerklePath(info.blockheight, proof.nodes.map((hash, level) => {
+  const offset = (proof.index >> level) ^ 1
+  const sibling = hash === '*' ? { offset, duplicate: true } : { offset, hash }
+  return level === 0 ? [{ offset: proof.index, hash: txid, txid: true }, sibling].sort((a, b) => a.offset - b.offset) : [sibling]
+}))
+
+let valid = false
+try {
+  await pause()
+  valid = (await tx.verify(new sdk.WhatsOnChain('test'))) === true
+} catch (e) {
+  console.log(`Not valid: ${e.message}`)
+}
+console.log(tx.id('hex'), tx.outputs.map((o) => o.satoshis), valid)
+```
+
+The console prints the transaction ID, the outputs `[1000, 477]` and `true`.
+
+- WhatsOnChain returns the merkle proof in the TSC format, a list of hashes from the transaction up to the block. The `MerklePath` built from it, with the raw transaction, is what the SDK reads as BEEF.
+- `new sdk.WhatsOnChain('test')` checks the proof against testnet. With no argument, it checks against Mainnet and throws `Invalid merkle path` for a testnet transaction.
+- `verify()` returns `true` for a valid BEEF and throws on a wrong proof or script, so the `try` and `catch` read both failures as not valid.
+
+## Next steps
+
+With a transaction inspected, send one of your own:
+
+- [Send a payment from a web app](/get-started/quick-start-browser/)
+- [Send a payment from a server](/get-started/quick-start-server/)
+- [Verify your payment on the explorer](/get-started/verify/)

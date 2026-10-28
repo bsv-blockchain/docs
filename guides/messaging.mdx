@@ -1,0 +1,264 @@
+---
+title: "Send messages between users"
+description: "Send encrypted messages and payments between users with MessageBox, which holds each message until its recipient reads it."
+---
+
+import MessagingFlow from '/snippets/MessagingFlow.jsx';
+
+**MessageBox** delivers encrypted messages and payments between users by their identity key, and a host holds each message until its recipient reads it, so the two users never need to be online at the same time. This fits an app that lets users message or pay each other, and here it runs as a standalone script you can adapt. In this guide you send a message to another user and read it back, then send a payment between the two.
+
+## Before you begin
+
+You need a funded testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [Send a payment from a web app](/get-started/quick-start-browser/) shows how to set one up.
+
+<Callout type="note">
+The wallet decides the network. These examples use a testnet wallet. To use Mainnet, read [Move your app to mainnet](/guides/go-to-mainnet/).
+</Callout>
+
+## How it works
+
+A message passes through your wallet, the MessageBox host and the recipient's wallet. The client encrypts the body before it sends, so the host only ever holds ciphertext:
+
+<MessagingFlow />
+
+Only the two wallets can read the body. A payment follows the same path, in a box of its own.
+
+## Connect to your wallet
+
+The first step is to install the packages and set up a client:
+
+<Steps>
+  <Step title="Install the packages">
+
+    Create an empty project folder and, in it, create an ES module project and add the message client, the SDK and `tsx`, a tool that runs TypeScript files without a build step:
+
+    ```bash
+    npm init -y
+    npm pkg set type=module
+    npm install @bsv/message-box-client @bsv/sdk
+    npm install -D tsx
+    ```
+
+  </Step>
+  <Step title="Create the client">
+
+    Create `messaging.ts` in the project folder and connect the client to BSV Desktop:
+
+    ```ts messaging.ts
+    import { MessageBoxClient } from '@bsv/message-box-client'
+    import { WalletClient } from '@bsv/sdk'
+
+    const wallet = new WalletClient('auto', 'localhost')
+    const client = new MessageBoxClient({
+      walletClient: wallet,
+      networkPreset: 'testnet'
+    })
+    ```
+
+    The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app. A Node script cannot reach the wallet without one. The `networkPreset` only picks the <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> that looks up a recipient's MessageBox host. When it finds none, the client uses `https://message-box-us-1.bsvb.tech`.
+
+  </Step>
+  <Step title="Get your identity key">
+
+    Ask the wallet for your identity key in the same file:
+
+    ```ts
+    const { publicKey: me } = await wallet.getPublicKey({ identityKey: true })
+    ```
+
+    Your identity key is the address other users send to, and you need theirs to send to them. To learn how it is derived, read [How keys and identity work](/concepts/keys-identity/).
+
+  </Step>
+</Steps>
+
+## Send and receive messages
+
+With the client ready, you send a message to an identity key and read it from the recipient's box. The examples start with your own key, which needs only one wallet.
+
+### Send a message
+
+The first example sends a message to your own key:
+
+<Steps>
+  <Step title="Send the message">
+
+    Add this to `messaging.ts`, below the code of the client, to send the message:
+
+    ```ts
+    const sent = await client.sendMessage({
+      recipient: me,
+      messageBox: 'inbox',
+      body: { text: 'Hello from MessageBox' }
+    })
+    console.log(sent)
+    ```
+
+    Run the file with `npx tsx messaging.ts`, with BSV Desktop open and unlocked. The call prints an object with the status and the message ID:
+
+    ```text
+    {
+      status: 'success',
+      messageId: '7aa436fb8f662344e9939a65b0a8677cd84d131dfd3747625a5f47c9c373c436',
+      message: 'Your message has been sent to 1 recipient(s).'
+    }
+    ```
+
+    The `body` is a string or an object, and the `messageBox` is free text that belongs to the recipient, so each identity has its own `inbox`. Avoid `notifications` as a box name, because it is a built-in box that charges the sender a fee.
+
+  </Step>
+</Steps>
+
+The host accepts a message for any valid key, so a successful send does not tell you that the recipient exists. It refuses messages over roughly 98,000 characters of text.
+
+### Read and acknowledge messages
+
+The recipient reads the box with their own wallet and acknowledges each message once the app has handled it:
+
+<Steps>
+  <Step title="List the messages">
+
+    Add this to `messaging.ts` to read the box as the recipient, with the same client:
+
+    ```ts
+    const messages = await client.listMessages({ messageBox: 'inbox' })
+    for (const m of messages) {
+      console.log(m.sender, m.body)
+    }
+    ```
+
+    The client decrypts each body for you and the loop prints one line for each message, with the sender's identity key and the body:
+
+    ```text
+    <sender identity key> { text: 'Hello from MessageBox' }
+    ```
+
+    A message has `messageId`, `body` and `sender`, which is the sender's identity key. Its dates are `createdAt` and `updatedAt`, although the package types declare `created_at` and `updated_at`.
+
+  </Step>
+  <Step title="Acknowledge the messages">
+
+    Send the message IDs back to the host once the app has handled them:
+
+    ```ts
+    await client.acknowledgeMessage({
+      messageIds: messages.map(m => m.messageId)
+    })
+    ```
+
+    A message stays in the box until it is acknowledged.
+
+  </Step>
+</Steps>
+
+After the acknowledgment the host deletes the messages, and a second acknowledgment of the same IDs fails.
+
+### Receive messages as they arrive
+
+To get a message the moment it is sent, instead of listing the box, the recipient listens on a live connection and the sender sends over it:
+
+<Steps>
+  <Step title="Listen for messages">
+
+    Open a second client for the live connection:
+
+    ```ts
+    const live = new MessageBoxClient({
+      walletClient: wallet,
+      networkPreset: 'testnet',
+      socketOptions: { managerOptions: { transports: ['websocket'] } }
+    })
+
+    await live.listenForLiveMessages({
+      messageBox: 'inbox',
+      onMessage: message => console.log(message.sender, message.body)
+    })
+    ```
+
+    The `transports` option is required, because the default connection does not work with the default host. Give each client its own `socketOptions` object.
+
+  </Step>
+  <Step title="Send a live message">
+
+    The `sender` is another client built like `live`, with the sender's wallet:
+
+    ```ts
+    await sender.sendLiveMessage({
+      recipient: recipientIdentityKey,
+      messageBox: 'inbox',
+      body: { text: 'Hello now' }
+    })
+    ```
+
+  </Step>
+</Steps>
+
+The listener receives `sender`, `messageId` and `body`, with the body as a JSON string. The message also stays in the box until the recipient acknowledges it.
+
+## Send a payment between users
+
+A payment travels as a message in the recipient's `payment_inbox` box on the same host, and the payment client builds the transaction with your wallet and sends it:
+
+<Steps>
+  <Step title="Send the payment">
+
+    Add this to `messaging.ts` to create a payment client with the same wallet:
+
+    ```ts
+    import { PeerPayClient } from '@bsv/message-box-client'
+
+    const peerPay = new PeerPayClient({
+      walletClient: wallet,
+      originator: 'localhost'
+    })
+
+    await peerPay.sendPayment({ recipient: me, amount: 100 })
+    ```
+
+    The `amount` is in satoshis, so `100` sends 100 satoshis. BSV Desktop opens a **Spending Request** for the amount plus the network fee, and the call waits until you authorize it. A payment cannot be undone once it is broadcast, on testnet or on Mainnet.
+
+  </Step>
+  <Step title="Accept the payment">
+
+    List the incoming payments and accept the first one:
+
+    ```ts
+    const incoming = await peerPay.listIncomingPayments()
+    await peerPay.acceptPayment(incoming[0])
+    ```
+
+    Each incoming payment carries a `token` with the `amount`, plus its `messageId` and `sender`. Accepting it adds the payment to the recipient's wallet and acknowledges the message.
+
+  </Step>
+</Steps>
+
+The recipient needs a wallet that can <Hint tip="Add a received payment to the wallet so its coins can be spent">internalize</Hint> payments, such as BSV Desktop. A payment you send to yourself costs only the network fee, and the Wallet page of BSV Desktop shows the new balance after you press its refresh button.
+
+## Adapt the example to your app
+
+To use this in a real app, apply these points:
+
+- Replace `localhost`, the originator, with the name of your app, because BSV Desktop shows it in its permission windows
+- Get the recipient's identity key from your users, instead of sending to your own key
+- Acknowledge a message only after your app has handled it, because the host deletes it after the acknowledgment
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Client cannot reach the wallet" defaultOpen>
+    The call fails with `Identity key retrieval failed` when the script cannot reach BSV Desktop. Pass an originator, as in `new WalletClient('auto', 'localhost')`, and keep BSV Desktop open and on testnet.
+  </Accordion>
+  <Accordion title="Live connection times out">
+    The default live connection does not work with the default host, so the call times out with `WebSocket authentication timed out!`. Create the client with `socketOptions: { managerOptions: { transports: ['websocket'] } }`.
+  </Accordion>
+  <Accordion title="Payment cannot be built">
+    The client throws `BRC-29 settlement could not be built safely.` when the wallet holds less than the amount plus the fee. Check the balance in BSV Desktop.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+With messages and payments working, continue with:
+
+- [Send messages with @bsv/message-box-client](/sdk/packages/message-box-client/)
+- [Gate an API behind payments](/guides/payments/)
+- [Authenticate users with their wallet](/guides/identity-auth/)
