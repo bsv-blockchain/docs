@@ -3,10 +3,10 @@ title: "P2P Medical"
 description: "A demo where a patient encrypts a medical file in the browser and shares it with a doctor through BSV wallets, UHRP storage and an audit timeline."
 ---
 
-The **P2P Medical** demo is a web app where a patient shares an encrypted file with a doctor. A <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet encrypts the file for the identity key of the doctor, <Hint tip="Universal Hash Resolution Protocol, content storage addressed by the hash of the file">UHRP</Hint> stores the encrypted copy, and the app keeps an audit timeline of who shared and viewed it. The demo is hosted at [p2p-medical.bsvblockchain.tech](https://p2p-medical.bsvblockchain.tech), and the source code is in [bsv-blockchain-demos/p2p-medical](https://github.com/bsv-blockchain-demos/p2p-medical).
+Open the P2P Medical demo to see how a patient shares an encrypted file with a doctor. A <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet encrypts the file for the <Hint tip="The public key that identifies a wallet to an app. The private key never leaves the wallet">identity key</Hint> of the doctor, <Hint tip="Universal Hash Resolution Protocol, content storage addressed by the hash of the file">UHRP</Hint> stores the encrypted copy, and the app keeps an audit timeline of who shared and viewed it. The demo runs on Mainnet, where the wallet transactions and the storage cost real satoshis. It is hosted at [p2p-medical.bsvblockchain.tech](https://p2p-medical.bsvblockchain.tech), and the source code is in [bsv-blockchain-demos/p2p-medical](https://github.com/bsv-blockchain-demos/p2p-medical).
 
 <Callout type="warning">
-  Use synthetic files only, never a real medical record. The demo runs on Mainnet, where a transaction cannot be undone and the wallet transactions and the storage cost real satoshis.
+  Use synthetic files only, never a real medical record. A transaction on Mainnet cannot be undone.
 </Callout>
 
 ## When to use it
@@ -27,7 +27,7 @@ The app creates a <Hint tip="A script template that stores data fields in an out
 
 ### Verify and decrypt
 
-The doctor downloads the encrypted copy and checks its SHA-256 hash against the metadata. The wallet then decrypts the file with the identity key of the patient and the shared key identifier, so only the wallet of the doctor can open it.
+The doctor downloads the encrypted copy and checks its SHA-256 hash against the metadata. The wallet then decrypts the file with the identity key of the patient and the shared key identifier, so only the wallets of the patient and the doctor can open it.
 
 ## What the demo records and what it does not guarantee
 
@@ -39,7 +39,7 @@ The REST routes of the backend accept identity keys from the request body and do
 
 You need a BRC-100 wallet, such as [BSV Desktop](/wallets/bsv-desktop/) or BSV Browser, connected to Mainnet and funded. To follow the whole flow you need two wallet identities, one for the patient and one for the doctor.
 
-Open [p2p-medical.bsvblockchain.tech](https://p2p-medical.bsvblockchain.tech) and click **Connect Wallet**. The first time an identity connects, the app asks for a profile, and each identity key has one role, patient or doctor. The patient then shares a file with a doctor, and the doctor opens it from the inbox.
+Open [p2p-medical.bsvblockchain.tech](https://p2p-medical.bsvblockchain.tech) and click **Connect Wallet**. The first time an identity connects, the app asks for a profile, and each identity key has one role, patient or doctor.
 
 ## Run it locally
 
@@ -71,7 +71,7 @@ A local run needs Node.js 22, Docker or a MongoDB instance, and a BRC-100 wallet
 
 Without Docker, start MongoDB, copy `.env.example` to `.env` in both `backend` and `frontend`, and run `npm install` and `npm run dev` in each folder.
 
-The frontend uploads to the UHRP provider `go-uhrp-us-1.bsvblockchain.tech` by default, with `nanostore.babbage.systems` as a second option, and the patient chooses one or both at upload time. The UHRP code of the frontend is set to Mainnet, and the Docker setup broadcasts through Mainnet ARC infrastructure.
+The frontend uploads to the UHRP provider `go-uhrp-us-1.bsvblockchain.tech` by default, with `nanostore.babbage.systems` as a second option, and the patient chooses one or both at upload time. The UHRP code of the frontend is set to Mainnet, and the Docker setup broadcasts through Mainnet <Hint tip="A transaction broadcast API of miners. The backend of the demo forwards BEEF transactions to it">ARC</Hint> infrastructure.
 
 ## How it is built
 
@@ -80,8 +80,9 @@ The demo has a frontend and a backend:
 | Layer | Technology | What it does |
 |---|---|---|
 | Frontend | Vite, React and TypeScript | Shows the interface, encrypts the file through the wallet and lets the patient pick the UHRP providers |
-| Backend | Express and MongoDB | Stores the tokens and the audit events, and handles the overlay `/submit` and `/lookup` routes |
-| Blockchain | `@bsv/sdk` | Provides `WalletClient`, PushDrop, identity resolution and the MessageBox client |
+| Backend | Express and MongoDB, with `@bsv/overlay` and `@bsv/overlay-express` | Stores the tokens and the audit events, and handles the `/submit` and `/lookup` routes of an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> |
+| Blockchain | `@bsv/sdk` | Provides `WalletClient`, PushDrop and identity resolution |
+| Messaging | `@bsv/message-box-client` | Sends the notification to the doctor |
 
 The README of the project declares the MIT license.
 
