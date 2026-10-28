@@ -12,7 +12,7 @@ Look up a BSV term you meet while building on BSV, in one line. When a page expl
 
 | Term | Meaning |
 |------|---------|
-| [Arcade](/guides/services/broadcasting/) | The BSV Association's transaction broadcaster. It delivers a signed transaction to the network, follows it until a miner includes it in a block and returns the Merkle path that proves it. |
+| [Arcade](/guides/services/broadcasting/) | The former name of BSV Broadcaster, until version 0.19.0. The public endpoint hostnames still contain `arcade`. |
 | [AtomicBEEF](/concepts/spv/) | BEEF for a single transaction (BRC-95). |
 | basket | A named group of outputs in a wallet, so an app can list them later. |
 | [BEEF](/concepts/spv/) | Background Evaluation Extended Format (BRC-62): a transaction with the proof a host needs to verify it, without running a node. |
@@ -24,6 +24,7 @@ Look up a BSV term you meet while building on BSV, in one line. When a page expl
 | `@bsv/sdk` | The base package for building on BSV: hashing, keys, Script, BEEF and Merkle paths, and `WalletClient`. |
 | `@bsv/simple` | A package with helpers for payments and tokens. |
 | `@bsv/wallet-toolbox` | A package for building a wallet. |
+| [BSV Broadcaster](/guides/services/broadcasting/) | The BSV Association's transaction broadcaster, formerly called Arcade. It delivers a signed transaction to the network, follows it until a miner includes it in a block and returns the Merkle path that proves it. |
 | [BSV Desktop](/wallets/bsv-desktop/) | A desktop wallet for BSV. It holds the keys, chooses the coins, signs, and asks the user to approve each payment. |
 | BUMP | BSV Unified Merkle Path (BRC-74): a compact Merkle path that proves a transaction is in a block. |
 | [certificate](/guides/identity-auth/) | A signed statement about a user, issued by a third party, like a verifiable credential. |
@@ -44,7 +45,7 @@ Look up a BSV term you meet while building on BSV, in one line. When a page expl
 | private key | The secret key that signs transactions. It stays in the wallet and never goes in app code. |
 | recovery phrase | The words that restore a wallet's keys, twelve in BSV Desktop 3. Anyone who has them can access the wallet. |
 | satoshi | The smallest unit of BSV. 100,000,000 satoshis make 1 BSV. |
-| [`SEEN_ON_NETWORK`](/guides/services/broadcasting/) | The Arcade status of a transaction seen in a miner's subtree. Safe to treat as zero-confirmation, before it is mined. |
+| [`SEEN_ON_NETWORK`](/guides/services/broadcasting/) | The BSV Broadcaster status of a transaction seen in a miner's subtree. Safe to treat as zero-confirmation, before it is mined. |
 | Spending Request | The BSV Desktop window where the user checks a payment an app asks for, then approves it with **Authorize** or refuses it with **Deny**. |
 | [SPV](/concepts/spv/) | Simplified Payment Verification: checking a transaction with its Merkle path and block headers, without running a node. |
 | STEAK | Submitted Transaction Execution AcKnowledgment: the answer of an overlay host that says which outputs each topic admitted. |

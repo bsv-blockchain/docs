@@ -1,8 +1,8 @@
-// How a transaction goes through Arcade, as three numbered steps: Submit, Follow, Prove.
-// Each step is one card: the call or field on top, then your app and what Arcade does side by side.
+// How a transaction goes through BSV Broadcaster, as three numbered steps: Submit, Follow, Prove.
+// Each step is one card: the call or field on top, then your app and what BSV Broadcaster does side by side.
 // Readable on its own: a reader sees the three steps, a developer sees the endpoints.
 // Edit the text below; the layout does not need to change.
-// Source: the BSV Skills Center page "Arcade" (docs.bsvblockchain.org/broadcasting/arcade) and a test against the public endpoints.
+// Source: the BSV Skills Center page "BSV Broadcaster" (hub.bsvblockchain.org/bsv-skills-center/broadcasting/bsv-broadcaster) and a test against the public endpoints.
 
 const steps = [
   {
@@ -50,7 +50,7 @@ const css = `
 
 export default function BroadcastFlow() {
   return (
-    <ol className="bfl" aria-label="Your app submits a signed transaction to Arcade, follows its status and keeps the merkle path">
+    <ol className="bfl" aria-label="Your app submits a signed transaction to BSV Broadcaster, follows its status and keeps the merkle path">
       <style>{css}</style>
       {steps.map((s, i) => (
         <li className="bfl-step" key={s.label}>
@@ -66,7 +66,7 @@ export default function BroadcastFlow() {
                 <p className="bfl-text">{s.app}</p>
               </div>
               <div className="bfl-side">
-                <span className="bfl-who">Arcade</span>
+                <span className="bfl-who">BSV Broadcaster</span>
                 <p className="bfl-text">{s.host}</p>
               </div>
             </div>
