@@ -6,7 +6,7 @@ sidebarTitle: "Broadcast with BSV Broadcaster"
 
 import BroadcastFlow from '/snippets/BroadcastFlow.jsx';
 
-BSV Broadcaster is the BSV Association's transaction broadcaster, and it replaces <Hint tip="The broadcaster that came before BSV Broadcaster. Its API is close enough that most clients only need a new URL">ARC</Hint> and <Hint tip="Merchant API: the broadcast API that came before ARC">mAPI</Hint>. It takes a signed transaction over HTTP, delivers it to the network, follows it until a miner includes it in a block, and returns the merkle path that proves it.
+BSV Broadcaster is the BSV Association's transaction broadcaster, and it replaces <Hint tip="The broadcaster that came before BSV Broadcaster. BSV Broadcaster keeps most of its request and response shapes, but the ARC class of @bsv/sdk does not work with it">ARC</Hint> and <Hint tip="Merchant API: the broadcast API that came before ARC">mAPI</Hint>. It takes a signed transaction over HTTP, delivers it to the network, follows it until a miner includes it in a block, and returns the merkle path that proves it.
 
 Use it when your app or server builds and signs transactions itself and has to send them. An app that uses `WalletClient` does not call BSV Broadcaster, because the wallet broadcasts the transactions it creates. In this guide you pick an endpoint, check its limits, submit a transaction and read its status.
 
@@ -164,15 +164,15 @@ These are the statuses you will see most:
 |--------|---------------|
 | `RECEIVED` | BSV Broadcaster checked it and queued it |
 | `SENT_TO_NETWORK` | Delivered to at least one <Hint tip="The node software of the BSV network">Teranode</Hint> node |
-| `ACCEPTED_BY_NETWORK` | A Teranode node accepted it into its mempool |
+| `ACCEPTED_BY_NETWORK` | A Teranode node accepted it into its <Hint tip="The set of valid transactions a node holds until a miner includes them in a block">mempool</Hint> |
 | `SEEN_ON_NETWORK` | Observed in a miner's subtree. Safe to treat as zero-confirmation, before it is mined |
 | `MINED` | In a block. The answer now carries `blockHash`, `blockHeight` and `merklePath` |
-| `IMMUTABLE` | Enough blocks are on top that a reorganization is no longer a practical concern |
+| `IMMUTABLE` | Enough blocks are on top that a <Hint tip="A reorganization, or reorg: the network switches to a longer chain, and the blocks it leaves are orphaned">reorganization</Hint> is no longer a practical concern |
 | `PENDING_RETRY` | Delivery failed and BSV Broadcaster tries again. Read `extraInfo` for the reason |
 | `REJECTED` | The network rejected it. Final |
 | `DOUBLE_SPEND_ATTEMPTED` | Another transaction spends the same output, and `competingTxs` lists it. Final |
 
-The `merklePath` of a mined transaction is a <Hint tip="BRC-74: a compact merkle path that proves a transaction is in a block">BUMP</Hint>. Keep it, because it is the proof that your app needs to verify the transaction with block headers. If the block is orphaned, BSV Broadcaster moves the transaction to the replacement block and sends a new `MINED` status with a new `merklePath`.
+The `merklePath` of a mined transaction is a <Hint tip="BRC-74: a compact merkle path that proves a transaction is in a block">BUMP</Hint>. Keep it, because it is the proof that your app needs to verify the transaction with block headers. If the block is <Hint tip="Left out of the chain after a reorganization. Its transactions return to the mempool and go into another block">orphaned</Hint>, BSV Broadcaster moves the transaction to the replacement block and sends a new `MINED` status with a new `merklePath`. Replace the stored proof each time a new `MINED` status arrives, and keep following the transaction until it reaches `IMMUTABLE`.
 
 ### Get notified instead of polling
 
@@ -181,16 +181,19 @@ Instead of asking again and again, you can have BSV Broadcaster tell you. Choose
 - Events: send an `X-CallbackToken` header with a token you choose, then read the events of that token with `curl -N "ENDPOINT/events?callbackToken=YOUR_TOKEN"`
 - Webhook: send an `X-CallbackUrl` header, and BSV Broadcaster posts each change to that address, which must be reachable from the internet
 
-Add `X-FullStatusUpdates: true` to get every intermediate status, not only the final ones. If the event stream drops, reconnect with a `Last-Event-ID` header set to the last `id` you saw, and the endpoint replays what you missed. A webhook request has a `User-Agent` that starts with `bsv-broadcaster-webhook/`, or with `arcade-webhook/` from an endpoint that runs a version before 0.19.0. The public endpoints ran 0.16.0 on 28 October 2026, so if you filter callbacks by `User-Agent`, allow both.
+Add `X-FullStatusUpdates: true` to get every intermediate status, not only the final ones. A webhook request has a `User-Agent` that starts with `bsv-broadcaster-webhook/`, or with `arcade-webhook/` from an endpoint that runs a version before 0.19.0. The public endpoints ran 0.16.0 on 28 October 2026, so if you filter callbacks by `User-Agent`, allow both.
 
 The `Teranode` broadcaster of the SDK sends neither header. Use `curl`, or write your own `Broadcaster` that adds them.
 
 Each event of the stream looks like this:
 
 ```text
+id: 1716205260987654321
 event: status
 data: {"txid":"9f2b…","txStatus":"MINED","timestamp":"..."}
 ```
+
+The `id` is the time of the event in nanoseconds. If the stream drops, reconnect with a `Last-Event-ID` header set to the last `id` you saw, and the endpoint replays the events you missed. A browser `EventSource` sends this header on its own.
 
 ## Handle failures
 
