@@ -20,14 +20,14 @@ Each piece gives the agent something different:
 - `@bsv/mcp`, `bsv-mcp`: gives tools that act and read live data: broadcast and status on BSV Broadcaster, a guardrail check of a project, BRCs and versions, plus dated facts. Use it for actions and live values, on testnet unless you configure Mainnet.
 </Visibility>
 
-Everything starts on testnet, where the coins have no value and come free from the faucet. Where the wallet lives is the app's choice, and the skill makes it per money path. In shape A, the app asks the user's <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet to sign. The skill gives every new app a login with two paths: [BSV Desktop](https://desktop.bsvb.tech/) on the same computer, and a phone wallet such as [BSV Browser](/wallets/bsv-browser/), paired by QR code. The wallet signs within the small monthly allowance the user granted to the app, and prompts for anything above it. In shape B, the app runs its own server wallet, which pays with no user present. No tool takes a private key, and the skill never asks for one.
+Everything starts on testnet, where the coins have no value and come free from the faucet. Where the wallet lives is the app's choice, and the skill makes it per money path. In shape A, the app asks the user's <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet to sign. The skill gives every new app a login with two paths: [BSV Desktop](https://desktop.bsvb.tech/) on the same computer, and a phone wallet such as [BSV Browser](/wallets/bsv-browser/), paired by QR code. BSV Desktop signs within the small monthly allowance the user granted to the app, and prompts for anything above it. In shape B, the app runs its own server wallet, which pays with no user present. No tool takes a private key, and the skill never asks for one.
 
 ## What you can ask
 
 With the pieces set up, try requests like these:
 
 - `Add tipping to my React app on BSV. Use BSV Desktop on testnet.`
-- `Check the status of transaction <txid> on BSV Broadcaster and tell me whether it is final.`
+- `Check the status of transaction TXID on BSV Broadcaster and tell me whether it is final.` Replace `TXID` with the transaction ID.
 - `Review this project against the BSV guardrails and fix every error.`
 - `Which wallet shape fits an app that pays creators automatically every night?`
 - `Should my game use a payment channel or one payment per move?`

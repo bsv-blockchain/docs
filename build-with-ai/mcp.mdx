@@ -123,7 +123,7 @@ The agent now has ten tools. The four `broadcaster_*` tools work with BSV Broadc
 | `docs_url` | Finds the live address of a page of these docs from its id |
 | `code_search`, `find_function_definition` | Search local clones of the BSV repositories, made with `setup.sh` from the repository, in the folder set in `BSV_REPOS_DIR` |
 
-The server also has 16 resources for the agent to read. Ten are dated facts, `bsv://facts/*`, on networks, BSV Broadcaster (`bsv://facts/bsv-broadcaster`), fees, WhatsOnChain, wallet limits, consensus, Rúnar, 1Color tokens, payment channels and versions. Each fact starts with the date it was verified, so the agent can tell how current it is. The other six are the guardrails, `bsv://guardrails`, the custody shapes, the threat model, the docs index, and the `@bsv/simple` 0.7 API and its traps. Two templates read one guardrail, as `bsv://guardrails#G-09` for example, and any BRC, as `bsv://brc/{id}`.
+The server also has 16 resources for the agent to read. Ten are dated facts, `bsv://facts/*`, on networks, BSV Broadcaster (`bsv://facts/bsv-broadcaster`), fees, WhatsOnChain, wallet limits, consensus, Rúnar, 1Color tokens, <Hint tip="Two parties lock funds in one output and exchange signed updates off the network. Only the last update is broadcast">payment channels</Hint> and versions. Each fact starts with the date it was verified, so the agent can tell how current it is. The other six are the guardrails, `bsv://guardrails`, the custody shapes, the threat model, the docs index, and the `@bsv/simple` 0.7 API and its traps. Two templates read one guardrail, as `bsv://guardrails#G-09` for example, and any BRC, as `bsv://brc/{id}`.
 
 It also has five prompts: `review_against_guardrails` runs the guardrail check and fixes the errors, `tokenize_with_1color` gives the encoding of 1Color token outputs, and `integrate_simple`, `add_simple_feature` and `debug_simple` work with `@bsv/simple`.
 
@@ -163,7 +163,7 @@ The guardrails are the rules a BSV app follows, such as broadcasting through BSV
   </Step>
 </Steps>
 
-For payment channels, the tool checks two guardrails in the code: G-36, that every lock time is in seconds or a block height, never in milliseconds, and G-08, that the app never signs a digest it received over the wire. The other channel guardrails, G-35, G-37 and G-38, are in the manual checklist.
+For payment channels, the tool checks G-36 in the code: every lock time is in seconds or a block height, never in milliseconds. The other channel guardrails, G-35, G-37 and G-38, are in the manual checklist. The tool also checks G-08 in the code, a rule for any app that signs a digest: the app signs only a digest it rebuilt itself, never one it received over the wire.
 
 A project is ready when the report shows 0 errors. The repository's tipping sample, [`samples/tipping-shape-a`](https://github.com/bsv-blockchain/bsv-ai-toolkit/tree/main/samples/tipping-shape-a), reports `0 errors, 0 warnings`, as [Start from the tipping sample](/build-with-ai/tipping-sample/) shows. To keep a finding that you checked and accept, add `// bsv-guardrail-ignore G-xx reason` on the flagged line or the line above. Every guardrail is listed in [`content/guardrails.yaml`](https://github.com/bsv-blockchain/bsv-ai-toolkit/blob/main/content/guardrails.yaml).
 
