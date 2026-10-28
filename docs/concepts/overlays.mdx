@@ -14,6 +14,10 @@ A node keeps the whole chain, but it does not know which transactions belong to 
 
 <OverlayCompare />
 
+<Visibility for="agents">
+The comparison has two columns. Index the chain yourself: you process every transaction on the network, you run the indexer or trust someone else's, you trust that the index left nothing out, and costs grow with the whole network. Use an overlay: you process only the transactions your app sends, the overlay checks each one, usually with SPV, it applies your own rules, and costs grow with your app.
+</Visibility>
+
 The state of a BSV app lives in <Hint tip="Unspent transaction output">UTXOs</Hint>, not in an account that a node updates. An output can be spent only once, and the miners reject a second spend. So when the overlay sees that an output it tracks was spent, it knows the state changed, and an app that holds an old copy finds out as soon as it tries to spend that output.
 
 ## The two parts of an overlay
@@ -21,6 +25,10 @@ The state of a BSV app lives in <Hint tip="Unspent transaction output">UTXOs</Hi
 An <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint> pairs a topic manager with a lookup service, and one overlay host can run many pairs. Their names start with `tm_` and `ls_`, as set by <Hint tip="BSV Request for Comments 87, the naming rules for topic managers and lookup services">BRC-87</Hint>:
 
 <OverlayParts />
+
+<Visibility for="agents">
+The diagram shows one overlay host with two parts. The topic manager, named with the tm_ prefix, applies the rules of your protocol and admits only the outputs that pass, for example a token with a valid format. The admitted outputs go to the lookup service, named with the ls_ prefix, which indexes them and answers queries about them, for example all the tokens of one asset.
+</Visibility>
 
 ## How a transaction goes through an overlay
 
