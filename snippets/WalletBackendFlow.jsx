@@ -14,7 +14,8 @@ const steps = [
   {
     label: 'Unlock',
     tag: 'WalletAuthenticationManager',
-    wallet: 'Combines the presentation key with the password to decrypt the root key from the user’s UMP token.',
+    who: 'None',
+    wallet: "Combines the presentation key with the password to decrypt the root key from the user's UMP token.",
     service: 'No backend call. The WAB never receives the password or the root key.',
   },
   {
@@ -34,7 +35,7 @@ const css = `
 .wbf-card { border: 1px solid var(--wd-border); border-radius: 14px; background: var(--wd-surface); overflow: hidden; }
 .wbf-top { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 12px 18px; border-bottom: 1px solid var(--wd-border); }
 .wbf-label { font-size: 15px; font-weight: 600; margin: 0; color: var(--wd-text); }
-.wbf-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--wd-primary); color: var(--wd-primary); }
+.wbf-tag { font-family: var(--wd-font-mono, ui-monospace, SFMono-Regular, Menlo, monospace); font-size: 12px; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--wd-primary); color: var(--wd-primary); }
 .wbf-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 12px; }
 .wbf-side { display: flex; flex-direction: column; gap: 4px; padding: 13px 16px; border: 1px solid var(--wd-border); border-radius: 10px; background: var(--wd-background); }
 .wbf-side + .wbf-side { border: 2px solid var(--wd-primary); padding: 12px 15px; }
@@ -66,7 +67,7 @@ export default function WalletBackendFlow() {
                 <p className="wbf-text">{s.wallet}</p>
               </div>
               <div className="wbf-side">
-                <span className="wbf-who">Backend</span>
+                <span className="wbf-who">{s.who || 'Backend'}</span>
                 <p className="wbf-text">{s.service}</p>
               </div>
             </div>
