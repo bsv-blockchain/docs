@@ -1,0 +1,211 @@
+---
+title: "Broadcast transactions with Arcade"
+description: "Send a signed transaction to Arcade, pick an endpoint and follow the transaction until it is mined."
+sidebarTitle: "Broadcast with Arcade"
+---
+
+import BroadcastFlow from '/snippets/BroadcastFlow.jsx';
+
+Arcade is the BSV Association's transaction broadcaster. It takes a signed transaction over HTTP, delivers it to the network, follows it until a miner includes it in a block, and returns the merkle path that proves it.
+
+Use it when your app or server builds and signs transactions itself and has to send them. An app that uses `WalletClient` does not need Arcade to broadcast, because the wallet broadcasts the transactions it creates. When the app acts on a payment, for example to deliver an order or collect a tip, it also submits the same transaction to Arcade and reads its status there. Submitting a transaction Arcade already has is safe. In this guide you pick an endpoint, check its limits, submit a transaction and read its status.
+
+## Before you begin
+
+You need `curl`, and for the SDK example Node.js 22 or newer. To submit a transaction you also need a fully signed one, as hex. This guide does not build it: create it with `@bsv/sdk`, as described on the [SDK page](/sdk/).
+
+<Callout type="warning">
+Arcade has public endpoints for testnet and for Mainnet. This guide uses testnet, where the coins have no value. A valid transaction you submit to a Mainnet endpoint spends real BSV, and a blockchain transaction cannot be reversed.
+</Callout>
+
+## How it works
+
+Your app submits the transaction and then follows it. Arcade reports each step as it happens:
+
+<BroadcastFlow />
+
+A `202` answer means Arcade checked the transaction and accepted it for delivery. It does not mean a miner has it. Follow the status until it reaches `SEEN_ON_NETWORK` or `MINED`.
+
+## Check an endpoint
+
+The public endpoints are open and need no API key:
+
+| Network | Operator | URL |
+|---------|----------|-----|
+| testnet | BSV Association | `https://arcade-v2-testnet-us-1.bsvblockchain.tech` |
+| Mainnet | BSV Association, United States | `https://arcade-us-1.bsvblockchain.tech` |
+| Mainnet | BSV Association, Europe | `https://arcade-eu-1.bsvblockchain.tech` |
+| Mainnet | GorillaPool | `https://arcade.gorillapool.io` |
+
+To go live, change the address to a Mainnet endpoint and read [Move your app to mainnet](/guides/go-to-mainnet/). Check the limits of the endpoint before you build a transaction:
+
+<Steps>
+  <Step title="Read the policy">
+    Each endpoint publishes the fee and the sizes it accepts:
+
+    ```bash
+    curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/policy
+    ```
+
+    ```text
+    {"policy":{"miningFee":{"satoshis":1,"bytes":1000},"maxtxsizepolicy":100000000,...},"timestamp":"..."}
+    ```
+
+    The `miningFee` is the lowest fee rate the endpoint accepts, here 1 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshi</Hint> for each 1,000 bytes. A transaction that pays less is refused. At the time of writing the Mainnet endpoints ask for 100 satoshis for each 1,000 bytes, so read the policy of the endpoint you use.
+  </Step>
+  <Step title="Check that it is healthy">
+    Ask the endpoint for its status:
+
+    ```bash
+    curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/health
+    ```
+
+    ```text
+    {"healthy":true,"version":"v0.16.0","status":"ok","blockHeight":1764512,"datahub_urls":[...]}
+    ```
+
+    `healthy` is `true` when the endpoint is connected to the network, and `blockHeight` is the block it has reached.
+  </Step>
+  <Step title="Try an invalid transaction">
+    Send input that is not a transaction, to see how Arcade refuses it. Nothing is broadcast:
+
+    ```bash
+    curl -s -X POST https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx \
+      -H "Content-Type: text/plain" \
+      --data "00"
+    ```
+
+    ```text
+    {"error":"failed to parse transaction"}
+    ```
+
+    The answer is a `400`, which Arcade gives whenever the transaction itself is wrong.
+  </Step>
+</Steps>
+
+## Choose the format
+
+Arcade takes the transaction in two formats:
+
+- Raw: the transaction as it appears on the chain
+- <Hint tip="Extended Format (BRC-30): the raw transaction plus the satoshis and locking script of every output it spends">EF</Hint>: preferred, because Arcade can check the fee and the scripts without looking up the outputs the transaction spends
+
+Arcade does not accept <Hint tip="Background Evaluation Extended Format (BRC-62): a transaction with the evidence a host needs to verify it.">BEEF</Hint>. Convert it to EF before you submit. A body can be up to 32 MiB, and it can be hex with `Content-Type: text/plain`, raw bytes with `application/octet-stream`, or JSON as `{ "rawTx": "HEX" }` with `application/json`.
+
+## Submit a transaction
+
+With a signed transaction in hand, send it to the endpoint you picked.
+
+### Submit with curl
+
+Replace `YOUR_SIGNED_TX_HEX` with the hex of your transaction:
+
+```bash
+curl -s -X POST https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx \
+  -H "Content-Type: text/plain" \
+  --data "YOUR_SIGNED_TX_HEX"
+```
+
+```text
+{"txid":"9f2b…","status":202,"txStatus":"RECEIVED"}
+```
+
+The `txid` is the identifier you follow in the next section. Submitting the same transaction again is safe: Arcade answers `202` again, with the status the transaction has reached.
+
+### Submit with TypeScript
+
+To submit from your app, use the `Teranode` broadcaster of `@bsv/sdk` with the `/tx` address of the endpoint. Here `tx` is your signed `Transaction`, and every input of it needs its `sourceTransaction`, so that the SDK can produce EF. This example was tested with `@bsv/sdk` 3.2.1:
+
+```ts
+import { Transaction, Teranode } from '@bsv/sdk'
+
+const arcade = new Teranode('https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx')
+
+const result = await tx.broadcast(arcade)
+console.log(result)
+```
+
+```text
+{ status: 'success', txid: '9f2b…', message: 'broadcast successful' }
+```
+
+<Callout type="warning">
+Do not point the `ARC` class of the SDK at Arcade, it calls a path Arcade does not serve. A call to `tx.broadcast()` with no argument uses GorillaPool's ARC, so pass the `Teranode` broadcaster as above.
+</Callout>
+
+## Follow the transaction
+
+### Read the status
+
+Ask Arcade for the status of the `txid`:
+
+```bash
+curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx/TXID
+```
+
+The `txStatus` field says where the transaction is. Once it is mined, the answer looks like this:
+
+```text
+{"txid":"9f2b…","txStatus":"MINED","blockHash":"0000…","blockHeight":972090,"merklePath":"BUMP_HEX"}
+```
+
+### Statuses
+
+These are the statuses you will see most:
+
+| Status | What it means |
+|--------|---------------|
+| `RECEIVED` | Arcade checked it and queued it |
+| `SENT_TO_NETWORK` | Delivered to at least one <Hint tip="The node software of the BSV network">Teranode</Hint> node |
+| `SEEN_ON_NETWORK` | Observed in a miner's subtree. Safe to treat as zero-confirmation, before it is mined |
+| `MINED` | In a block. The answer now carries `blockHash`, `blockHeight` and `merklePath` |
+| `PENDING_RETRY` | Delivery failed and Arcade tries again. Read `extraInfo` for the reason |
+| `REJECTED` | The network rejected it. Final |
+| `DOUBLE_SPEND_ATTEMPTED` | Another transaction spends the same output. Final |
+
+The `merklePath` of a mined transaction is a <Hint tip="BRC-74: a compact merkle path that proves a transaction is in a block">BUMP</Hint>. Keep it, because it is the proof that your app needs to verify the transaction with block headers.
+
+### Get notified instead of polling
+
+Instead of asking again and again, you can have Arcade tell you. Choose one of two ways when you submit:
+
+- Events: send an `X-CallbackToken` header with a token you choose, then read the events of that token with `curl -N "ENDPOINT/events?callbackToken=YOUR_TOKEN"`
+- Webhook: send an `X-CallbackUrl` header, and Arcade posts each change to that address, which must be reachable from the internet
+
+The `Teranode` broadcaster of the SDK sends neither header. Use `curl`, or write your own `Broadcaster` that adds them.
+
+Each event of the stream looks like this:
+
+```text
+event: status
+data: {"txid":"9f2b…","txStatus":"MINED","timestamp":"..."}
+```
+
+## Handle failures
+
+- Keep the signed transaction until you have seen it on the network
+- After a timeout or a `503` (Arcade is under backpressure and queued nothing), send the same bytes again. Do not build a new transaction from the same inputs, or you can double spend against your own first attempt
+- A `400` is final. Fix the transaction before you send it again. The one exception is code 476, a locktime that has not passed yet: send the same transaction again after it passes
+- Have a second route ready, for when the endpoint is unreachable
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="400 failed to parse transaction">
+    The body is not a complete transaction. Check that the hex is complete, and that `Content-Type` matches the body: `text/plain` for hex.
+  </Accordion>
+  <Accordion title="404 transaction not found">
+    `{"error":"transaction not found"}` means this endpoint has never seen the `txid`. Ask the same endpoint you submitted to, because each one keeps its own records.
+  </Accordion>
+  <Accordion title="Status stays PENDING_RETRY with TX_MISSING_PARENT">
+    The network does not know an output the transaction spends. In `extraInfo` the status shows `TX_MISSING_PARENT` and the `txid` of the missing transaction. Arcade accepted the transaction at intake, because EF carries the data of the spent outputs, and keeps retrying. Check that the transaction that created the output is on the network, and that you are on the right network.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+With a transaction broadcast, continue with:
+
+- [Verify your payment on the explorer](/get-started/verify/)
+- [Run your own Arcade](https://docs.bsvblockchain.org/broadcasting/run-your-own-arcade)
+- [Every way to broadcast](https://docs.bsvblockchain.org/broadcasting/broadcasting)

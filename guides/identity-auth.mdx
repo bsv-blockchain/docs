@@ -1,0 +1,231 @@
+---
+title: Authenticate users with their wallet
+sidebarTitle: Authenticate users
+description: Use the identity key of a BSV wallet to know which user sends each request to your Express API, with mutual authentication handled by middleware.
+---
+
+import AuthenticationFlow from '/snippets/AuthenticationFlow.jsx';
+
+**Mutual authentication** lets an API identify each caller by the identity key of the user's BSV wallet, so a route knows who sent the request without accounts or passwords. This fits an API that serves a user's own data or actions. In this guide you build an Express API that reads the identity key behind each request, then a Node client that signs its requests from BSV Desktop. Both run in one project you can adapt to your API.
+
+## Before you begin
+
+You need Node.js 22 or newer and a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/). [Send a payment from a web app](/get-started/quick-start-browser/) shows how to set one up. The BSV Desktop windows in this guide come from version 3.1.1.
+
+## How it works
+
+Mutual authentication runs before a route does. The wallet and the server prove their identity keys to each other, so only a verified caller reaches your code:
+
+<AuthenticationFlow />
+
+Every route can then read the caller as `req.auth.identityKey`.
+
+## Set up the authenticated API
+
+Start with the server that identifies the caller, then add a client that calls it, both in one new project folder.
+
+### Protect the API with the auth middleware
+
+Follow these steps in that folder to build the server and read the caller in a route:
+
+<Steps>
+  <Step title="Install the packages">
+    Install the packages and the TypeScript runner:
+
+    ```bash
+    npm install @bsv/auth-express-middleware @bsv/sdk @bsv/wallet-toolbox express
+    npm install --save-dev tsx typescript @types/express @types/node
+    ```
+
+    The middleware works with `@bsv/sdk` 2.8.5 or later in the 2.x line, and with 3.x. The code in this guide uses top-level `await`, so set `"type": "module"` in your `package.json`.
+  </Step>
+  <Step title="Create the server wallet">
+    Create `wallet.ts` in the project folder:
+
+    ```ts wallet.ts
+    import { PrivateKey } from '@bsv/sdk'
+    import { Setup } from '@bsv/wallet-toolbox'
+
+    export async function createServerWallet(rootKeyHex = PrivateKey.fromRandom().toHex()) {
+      const identityKey = PrivateKey.fromHex(rootKeyHex).toPublicKey().toString()
+      const filePath = `server-${identityKey.slice(0, 8)}.sqlite`
+      const env = {
+        chain: 'test' as const,
+        identityKey,
+        identityKey2: identityKey,
+        filePath,
+        taalApiKey: '',
+        devKeys: {},
+        mySQLConnection: ''
+      }
+      const { wallet } = await Setup.createWalletSQLite({ env, rootKeyHex, filePath, databaseName: 'server' })
+      return wallet
+    }
+    ```
+
+    The middleware signs its responses with a wallet that implements `WalletInterface`, and a bare `ProtoWallet` does not qualify. The identity key of this wallet is the identity of your server.
+
+    `Setup` reads only `chain` from `env` when you pass `rootKeyHex`, and the other fields are values that the `SetupEnv` type requires. The file name uses the start of the identity key, so each key gets its own wallet database.
+  </Step>
+  <Step title="Add the middleware">
+    Next, create `server.ts` in the same folder:
+
+    ```ts server.ts
+    import express from 'express'
+    import { createAuthMiddleware, type AuthRequest } from '@bsv/auth-express-middleware'
+    import { createServerWallet } from './wallet.js'
+
+    const wallet = await createServerWallet()
+    const app = express()
+    app.use(express.json())
+    app.use(createAuthMiddleware({ wallet }))
+    ```
+
+    Authentication is required by default, so a request without the authentication headers gets a `401` response.
+  </Step>
+  <Step title="Read the caller in a route">
+    Add the route in `server.ts`, below the middleware lines:
+
+    ```ts server.ts
+    app.get('/private', (req: AuthRequest, res) => {
+      res.json({ identityKey: req.auth?.identityKey })
+    })
+
+    app.listen(3000, () => console.log('Server on http://localhost:3000'))
+    ```
+
+    The value of `req.auth.identityKey` is the identity key of the wallet that signed the request. To also receive the <Hint tip="Signed statements about a user, issued by a third party, like a verifiable credential">certificates</Hint> the caller holds, the middleware accepts `certificatesToRequest` and `onCertificatesReceived`, described on the [package page on npm](https://www.npmjs.com/package/@bsv/auth-express-middleware).
+  </Step>
+</Steps>
+
+### Call the API with AuthFetch
+
+With the server ready, create the client that signs its requests from BSV Desktop:
+
+<Steps>
+  <Step title="Create the client">
+    Create `client.ts` in the same folder:
+
+    ```ts client.ts
+    import { AuthFetch, WalletClient } from '@bsv/sdk'
+
+    const wallet = new WalletClient('auto', 'localhost')
+    const authFetch = new AuthFetch(wallet)
+
+    const response = await authFetch.fetch('http://localhost:3000/private')
+    console.log(await response.json())
+    ```
+
+    The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app in its permission windows. BSV Desktop keeps permissions per originator, and a Node script cannot reach the wallet without one.
+  </Step>
+  <Step title="Start the server">
+    Start the server in one terminal:
+
+    ```bash
+    npx tsx server.ts
+    ```
+
+    It prints the line below and then stays busy:
+
+    ```text
+    Server on http://localhost:3000
+    ```
+  </Step>
+  <Step title="Run the client">
+    Run the client in the second terminal, with BSV Desktop open and unlocked:
+
+    ```bash
+    npx tsx client.ts
+    ```
+
+    The client prints the identity key of the BSV Desktop wallet that signed the request:
+
+    ```text
+    { identityKey: '<identity key of your wallet>' }
+    ```
+
+    BSV Desktop shows the start of this key for each profile under **Wallet profiles**.
+  </Step>
+</Steps>
+
+The response also carries the identity key of the server in the `x-bsv-auth-identity-key` header, so the client can tell which server answered.
+
+<Callout type="note">
+  By default BSV Desktop answers these calls without asking. With **Require permission for signature creation**, **Require permission for public key revelation** and **Require permission for identity key revelation** turned on in **Settings**, and the app reloaded, the first call opens two **Protocol Access Request** windows, for **identity key retrieval** and **auth message signature**. Click **Grant Access** to let the call through, and BSV Desktop remembers the choice for the originator.
+</Callout>
+
+## Customize and deploy
+
+Once the basic flow works, decide who can call the API and get the server ready for real traffic.
+
+### Handle callers without authentication
+
+To serve a route to everyone and still identify the callers who are authenticated, set `allowUnauthenticated`:
+
+```ts server.ts
+app.use(createAuthMiddleware({ wallet, allowUnauthenticated: true }))
+```
+
+A request from `AuthFetch` still reaches the route with the real identity key, and any other request arrives with the identity key `unknown`. Treat `unknown` as "not authenticated" and never as permission to do anything.
+
+### Keep the server identity stable
+
+To keep one server identity across restarts, create the key once and pass it to `createServerWallet`:
+
+<Steps>
+  <Step title="Generate the key">
+    ```bash
+    node -e "import('@bsv/sdk').then(({ PrivateKey }) => console.log(PrivateKey.fromRandom().toHex()))"
+    ```
+
+    <Callout type="warning">
+      The key is the identity of your server, and anyone who holds it can run a server with your identity. Keep it private, in a secret store, and never paste it into code or commit it.
+    </Callout>
+  </Step>
+  <Step title="Pass the key to the wallet">
+    Save the key as `SERVER_ROOT_KEY` in a `.env` file that is in your `.gitignore`, and read it in `server.ts`:
+
+    ```ts server.ts
+    const wallet = await createServerWallet(process.env.SERVER_ROOT_KEY)
+    ```
+
+    Start the server with `npx tsx --env-file=.env server.ts`.
+  </Step>
+</Steps>
+
+Without a key, the server gets a new random one, and so a new identity, at every start. BSV Desktop stores its **auth message signature** permission per server identity key.
+
+### Prepare the API for production
+
+Before the API serves real users, check these points:
+
+- Share the session state across instances. The default session manager lives in the memory of one process, so a service with several instances needs a shared `sessionManager`.
+- Review `transportLimits`. The defaults are a 30 second request timeout, 1,000 pending requests per process and 8 MiB for a signed response, and a request over a limit is rejected with `413` or `503`. Do not set `maxPendingRequests` too low, because each authenticated request can hold more than one pending slot.
+- Move off testnet by following [Move your app to mainnet](/guides/go-to-mainnet/).
+
+To adopt this in a real API, add `createAuthMiddleware` to the routes you want to protect and keep the server root key in your secret store.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Request rejected without the authentication headers" defaultOpen>
+    The request reached a protected route without the authentication headers, and the middleware answers `Mutual-authentication failed!`. Call the route with `AuthFetch`, or set `allowUnauthenticated` on the middleware if the route must accept anonymous callers.
+  </Accordion>
+  <Accordion title="Client cannot reach the wallet">
+    The script reached no wallet and throws `No wallet available over any communication substrate`. A Node script cannot connect to BSV Desktop without an originator, so pass one as the second argument of `WalletClient`, as in `client.ts`, and keep BSV Desktop open and unlocked.
+  </Accordion>
+  <Accordion title="Server wallet does not implement WalletInterface">
+    The middleware and `AuthFetch` take a `WalletInterface`. A `ProtoWallet` does not implement it and fails with `Type 'ProtoWallet' is missing the following properties from type 'WalletInterface'`. Pass a wallet like the one `createServerWallet` returns.
+  </Accordion>
+  <Accordion title="Script runs the files as CommonJS">
+    The runner `tsx` runs the files as CommonJS. The script stops with `Top-level await is currently not supported with the "cjs" output format`. Set `"type": "module"` in your `package.json`.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+With the authenticated API running, continue with:
+
+- [Gate an API behind payments](/guides/payments/)
+- [Keys and identity](/concepts/keys-identity/)
+- [Look up a user's identity key with Paymail](/standards/paymail/)

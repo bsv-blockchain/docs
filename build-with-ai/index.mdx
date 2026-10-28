@@ -1,0 +1,90 @@
+---
+title: "Coding with agents"
+description: "Set up an AI coding agent to build BSV apps the way these docs describe, with the BSV docs server, the bsv-dev skill and @bsv/mcp, on testnet."
+sidebarTitle: "Coding with agents"
+---
+
+import AgentToolkit from '/snippets/AgentToolkit.jsx';
+
+Set up an AI coding agent, such as [Claude Code](https://code.claude.com/docs/en/overview), Cursor, Windsurf or VS Code, so it builds BSV apps the way these docs describe. It takes three pieces, one command each: the BSV docs server gives the agent these pages, the `bsv-dev` skill gives it the decisions, and `@bsv/mcp` gives it tools. Use it when an agent writes your BSV code. At the end, the agent reads the docs, builds on testnet, keeps keys out of the code and checks its work against the BSV guardrails.
+
+## How it works
+
+Each piece gives the agent something different:
+
+<AgentToolkit />
+
+<Visibility for="agents">
+- BSV docs server, `bsv-docs`: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides.
+- `bsv-dev` skill: gives the decisions, as a playbook the agent loads for BSV work: who holds the keys, wallet login, payments, Arcade and when a payment is final, testnet to Mainnet, the guardrail review. Use it for building the way these docs do.
+- `@bsv/mcp`, `bsv-mcp`: gives tools that act and read live data: broadcast and status on Arcade, a guardrail check of a project, BRCs and versions, plus dated facts. Use it for actions and live values, on testnet unless you configure Mainnet.
+</Visibility>
+
+Everything starts on testnet, where the coins have no value and come free from the faucet. Where the wallet lives is the app's choice, and the skill makes it per money path. In shape A, the app asks the user's <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet, such as [BSV Desktop](https://desktop.bsvb.tech/), to sign. The wallet signs within the small monthly allowance the user granted to the app, and prompts for anything above it. In shape B, the app runs its own server wallet, which pays with no user present. No tool takes a private key, and the skill never asks for one.
+
+## What you can ask
+
+With the pieces set up, try requests like these:
+
+- `Add tipping to my React app on BSV. Use BSV Desktop on testnet.`
+- `Check transaction <txid> on Arcade and tell me whether it is final.`
+- `Review this project against the BSV guardrails and fix every error.`
+- `Which wallet shape fits an app that pays creators automatically every night?`
+- `Send my first BSV payment from a small Node.js script. Build it and run it.` [Send a payment with an AI agent](/build-with-ai/prompts/) walks through this one.
+
+## Set up your agent
+
+Each piece is one command in Claude Code. The next two pages show each command with its output.
+
+### Connect the BSV docs server
+
+The docs server runs on this site and needs no login:
+
+```bash
+claude mcp add --transport http bsv-docs https://bsv.writedocs.io/mcp
+```
+
+### Add @bsv/mcp
+
+`@bsv/mcp` runs on your machine through `npx` and needs Node.js 22 or newer:
+
+```bash
+claude mcp add bsv-mcp -e BSV_NETWORK=testnet -- npx -y @bsv/mcp
+```
+
+### Install the skill
+
+In Claude Code, install the plugin. It holds the skill and both servers, so it replaces the two commands above:
+
+```bash
+claude plugin marketplace add bsv-blockchain/bsv-ai-toolkit && claude plugin install bsv-dev@bsv
+```
+
+In any other agent that reads Agent Skills, install the skill on its own:
+
+```bash
+npx skills add bsv-blockchain/bsv-ai-toolkit
+```
+
+<CardGroup cols={2}>
+  <Card title="Connect your AI tool with MCP" href="/build-with-ai/mcp/">
+    Add the docs server and `@bsv/mcp`, see their tools and check a project against the guardrails.
+  </Card>
+  <Card title="Install the BSV agent skill" href="/build-with-ai/skill/">
+    Install the skill or the Claude Code plugin, and see what the skill decides and what stays yours.
+  </Card>
+</CardGroup>
+
+## Skills library
+
+The official skill is `bsv-dev`, maintained by the BSV Association in [bsv-blockchain/bsv-ai-toolkit](https://github.com/bsv-blockchain/bsv-ai-toolkit).
+
+Skills from other authors are listed in [`community-skills.yaml`](https://github.com/bsv-blockchain/bsv-ai-toolkit/blob/main/community-skills.yaml) in the same repository. Each one is added by pull request, with every link pinned to the commit that was reviewed. The list is empty today.
+
+## Next steps
+
+With the agent set up, start from a working app, let the agent send a first testnet payment, or read the docs the way it does:
+
+- [Start from the tipping sample](/build-with-ai/tipping-sample/)
+- [Send a payment with an AI agent](/build-with-ai/prompts/)
+- [Give agents the docs in Markdown](/build-with-ai/llm-resources/)

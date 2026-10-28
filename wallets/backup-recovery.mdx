@@ -1,0 +1,102 @@
+---
+title: "Back up and recover a wallet"
+description: "A BSV Desktop backup keeps the keys in a recovery phrase or backup shares and the balance and history in an encrypted wallet data file."
+sidebarTitle: "Back up a wallet"
+---
+
+Back up a BSV Desktop wallet and restore it on another device with the same keys, balance and history. Do it before the wallet holds coins you care about and before you move to a new computer, since a lost device with no backup means lost coins. The steps use testnet and were not tested on Mainnet. This page was written against BSV Desktop 3.3.1. At the end, the other device shows the same identity key, balance and **Activity** as the first one, and can spend the coins.
+
+## How it works
+
+A complete backup has two parts, and the restore needs both:
+
+| Part | What it brings back | Where in BSV Desktop |
+|------|---------------------|----------------------|
+| Recovery phrase, or two of three backup shares | The keys, so the same identity key and the same addresses | **Settings**, **Back up & recover** |
+| Wallet data file, encrypted with a passphrase | The records of every coin and payment, so the balance and the history | **Settings**, **Wallet data files** |
+
+With the keys alone, the restored wallet finds only recent payments to its BSV address that are not spent yet. The change from your own payments and the history come back only from the wallet data file, which holds no keys.
+
+## Save the keys
+
+The first step is to save the keys, with the recovery phrase, with backup shares, or both:
+
+<Callout type="warning">
+  Anyone with the recovery phrase, or with two backup shares, can spend your coins. Keep them offline and out of screenshots, code and websites, and never share them.
+</Callout>
+
+<Steps>
+  <Step>In BSV Desktop, open **Settings**, then **Back up & recover**.</Step>
+  <Step>Under **Recovery phrase**, choose **Show recovery material**, write the 12 words down in order, then choose **Hide**.</Step>
+  <Step>For backup shares, choose **Create backup shares** under **Three shares. Any two restore your wallet.**, then keep each of the three shares in a different place. This screen also shows the recovery phrase.</Step>
+</Steps>
+
+Any two shares recreate the recovery phrase, so losing one share is not a problem. A new set of shares does not cancel an older set.
+
+## Export the wallet data file
+
+With the keys saved, export the records that hold the balance and the history:
+
+<Steps>
+  <Step>In **Settings**, open **Wallet data files** and check the network in the line **Current network**, for example "Current network: test.".</Step>
+  <Step>Enter a passphrase of at least 12 characters in **Wallet file passphrase**, then the same passphrase in **Confirm export passphrase**. The **Open and validate wallet file** button between the two fields is for a restore, not for the export.</Step>
+  <Step>Choose **Export current wallet** and save the file, named `wallet-data.brc39` by default.</Step>
+</Steps>
+
+BSV Desktop confirms with "Encrypted wallet export saved.". The file covers the current network and the records up to the moment of the export, so export it again after new payments. Keep the passphrase apart from the file, since the file cannot be opened without it.
+
+## Restore the keys on the other device
+
+On the other device, install [BSV Desktop](/wallets/bsv-desktop/) and restore the keys first:
+
+<Steps>
+  <Step>On the welcome screen, choose **Import an existing wallet**.</Step>
+  <Step>In the **Recovery phrase** tab, enter the 12 words in **Recovery phrase or private key** and choose **Restore wallet**. If the screen shows **Created in BSV Desktop 2**, leave it unticked: it is only for a phrase from a version 2 wallet. To use shares instead, open the **Backup shares** tab, enter two shares in **Backup share 1** and **Backup share 2**, and choose **Restore wallet**.</Step>
+  <Step>Set a password for this device in **Device password** and **Confirm device password**, then choose **Protect my wallet**.</Step>
+  <Step>Switch to the network of the backup with the network button at the top right, since a restored wallet opens on Mainnet.</Step>
+</Steps>
+
+The **Everyday Identity Key** in **Settings**, **Your identity** now matches the first device. The balance shows only recent payments to the BSV address that are still unspent, often 0, until the wallet data file is loaded.
+
+## Restore the balance and history
+
+With the keys in place, load the wallet data file:
+
+<Steps>
+  <Step>In **Settings**, open **Wallet data files** and enter the file's passphrase in **Wallet file passphrase**.</Step>
+  <Step>Choose **Open and validate wallet file** and pick `wallet-data.brc39`. BSV Desktop shows "Verified N records. Review the identity and network below." and adds a card under **Saved imports and recovery** with the network, the number of records and the **Identity**.</Step>
+  <Step>
+    Check that the **Identity** on the card matches the **Everyday Identity Key** of the wallet, then choose **Use as main device copy** on the card and confirm.
+
+    <Frame>
+      <img src="/images/backup-recovery/01-use-as-main-device-copy.png" alt="A wallet data file card under Saved imports and recovery in BSV Desktop, with the network, the number of records, the identity key and the Use as main device copy button highlighted" />
+    </Frame>
+  </Step>
+  <Step>When BSV Desktop restarts, unlock it with the device password.</Step>
+</Steps>
+
+The wallet now shows the balance and the **Activity** entries of the first device, on the network of the file, and can spend those coins.
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Restore never finishes on a new install">
+    On every try, **Restore wallet** answers `Your wallet is still getting ready. Try again in a moment.` Close BSV Desktop, including its icon in the system tray, open it again, wait about 30 seconds and restore again.
+  </Accordion>
+  <Accordion title="Wallet data file does not open">
+    The message ends with `The file could not be unlocked. Check the passphrase and that the file is intact.` The passphrase is not the one used for the export. The failed try stays under **Saved imports and recovery** as **interrupted**. Enter the right passphrase and choose **Open and validate wallet file** again.
+  </Accordion>
+  <Accordion title="Merge into current wallet shows an error">
+    On the card, **Merge into current wallet** ends with `Invalid wallet file request`, and the balance does not change. Use **Use as main device copy** on the same card instead.
+  </Accordion>
+  <Accordion title="Payment to an older address is missing">
+    The BSV address changes every day, by the UTC date. **Check for payments** looks at the last four days and at every address this device has shown, so on a new device it misses older addresses. On the **BSV ADDRESS** tab, enter the day you shared the address in **Recover a payment sent to an older address**.
+  </Accordion>
+</AccordionGroup>
+
+## Related articles
+
+To learn more about wallets in BSV, review these articles:
+
+- [BSV Desktop](/wallets/bsv-desktop/)
+- [Send a payment from a web app](/get-started/quick-start-browser/)

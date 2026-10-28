@@ -1,0 +1,71 @@
+---
+title: "Give agents the docs in Markdown"
+description: "Read the BSV docs as Markdown through llms.txt and a .md copy of every page, and give an AI agent rules that keep it on testnet."
+sidebarTitle: "Docs for agents"
+---
+
+The site publishes every page of these docs as plain Markdown, so an AI agent can read the guides before it writes BSV code. It works with any AI tool that can open a web address or read pasted text, with no setup. Without the docs, an agent can write code for the wrong network or put a private key in your code. At the end, your agent knows where to find the pages it needs, and your project has rules that keep it on testnet.
+
+## Find the docs in Markdown
+
+The site publishes the docs in three Markdown forms:
+
+| File | Address | What it holds |
+|------|---------|---------------|
+| `llms.txt` | `https://bsv.writedocs.io/llms.txt` | The list of every page, grouped as in the sidebar, with its title, the address of its Markdown copy and a one line description |
+| `llms-full.txt` | `https://bsv.writedocs.io/llms-full.txt` | Every page in full, in one file |
+| Markdown copy of a page | The page address with `.md` in place of the final slash, for example `https://bsv.writedocs.io/docs/get-started/quick-start-browser.md` | One page in full |
+
+Point the agent at `llms.txt` first, so it reads only the pages it needs. Use `llms-full.txt` when your tool loads a whole file into its context at once.
+
+<Callout type="warning">
+  The page addresses in `llms.txt` use `docs.bsvblockchain.org`. To read a page, the agent opens the same path on `bsv.writedocs.io`, as the request and the rules below tell it.
+</Callout>
+
+## Give a page to your agent
+
+Every page has a **Copy page** menu. These options give the page to a chat:
+
+- Select **Copy page** to copy the page as Markdown, ready to paste into a chat.
+- Select **View as Markdown** to open the `.md` copy of the page.
+- Select **Open in ChatGPT**, **Open in Claude** or **Open in Perplexity** to start a chat about the page in that tool.
+
+For an agent that reads web addresses, such as [Claude Code](https://code.claude.com/docs/en/overview), put the address in your request:
+
+```text
+Read https://bsv.writedocs.io/llms.txt, then read the .md copies of the pages you need before you write BSV code. The links in llms.txt use docs.bsvblockchain.org, so open the same path on bsv.writedocs.io instead.
+```
+
+To give the agent search across all pages instead, use **Copy MCP server URL**, **Connect to Cursor** or **Connect to VS Code** in the same menu, as in [Connect your AI tool with MCP](/build-with-ai/mcp/).
+
+## Add the rules to your project
+
+Add these nine rules to the instructions file your agent reads in every session, such as `CLAUDE.md` at the root of the project for Claude Code:
+
+```markdown CLAUDE.md
+<!-- bsv-dev rules: begin -->
+1. Read https://bsv.writedocs.io/llms.txt first, then fetch only the pages the task needs. Its page links point at docs.bsvblockchain.org; open the same path on bsv.writedocs.io instead.
+2. When the `bsv-docs` and `bsv-mcp` MCP servers are connected, use their tools before relying on memory for BSV APIs, versions, limits or fees.
+3. Work on testnet unless `BSV_NETWORK=mainnet` is set on purpose by the operator. Before a payment, check that `wallet.getNetwork()` returns `testnet`.
+4. For the user's wallet, connect with `@bsv/sdk` 3.x `new WalletClient('auto', originator)`, from the browser or a local script.
+5. Never hold, ask for, print or generate for production use a private key, WIF or recovery phrase; the user's wallet (shape A) or an operator-set variable outside the repo (shape B) holds it.
+6. Testnet coins come from https://bsvfaucet.com and wallet approvals come from the user: ask the user for both, and never work around either.
+7. Use Arcade for every broadcast and every txid state read; never the legacy ARC API, and never WhatsOnChain as the truth for a known txid.
+8. A transaction is final at `SEEN_ON_NETWORK` or later with no competing transaction; never wait for confirmations or `MINED`.
+9. If `bsv-mcp` is connected, run `check_guardrails` with the project's absolute path and fix every error before calling the work done.
+<!-- bsv-dev rules: end -->
+```
+
+These rules are the ones the `bsv-dev` skill ships, as `CLAUDE.md.snippet`, `AGENTS.md.snippet` and `bsv.mdc` for Cursor. In rule 5, shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. The begin and end lines let you or a tool find the block and update it. With the skill installed, the agent offers you these rules for your project, and you add them yourself: see [Install the BSV agent skill](/build-with-ai/skill/).
+
+<Callout type="note">
+  Rules 2 and 9 apply when the `bsv-docs` and `bsv-mcp` servers are connected. Without `bsv-mcp`, the agent cannot run `check_guardrails`, so connect both servers as in [Connect your AI tool with MCP](/build-with-ai/mcp/).
+</Callout>
+
+## Next steps
+
+With the docs and the rules in place, your agent can build a first payment from the Quick Start, search the docs through MCP or load the skill:
+
+- [Send a payment from a web app](/get-started/quick-start-browser/)
+- [Connect your AI tool with MCP](/build-with-ai/mcp/)
+- [Install the BSV agent skill](/build-with-ai/skill/)
