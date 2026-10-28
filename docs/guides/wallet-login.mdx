@@ -27,7 +27,7 @@ The login reacts to what it finds, in the order BRC-185 sets out:
 | The user chooses the phone | Shows a QR code. The user scans it with the phone and approves the connection there |
 | The user is logged in | Shows which wallet is connected, with a control to change wallet or log out |
 
-The identity key that the wallet returns tells the page who the user is. It does not prove it to your server. To have your API know which user sent each request, add mutual authentication as in [Authenticate users with their wallet](/docs/guides/identity-auth/).
+The identity key that the wallet returns tells the page who the user is. It does not prove it to your server: the page reads the key in the browser, and nothing checks that the caller holds the private key behind it, so any script or modified client can send any public key. To have your API know which user sent each request, add mutual authentication as in [Authenticate users with their wallet](/docs/guides/identity-auth/).
 
 ## How the phone connection works
 
@@ -259,6 +259,10 @@ The login component holds the decisions from the table above. Run these steps in
     ```
 
     Keep `user.wallet` for the rest of your app. It has the same methods whether the wallet is on the computer or the phone.
+
+    <Callout type="warning">
+      `user.identityKey` identifies the user inside the page only. Do not send it to your API as proof of who the user is, because a client can send another user's key. Before your server trusts a key for data or actions, verify it with mutual authentication, as in [Authenticate users with their wallet](/docs/guides/identity-auth/).
+    </Callout>
   </Step>
   <Step title="Try the computer path">
     Start the app with `npm run dev`, open `http://localhost:5173` and select **Log in**. With BSV Desktop open and unlocked, the page shows the identity key of the wallet, shortened here:
