@@ -3,50 +3,39 @@ title: "Wallets overview"
 description: "Pick a wallet to use, BSV Desktop on a computer or BSV Browser on a phone, or start building your own BRC-100 wallet."
 ---
 
-A wallet holds your keys and signs what your apps ask for, so no private key goes in your code. This page helps you pick a wallet to use, and points you to the pages for backing it up and for building your own.
+import BlueTable from '/snippets/BlueTable.jsx';
 
-## Pick a wallet to use
+A wallet holds your keys and signs what your apps ask for, so no private key goes in your code. The BSV Association makes two wallets, and both implement <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>.
 
-BSV has two wallets from the BSV Association, one for the computer and one for the phone. Both implement <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>.
+## Choose a wallet
 
-<div className="cards-interactive">
+<BlueTable>
 
-<CardGroup cols={2}>
-  <Card title="BSV Desktop" href="/docs/wallets/bsv-desktop/">
-    The wallet for macOS, Windows and Linux. These docs use it on testnet.
-  </Card>
-  <Card title="BSV Browser" href="/docs/wallets/bsv-browser/">
-    The wallet for iOS and Android, built into a mobile browser for BSV websites.
-  </Card>
-</CardGroup>
+| Wallet | Runs on | Use it to | Get it |
+|---|---|---|---|
+| [BSV Desktop](/docs/wallets/bsv-desktop/) | macOS, Windows and Linux | Build and test apps on your computer | [desktop.bsvb.tech](https://desktop.bsvb.tech/) |
+| [BSV Browser](/docs/wallets/bsv-browser/) | iOS and Android | Use BSV web apps and pay from your phone | [mobile.bsvb.tech](https://mobile.bsvb.tech) |
 
-</div>
+</BlueTable>
 
-| | BSV Desktop | BSV Browser |
-|---|---|---|
-| Runs on | macOS, Windows and Linux | iOS and Android |
-| Use it to | Build and test apps on your computer | Use BSV web apps and pay from your phone |
-| Where to get it | [desktop.bsvb.tech](https://desktop.bsvb.tech/) | [mobile.bsvb.tech](https://mobile.bsvb.tech) |
+## Use BSV Desktop on testnet for these docs
 
-If you follow the guides in these docs, use BSV Desktop. Start with [Send a payment from a web app](/docs/get-started/quick-start-browser/).
+The guides in these docs use BSV Desktop on testnet, where coins are free and have no value.
 
 <Callout type="warning">
-  A new BSV Desktop wallet opens on Mainnet, where coins have real value. The guides use testnet, except the guide about Mainnet, and the Quick Start shows how to switch.
+  A new BSV Desktop wallet opens on Mainnet, where coins have real value. Switch it to testnet before you follow a guide, as the Quick Start shows. Every guide uses testnet, except the one about moving to Mainnet.
 </Callout>
 
 ## Back up your wallet
 
-A wallet keeps your keys on your device. Back up a BSV Desktop wallet before it holds coins you care about, as in [Back up and recover a wallet](/docs/wallets/backup-recovery/). The backup options of BSV Browser are on its [own page](/docs/wallets/bsv-browser/).
+Back up a wallet before it holds coins you care about. For BSV Desktop, follow [Back up and recover a wallet](/docs/wallets/backup-recovery/). BSV Browser explains its backup options on its own page.
 
 ## Build your own wallet
 
 To build a wallet instead of using one, follow [Build a wallet](/docs/wallet-dev/). To find other BRC-100 wallets, see the wallet directory at [brc100.org](https://brc100.org).
 
-## Related articles
+## Next steps
 
-To learn more about wallets in BSV, review these articles:
+With BSV Desktop installed on testnet, send your first payment:
 
-- [BSV Desktop](/docs/wallets/bsv-desktop/)
-- [BSV Browser](/docs/wallets/bsv-browser/)
-- [Back up and recover a wallet](/docs/wallets/backup-recovery/)
-- [How wallets and BRC-100 work](/docs/concepts/wallet-model/)
+- [Send a payment from a web app](/docs/get-started/quick-start-browser/)
