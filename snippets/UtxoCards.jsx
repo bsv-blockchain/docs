@@ -5,8 +5,8 @@ const sets = {
   broadcast: {
     label: 'The three broadcast options',
     cards: [
-      { name: 'Immediate broadcast', who: 'Broadcast right away', what: 'The wallet broadcasts before createAction returns. A successful broadcast moves the proof request to unmined and the transaction to unproven.' },
-      { name: 'acceptDelayedBroadcast', who: 'Broadcast later by the Monitor', what: 'The proof request starts as unsent and the transaction as unprocessed. The Monitor broadcasts it later.' },
+      { name: 'acceptDelayedBroadcast: false', who: 'Broadcast right away', what: 'The wallet broadcasts before createAction returns. A successful broadcast moves the proof request to unmined and the transaction to unproven.' },
+      { name: 'acceptDelayedBroadcast: true', who: 'Broadcast later by the Monitor, the default', what: 'The proof request starts as unsent and the transaction as unprocessed. The Monitor broadcasts it later.' },
       { name: 'noSend', who: 'Not broadcast', what: 'Without sendWith, both start as nosend and the transaction is not broadcast. It waits for a later sendWith batch.' },
     ],
   },
