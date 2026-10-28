@@ -6,14 +6,11 @@ const roles = [
     who: 'The skill',
     where: 'Decides by default',
     items: [
-      'A BRC-100 wallet for users, with the identity key as their id',
-      'A login with BSV Desktop or a phone wallet over Wallet Relay',
-      'Who holds the keys, per money path',
+      'A BRC-100 wallet for users, and who holds the keys, per money path',
+      'A login that offers BSV Desktop and a phone wallet over Wallet Relay',
       <>BSV Broadcaster for every broadcast and status read, final at <code>SEEN_ON_NETWORK</code> or later with no competing transaction</>,
-      <><code>WalletClient('auto', originator)</code> from <code>@bsv/sdk</code> 3.x</>,
-      'Testnet, with fees at 100 sat/kB on both networks, never below the BSV Broadcaster /policy',
-      'One transaction per payment, a payment channel only for many updates between two parties',
-      'Rúnar for contracts, 1Color for tokens',
+      'Testnet, with fees at 100 sat/kB, never below the BSV Broadcaster /policy',
+      'One transaction per payment, a payment channel only for many updates, Rúnar for contracts, 1Color for tokens',
     ],
   },
   {
@@ -21,7 +18,8 @@ const roles = [
     where: 'Keep these steps',
     items: [
       'Run the install commands, since the skill never edits your agent configuration',
-      "Get testnet coins and approve the wallet's prompts, in BSV Desktop or on your phone",
+      'Get testnet coins from the faucet',
+      "Approve the wallet's prompts, in BSV Desktop or on your phone",
       'Say yes before any broadcast, after the agent shows the outputs, total, fee and network',
       <>Set <code>BSV_NETWORK=mainnet</code> yourself</>,
     ],
