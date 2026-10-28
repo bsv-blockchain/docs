@@ -1,4 +1,4 @@
-// Blue frame for a Markdown table, in the colors of the other boxes (same look as GlossaryTable).
+// Blue frame for a Markdown table, in the colors of the other boxes. Shared by every page with a table (glossary, Build a wallet, ...).
 // The rows stay in the Markdown table of the page, so search and the Markdown copy for agents keep them.
 
 export default function BlueTable({ children }) {

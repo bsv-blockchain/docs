@@ -18,6 +18,10 @@ Each transaction the wallet creates has two records, and each has its own status
 
 <UtxoRecords />
 
+<Visibility for="agents">
+Each transaction has two status records. transactions.status is what the app sees: the status that listActions reports, from unsigned to completed or failed. proven_tx_reqs.status is what the Monitor works on: the status of the proof request, which tracks the broadcast and the Merkle proof in the background.
+</Visibility>
+
 They advance together, but they do not use the same set of values.
 
 ## How createAction claims the coins
@@ -62,6 +66,10 @@ Both paths end in `processAction`, which checks the signed transaction against t
 
 <UtxoCards set="broadcast" />
 
+<Visibility for="agents">
+There are three broadcast options. Immediate broadcast: the wallet broadcasts before createAction returns, and a successful broadcast moves the proof request to unmined and the transaction to unproven. acceptDelayedBroadcast: the proof request starts as unsent and the transaction as unprocessed, and the Monitor broadcasts it later. noSend without sendWith: both start as nosend, the transaction is not broadcast, and it waits for a later sendWith batch.
+</Visibility>
+
 When a broadcast happens, its result sets both statuses:
 
 <BlueTable>
@@ -82,6 +90,10 @@ A late result never moves a proof request back from `completed` or `unmined`.
 These are the values of `transactions.status`. A transaction usually moves along the top row, and the boxes with a blue border are final:
 
 <UtxoStatusFlow />
+
+<Visibility for="agents">
+The usual path of transactions.status is unsigned (createAction committed the plan and the inputs are claimed), then unprocessed (signed, not broadcast yet), then sending (queued for broadcast, or retrying after a service error), then unproven (the network accepted it and the wallet has no Merkle proof yet), then completed (the wallet found and validated its Merkle proof, final). Off the usual path: nosend (signed and kept back by the noSend option), failed (aborted, rejected or abandoned, final unless an operator sets it to unfail) and unfail (set by an operator to retry: unproven if a proof is found, failed if not).
+</Visibility>
 
 The proof request is final at `completed`, `invalid` or `doubleSpend`. Every other value is still open, and the Monitor keeps working on it.
 
@@ -127,6 +139,10 @@ Releasing the inputs is optimistic, since most failures are temporary. When the 
 
 <UtxoCards set="internalize" />
 
+<Visibility for="agents">
+There are two internalizeAction protocols. wallet payment counts in the balance: the wallet checks the BRC-29 derivation of the output, then stores it as managed change in the default basket, where it can fund the next transaction. basket insertion stays out of the balance: the wallet stores the output as a custom output in a named basket, with the app's own instructions and tags, and an insertion into default is rejected.
+</Visibility>
+
 A transaction that arrives with a Merkle proof is stored as `completed`. Without one, it is stored as `unproven`.
 
 ## What the Monitor settles in the background
@@ -134,6 +150,10 @@ A transaction that arrives with a Merkle proof is stored as `completed`. Without
 Every method above returns before the transaction is final. The `Monitor` runs tasks on an interval that broadcast what is waiting, collect proofs and repair state that drifted:
 
 <MonitorTasks />
+
+<Visibility for="agents">
+The Monitor tasks: TaskSendWaiting broadcasts unsent requests and retries stale sending ones. TaskCheckForProofs fetches Merkle proofs for unmined requests and marks the request and the transaction completed. TaskReviewStatus reconciles each transaction with its proof request. TaskReviewDoubleSpends checks whether a reported double spend is real, and sends a false positive to unfail. TaskFailAbandoned moves old transactions that never reached a final status to failed. TaskReviewUtxos repairs change outputs whose state drifted.
+</Visibility>
 
 The Monitor profile decides which tasks run, and not every task class is registered by default. Delayed broadcasts and the move from `unproven` to `completed` both depend on the Monitor.
 
