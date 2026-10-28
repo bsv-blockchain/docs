@@ -3,7 +3,7 @@ title: "BSV Browser"
 description: "BSV Browser is the BSV Association's mobile wallet for iOS and Android, a web browser with a self-custodial wallet inside."
 ---
 
-BSV Browser is the BSV Association's wallet for the phone. It is a web browser for iOS and Android with a <Hint tip="Only you hold the keys. Nobody else can spend your coins or recover the wallet for you">self-custodial</Hint> wallet inside, so a BSV web app that you open in it can ask the wallet for payments and identity through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>. Read this page to decide when to use it instead of [BSV Desktop](/docs/wallets/bsv-desktop/), and to find where its main settings are.
+**BSV Browser** is the BSV Association's wallet for the phone. It is a web browser for iOS and Android with a <Hint tip="Only you hold the keys. Nobody else can spend your coins or recover the wallet for you">self-custodial</Hint> wallet inside, so a BSV web app that you open in it can ask the wallet for payments and identity through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>.
 
 ## When to use BSV Browser
 
@@ -14,16 +14,16 @@ Use BSV Browser when you want a wallet on your phone, or when you want to open a
 | Runs on | macOS, Windows and Linux | iOS and Android |
 | How apps reach the wallet | Apps on the same computer, through ports on your machine | Web apps opened inside the browser |
 
-Download BSV Browser from the [App Store](https://apps.apple.com/app/bsv-browser/id6755637932) or from [Google Play](https://play.google.com/store/apps/details?id=org.bsvassociation.browser). The [BSV Browser site](https://mobile.bsvb.tech) has the same links.
+Download BSV Browser from the [App Store](https://apps.apple.com/app/bsv-browser/id6755637932) or from [Google Play](https://play.google.com/store/apps/details?id=org.bsvassociation.browser).
 
 ## Browser mode and wallet mode
 
-BSV Browser starts as a normal web browser, with tabs, bookmarks and history, and no wallet. Nothing is created until you choose to. When you create or import a wallet, the browser switches to wallet mode, and BSV web apps can request payments, identity and certificates from it. A permission sheet shows each request, and you approve or reject it.
+BSV Browser starts as a normal web browser, with tabs, bookmarks and history, and no wallet. When you create or import a wallet, the browser switches to wallet mode, and BSV web apps can request payments, identity and certificates from it. A permission sheet shows each request, and you approve or reject it.
 
 ## Where things are
 
 <Callout type="warning">
-  Creating a wallet makes a recovery phrase that anyone can use to spend your coins. Keep it offline and never share it. Check **BSV Network** in **Wallet**, **Settings** before you receive or send coins: Mainnet moves real BSV, and testnet is for learning.
+  Creating a wallet makes a recovery phrase that anyone can use to spend your coins. Keep it offline and never share it. Check **BSV Network** in **Wallet**, **Settings** before you receive or send coins. Testnet is for learning, and Mainnet moves real BSV.
 </Callout>
 
 Open the menu with the three dots at the bottom right of the screen, then choose **Wallet**.
@@ -38,7 +38,7 @@ Open the menu with the three dots at the bottom right of the screen, then choose
 
 ## Networks
 
-**BSV Network** offers **Mainnet**, **Testnet** and <Hint tip="A test network for Teranode, the node software of the BSV network">**Teratest**</Hint>. Switching the network rebuilds the wallet on the chain you choose. Use testnet to learn and test, since its coins are free and have no value. A payment on Mainnet moves real BSV and cannot be undone.
+In **Wallet**, **Settings**, **BSV Network** offers **Mainnet**, **Testnet** and <Hint tip="A test network for Teranode, the node software of the BSV network">**Teratest**</Hint>. Switching the network rebuilds the wallet on the chain you choose. Use testnet to learn and test, since its coins are free and have no value. A payment on Mainnet moves real BSV and cannot be undone.
 
 ## Back up your wallet
 
@@ -48,14 +48,14 @@ Open the menu with the three dots at the bottom right of the screen, then choose
 
 BSV Browser gives you four ways to back up. Use more than one.
 
-- The recovery phrase: 12 words that restore your keys on any compatible device. Find it in **Backup Wallet Keys**. It restores only the keys, not the history
-- Recovery shares: **Print Recovery Shares** splits the key into three printed pages, and any two of them restore the wallet. To restore, choose **Import from backup**, then **Scan Backup Shares**, and scan two pages. Like the phrase, they restore only the keys
-- Wallet data: **Export Wallet Data** saves the wallet database as a `.db` file, with the transaction history, the coins and the certificates. To restore it, choose **Wallet**, **Settings**, **Import Wallet Data** and pick the file
-- Private backup: by default, BSV Browser keeps an encrypted copy of the wallet database on a BSV Association server. It brings back the history on a new phone after you restore the keys with the phrase or the shares. The copy is encrypted on your device with a key that your phrase restores, so BSV Association cannot read it and cannot restore it for you. Turn it off or delete it in **Wallet**, **Settings**, **Private backup**. With it off, the phrase alone may not recover all of your funds on a new device
+- The recovery phrase is 12 words that restore your keys on any compatible device. Find it in **Backup Wallet Keys**. It restores only the keys, not the history
+- Recovery shares come from **Print Recovery Shares**, which splits the key into three printed pages, and any two of them restore the wallet. To restore, choose **Import from backup**, then **Scan Backup Shares**, and scan two pages. Like the phrase, they restore only the keys
+- Wallet data comes from **Export Wallet Data**, which saves the wallet database as a `.db` file, with the transaction history, the coins and the certificates. To restore it, choose **Wallet**, **Settings**, **Import Wallet Data** and pick the file
+- The private backup is on by default. BSV Browser keeps an encrypted copy of the wallet database on a BSV Association server. It brings back the history on a new phone after you restore the keys with the phrase or the shares. The copy is encrypted on your device with a key that your phrase restores, so BSV Association cannot read it and cannot restore it for you. Turn it off or delete it in **Wallet**, **Settings**, **Private backup**. With it off, the phrase alone may not recover all of your funds on a new device
 
 ## Related articles
 
-To learn more about wallets in BSV, review these articles:
+More about wallets:
 
 - [Wallets overview](/docs/wallets/)
 - [BSV Desktop](/docs/wallets/bsv-desktop/)
