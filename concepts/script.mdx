@@ -43,7 +43,7 @@ The network checks every input the same way. It runs the unlocking script first,
 
 ### The stack step by step
 
-Try it yourself: press Step to run the next chunk of the P2PKH pair, then switch to another key and run it again to see the spend fail.
+Press Step to walk through the P2PKH pair one chunk at a time, then switch to another key and run it again to watch the spend fail.
 
 <ScriptStepper />
 
@@ -116,7 +116,7 @@ A script template packages one kind of script. Its `lock` method builds a lockin
 
 ### Templates in `@bsv/sdk`
 
-Try it yourself: pick a template to see what `lock` and `unlock` take and return, and how large its unlocking script is expected to be.
+Switch between the three templates to compare what `lock` and `unlock` take and return, and how large each unlocking script is expected to be.
 
 <ScriptTemplates />
 
