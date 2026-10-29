@@ -3,8 +3,8 @@
 import { Fragment } from 'react';
 
 const path = [
-  { name: '.env', what: 'Two testnet keys written once by Setup.makeEnv()' },
-  { name: "Setup.getEnv('test')", what: 'Reads the keys and sets the chain to testnet' },
+  { name: '.env', what: 'Testnet and Mainnet keys and placeholder API keys, written once by Setup.makeEnv()' },
+  { name: "Setup.getEnv('test')", what: 'Reads the testnet keys and sets the chain to testnet' },
   { name: 'Setup.createWalletSQLite', what: 'Builds the key deriver, the storage, the services and the Monitor, then the wallet' },
   { name: 'setup', what: 'The object your code uses: the wallet and every part behind it' },
 ];

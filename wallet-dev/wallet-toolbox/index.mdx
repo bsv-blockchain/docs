@@ -1,13 +1,13 @@
 ---
 title: "Build a wallet with wallet-toolbox"
-description: "Set up a BRC-100 wallet with the Setup helpers of @bsv/wallet-toolbox, run its Monitor, back up its records and choose where it stores them."
+description: "Set up a BRC-100 wallet with the Setup helpers of @bsv/wallet-toolbox, run its Monitor and choose where it stores its records."
 sidebarTitle: "Use wallet-toolbox"
 ---
 
 import BlueTable from '/snippets/BlueTable.jsx';
 import ToolboxSetupFlow from '/snippets/ToolboxSetupFlow.jsx';
 
-Start a <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet on `@bsv/wallet-toolbox` with its `Setup` helpers, then decide where the wallet keeps its records. At the end, you have a testnet wallet in Node.js with SQLite storage, a running Monitor and a backup copy of its records, plus the call that opens the same wallet on remote storage or in a browser. Start here when you build a wallet product or a wallet-like service. The `Setup` helpers build the whole wallet in one call and return each part, so you can start from a working wallet and replace one part at a time.
+Start a <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet on `@bsv/wallet-toolbox` with its `Setup` helpers, then decide where the wallet keeps its records. At the end, you have a testnet wallet in Node.js with SQLite storage and a running Monitor, plus the calls that open a wallet with the same keys on remote storage or in a browser.
 
 ## Before you begin
 
@@ -15,12 +15,12 @@ You need Node.js 22 or newer. The example runs on testnet with a new wallet that
 
 ## How it works
 
-The `Setup` class turns two keys in a `.env` file into a complete wallet:
+The `Setup` class turns the keys in a `.env` file into a complete wallet:
 
 <ToolboxSetupFlow />
 
 <Visibility for="agents">
-How Setup builds a wallet, in four steps: .env holds two testnet keys written once by Setup.makeEnv(). Setup.getEnv('test') reads the keys and sets the chain to testnet. Setup.createWalletSQLite builds the key deriver, the storage, the services and the Monitor, then the wallet. setup is the object your code uses: the wallet and every part behind it.
+How Setup builds a wallet, in four steps: .env holds testnet and Mainnet keys and placeholder API keys, written once by Setup.makeEnv(). Setup.getEnv('test') reads the testnet keys and sets the chain to testnet. Setup.createWalletSQLite builds the key deriver, the storage, the services and the Monitor, then the wallet. setup is the object your code uses: the wallet and every part behind it.
 </Visibility>
 
 The `setup` object it returns gives you each part by name:
@@ -45,7 +45,7 @@ The first step is to create a Node.js project folder with the toolbox, the keys 
 
 <Steps>
   <Step title="Install the toolbox">
-    Create an empty folder, open it in the terminal and install `@bsv/wallet-toolbox`:
+    In an empty folder, install `@bsv/wallet-toolbox`:
 
     ```bash
     npm init -y
@@ -55,7 +55,7 @@ The first step is to create a Node.js project folder with the toolbox, the keys 
     The toolbox installs `@bsv/sdk`, Knex and SQLite with it, so the wallet needs no database server.
   </Step>
   <Step title="Keep the keys out of git">
-    Create `.gitignore` in the project folder, so the keys and the wallet files never reach a repository:
+    Add `.gitignore` to the project folder, so the keys and the wallet files never reach a repository:
 
     ```text .gitignore
     .env
@@ -65,10 +65,10 @@ The first step is to create a Node.js project folder with the toolbox, the keys 
   </Step>
   <Step title="Generate the keys">
     <Callout type="warning">
-      The `.env` file holds the private keys of the wallet. Keep it private, never print it, paste it into code or commit it, and use this wallet only on testnet. Anyone with this file can spend the coins of the wallet.
+      The `.env` file holds the private keys of the wallet. Keep it private, never print it, paste it into code or commit it, and use this wallet only on testnet. The file also holds Mainnet keys that this page does not use. Anyone with this file can spend the coins of the wallet.
     </Callout>
 
-    Write the keys to `.env` with `Setup.makeEnv()`. Save this script as `create-env.mjs` in the same folder:
+    `Setup.makeEnv()` generates the keys. Save this script as `create-env.mjs` in the same folder, to write them to `.env`:
 
     ```javascript create-env.mjs
     import { existsSync, writeFileSync } from 'node:fs'
@@ -82,17 +82,15 @@ The first step is to create a Node.js project folder with the toolbox, the keys 
     }
     ```
 
-    Run it once:
-
-    ```bash
-    node create-env.mjs
-    ```
+    Run it once with `node create-env.mjs`:
 
     ```text
     Wrote the test wallet keys to .env.
     ```
 
-    The script never prints the keys, and it does not replace an existing `.env`.
+    - `.env` holds two testnet keys, two Mainnet keys and placeholder API keys. The wallet on this page uses the first testnet key.
+    - `{ mode: 0o600 }` lets only your user account read and write `.env` on Linux and macOS.
+    - The script never prints the keys, and it does not replace an existing `.env`.
   </Step>
   <Step title="Open the wallet">
     Create `wallet.mjs`, a module that the other scripts import to open the wallet:
@@ -110,7 +108,7 @@ The first step is to create a Node.js project folder with the toolbox, the keys 
     })
     ```
 
-    - `Setup.getEnv('test')` reads the keys and puts the wallet on testnet. `test` is the name the toolbox uses for testnet.
+    - `Setup.getEnv('test')` reads the testnet keys and puts the wallet on testnet. `test` is the name the toolbox uses for testnet.
     - `Setup.createWalletSQLite` creates `wallet.sqlite` on the first run and sets up its tables. `databaseName` becomes the name of this store.
   </Step>
   <Step title="Check the wallet">
@@ -133,19 +131,14 @@ The first step is to create a Node.js project folder with the toolbox, the keys 
     await wallet.destroy()
     ```
 
-    Run it:
-
-    ```bash
-    node check.mjs
-    ```
+    Run it with `node check.mjs`:
 
     ```text
-    Identity key: 023d8dae4bcebdf3267ecc700c26f800ee8182b268fd230dd2b9a223676d591b10
+    Identity key: 023d8dae...591b10
     Network: testnet
     Outputs: { totalOutputs: 0, outputs: [] }
     ```
 
-    - The identity key is different for every `.env`.
     - `default` is the <Hint tip="A named group of outputs the wallet tracks">basket</Hint> that holds the coins the wallet spends from. It is empty because the wallet is new.
     - `destroy()` closes the storage, so the script can end.
   </Step>
@@ -155,120 +148,46 @@ The wallet now answers BRC-100 calls on testnet and keeps its records in `wallet
 
 ## Start the Monitor
 
-With the wallet open, start its <Hint tip="The toolbox component that broadcasts queued transactions, gathers proofs and repairs wallet state in the background">Monitor</Hint>, which finishes the work that wallet methods leave for later, such as delayed broadcasts and <Hint tip="The proof that a transaction is in a block, checked against the block header">Merkle proofs</Hint>. A script that ends right away does not need it, and a wallet that runs as a service does:
+With the wallet open, start its <Hint tip="The toolbox component that broadcasts queued transactions, gathers proofs and repairs wallet state in the background">Monitor</Hint>, which finishes the work that wallet methods leave for later, such as delayed broadcasts and <Hint tip="The proof that a transaction is in a block, checked against the block header">Merkle proofs</Hint>. By default, `createAction` leaves the broadcast to the Monitor, so a wallet that sends transactions needs the Monitor running. A script that ends right away needs it too, unless it sends with `acceptDelayedBroadcast: false`.
 
-<Steps>
-  <Step title="Write the service script">
-    Create `monitor.mjs`, which starts the Monitor and stops it cleanly on Ctrl+C:
+Create `monitor.mjs`, which starts the Monitor and stops it cleanly on Ctrl+C:
 
-    ```javascript monitor.mjs
-    import { setup } from './wallet.mjs'
+```javascript monitor.mjs
+import { setup } from './wallet.mjs'
 
-    const { wallet, monitor } = setup
+const { wallet, monitor } = setup
 
-    const running = monitor.startTasks()
-    console.log('Monitor running. Press Ctrl+C to stop.')
+const running = monitor.startTasks()
+console.log('Monitor running. Press Ctrl+C to stop.')
 
-    process.once('SIGINT', async () => {
-      monitor.stopTasks()
-      await running
-      await wallet.destroy()
-      console.log('Monitor stopped.')
-    })
-    ```
+process.once('SIGINT', async () => {
+  monitor.stopTasks()
+  await running
+  await wallet.destroy()
+  console.log('Monitor stopped.')
+})
+```
 
-    - `startTasks()` runs the Monitor tasks on an interval until `stopTasks()` is called.
-    - Stop the Monitor before `destroy()`, so no task writes to a closed store.
-  </Step>
-  <Step title="Run the service">
-    Start it, and press Ctrl+C when you want it to stop:
+- `startTasks()` runs the Monitor tasks on an interval until `stopTasks()` is called.
+- Stop the Monitor before `destroy()`, so no task writes to a closed store.
 
-    ```bash
-    node monitor.mjs
-    ```
+Run it with `node monitor.mjs`, and press Ctrl+C when you want it to stop:
 
-    ```text
-    Monitor running. Press Ctrl+C to stop.
-    Monitor stopped.
-    ```
-  </Step>
-</Steps>
+```text
+Monitor running. Press Ctrl+C to stop.
+Monitor stopped.
+```
 
-In your wallet service, start the Monitor once, next to the code that answers app requests. [How the toolbox tracks UTXOs](/wallet-dev/wallet-toolbox/utxo-lifecycle/#what-the-monitor-settles-in-the-background) lists what each Monitor task does.
-
-## Add a backup store
-
-The storage manager can keep backup stores next to the active one and copy the records to them. A wallet needs these records to recover its outputs, since the keys in `.env` alone cannot rebuild them. Follow these steps to add a second SQLite file as a backup:
-
-<Steps>
-  <Step title="Write the backup script">
-    Create `backup.mjs` in the project folder. It opens a second store, adds it to the storage manager and copies the records:
-
-    ```javascript backup.mjs
-    import { Setup } from '@bsv/wallet-toolbox'
-    import { setup } from './wallet.mjs'
-
-    const { storage, wallet } = setup
-    const active = storage.getActiveStore()
-
-    const backup = await Setup.createStorageKnex({
-      env: Setup.getEnv('test'),
-      knex: Setup.createSQLiteKnex('./backup.sqlite'),
-      databaseName: 'mywallet-backup'
-    })
-    await storage.addWalletStorageProvider(backup)
-    await storage.setActive(active)
-    await storage.updateBackups()
-
-    for (const store of storage.getStores()) {
-      console.log(`${store.storageName}: ${store.isActive ? 'active' : 'backup'}`)
-    }
-
-    await wallet.destroy()
-    ```
-
-    - `getActiveStore()` returns the key of the active store, `wallet.sqlite`.
-    - A new store marks itself as active when it is added. `setActive(active)` keeps `wallet.sqlite` as the active store and turns the new one into its backup.
-    - `updateBackups()` copies the records from the active store to every backup.
-  </Step>
-  <Step title="Run the backup">
-    Run the script:
-
-    ```bash
-    node backup.mjs
-    ```
-
-    ```text
-    mywallet: active
-    mywallet-backup: backup
-    ```
-
-    `backup.sqlite` now holds a copy of the wallet records. Run the script again to copy later changes.
-  </Step>
-</Steps>
-
-The backup holds the same records as the active store, so protect it the same way. To switch stores, pass the key of a backup store to `setActive`, and that store becomes the active one.
+With the Monitor running, the wallet broadcasts its queued transactions and collects their proofs on its own. [How the toolbox tracks UTXOs](/wallet-dev/wallet-toolbox/utxo-lifecycle/#what-the-monitor-settles-in-the-background) lists what each Monitor task does.
 
 ## Choose the storage
 
-Each `Setup` call opens the same wallet on a different store. Pick the store by where the wallet runs:
-
-<CardGroup cols={3}>
-  <Card title="SQLite or MySQL" icon="database">
-    A wallet in Node.js, such as a server wallet or a desktop app. The records stay in a database you run, through Knex.
-  </Card>
-  <Card title="Remote storage" icon="cloud">
-    A wallet that keeps its records on a storage server and reaches it over HTTPS with `StorageClient`.
-  </Card>
-  <Card title="IndexedDB" icon="app-window">
-    A wallet that runs in a browser and keeps its records on the user's device.
-  </Card>
-</CardGroup>
-
-The tabs below show the call for each one:
+Each `Setup` call opens a wallet with the same keys on a different store, with its own records. Pick the store by where the wallet runs:
 
 <Tabs>
 <Tab title="SQLite or MySQL">
+
+For a wallet in Node.js, such as a server wallet or a desktop app. The records stay in a database you run, through Knex.
 
 `wallet.mjs` above already uses SQLite:
 
@@ -281,7 +200,9 @@ For MySQL, call `Setup.createWalletMySQL({ env, databaseName })` instead. It rea
 </Tab>
 <Tab title="Remote storage">
 
-Save this as `remote-wallet.mjs` in the same project to open the wallet on a storage server:
+For a wallet that keeps its records on a storage server and reaches it over HTTPS with `StorageClient`.
+
+Save this as `remote-wallet.mjs` in the same project:
 
 ```javascript remote-wallet.mjs
 import { Setup } from '@bsv/wallet-toolbox'
@@ -301,15 +222,20 @@ for (const store of setup.storage.getStores()) {
 await setup.wallet.destroy()
 ```
 
+Run it with `node remote-wallet.mjs`:
+
 ```text
 StorageClient https://go-wallet-testnet-us-1.bsvblockchain.tech
 ```
 
-- `endpointUrl` is the storage server. It must run on the same network as the wallet, and this one runs on testnet.
+- `endpointUrl` here is a public testnet storage server, for trying remote storage. It must run on the same network as the wallet. Without `endpointUrl`, the call uses `https://staging-storage.babbage.systems` on testnet.
+- Production wallets run their own storage server, as [Run a wallet backend](/wallet-dev/infrastructure/) describes.
 - The records live on the server, and the keys stay in `.env` on your machine.
 
 </Tab>
 <Tab title="IndexedDB">
+
+For a wallet that runs in a browser and keeps its records on the user's device.
 
 Install the browser package in your web app:
 
@@ -337,26 +263,13 @@ export async function openWallet (rootKeyHex) {
 </Tab>
 </Tabs>
 
-<Visibility for="agents">
-The three storage choices: SQLite or MySQL through Knex for a wallet in Node.js (Setup.createWalletSQLite, Setup.createWalletMySQL, Setup.createWalletKnex); remote storage on a storage server reached over HTTPS with StorageClient (Setup.createWalletClient with endpointUrl); IndexedDB in the browser (SetupClient.createWalletIdb from @bsv/wallet-toolbox-client, with chain, rootKeyHex and databaseName).
-</Visibility>
+Whichever store you pick, the wallet methods stay the same. Some `setup` fields change with the store: `createWalletClient` returns `endpointUrl` and no `activeStorage` or `userId`, and the `activeStorage` of `createWalletIdb` is a `StorageIdb`.
 
-Whichever store you pick, the wallet methods and the `setup` fields stay the same.
-
-## Troubleshooting
-
-<AccordionGroup>
-  <Accordion title="Backup store is not accepted">
-    `updateBackups()` throws `WERR_NOT_ACTIVE: WalletStorageManager is not accessing user's active storage or there are conflicting active stores configured.` A new store marks itself as active when it is added, so the manager sees two active stores. Call `storage.setActive()` with the key of the store you want as active, as in `backup.mjs`, before `updateBackups()`.
-  </Accordion>
-  <Accordion title="New wallet cannot send a payment">
-    `createAction` throws `WERR_INSUFFICIENT_FUNDS` with the number of <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV.">satoshis</Hint> that are needed. A new wallet holds no coins. Fund it first, for example with [Fund the server wallet from BSV Desktop](/get-started/quick-start-server/#fund-the-server-wallet-from-bsv-desktop).
-  </Accordion>
-</AccordionGroup>
+The wallet needs its records to recover its outputs, since the keys in `.env` alone cannot rebuild them, so keep a backup store next to the active one. [Plug in your own storage](/wallet-dev/wallet-toolbox/storage-adapter/) shows how to add one.
 
 ## Next steps
 
-With a working wallet, continue with how it handles its coins:
+With a working wallet, continue with how it handles its coins and its storage:
 
 - [How the toolbox tracks UTXOs](/wallet-dev/wallet-toolbox/utxo-lifecycle/)
-- [Send a payment from a server](/get-started/quick-start-server/)
+- [Plug in your own storage](/wallet-dev/wallet-toolbox/storage-adapter/)
