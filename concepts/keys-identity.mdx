@@ -7,6 +7,7 @@ sidebarTitle: "Keys and identity"
 import KeyPairFlow from '/snippets/KeyPairFlow.jsx';
 import DeriveSteps from '/snippets/DeriveSteps.jsx';
 import InvoiceBuilder from '/snippets/InvoiceBuilder.jsx';
+import IdentityRequest from '/snippets/IdentityRequest.jsx';
 
 On BSV, a private key proves control. It signs the inputs that spend an output and the messages an app sends, and the matching public key lets anyone check those signatures. A wallet holds the keys for your app. You work with them when you derive a key for another party, identify a user or debug a failed signature.
 
@@ -189,11 +190,35 @@ A signature made under one protocol name or key ID does not verify under another
 
 ## Identity keys and mutual authentication
 
-The identity key is the wallet's root public key, 33 bytes. It stays the same across calls, and the keys derived for protocols are different from it. An app reads it with `getPublicKey({ identityKey: true })`, as in the example, and uses it to recognize a user and to check who a request comes from.
+The identity key is the wallet's root public key, 33 bytes. It stays the same across calls and differs from the keys derived for protocols. An app reads it with `getPublicKey({ identityKey: true })` and uses it to recognize a user.
 
-Two parties prove their identity keys to each other in a handshake. The BRC-103 standard defines this exchange between peers, and BRC-104 binds it to HTTP. `AuthFetch` in `@bsv/sdk` is the client side, and `@bsv/auth-express-middleware` is the server side, where each request arrives with the user's identity key in `req.auth.identityKey`. [Authenticate users with their wallet](/guides/identity-auth/) walks through the steps. The identity covers the method, path, query, signed headers and body of a request, not the `Host` header or cookies. BRC-31 is historical guidance and not the current HTTP contract.
+### A request with and without authentication
 
-Certificates build on the same keys. A certifier signs a certificate that binds fields to a user's identity key, and a changed field no longer verifies.
+Two parties prove their identity keys to each other in a handshake that BRC-103 defines, and BRC-104 binds it to HTTP. `AuthFetch` in `@bsv/sdk` is the client, and `@bsv/auth-express-middleware` is the server. Press **Step** to follow a request from the app to the server, then switch to **A plain fetch** to see the server turn it away. [Authenticate users with their wallet](/guides/identity-auth/) walks through the setup.
+
+<IdentityRequest />
+
+<Visibility for="agents">
+The diagram has the app on the left, the Express server on the right and the result in the middle. With AuthFetch, the app and the server first prove their identity keys to each other in a handshake. The request then goes out signed with the identity key of the app. The middleware verifies the signature and puts the identity key in req.auth.identityKey, and the route runs. The response is signed too and carries the identity key of the server in the x-bsv-auth-identity-key header, and AuthFetch returns it with status 200. With a plain fetch, the request has no identity key and no signature, the middleware turns it away before the route runs, and the server answers 401 with the code UNAUTHORIZED and the message Mutual-authentication failed!
+</Visibility>
+
+### What the identity covers
+
+The signature of a request covers some parts of it and not others:
+
+| Part of the request | Covered by the identity |
+|---------------------|-------------------------|
+| Method, path and query | Yes |
+| The signed headers the request declares | Yes |
+| Body | Yes |
+| `Host` header | No |
+| Cookies and most other headers | No |
+
+Authorize with the authenticated identity key and the covered parts, not with the `Host` header or cookies. BRC-31 is historical guidance and not the current HTTP contract.
+
+### Certificates
+
+A certifier signs a certificate that binds fields to the identity key of a user, and a changed field no longer verifies.
 
 ## Related articles
 
