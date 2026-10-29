@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-// Script templates in "How Script works": pick a template and see what lock and unlock take and return.
+// Script templates: pick a template and see what lock and unlock take and return.
 // Content only: edit the texts below, the layout does not need to change.
-// The fields of PushDrop show the example bytes of the page (hello, world). Source: running P2PKH, PushDrop and RPuzzle of @bsv/sdk 4.0.1 on 2026-10-29. Locking scripts as printed by toASM(), sizes from estimateLength().
+// The fields of PushDrop show the example bytes of the page (hello, world). Source: P2PKH, PushDrop and RPuzzle of @bsv/sdk 4.0.1. Locking scripts as printed by toASM(), sizes from estimateLength().
 
 const templates = [
   {
@@ -68,7 +68,7 @@ const copy = {
   estimateText: 'returns the expected size in bytes, before any signature exists',
   locking: 'Locking script',
   unlocking: 'Unlocking script from sign',
-  size: 'Size from estimateLength',
+  size: 'Estimated size',
   bytes: 'bytes',
 };
 

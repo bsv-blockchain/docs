@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-// Step by step run of a P2PKH spend for "How Script works": the two scripts on the left, the stack on the right, one button to run the next chunk.
+// Step by step run of a P2PKH spend: the two scripts on the left, the stack on the right, one button to run the next chunk.
 // A switch picks the key that made the unlocking script. The owner key passes, another key stops at OP_EQUALVERIFY.
-// Content only: edit the texts below, the layout does not need to change. The steps follow Spend.step() of @bsv/sdk 4.0.1, 2026-10-29.
+// Content only: edit the texts below, the layout does not need to change. The steps follow Spend.step() of @bsv/sdk 4.0.1.
 
 const copy = {
   keyLabel: 'The unlocking script was made with',
@@ -31,8 +31,8 @@ const chunks = [
 const item = (k, label) => ({ k, label });
 
 function buildSteps(other) {
-  const pk = item(other ? 'other' : 'pk', other ? 'public key of another key' : 'public key');
-  const hashed = item(other ? 'other' : 'hash', other ? 'hash of that key' : 'hash of the key');
+  const pk = item(other ? 'other' : 'pk', other ? 'public key of the other key' : 'public key');
+  const hashed = item(other ? 'other' : 'hash', other ? 'hash of the other public key' : 'hash of the key');
   const sig = item('sig', 'signature');
   const addr = item('hash', 'hash from the address');
   const steps = [

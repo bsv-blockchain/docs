@@ -8,7 +8,7 @@ import ScriptTemplates from '/snippets/ScriptTemplates.jsx';
 
 Every BSV output carries a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> that sets the condition to spend it, and every input carries an <Hint tip="The part of an input that meets the condition set by the locking script of the output it spends">unlocking script</Hint> that meets that condition. Both are written in Script, a small stack based language. A wallet builds these scripts for you, so you meet Script when you lock an output to a custom condition, read what an output says, or find out why a spend was rejected.
 
-The most common script, <Hint tip="Pay to Public Key Hash, an output that only the key behind one address can spend">P2PKH</Hint>, shows how the two work together, and `@bsv/sdk` has the classes that build and check them. [How transactions and fees work](/concepts/transactions/) covers the transaction around them. This page was written against `@bsv/sdk` 4.0.1.
+The most common script, <Hint tip="Pay to Public Key Hash, an output that only the key behind one address can spend">P2PKH</Hint>, shows how the two work together. `@bsv/sdk` has the classes that build and check them. [How transactions and fees work](/concepts/transactions/) covers the transaction around them. This page was written against `@bsv/sdk` 4.0.1.
 
 ## A locking and an unlocking script
 
@@ -28,7 +28,7 @@ console.log(lockingScript.toASM())
 console.log(lockingScript.toHex())
 ```
 
-The script prints as opcodes and as the bytes that go into a transaction. The hash differs on every run, because the key is new:
+The hash differs on every run, because the key is new:
 
 ```text
 OP_DUP OP_HASH160 ad8dc0311ea55f42110c2e2c4034e2588e099088 OP_EQUALVERIFY OP_CHECKSIG
@@ -39,19 +39,19 @@ The locking script holds only the hash of a public key, so it works the same on 
 
 ## How a spend is checked
 
-The network checks every input the same way. It runs the unlocking script first, then the locking script on the same stack, and the spend is valid when the script ends with a non zero value on top of the stack. The two scripts run in turn and are not joined into one.
+The network checks every input the same way. It runs the unlocking script first, then the locking script on the same stack, and the spend is valid when the script ends with a nonzero value on top of the stack. The two scripts run in turn and are not joined into one.
 
 ### The stack step by step
 
-Press Step to walk through the P2PKH pair one chunk at a time, then switch to another key and run it again to watch the spend fail.
+Press **Step** to walk through the P2PKH pair one chunk at a time, then switch to **Another key** and run it again to watch the spend fail.
 
 <ScriptStepper />
 
 <Visibility for="agents">
-The diagram has the unlocking script and the locking script on the left and the stack on the right. Seven steps run in order. 1, the unlocking script pushes the signature. 2, it pushes the public key. 3, OP_DUP copies the public key, so the stack holds the signature and the public key twice. 4, OP_HASH160 replaces the copy with its hash. 5, the locking script pushes the hash from the address. 6, OP_EQUALVERIFY finds the two hashes equal and removes them, leaving the signature and the public key. 7, OP_CHECKSIG checks the signature and leaves 01, so the spend is valid. With a different key, the hash of that key differs from the hash in the address at step 6, OP_EQUALVERIFY fails and the script stops before OP_CHECKSIG.
+The diagram has the unlocking script and the locking script on the left and the stack on the right. Seven steps run in order. Step 1, the unlocking script pushes the signature. Step 2, it pushes the public key. Step 3, OP_DUP copies the public key, so the stack holds the signature and two copies of the public key. Step 4, OP_HASH160 replaces the top copy with its hash. Step 5, the locking script pushes the hash from the address. Step 6, OP_EQUALVERIFY finds the two hashes equal and removes them, leaving the signature and the public key. Step 7, OP_CHECKSIG checks the signature and leaves 01, so the spend is valid. With a different key, the hash of that key differs from the hash in the address at step 6, OP_EQUALVERIFY fails and the script stops before OP_CHECKSIG.
 </Visibility>
 
-`OP_HASH160` is a SHA-256 followed by a RIPEMD-160, the same hash an address holds. `OP_CHECKSIG` checks the signature against the public key and the transaction, so it is the one opcode that ties the spend to the rest of the transaction.
+`OP_HASH160` is a SHA-256 followed by a RIPEMD-160, the same hash an address holds.
 
 ### Check a spend in code
 
@@ -99,7 +99,7 @@ await check(owner)
 await check(stranger)
 ```
 
-A spend needs an earlier transaction to spend from, and `source` plays that role with one output of 1,000 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> locked to the owner. The input sets a `sequence` because the `P2PKH` template cannot sign an input without one. Running the file prints:
+`source` stands in for the earlier transaction, with one output of 1,000 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> locked to the owner. The input sets a `sequence` because the `P2PKH` template cannot sign an input without one. Running the file prints:
 
 ```text
 valid: true
@@ -108,7 +108,7 @@ rejected: Script evaluation error: OP_EQUALVERIFY requires the top two stack ite
 
 `validate()` returns `true` or throws an error that names the opcode and its position. It never returns `false`, so wrap it in `try` and `catch`. To watch the stack change, call `spend.step()` in a loop. Each call runs one chunk and returns `false` once both scripts are done, and `spend.stack` holds the stack after each step.
 
-A passing check means the two scripts are satisfied. The network also validates the rest of the transaction, such as the amounts, the lock time and the Merkle path of each input.
+A passing check means the two scripts are satisfied. The network also validates the rest of the transaction.
 
 ## Script templates
 
@@ -116,7 +116,7 @@ A script template packages one kind of script. Its `lock` method builds a lockin
 
 ### Templates in `@bsv/sdk`
 
-Switch between the three templates to compare what `lock` and `unlock` take and return, and how large each unlocking script is expected to be.
+Switch between `P2PKH`, `PushDrop` and <Hint tip="A template that locks an output with an R puzzle, which the spender unlocks with the matching K value">RPuzzle</Hint> to compare what `lock` and `unlock` take and return.
 
 <ScriptTemplates />
 
@@ -128,7 +128,7 @@ A fee depends on the size of the transaction, and a signature does not exist unt
 
 ### Lock data with PushDrop
 
-`PushDrop` locks data fields to a public key, so an output can carry data and still be spent. Overlay protocols use it. It takes its keys from a wallet, so its `lock` needs a wallet object as well as the data. This example uses `ProtoWallet`, a class in `@bsv/sdk` that signs and derives keys on its own and needs no network:
+`PushDrop` locks data fields to a public key, so an output can carry data and still be spent. [Overlay protocols](/concepts/overlays/) use it. It takes its keys from a wallet, so its `lock` needs a wallet object as well as the data. This example uses `ProtoWallet`, a class in `@bsv/sdk` that signs and derives keys on its own and needs no network:
 
 ```javascript pushdrop.mjs
 import { PrivateKey, PushDrop, ProtoWallet, Utils } from '@bsv/sdk'
@@ -149,7 +149,7 @@ The key, the signature and the hex of the fields differ on every run. The script
 
 `Utils.toArray` turns text into the bytes of a field, and `68656c6c6f` and `776f726c64` are `hello` and `world` in hex. The public key and `OP_CHECKSIG` come first, so only the holder of that key can spend the output. `OP_2DROP` and `OP_DROP` remove the two fields and the signature from the stack again, so the data does not change what the script has to prove.
 
-The security level in `protocolID` sets how much approval a wallet asks for: none at `0`, for every app at `1`, and for every counterparty and app at `2`. The 5 to 400 byte limit on the name is part of the `WalletProtocol` type of the BRC-100 interface, so any wallet is expected to reject a shorter name, and `'demo token'` works where `'demo'` does not. `ProtoWallet` does it with the message `The protocolID[1] parameter must be at least 5 length.`, and another wallet may word its error differently.
+The security level in `protocolID` sets how much approval a wallet asks for: none at `0`, approval for each application at `1`, and approval for each counterparty and application at `2`. The name must be 5 to 400 bytes, so `'demo token'` works where `'demo'` does not. `ProtoWallet` rejects a shorter name with the message `The protocolID[1] parameter must be at least 5 length.`
 
 ## Scripts that carry data
 
@@ -169,11 +169,11 @@ console.log(lockingScript.toASM())
 OP_0 OP_RETURN 68656c6c6f
 ```
 
-`Script.fromASM` and `toASM` convert between readable opcodes and bytes, and `toASM` writes `OP_FALSE` as `OP_0`. The last push, `68656c6c6f`, is the word `hello` in hex. Use `PushDrop` instead when the output has to stay spendable.
+`toASM` writes `OP_FALSE` as `OP_0`. Use `PushDrop` instead when the output has to stay spendable.
 
 ## Scripts in a wallet
 
-A BRC-100 wallet takes and returns scripts as hex strings. Each output of `createAction` has a `lockingScript` in hex, which is what `toHex()` returns, and `listOutputs` returns the locking script of an output only when you pass `include: 'locking scripts'`. An input of `createAction` takes an `unlockingScript` in hex, or an `unlockingScriptLength` when you supply the script later with `signAction`. [BRC-100 Wallet Interface](/concepts/wallet-model/) describes the calls.
+A <Hint tip="BSV Request for Comments 100, the standard interface between a wallet and an app">BRC-100</Hint> wallet takes and returns scripts as hex strings. Each output of `createAction` has a `lockingScript` in hex, which is what `toHex()` returns, and `listOutputs` returns the locking script of an output only when you pass `include: 'locking scripts'`. An input of `createAction` takes an `unlockingScript` in hex, or an `unlockingScriptLength` when you supply the script later with `signAction`. [BRC-100 Wallet Interface](/concepts/wallet-model/) describes the calls.
 
 ## Related articles
 
