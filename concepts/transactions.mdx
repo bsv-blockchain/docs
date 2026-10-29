@@ -18,13 +18,15 @@ A transaction has four parts, serialized in this order, as [BRC-12](https://bsv.
 | Part | What it holds |
 |------|---------------|
 | Version | A 4-byte version number |
-| Inputs | One entry per output being spent, with the source transaction ID, the output index, an unlocking script and a sequence number |
-| Outputs | One entry per new output, with an amount in <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> and a locking script |
-| Lock time | When not zero, the earliest time or block height at which the transaction can go in a block |
+| Inputs | One entry per output being spent, with the source transaction ID, the output index, an <Hint tip="The part of an input that meets the condition set by the locking script of the output it spends">unlocking script</Hint> and a sequence number |
+| Outputs | One entry per new output, with an amount in <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> and a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> |
+| Lock time | When not zero, the earliest time or block height at which the transaction can go in a block, if at least one input has a sequence number below `0xFFFFFFFF` |
 
 </BlueTable>
 
-The scripts hold the rules. The <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> of an output sets the condition to spend it, and the unlocking script of the input that spends it meets that condition.
+`@bsv/sdk` sets every sequence number to `0xFFFFFFFF` by default, so a lock time has no effect until you lower one.
+
+The scripts hold the rules. The locking script of an output sets the condition to spend it, and the unlocking script of the input that spends it meets that condition.
 
 The transaction ID is the double SHA-256 hash of the whole serialized transaction. A change to any part gives a different transaction ID.
 
@@ -82,7 +84,7 @@ This page was written against `@bsv/sdk` 4.0.1.
 
 ## Who sets the rate
 
-Two sides set the rate. Each broadcast endpoint publishes the lowest rate it accepts, as `miningFee` in its policy, and refuses a transaction that pays less. The rate differs by network and by endpoint, and [Broadcast transactions with Arcade](/guides/services/broadcasting/) shows how to read it.
+Two sides set the rate. Each broadcast endpoint publishes the lowest rate it accepts, as `miningFee` in its policy, and refuses a transaction that pays less. The rate differs by network and by endpoint, and [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/) shows how to read it.
 
 The side that builds the transaction picks the rate it pays, at or above that minimum. When your app asks a wallet for a transaction, the wallet picks it, so the app does not set a fee. When your code builds the transaction with `@bsv/sdk`, the fee model you pass to `tx.fee()` picks it.
 
@@ -95,10 +97,10 @@ A transaction is final only once it is in a block. It gets there in four steps:
     The wallet, or your code, fills each unlocking script. With `SIGHASH_ALL`, the inputs, the outputs and so the fee are now fixed.
   </Step>
   <Step title="Broadcast">
-    A broadcaster such as Arcade checks the transaction and delivers it to the network. A wallet broadcasts the transactions it creates, so an app that uses `WalletClient` does not call a broadcaster.
+    BSV Broadcaster checks the transaction and delivers it to the network. A wallet broadcasts the transactions it creates, so an app that uses `WalletClient` does not call a broadcaster.
   </Step>
   <Step title="Seen by miners">
-    Miners validate the transaction. Arcade reports `SEEN_ON_NETWORK` once a miner has it, which is safe to treat as zero confirmation.
+    Miners validate the transaction. BSV Broadcaster reports `SEEN_ON_NETWORK` once a miner has it, which is safe to treat as zero confirmation.
   </Step>
   <Step title="Mined">
     A miner includes the transaction in a block. The transaction now has a Merkle path, a <Hint tip="BSV Unified Merkle Path (BRC-74): a compact proof that a transaction is in a block">BUMP</Hint>, that an app can check against block headers without asking a node.
