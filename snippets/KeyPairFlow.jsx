@@ -85,7 +85,8 @@ const css = `
   .kp-detail dd { margin-bottom: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .kp-thumb, .kp-node,   .kp-detail { animation: none; }
+  .kp-thumb, .kp-opt, .kp-node { transition: none; }
+  .kp-detail { animation: none; }
 }
 `;
 

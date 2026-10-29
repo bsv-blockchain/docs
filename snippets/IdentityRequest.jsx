@@ -120,14 +120,14 @@ export default function IdentityRequest() {
           <button type="button" className="ia-btn" data-primary="true" disabled={at === last} onClick={() => setStep(at + 1)}>{copy.step}</button>
           <button type="button" className="ia-btn" disabled={at === 0} onClick={() => setStep(0)}>{copy.reset}</button>
         </div>
-        <span className="ia-count">{`${at} of ${last}`}</span>
+        <span className="ia-count">{`${at + 1} of ${run.length}`}</span>
         <p className="ia-note">
           {status ? <span className="ia-status" data-t={cur.end}>{status}</span> : null}
           {cur.note}
         </p>
       </div>
 
-      <p className="ia-sr" aria-live="polite">{`Step ${at} of ${last}. ${cur.note}`}</p>
+      <p className="ia-sr" aria-live="polite">{`Step ${at + 1} of ${run.length}. ${cur.note}`}</p>
     </div>
   );
 }

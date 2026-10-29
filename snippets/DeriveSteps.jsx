@@ -132,7 +132,7 @@ export default function DeriveSteps() {
         <div className="dk-seg" role="group" aria-label={copy.caseLabel}>
           <span className="dk-thumb" aria-hidden="true" style={{ transform: `translateX(${index * 100}%)`, background: index === 0 ? undefined : '#c2410c' }} />
           {cases.map((c) => (
-            <button key={c} type="button" className="dk-opt" aria-pressed={mode === c} onClick={() => setMode(c)}>{copy[c]}</button>
+            <button key={c} type="button" className="dk-opt" aria-pressed={mode === c} onClick={() => { setMode(c); setStep(0); }}>{copy[c]}</button>
           ))}
         </div>
       </div>
@@ -157,14 +157,14 @@ export default function DeriveSteps() {
           <button type="button" className="dk-btn" data-primary="true" disabled={at === last} onClick={() => setStep(at + 1)}>{copy.step}</button>
           <button type="button" className="dk-btn" disabled={at === 0} onClick={() => setStep(0)}>{copy.reset}</button>
         </div>
-        <span className="dk-count">{`${at} of ${last}`}</span>
+        <span className="dk-count">{`${at + 1} of ${run.length}`}</span>
         <p className="dk-note">
           {status ? <span className="dk-status" data-t={cur.end}>{status}</span> : null}
           {cur.note}
         </p>
       </div>
 
-      <p className="dk-sr" aria-live="polite">{`Step ${at} of ${last}. ${cur.note}`}</p>
+      <p className="dk-sr" aria-live="polite">{`Step ${at + 1} of ${run.length}. ${cur.note}`}</p>
     </div>
   );
 }

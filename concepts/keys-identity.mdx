@@ -9,7 +9,7 @@ import DeriveSteps from '/snippets/DeriveSteps.jsx';
 import InvoiceBuilder from '/snippets/InvoiceBuilder.jsx';
 import IdentityRequest from '/snippets/IdentityRequest.jsx';
 
-On BSV, a private key proves control. It signs the inputs that spend an output and the messages an app sends, and the matching public key lets anyone check those signatures. A wallet holds the keys for your app. You work with them when you derive a key for another party, identify a user or debug a failed signature.
+On BSV, a private key proves control. It signs the inputs that spend an output and the messages an app sends, and the matching public key lets anyone check those signatures. A wallet holds the keys for your app. You work with them when you derive a key for another party, identify a user or debug a failed signature. By the end of this page you can derive a key for a counterparty with `ProtoWallet` and recognize a user by their identity key.
 
 The examples use `@bsv/sdk` 4.0.1 and run with Node.js. Install it with `npm install @bsv/sdk@4.0.1`, save each example as an `.mjs` file and run it with `node`. [How the BSV stack fits together](/concepts/architecture/) shows where the wallet sits.
 
@@ -19,7 +19,7 @@ A private key is a 256 bit number, and the public key and the address are comput
 
 ### From a private key to an address
 
-Select **Private key**, **Public key**, **hash160** and **Address** in turn to see what each one is and how it is made, then switch between **Testnet** and **Mainnet** to see what changes in the address.
+Select **Private key**, **Public key**, <Hint tip="SHA-256 followed by RIPEMD-160 of the public key">**hash160**</Hint> and **Address** in turn to see what each one is and how it is made, then switch between **Testnet** and **Mainnet** to see what changes in the address.
 
 <KeyPairFlow />
 
@@ -48,6 +48,7 @@ const message = Utils.toArray('Hi John', 'utf8')
 const signature = privateKey.sign(message)
 console.log('verifies:', publicKey.verify(message, signature))
 console.log('changed message verifies:', publicKey.verify(Utils.toArray('Hi Eve', 'utf8'), signature))
+console.log('another public key verifies:', PrivateKey.fromRandom().toPublicKey().verify(message, signature))
 
 console.log('hash160:', Utils.toHex(Hash.hash160(publicKey.encode(true))))
 ```
@@ -55,11 +56,12 @@ console.log('hash160:', Utils.toHex(Hash.hash160(publicKey.encode(true))))
 The signature verifies for the message it signed with the matching public key, and fails for a changed message or for another public key:
 
 ```text
-public key: 0273fdc6002ad4fc59d1a9a9cdb11a8da48a8e00cc7e557a2426fd0d8bb0a57e87
-address: n2wE7d97xdfHCNYjnjRCDf7PKV1J8SekN7
+public key: 0366ef25ae5f614c870da7ed6a601bc03a32f910015752306414bfdbc1afe9f579
+address: mmEyZENMwGN7MQxj1dAH8Y5gNezGvdHJHo
 verifies: true
 changed message verifies: false
-hash160: eaf1d49f4c640a75f6da33e06aec862a43346806
+another public key verifies: false
+hash160: 3ecb270ad7f2875dd75b0f721ef08368fc414247
 ```
 
 [How Script works](/concepts/script/) shows how the network checks the public key and signature that spend an output locked to that hash.
@@ -126,12 +128,12 @@ John never sees Jane's private key, and each pair of parties has its own set of 
 
 ### Build an invoice number
 
-Move the **Security level** from 0 to 2 and pick a **Counterparty** to see what each one means, then edit the **Protocol name** and the **Key ID** to watch the invoice number change. Try a name that ends in "protocol" or has fewer than five characters to see a check fail.
+Move the **Security level** from 0 to 2 and pick a **Counterparty** to see what each one means, then edit the **Protocol name** and the **Key ID** to watch the invoice number change. Try the name `order receipts protocol` or a name with fewer than five characters to see a check fail.
 
 <InvoiceBuilder />
 
 <Visibility for="agents">
-The tool joins a security level of 0, 1 or 2, a protocol name and a key ID with hyphens, for example 2-order receipts-1042, and lists the checks of KeyDeriver in @bsv/sdk 4.0.1. The name is trimmed and lowercased in the invoice number. The protocol name has 5 to 400 characters after trimming, only letters, numbers and spaces, no double spaces, and does not end in protocol. The key ID has at least 1 character. The counterparty is self, which derives from the wallet's own key, anyone, which uses the publicly known private key 1 so that anyone can derive the same public key, or another party, whose identity public key the wallet needs. Level 0 asks the user for nothing, level 1 asks once for the app and the protocol, and level 2 asks once for the app, the protocol and each counterparty. BRC-43 says 280 characters for the name, and the SDK accepts up to 400.
+The tool joins a security level of 0, 1 or 2, a protocol name and a key ID with hyphens, for example 2-order receipts-1042, and lists the checks of KeyDeriver in @bsv/sdk 4.0.1. The name is trimmed and lowercased in the invoice number. The protocol name has 5 to 400 characters after trimming, only letters, numbers and spaces, no double spaces, and does not end in a space followed by protocol. The key ID has at least 1 character. The counterparty is self, which derives from the wallet's own key, anyone, which uses the publicly known private key 1 so that anyone can derive the same public key, or another party, whose identity public key the wallet needs. Level 0 asks the user for nothing, level 1 asks once for the app and the protocol, and level 2 asks once for the app, the protocol and each counterparty. BRC-43 says 280 characters for the name, and the SDK accepts up to 400.
 </Visibility>
 
 ### Sign and encrypt with a wallet
@@ -199,7 +201,7 @@ In the BRC-104 v0.1 binding, as the ts-stack identity page describes it, the sig
 | Method, path and query | `Host` header |
 | Declared signed headers and body | Cookies and most other headers |
 
-Authorize with the authenticated identity key and the covered parts only. BRC-31 is historical guidance, not the current HTTP contract.
+Authorize with the authenticated identity key and the covered parts only. <Hint tip="The earlier authentication handshake, replaced by BRC-103 and BRC-104">BRC-31</Hint> is historical guidance, not the current HTTP contract.
 
 ### Certificates
 
