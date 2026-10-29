@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 // Script templates in "How Script works": pick a template and see what lock and unlock take and return.
 // Content only: edit the texts below, the layout does not need to change.
-// Source: running P2PKH, PushDrop and RPuzzle of @bsv/sdk 4.0.1 on 2026-10-29. Locking scripts as printed by toASM(), sizes from estimateLength().
+// The fields of PushDrop show the example bytes of the page (hello, world). Source: running P2PKH, PushDrop and RPuzzle of @bsv/sdk 4.0.1 on 2026-10-29. Locking scripts as printed by toASM(), sizes from estimateLength().
 
 const templates = [
   {
@@ -11,6 +11,7 @@ const templates = [
     pitch: 'One public key hash',
     call: 'new P2PKH()',
     lockArgs: ['address'],
+    lockParams: [['address', 'a P2PKH address, such as the one from toAddress()']],
     lock: [
       { t: 'OP_DUP' }, { t: 'OP_HASH160' }, { t: '20 byte hash', d: true }, { t: 'OP_EQUALVERIFY' }, { t: 'OP_CHECKSIG' },
     ],
@@ -24,8 +25,15 @@ const templates = [
     pitch: 'Data fields and a key',
     call: 'new PushDrop(wallet)',
     lockArgs: ['fields', 'protocolID', 'keyID', 'counterparty'],
+    lockParams: [
+      ['fields', 'one array of bytes per data field'],
+      ['protocolID', '[securityLevel, name]: a level of 0, 1 or 2, and a name of 5 to 400 bytes'],
+      ['keyID', 'a string that picks the key under that protocol'],
+      ['counterparty', "'self', 'anyone' or a public key in hex"],
+    ],
+    unlockNote: 'The same protocolID, keyID and counterparty as lock.',
     lock: [
-      { t: 'public key', d: true }, { t: 'OP_CHECKSIG' }, { t: 'field 1', d: true }, { t: 'field 2', d: true }, { t: 'signature', d: true }, { t: 'OP_2DROP' }, { t: 'OP_DROP' },
+      { t: 'public key', d: true }, { t: 'OP_CHECKSIG' }, { t: 'field: hello', d: true }, { t: 'field: world', d: true }, { t: 'signature', d: true }, { t: 'OP_2DROP' }, { t: 'OP_DROP' },
     ],
     unlockArgs: ['protocolID', 'keyID', 'counterparty'],
     unlock: [{ t: 'signature', d: true }],
@@ -37,6 +45,7 @@ const templates = [
     pitch: 'A secret K value',
     call: "new RPuzzle('HASH160')",
     lockArgs: ['value'],
+    lockParams: [['value', 'the R value, or its hash, as an array of bytes']],
     lock: [
       { t: 'OP_OVER' }, { t: 'OP_3' }, { t: 'OP_SPLIT' }, { t: 'OP_NIP' }, { t: 'OP_1' }, { t: 'OP_SPLIT' }, { t: 'OP_SWAP' }, { t: 'OP_SPLIT' }, { t: 'OP_DROP' }, { t: 'OP_HASH160' }, { t: '20 byte hash', d: true }, { t: 'OP_EQUALVERIFY' }, { t: 'OP_CHECKSIG' },
     ],
@@ -78,6 +87,9 @@ const css = `
 .st-sig { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.5; word-break: break-word; }
 .st-fn { font-weight: 700; color: var(--wd-primary); }
 .st-arg { padding: 1px 6px; border-radius: 6px; background: color-mix(in srgb, var(--wd-primary) 10%, var(--wd-surface)); }
+.st-params { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.st-params li { margin: 0; font-size: 12.5px; line-height: 1.45; }
+.st-params b { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
 .st-ret { margin: 0; font-size: 12.5px; color: var(--wd-text-muted); }
 .st-sub { margin: 0; font-size: 12.5px; line-height: 1.45; }
 .st-sub b { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12.5px; }
@@ -136,6 +148,11 @@ export default function ScriptTemplates() {
       <div className="st-grid" key={t.key}>
         <div className="st-card">
           <Signature fn={`${t.call}.${copy.lock}`} args={t.lockArgs} />
+          <ul className="st-params">
+            {t.lockParams.map(([n, d]) => (
+              <li key={n}><b>{n}</b> {d}</li>
+            ))}
+          </ul>
           <p className="st-ret">{copy.lockReturns}</p>
           <p className="st-eyebrow">{copy.locking}</p>
           <div className="st-chunks">
@@ -147,6 +164,7 @@ export default function ScriptTemplates() {
 
         <div className="st-card">
           <Signature fn={`${t.call}.${copy.unlock}`} args={t.unlockArgs} />
+          {t.unlockNote ? <p className="st-sub">{t.unlockNote}</p> : null}
           <p className="st-ret">{copy.unlockReturns}</p>
           <p className="st-sub"><b>{copy.sign}</b> {copy.signText}</p>
           <p className="st-eyebrow">{copy.unlocking}</p>

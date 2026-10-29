@@ -150,7 +150,7 @@ console.log(await unlock.estimateLength())
 <ScriptTemplates />
 
 <Visibility for="agents">
-The diagram has a tab for each template and two cards. The left card shows the call to lock and the locking script it returns. The right card shows the call to unlock, which returns an object with sign and estimateLength, the unlocking script that sign builds, and the size estimateLength returns. P2PKH: lock takes an address and returns OP_DUP OP_HASH160, a 20 byte hash, OP_EQUALVERIFY, OP_CHECKSIG. unlock takes a private key, the unlocking script is a signature and a public key, and the estimate is 108 bytes. PushDrop: lock takes fields, a protocol ID, a key ID and a counterparty, and returns a public key, OP_CHECKSIG, the fields, a signature, OP_2DROP, OP_DROP. unlock takes a protocol ID, a key ID and a counterparty, the unlocking script is a signature, and the estimate is 73 bytes. RPuzzle: lock takes a value and returns thirteen opcodes and data pushes that end with a 20 byte hash, OP_EQUALVERIFY and OP_CHECKSIG. unlock takes the K value and a private key, the unlocking script is a signature and a public key, and the estimate is 108 bytes.
+The diagram has a tab for each template and two cards. The left card shows the call to lock and the locking script it returns. The right card shows the call to unlock, which returns an object with sign and estimateLength, the unlocking script that sign builds, and the size estimateLength returns. P2PKH: lock takes an address and returns OP_DUP OP_HASH160, a 20 byte hash, OP_EQUALVERIFY, OP_CHECKSIG. unlock takes a private key, the unlocking script is a signature and a public key, and the estimate is 108 bytes. PushDrop: lock takes fields (one byte array per data field), a protocol ID (a security level of 0, 1 or 2 and a name of 5 to 400 bytes), a key ID and a counterparty (self, anyone or a public key in hex), and returns a public key, OP_CHECKSIG, the fields, a signature, OP_2DROP, OP_DROP. unlock takes a protocol ID, a key ID and a counterparty, the unlocking script is a signature, and the estimate is 73 bytes. RPuzzle: lock takes a value and returns thirteen opcodes and data pushes that end with a 20 byte hash, OP_EQUALVERIFY and OP_CHECKSIG. unlock takes the K value and a private key, the unlocking script is a signature and a public key, and the estimate is 108 bytes.
 </Visibility>
 
 In short:
@@ -160,6 +160,36 @@ In short:
 - `RPuzzle` locks an output with an R puzzle, which the spender unlocks with the matching K value.
 
 To build your own template, read [Write a custom script template](/sdk/typescript/low-level/script-templates/).
+
+### Lock data with PushDrop
+
+`PushDrop` takes its keys from a wallet, so its `lock` needs a wallet object as well as the data. This example uses `ProtoWallet`, a class in `@bsv/sdk` that signs and derives keys on its own and needs no network:
+
+```javascript pushdrop.mjs
+import { PrivateKey, PushDrop, ProtoWallet, Utils } from '@bsv/sdk'
+
+const wallet = new ProtoWallet(PrivateKey.fromRandom())
+const fields = [Utils.toArray('hello', 'utf8'), Utils.toArray('world', 'utf8')]
+
+const lockingScript = await new PushDrop(wallet).lock(fields, [0, 'demo token'], '1', 'self')
+
+console.log(lockingScript.toASM())
+```
+
+The four values of `lock` are:
+
+- `fields` is an array of byte arrays, one for each data field. `Utils.toArray` turns text into bytes.
+- `protocolID` is `[securityLevel, name]`. The security level is `0`, `1` or `2`, and sets how much approval a wallet asks for: none at `0`, for every app at `1`, and for every counterparty and app at `2`. The name must be 5 to 400 bytes long, so `'demo token'` works and `'demo'` does not.
+- `keyID` is a string that picks the key under that protocol.
+- `counterparty` is `'self'`, `'anyone'` or a public key in hex.
+
+The key, the signature and the hex of the fields differ on every run. The script has this shape:
+
+```text
+03919c18...(33 byte public key) OP_CHECKSIG 68656c6c6f 776f726c64 30450221...(71 byte signature) OP_2DROP OP_DROP
+```
+
+The public key and `OP_CHECKSIG` come first, so only the holder of that key can spend the output. The two data fields follow, and `68656c6c6f` and `776f726c64` are `hello` and `world` in hex. `OP_2DROP` and `OP_DROP` remove the two fields and the signature from the stack again, so the data does not change what the script has to prove. With a protocol name of fewer than 5 bytes, `lock` throws `The protocolID[1] parameter must be at least 5 length.`
 
 ## Scripts that carry data
 
