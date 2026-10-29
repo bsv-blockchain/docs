@@ -4,6 +4,10 @@ description: "Understand private and public keys, how BRC-42 derives a separate 
 sidebarTitle: "Keys and identity"
 ---
 
+import KeyPairFlow from '/snippets/KeyPairFlow.jsx';
+import DeriveSteps from '/snippets/DeriveSteps.jsx';
+import InvoiceBuilder from '/snippets/InvoiceBuilder.jsx';
+
 On BSV, a private key proves control. It signs the inputs that spend an output and the messages an app sends, and the matching public key lets anyone check those signatures. A wallet holds the keys for your app. You work with them when you derive a key for another party, identify a user or debug a failed signature.
 
 The examples use `@bsv/sdk` 4.0.1 and run with Node.js. Install it with `npm install @bsv/sdk@4.0.1`, save each example as an `.mjs` file and run it with `node`. [How the BSV stack fits together](/concepts/architecture/) shows where the wallet sits.
@@ -11,6 +15,18 @@ The examples use `@bsv/sdk` 4.0.1 and run with Node.js. Install it with `npm ins
 ## Private keys, public keys and addresses
 
 A private key is a 256 bit number. The public key is computed from it on the secp256k1 curve and is 33 bytes when compressed, so you can share it. An address is the <Hint tip="SHA-256 followed by RIPEMD-160">hash160</Hint> of the public key with a version byte and a checksum added, and the version byte tells testnet from Mainnet.
+
+### From a private key to an address
+
+Select each stage to see what it is, how big it is and how it is made, then switch the network to see how the last stage changes.
+
+<KeyPairFlow />
+
+<Visibility for="agents">
+The diagram has four stages in a row, joined by one way arrows. The private key is a 256 bit number of 32 bytes that signs and is never shared. The public key is 33 bytes when compressed, made from the private key on the secp256k1 curve, and can be shared. The hash160 is 20 bytes, a SHA-256 of the public key followed by a RIPEMD-160, and it is what a P2PKH locking script holds. The address is 25 bytes, a version byte, the hash160 and a 4 byte checksum written in base58. Testnet addresses start with m and Mainnet addresses start with 1.
+</Visibility>
+
+### Sign and verify in code
 
 <Callout type="warning">
 Each example generates a new random private key on every run, only to try the code. Never put a private key that holds value in code, and never commit one to version control.
@@ -55,11 +71,23 @@ The locking script of a payment to an address holds that hash160. [How Script wo
 
 An app that signs everything with one key ties all its activity to that key. BRC-42 gives two parties a way to derive a separate key for each other, and for each purpose, from keys they already have. The earlier docs call it type 42.
 
+### How two parties derive a key
+
 Each party keeps a master private key and shares the master public key. To derive a key, they agree on an invoice number, which is any string that names the purpose, such as `order 1042`. The derivation has three steps:
 
 1. Each party combines its own private key with the other's public key. Both get the same shared secret, using <Hint tip="Elliptic curve Diffie-Hellman, a way for two parties to compute the same secret from their own private key and the other's public key">ECDH</Hint>.
 2. The shared secret is the key of an <Hint tip="Hash based message authentication code">HMAC</Hint> over the invoice number.
 3. The owner adds the result to the master private key to get the child private key. The other party adds it to the owner's master public key to get the matching child public key.
+
+Step through the derivation between Alice and Bob, then switch what Bob derives with to see the check fail.
+
+<DeriveSteps />
+
+<Visibility for="agents">
+The diagram has Alice on the left, Bob on the right and what both sides share in the middle. Step 1, each holds a master private key and the other's public key. Step 2, both compute the same shared secret. Step 3, both run an HMAC over the invoice number order 1042 keyed by the shared secret and get equal results. Step 4, Alice adds the result to her master private key to get the child private key, and Bob adds it to her master public key to get the matching child public key, and the two match. Step 5, Alice signs with the child private key and Bob verifies the signature with the child public key. If Bob uses another invoice number or another private key, the results at step 2 or 3 differ, the keys do not match and the signature does not verify.
+</Visibility>
+
+### Derive keys in code
 
 ```javascript derive.mjs
 import { PrivateKey, Utils } from '@bsv/sdk'
@@ -106,6 +134,18 @@ BRC-43 gives the invoice number a format that a wallet can enforce, `<security l
 - Level 2 asks once for each counterparty as well.
 
 The counterparty is `self`, `anyone` or the public key of another party. With `self`, the wallet derives from its own key, for data only the user needs. With `anyone`, the derivation uses a publicly known private key (the number 1), so anyone can derive the same public key. `ProtoWallet` in `@bsv/sdk` does the derivation and checks the names, and a wallet adds the approval prompts. The [BRC-100 Wallet Interface](/concepts/wallet-model/) has the same calls, `getPublicKey`, `createSignature`, `verifySignature`, `encrypt` and `decrypt`. The derived key signs and it encrypts, and the last lines of the example show both.
+
+### Build an invoice number
+
+Change the security level, the protocol name, the key ID and the counterparty to see the invoice number and which checks pass.
+
+<InvoiceBuilder />
+
+<Visibility for="agents">
+The tool joins a security level of 0, 1 or 2, a protocol name and a key ID with hyphens, for example 2-order receipts-1042, and lists the checks on the name. The protocol name needs at least 5 characters, no double spaces, must not end in protocol, and BRC-43 limits it to letters, numbers and spaces and at most 280 characters. The key ID needs at least 1 character. The counterparty is self, anyone or another party. Level 0 asks the user for nothing, level 1 asks once for the app and the protocol, and level 2 asks once for each counterparty.
+</Visibility>
+
+### Sign and encrypt with a wallet
 
 ```javascript wallet.mjs
 import { PrivateKey, ProtoWallet, Utils } from '@bsv/sdk'
