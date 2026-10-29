@@ -1,5 +1,5 @@
 // The three pieces in "Coding with agents": three boxes of the same size, side by side.
-// Content only: edit the texts here. Keep each text short and about the same length. Tested with Claude Code 2.1.303 and @bsv/mcp 2.0.0 (bsv-blockchain/bsv-ai-toolkit main at 1ff7a6c), 2026-10-28.
+// Content only: edit the texts here. Keep each text short and about the same length. Tested with Claude Code 2.1.303 and @bsv/mcp 2.0.1 (bsv-blockchain/bsv-ai-toolkit v2.0.1), 2026-10-29.
 
 const pieces = [
   {

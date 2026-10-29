@@ -76,7 +76,7 @@ Ask Claude Code a BSV question in the same project, and it calls `search_docs` a
 
 ## Add @bsv/mcp
 
-`@bsv/mcp` is the BSV Association's MCP server for building apps, testnet first. Its source is in [bsv-blockchain/bsv-ai-toolkit](https://github.com/bsv-blockchain/bsv-ai-toolkit). It replaces `@bsv/simple-mcp`, as described in [Where Simple MCP went](#where-simple-mcp-went). This section uses `@bsv/mcp` 2.0.0.
+`@bsv/mcp` is the BSV Association's MCP server for building apps, testnet first. Its source is in [bsv-blockchain/bsv-ai-toolkit](https://github.com/bsv-blockchain/bsv-ai-toolkit). It replaces `@bsv/simple-mcp`, as described in [Where Simple MCP went](#where-simple-mcp-went). This section uses `@bsv/mcp` 2.0.1.
 
 <Steps>
   <Step title="Add the server">
@@ -174,7 +174,7 @@ A project is ready when the report shows 0 errors. The repository's tipping samp
 | Variable | Default | What it does |
 |----------|---------|--------------|
 | `BSV_NETWORK` | `testnet` | `testnet` or `mainnet`. Picks the default BSV Broadcaster endpoint and gates Mainnet broadcasts. Any other value stops the server |
-| `BSV_BROADCASTER_URL` | Per network | BSV Broadcaster base URL. Default on testnet `https://arcade-testnet-us-1.bsvblockchain.tech`, on Mainnet `https://arcade-us-1.bsvblockchain.tech`. A host that belongs to the other network stops the server |
+| `BSV_BROADCASTER_URL` | Per network | BSV Broadcaster base URL. Default on testnet `https://arcade-v2-testnet-us-1.bsvblockchain.tech`, on Mainnet `https://arcade-us-1.bsvblockchain.tech`. A host that belongs to the other network stops the server |
 | `BSV_MCP_ALLOW_MAINNET_BROADCAST` | Not set | `1` lets `broadcaster_submit` broadcast on Mainnet |
 | `BSV_REPOS_DIR` | Not set | The folder of BSV repository clones made with `setup.sh`, for `code_search` and `find_function_definition` |
 
@@ -182,7 +182,7 @@ The server still reads `ARCADE_URL`, the former name of `BSV_BROADCASTER_URL`, w
 
 Set `BSV_NETWORK=mainnet` for any Mainnet BSV Broadcaster endpoint, including your own. The server goes by the network you set, not by the address: it refuses the known Mainnet hosts on testnet, but it cannot tell where an unknown host belongs, so it treats an unknown Mainnet endpoint under `BSV_NETWORK=testnet` as testnet, without the Mainnet gate.
 
-Both testnet hosts, `arcade-testnet-us-1` and `arcade-v2-testnet-us-1`, are live. [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/) uses the second; set `BSV_BROADCASTER_URL` to use it here.
+The testnet default is the host that [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/) uses. `arcade-testnet-us-1`, the default of `@bsv/mcp` 2.0.0, still works and counts as testnet; set `BSV_BROADCASTER_URL` to use it.
 
 ## Use another AI tool
 
@@ -266,7 +266,7 @@ File modified: /Users/you/.claude.json [project: /Users/you/my-app]
 `@bsv/mcp` replaces `@bsv/simple-mcp`. The table below shows where each resource and prompt went. If your project still has `@bsv/simple-mcp`, remove it with `claude mcp remove simple-mcp -s local` and add `@bsv/mcp` as above.
 
 <Accordion title="Resources and prompts that moved">
-  | `@bsv/simple-mcp` 0.0.2 | `@bsv/mcp` 2.0.0 |
+  | `@bsv/simple-mcp` 0.0.2 | `@bsv/mcp` 2.0.1 |
   |---|---|
   | `simple://api/*`, `simple://guide/nextjs`, `simple://guide/patterns` | Resource `bsv://simple/api` |
   | `simple://guide/gotchas` | Resource `bsv://simple/gotchas` |

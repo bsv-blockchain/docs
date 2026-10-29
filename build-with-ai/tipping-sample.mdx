@@ -60,11 +60,11 @@ Install the sample, then tip from one wallet to the other:
     ```
 
     ```text
-    [web]   VITE v7.3.7  ready in 642 ms
+    [web]   VITE v7.3.7  ready in 677 ms
     [web]
     [web]   ➜  Local:   http://localhost:5173/
     [web]   ➜  Network: use --host to expose
-    [relay] bsv-tipping-demo relay on :8080 network=testnet broadcaster=https://arcade-testnet-us-1.bsvblockchain.tech origin=http://localhost:5173
+    [relay] bsv-tipping-demo relay on :8080 network=testnet broadcaster=https://arcade-v2-testnet-us-1.bsvblockchain.tech origin=http://localhost:5173
     ```
 
     The web app runs on port 5173 and the relay on port 8080. In a second terminal, check the relay:
@@ -74,7 +74,7 @@ Install the sample, then tip from one wallet to the other:
     ```
 
     ```text
-    {"ok":true,"network":"testnet","broadcasterOrigin":"https://arcade-testnet-us-1.bsvblockchain.tech","version":"0.1.0"}
+    {"ok":true,"network":"testnet","broadcasterOrigin":"https://arcade-v2-testnet-us-1.bsvblockchain.tech","version":"0.1.0"}
     ```
 
     The relay is on testnet and uses the public testnet BSV Broadcaster endpoint, whose hostname still contains `arcade`.

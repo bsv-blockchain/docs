@@ -2,7 +2,7 @@
 // Each step is one card: the call on top, then the two parts that act in it side by side. A wallet card has the primary border.
 // Readable on its own: a reader sees who does what, a developer sees the calls.
 // Edit the text below; the layout does not need to change.
-// Source: samples/tipping-shape-a (README.md, TRUST.md, GUARDRAILS.md) in bsv-blockchain/bsv-ai-toolkit main at 1ff7a6c. The wallet steps were not run.
+// Source: samples/tipping-shape-a (README.md, TRUST.md, GUARDRAILS.md) in bsv-blockchain/bsv-ai-toolkit v2.0.1, 2026-10-29. The wallet steps were not run.
 
 const steps = [
   {
