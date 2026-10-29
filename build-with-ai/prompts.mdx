@@ -21,7 +21,7 @@ The agent does the work that happens in code, and you do the work that happens i
 <AgentPaymentRoles />
 
 <Visibility for="agents">
-- Agent, works in the code: reads these docs, installs `@bsv/sdk`, writes a script that connects to BSV Desktop through `WalletClient`, checks that the wallet is on testnet, runs the payment and reads its status from Arcade.
+- Agent, works in the code: reads these docs, installs `@bsv/sdk`, writes a script that connects to BSV Desktop through `WalletClient`, checks that the wallet is on testnet, runs the payment and reads its status from BSV Broadcaster.
 - You, work in the wallet: get testnet coins if the wallet is empty, give the agent your testnet address and approve the payment in BSV Desktop with **Authorize**.
 </Visibility>
 
@@ -68,7 +68,7 @@ With the project ready, make the request and check what the agent builds:
     - connects to the wallet with `new WalletClient(...)` from `@bsv/sdk`, with no private key, recovery phrase or `.env` secret;
     - stops unless the `network` field returned by `wallet.getNetwork()` is `testnet`;
     - sends the payment with `wallet.createAction(...)`, to the address and amount you expect;
-    - after the wallet returns the transaction ID, sends the transaction to Arcade and reads its status there.
+    - after the wallet returns the transaction ID, sends the transaction to BSV Broadcaster and reads its status there.
 
     The script is the agent's own, so names and messages vary from run to run.
   </Step>
@@ -115,7 +115,7 @@ A sent payment cannot be undone, so check the request in BSV Desktop before you 
       <img src="/images/pay-with-ai-agent/02-spending-request.png" alt="The Spending Request window of BSV Desktop from first-payment.local for a payment named My first BSV payment, with the total of 1,094 satoshis and the Deny and Authorize buttons" />
     </Frame>
 
-    After you approve, the script prints the transaction ID, sends the transaction to [Arcade](/docs/guides/services/broadcasting/) and prints its status, for example:
+    After you approve, the script prints the transaction ID, sends the transaction to [BSV Broadcaster](/guides/services/broadcasting/) and prints its status, for example:
 
     ```text
     Wallet network: testnet
@@ -128,7 +128,7 @@ A sent payment cannot be undone, so check the request in BSV Desktop before you 
     Explorer (for viewing only): https://test.whatsonchain.com/tx/<64 character transaction ID>
     ```
 
-    The payment is final when Arcade reports `SEEN_ON_NETWORK`, with no wait for a block. The explorer link is only to see the transaction: if [WhatsOnChain](https://test.whatsonchain.com/) shows **This page cannot be found**, it has not listed the payment yet, so wait a minute and reload.
+    The payment is final when BSV Broadcaster reports `SEEN_ON_NETWORK`, with no wait for a block. The explorer link is only to see the transaction: if [WhatsOnChain](https://test.whatsonchain.com/) shows **This page cannot be found**, it has not listed the payment yet, so wait a minute and reload.
   </Step>
 </Steps>
 

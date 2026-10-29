@@ -11,7 +11,7 @@ const roles = [
       <>Writes a script that connects to BSV Desktop through <code>WalletClient</code></>,
       'Checks that the wallet is on testnet',
       'Runs the payment',
-      'Reads the payment status from Arcade',
+      'Reads the payment status from BSV Broadcaster',
     ],
   },
   {
