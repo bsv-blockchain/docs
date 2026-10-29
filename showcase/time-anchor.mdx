@@ -74,13 +74,37 @@ The app needs Node.js 22.12 or newer, npm and a BRC-100 wallet that is running, 
     npm run dev
     ```
 
-    The terminal prints the address of the server, `http://localhost:5173/`. Keep that port free, because the desktop app always loads it.
+    `npm ci` prints a few deprecation warnings and an audit summary, which you can ignore here, and ends with a line like this:
+
+    ```text
+    added 494 packages, and audited 495 packages in 36s
+    ```
+
+    `npm run dev` then prints the address of the server. Keep that port free, because the desktop app always loads it:
+
+    ```text
+    VITE v7.0.2  ready in 457 ms
+
+    ➜  Local:   http://localhost:5173/
+    ```
   </Step>
   <Step title="Open the desktop app">
     In a second terminal, in the same folder, compile and launch the Electron app:
 
     ```bash
     npm run electron
+    ```
+
+    The terminal first compiles the Electron files and then launches the app. It prints the commands it runs and one line with the local path of the compiled files:
+
+    ```text
+    > desktop-file-integrity@0.0.0 electron
+    > npm run build:electron && npx electron dist-electron/electron/main.js
+
+    > desktop-file-integrity@0.0.0 build:electron
+    > tsc -p tsconfig.electron.json && tsc -p tsconfig.preload.json
+
+    __dirname <path to the folder>\dist-electron\electron
     ```
 
     A window titled **File Integrity** opens. The button **Wallet Connected** appears at the bottom left when the app reaches the wallet. Opening the Vite address in a regular browser is not enough, because the file dialogs and the logs use the Electron interface.
