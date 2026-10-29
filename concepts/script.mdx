@@ -3,7 +3,7 @@ title: "How Script works"
 description: "Understand locking and unlocking scripts, how a spend is checked on one stack, and how script templates in @bsv/sdk package them."
 ---
 
-import BlueTable from '/snippets/BlueTable.jsx';
+import ScriptStepper from '/snippets/ScriptStepper.jsx';
 
 Every BSV output carries a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> that sets the condition to spend it, and every input carries an <Hint tip="The part of an input that meets the condition set by the locking script of the output it spends">unlocking script</Hint> that meets that condition. Both are written in Script, a small stack based language. A wallet builds these scripts for you, so you meet Script when you lock an output to a custom condition, read what an output says, or find out why a spend was rejected.
 
@@ -46,21 +46,13 @@ The network checks every input the same way. It runs the unlocking script first,
 
 ### The stack step by step
 
-For the P2PKH pair, the stack changes like this:
+Run the P2PKH pair one chunk at a time. Switch the key to see a spend fail:
 
-<BlueTable>
+<ScriptStepper />
 
-| Step | Script | Runs | Stack after, bottom to top |
-|------|--------|------|----------------------------|
-| 1 | Unlocking | Push the signature | signature |
-| 2 | Unlocking | Push the public key | signature, public key |
-| 3 | Locking | `OP_DUP` | signature, public key, public key |
-| 4 | Locking | `OP_HASH160` | signature, public key, hash of the key |
-| 5 | Locking | Push the 20 byte hash | signature, public key, hash of the key, hash from the address |
-| 6 | Locking | `OP_EQUALVERIFY` | signature, public key |
-| 7 | Locking | `OP_CHECKSIG` | `01` |
-
-</BlueTable>
+<Visibility for="agents">
+The diagram has the unlocking script and the locking script on the left and the stack on the right. Seven steps run in order. 1, the unlocking script pushes the signature. 2, it pushes the public key. 3, OP_DUP copies the public key, so the stack holds the signature and the public key twice. 4, OP_HASH160 replaces the copy with its hash. 5, the locking script pushes the hash from the address. 6, OP_EQUALVERIFY finds the two hashes equal and removes them, leaving the signature and the public key. 7, OP_CHECKSIG checks the signature and leaves 01, so the spend is valid. With a different key, the hash of that key differs from the hash in the address at step 6, OP_EQUALVERIFY fails and the script stops before OP_CHECKSIG.
+</Visibility>
 
 ### Check a spend in code
 
