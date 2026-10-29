@@ -51,7 +51,7 @@ The app has no network setting, and it creates the transaction on the network of
 
 The app keeps the addresses in local storage and clears it when you quit, so set them again after each restart.
 
-<Callout type="info">
+<Callout type="warning">
   The overlay and the UHRP host must accept the network of your wallet, and the transaction is created either way. When the UHRP host does not accept it, the **UHRP URL** column of the **Status** table shows **Failed**. When the overlay does not, **Verify Files** shows **File is not verified**.
 </Callout>
 
@@ -93,7 +93,7 @@ The app needs Node.js 22.12 or newer, npm and a BRC-100 wallet that is running, 
     </Frame>
   </Step>
   <Step title="Save the file">
-    The **Enable Recall (UHRP)** option decides whether the encrypted copy is uploaded. Click **Save to blockchain** and approve the request in the wallet.
+    The **Enable Recall (UHRP)** option decides whether the encrypted copy is uploaded. Click **Save to blockchain**. BSV Desktop opens a **Spending Request** window with the amount, which is the 1 satoshi output plus the transaction fee. Click **Authorize** to approve it.
 
     <Frame>
       <img src="/images/time-anchor/04-save-to-blockchain.png" alt="The Save Files screen of the File Integrity app with the Save to blockchain button highlighted below the file preview" />
