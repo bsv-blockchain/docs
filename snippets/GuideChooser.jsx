@@ -11,7 +11,7 @@ const options = [
     goal: 'Charge for an API',
     detail: 'Pay per request with HTTP 402',
     title: 'Gate an API behind payments',
-    text: 'Charge for API routes with HTTP 402 Payment Required, using an Express middleware that prices a route and a fetch wrapper that pays from the user's wallet.',
+    text: "Charge for API routes with HTTP 402 Payment Required, using an Express middleware that prices a route and a fetch wrapper that pays from the user's wallet.",
     href: '/guides/payments/',
   },
   {
