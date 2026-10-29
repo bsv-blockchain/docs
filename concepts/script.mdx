@@ -35,15 +35,7 @@ OP_DUP OP_HASH160 ad8dc0311ea55f42110c2e2c4034e2588e099088 OP_EQUALVERIFY OP_CHE
 76a914ad8dc0311ea55f42110c2e2c4034e2588e09908888ac
 ```
 
-The locking script holds only the hash of a public key, so it works the same on testnet and on Mainnet. Read left to right, it asks the spender for two things:
-
-- `OP_DUP` copies the top item of the stack.
-- `OP_HASH160` replaces that copy with its hash, a SHA-256 followed by a RIPEMD-160.
-- The 20 byte push adds the hash from the address.
-- `OP_EQUALVERIFY` ends the script with an error unless the two top items are equal.
-- `OP_CHECKSIG` takes a public key and a signature off the stack and checks the signature against the key and the transaction. It leaves `01` when the signature is valid.
-
-The unlocking script that meets this condition is two pushes, a signature and the public key.
+The locking script holds only the hash of a public key, so it works the same on testnet and on Mainnet. The unlocking script that meets it is two pushes, a signature and the public key.
 
 ## How a spend is checked
 
@@ -51,13 +43,13 @@ The network checks every input the same way. It runs the unlocking script first,
 
 ### The stack step by step
 
-Run the P2PKH pair one chunk at a time. Switch the key to see a spend fail:
-
 <ScriptStepper />
 
 <Visibility for="agents">
 The diagram has the unlocking script and the locking script on the left and the stack on the right. Seven steps run in order. 1, the unlocking script pushes the signature. 2, it pushes the public key. 3, OP_DUP copies the public key, so the stack holds the signature and the public key twice. 4, OP_HASH160 replaces the copy with its hash. 5, the locking script pushes the hash from the address. 6, OP_EQUALVERIFY finds the two hashes equal and removes them, leaving the signature and the public key. 7, OP_CHECKSIG checks the signature and leaves 01, so the spend is valid. With a different key, the hash of that key differs from the hash in the address at step 6, OP_EQUALVERIFY fails and the script stops before OP_CHECKSIG.
 </Visibility>
+
+`OP_HASH160` is a SHA-256 followed by a RIPEMD-160, the same hash an address holds. `OP_CHECKSIG` checks the signature against the public key and the transaction, so it is the one opcode that ties the spend to the rest of the transaction.
 
 ### Check a spend in code
 
@@ -112,44 +104,15 @@ valid: true
 rejected: Script evaluation error: OP_EQUALVERIFY requires the top two stack items to be equal.
 ```
 
-The second spend fails at step 6. The stranger's public key hashes to a different value than the one in the locking script, so the script stops before `OP_CHECKSIG` runs.
-
 `validate()` returns `true` or throws an error that names the opcode and its position. It never returns `false`, so wrap it in `try` and `catch`. To watch the stack change, call `spend.step()` in a loop. Each call runs one chunk and returns `false` once both scripts are done, and `spend.stack` holds the stack after each step.
 
-### What a passing check means
-
-A passing `Spend` check means the two scripts are satisfied. The network also validates the rest of the transaction, such as the amounts, the lock time and the Merkle path of each input. The signature covers the parts of the transaction that its signature hash flag selects, which [How transactions and fees work](/concepts/transactions/) describes.
+A passing check means the two scripts are satisfied. The network also validates the rest of the transaction, such as the amounts, the lock time and the Merkle path of each input.
 
 ## Script templates
 
-A script template packages one kind of script.
-
-### What a template provides
-
-A template has two methods:
-
-- `lock` builds a locking script from the parameters of that kind of script.
-- `unlock` returns an object with two functions. `sign` builds the unlocking script for one input once the transaction exists, and `estimateLength` returns the expected size of that script in bytes.
-
-A fee depends on the size of the transaction, and the signature does not exist until the transaction is signed. The SDK therefore takes the size of each unlocking script from `estimateLength` when it computes the fee. You pass the template as the `unlockingScriptTemplate` of an input, as the snippet above does. This shows what `unlock` returns for `P2PKH`:
-
-```javascript estimate.mjs
-import { PrivateKey, P2PKH } from '@bsv/sdk'
-
-const unlock = new P2PKH().unlock(PrivateKey.fromRandom())
-
-console.log(Object.keys(unlock))
-console.log(await unlock.estimateLength())
-```
-
-```text
-[ 'sign', 'estimateLength' ]
-108
-```
+A script template packages one kind of script. Its `lock` method builds a locking script, and its `unlock` method returns an object with `sign`, which builds the unlocking script for one input, and `estimateLength`, which returns the size that script is expected to have.
 
 ### Templates in `@bsv/sdk`
-
-`@bsv/sdk` ships these templates. Pick one to see what `lock` and `unlock` take and return, and how big its unlocking script is expected to be:
 
 <ScriptTemplates />
 
@@ -157,17 +120,11 @@ console.log(await unlock.estimateLength())
 The diagram has a tab for each template and two cards. The left card shows the call to lock and the locking script it returns. The right card shows the call to unlock, which returns an object with sign and estimateLength, the unlocking script that sign builds, and the size estimateLength returns. P2PKH: lock takes an address and returns OP_DUP OP_HASH160, a 20 byte hash, OP_EQUALVERIFY, OP_CHECKSIG. unlock takes a private key, the unlocking script is a signature and a public key, and the estimate is 108 bytes. PushDrop: lock takes fields (one byte array per data field), a protocol ID (a security level of 0, 1 or 2 and a name of 5 to 400 bytes), a key ID and a counterparty (self, anyone or a public key in hex), and returns a public key, OP_CHECKSIG, the fields, a signature, OP_2DROP, OP_DROP. unlock takes a protocol ID, a key ID and a counterparty, the unlocking script is a signature, and the estimate is 73 bytes. RPuzzle: lock takes a value and returns thirteen opcodes and data pushes that end with a 20 byte hash, OP_EQUALVERIFY and OP_CHECKSIG. unlock takes the K value and a private key, the unlocking script is a signature and a public key, and the estimate is 108 bytes.
 </Visibility>
 
-In short:
-
-- `P2PKH` locks an output to one public key hash. It is the script of an ordinary payment.
-- `PushDrop` locks data fields to a public key, which lets an output carry data and still be spent. Overlay protocols use it.
-- `RPuzzle` locks an output with an R puzzle, which the spender unlocks with the matching K value.
-
-To build your own template, read [Write a custom script template](/sdk/typescript/low-level/script-templates/).
+A fee depends on the size of the transaction, and a signature does not exist until the transaction is signed. The SDK therefore takes the size of each unlocking script from `estimateLength` when it computes the fee. You pass a template as the `unlockingScriptTemplate` of an input, as `spend.mjs` does.
 
 ### Lock data with PushDrop
 
-`PushDrop` takes its keys from a wallet, so its `lock` needs a wallet object as well as the data. This example uses `ProtoWallet`, a class in `@bsv/sdk` that signs and derives keys on its own and needs no network:
+`PushDrop` locks data fields to a public key, so an output can carry data and still be spent. Overlay protocols use it. It takes its keys from a wallet, so its `lock` needs a wallet object as well as the data. This example uses `ProtoWallet`, a class in `@bsv/sdk` that signs and derives keys on its own and needs no network:
 
 ```javascript pushdrop.mjs
 import { PrivateKey, PushDrop, ProtoWallet, Utils } from '@bsv/sdk'
@@ -180,22 +137,15 @@ const lockingScript = await new PushDrop(wallet).lock(fields, [0, 'demo token'],
 console.log(lockingScript.toASM())
 ```
 
-The four values of `lock` are:
-
-- `fields` is an array of byte arrays, one for each data field. `Utils.toArray` turns text into bytes.
-- `protocolID` is `[securityLevel, name]`. The security level is `0`, `1` or `2`, and sets how much approval a wallet asks for: none at `0`, for every app at `1`, and for every counterparty and app at `2`. The name must be 5 to 400 bytes long, so `'demo token'` works and `'demo'` does not.
-- `keyID` is a string that picks the key under that protocol.
-- `counterparty` is `'self'`, `'anyone'` or a public key in hex.
-
 The key, the signature and the hex of the fields differ on every run. The script has this shape:
 
 ```text
 03919c18...(33 byte public key) OP_CHECKSIG 68656c6c6f 776f726c64 30450221...(71 byte signature) OP_2DROP OP_DROP
 ```
 
-The public key and `OP_CHECKSIG` come first, so only the holder of that key can spend the output. The two data fields follow, and `68656c6c6f` and `776f726c64` are `hello` and `world` in hex. `OP_2DROP` and `OP_DROP` remove the two fields and the signature from the stack again, so the data does not change what the script has to prove.
+`Utils.toArray` turns text into the bytes of a field, and `68656c6c6f` and `776f726c64` are `hello` and `world` in hex. The public key and `OP_CHECKSIG` come first, so only the holder of that key can spend the output. `OP_2DROP` and `OP_DROP` remove the two fields and the signature from the stack again, so the data does not change what the script has to prove.
 
-The 5 to 400 byte limit on the name is part of the `WalletProtocol` type of the BRC-100 interface, so any wallet is expected to reject a shorter one. `ProtoWallet` does it with the message `The protocolID[1] parameter must be at least 5 length.`, and another wallet may word its error differently.
+The security level in `protocolID` sets how much approval a wallet asks for: none at `0`, for every app at `1`, and for every counterparty and app at `2`. The 5 to 400 byte limit on the name is part of the `WalletProtocol` type of the BRC-100 interface, so any wallet is expected to reject a shorter name, and `'demo token'` works where `'demo'` does not. `ProtoWallet` does it with the message `The protocolID[1] parameter must be at least 5 length.`, and another wallet may word its error differently.
 
 ## Scripts that carry data
 
