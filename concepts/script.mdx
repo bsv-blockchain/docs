@@ -12,7 +12,11 @@ The most common script, <Hint tip="Pay to Public Key Hash, an output that only t
 
 ## A locking and an unlocking script
 
-A script is a list of chunks read from left to right. A chunk is either data, which is pushed on a stack, or an opcode, which takes items off the stack and puts a result back. The examples on this page run with Node.js after `npm install @bsv/sdk`:
+A script is a list of chunks read from left to right. A chunk is either data, which is pushed on a stack, or an opcode, which takes items off the stack and puts a result back. The examples on this page run with Node.js after `npm install @bsv/sdk`.
+
+<Callout type="warning">
+Each example generates a new random private key on every run, only to try the scripts. Never put a private key that holds value in code, and never commit one to version control.
+</Callout>
 
 ```javascript lock.mjs
 import { PrivateKey, P2PKH } from '@bsv/sdk'
@@ -189,7 +193,9 @@ The key, the signature and the hex of the fields differ on every run. The script
 03919c18...(33 byte public key) OP_CHECKSIG 68656c6c6f 776f726c64 30450221...(71 byte signature) OP_2DROP OP_DROP
 ```
 
-The public key and `OP_CHECKSIG` come first, so only the holder of that key can spend the output. The two data fields follow, and `68656c6c6f` and `776f726c64` are `hello` and `world` in hex. `OP_2DROP` and `OP_DROP` remove the two fields and the signature from the stack again, so the data does not change what the script has to prove. With a protocol name of fewer than 5 bytes, `lock` throws `The protocolID[1] parameter must be at least 5 length.`
+The public key and `OP_CHECKSIG` come first, so only the holder of that key can spend the output. The two data fields follow, and `68656c6c6f` and `776f726c64` are `hello` and `world` in hex. `OP_2DROP` and `OP_DROP` remove the two fields and the signature from the stack again, so the data does not change what the script has to prove.
+
+The 5 to 400 byte limit on the name is part of the `WalletProtocol` type of the BRC-100 interface, so any wallet is expected to reject a shorter one. `ProtoWallet` does it with the message `The protocolID[1] parameter must be at least 5 length.`, and another wallet may word its error differently.
 
 ## Scripts that carry data
 
