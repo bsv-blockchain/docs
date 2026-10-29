@@ -43,6 +43,8 @@ The network checks every input the same way. It runs the unlocking script first,
 
 ### The stack step by step
 
+Try it yourself: press Step to run the next chunk of the P2PKH pair, then switch to another key and run it again to see the spend fail.
+
 <ScriptStepper />
 
 <Visibility for="agents">
@@ -97,7 +99,7 @@ await check(owner)
 await check(stranger)
 ```
 
-The `source` transaction stands in for the earlier transaction that created the output, which holds 1,000 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint>. The `sequence` of the input is required, because the `P2PKH` template cannot sign an input without one. The two calls print:
+A spend needs an earlier transaction to spend from, and `source` plays that role with one output of 1,000 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> locked to the owner. The input sets a `sequence` because the `P2PKH` template cannot sign an input without one. Running the file prints:
 
 ```text
 valid: true
@@ -113,6 +115,8 @@ A passing check means the two scripts are satisfied. The network also validates 
 A script template packages one kind of script. Its `lock` method builds a locking script, and its `unlock` method returns an object with `sign`, which builds the unlocking script for one input, and `estimateLength`, which returns the size that script is expected to have.
 
 ### Templates in `@bsv/sdk`
+
+Try it yourself: pick a template to see what `lock` and `unlock` take and return, and how large its unlocking script is expected to be.
 
 <ScriptTemplates />
 
