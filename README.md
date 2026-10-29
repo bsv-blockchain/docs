@@ -205,3 +205,9 @@ Check a technical claim against one of these before you accept it.
 - The ts-stack documentation at [bsv-blockchain.github.io/ts-stack](https://bsv-blockchain.github.io/ts-stack/)
 - The source and the releases in the [bsv-blockchain](https://github.com/bsv-blockchain) organization on GitHub, for products such as BSV Desktop and BSV Browser
 - npm, for the exact name and version of a package
+
+## License
+
+The documentation and code samples in this repository are licensed under the Apache License 2.0. See `LICENSE`.
+
+The Chillax font in `fonts/` is not covered by that license. It keeps its own license. See `fonts/README.md`.
