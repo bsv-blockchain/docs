@@ -3,12 +3,15 @@ import { useState } from 'react';
 // Content only: edit the text here, the layout below does not need to change.
 // Source: the description of each guide in guides/. Each option is one thing the reader wants to do and the guide it leads to.
 // Wrap a code term in backticks to show it as code.
+// Writedocs adds the base path to the links of the page but not to an address computed here, so it is written once.
+const BASE_PATH = '/docs';
+
 const options = [
   {
     goal: 'Charge for an API',
     detail: 'Pay per request with HTTP 402',
     title: 'Gate an API behind payments',
-    text: 'Charge for API routes with HTTP 402 Payment Required, using an Express middleware that prices a route and a fetch wrapper that pays from a BRC-100 wallet.',
+    text: 'Charge for API routes with HTTP 402 Payment Required, using an Express middleware that prices a route and a fetch wrapper that pays from the user's wallet.',
     href: '/guides/payments/',
   },
   {
@@ -36,7 +39,7 @@ const options = [
     goal: "Find your app's transactions",
     detail: 'Without scanning the chain',
     title: 'Track transactions with overlays',
-    text: "Index your app's transactions in an overlay and look them up by service, instead of scanning the chain.",
+    text: "Track your app's transactions in an overlay, a service that indexes them under a topic, and look them up without scanning the chain.",
     href: '/guides/overlays/',
   },
   {
@@ -111,7 +114,7 @@ export default function GuideChooser() {
             <div className="gc-title">{current.title}</div>
             <p className="gc-text">{current.text}</p>
           </div>
-          <a className="gc-cta" href={current.href}><span>Open the guide</span><span aria-hidden="true">→</span></a>
+          <a className="gc-cta" href={BASE_PATH + current.href}><span>Open the guide</span><span aria-hidden="true">→</span></a>
         </div>
       </div>
     </div>
