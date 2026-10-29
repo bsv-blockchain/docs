@@ -93,7 +93,7 @@ The plugin holds the skill, the two commands and both MCP servers:
   </Step>
 </Steps>
 
-The plugin bundles `bsv-docs` and `bsv-mcp`, so it replaces the two `claude mcp add` commands of [Connect your AI tool with MCP](/build-with-ai/mcp/). It never sets `BSV_MCP_ALLOW_MAINNET_BROADCAST`, so a Mainnet broadcast by the agent still needs you to set it in the shell that starts Claude Code.
+The plugin bundles `bsv-docs` and `bsv-mcp`, so it replaces the two `claude mcp add` commands of [Connect your AI tool with MCP](/build-with-ai/mcp/). It never sets `BSV_MCP_ALLOW_MAINNET_BROADCAST`, so a Mainnet broadcast by the agent still needs you to set it in the shell that starts Claude Code. A `broadcaster_url` that points at Mainnet also needs `bsv_network` set to `mainnet`, or the server treats it as testnet and that gate does not apply.
 
 ## Install the skill in another agent
 

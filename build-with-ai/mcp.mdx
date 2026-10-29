@@ -128,7 +128,7 @@ The server also has 16 resources for the agent to read. Ten are dated facts, `bs
 It also has five prompts: `review_against_guardrails` runs the guardrail check and fixes the errors, `tokenize_with_1color` gives the encoding of 1Color token outputs, and `integrate_simple`, `add_simple_feature` and `debug_simple` work with `@bsv/simple`.
 
 <Callout type="warning">
-  A Mainnet broadcast through `broadcaster_submit` needs `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` in the shell that starts the agent, whether the network comes from `BSV_NETWORK=mainnet` or from the call itself. Without it, the tool refuses before it contacts BSV Broadcaster. A Mainnet broadcast spends real BSV and cannot be undone.
+  `broadcaster_submit` refuses a Mainnet broadcast, before it contacts BSV Broadcaster, unless `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` is set in the shell that starts the agent. The gate goes by the network of the call, never by the address: the `network` the agent passes, or `BSV_NETWORK` when it passes none. A custom `BSV_BROADCASTER_URL` that points at Mainnet needs `BSV_NETWORK=mainnet`. Under `BSV_NETWORK=testnet`, the server treats that endpoint as testnet, and the gate does not apply. A Mainnet broadcast spends real BSV and cannot be undone.
 </Callout>
 
 ## Check a project against the guardrails
@@ -180,7 +180,7 @@ A project is ready when the report shows 0 errors. The repository's tipping samp
 
 The server still reads `ARCADE_URL`, the former name of `BSV_BROADCASTER_URL`, when `BSV_BROADCASTER_URL` is not set. It is deprecated, and the server logs a warning when it uses it.
 
-Set `BSV_NETWORK=mainnet` for any Mainnet BSV Broadcaster endpoint, including your own. The server goes by the network you set, not by the address: it refuses the known Mainnet hosts on testnet, but it cannot tell where an unknown host belongs, so it treats an unknown Mainnet endpoint under `BSV_NETWORK=testnet` as testnet.
+Set `BSV_NETWORK=mainnet` for any Mainnet BSV Broadcaster endpoint, including your own. The server goes by the network you set, not by the address: it refuses the known Mainnet hosts on testnet, but it cannot tell where an unknown host belongs, so it treats an unknown Mainnet endpoint under `BSV_NETWORK=testnet` as testnet, without the Mainnet gate.
 
 Both testnet hosts, `arcade-testnet-us-1` and `arcade-v2-testnet-us-1`, are live. [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/) uses the second; set `BSV_BROADCASTER_URL` to use it here.
 
