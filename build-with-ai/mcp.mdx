@@ -26,6 +26,10 @@ Two MCP servers give the agent BSV knowledge in different ways. The BSV docs ser
 
 Claude Code adds each server to the current project only, so run the commands in your project folder.
 
+<Callout type="note">
+  The `bsv-dev` plugin of [Install the BSV agent skill](/build-with-ai/skill/) already connects both servers, as `plugin:bsv-dev:bsv-docs` and `plugin:bsv-dev:bsv-mcp`. With the plugin, skip the two `claude mcp add` commands on this page, or Claude Code starts a second copy of `bsv-mcp`. The tools, the guardrail check and the settings below are the same.
+</Callout>
+
 ## Connect the BSV docs server
 
 The docs server runs on this site and needs no login or API key:
@@ -169,7 +173,7 @@ A project is ready when the report shows 0 errors. The repository's tipping samp
 
 ## Set the environment
 
-`@bsv/mcp` reads these variables, which you pass with `-e` in `claude mcp add`:
+`@bsv/mcp` reads these variables, which you pass with `-e` in `claude mcp add`. The plugin sets `BSV_NETWORK` and `BSV_BROADCASTER_URL` from its `bsv_network` and `broadcaster_url` settings:
 
 | Variable | Default | What it does |
 |----------|---------|--------------|
@@ -250,13 +254,16 @@ These configurations come from the install notes of `@bsv/mcp` and were not run 
 
 ## Remove a server
 
-Run the command with the name of the server, here `bsv-mcp`:
+Run `claude mcp remove` with the name of the server, in the project folder where you added it. `-s local` is the scope that `claude mcp add` uses. To remove both servers, for example before you install the plugin:
 
 ```bash
+claude mcp remove bsv-docs -s local
 claude mcp remove bsv-mcp -s local
 ```
 
 ```text
+Removed MCP server bsv-docs from local config
+File modified: /Users/you/.claude.json [project: /Users/you/my-app]
 Removed MCP server bsv-mcp from local config
 File modified: /Users/you/.claude.json [project: /Users/you/my-app]
 ```
@@ -280,7 +287,7 @@ The code generators have no replacement. The prompts guide the agent to write th
 
 ## Next steps
 
-With both servers connected, give the agent the BSV playbook, then let it build a first payment:
+With both servers connected, give the agent the BSV playbook, which in Claude Code replaces these servers with the plugin's, then let it build a first payment:
 
 - [Install the BSV agent skill](/build-with-ai/skill/)
 - [Send a payment with an AI agent](/build-with-ai/prompts/)

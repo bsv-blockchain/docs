@@ -40,6 +40,21 @@ The skill works on its own, and better with the two MCP servers of [Connect your
 The plugin holds the skill, the two commands and both MCP servers:
 
 <Steps>
+  <Step title="Remove the servers you added by hand">
+    Skip this step if you did not add the servers with `claude mcp add`. If you did, as in [Connect your AI tool with MCP](/build-with-ai/mcp/), remove them in that project folder, so Claude Code does not start a second copy of `bsv-mcp`:
+
+    ```bash
+    claude mcp remove bsv-docs -s local
+    claude mcp remove bsv-mcp -s local
+    ```
+
+    ```text
+    Removed MCP server bsv-docs from local config
+    File modified: /Users/you/.claude.json [project: /Users/you/my-app]
+    Removed MCP server bsv-mcp from local config
+    File modified: /Users/you/.claude.json [project: /Users/you/my-app]
+    ```
+  </Step>
   <Step title="Add the marketplace and install">
     Add the BSV marketplace and install the plugin from it:
 
