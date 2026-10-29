@@ -4,6 +4,7 @@ description: "Understand locking and unlocking scripts, how a spend is checked o
 ---
 
 import ScriptStepper from '/snippets/ScriptStepper.jsx';
+import ScriptTemplates from '/snippets/ScriptTemplates.jsx';
 
 Every BSV output carries a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> that sets the condition to spend it, and every input carries an <Hint tip="The part of an input that meets the condition set by the locking script of the output it spends">unlocking script</Hint> that meets that condition. Both are written in Script, a small stack based language. A wallet builds these scripts for you, so you meet Script when you lock an output to a custom condition, read what an output says, or find out why a spend was rejected.
 
@@ -144,7 +145,15 @@ console.log(await unlock.estimateLength())
 
 ### Templates in `@bsv/sdk`
 
-`@bsv/sdk` ships these templates:
+`@bsv/sdk` ships these templates. Pick one to see what `lock` and `unlock` take and return, and how big its unlocking script is expected to be:
+
+<ScriptTemplates />
+
+<Visibility for="agents">
+The diagram has a tab for each template and two cards. The left card shows the call to lock and the locking script it returns. The right card shows the call to unlock, which returns an object with sign and estimateLength, the unlocking script that sign builds, and the size estimateLength returns. P2PKH: lock takes an address and returns OP_DUP OP_HASH160, a 20 byte hash, OP_EQUALVERIFY, OP_CHECKSIG. unlock takes a private key, the unlocking script is a signature and a public key, and the estimate is 108 bytes. PushDrop: lock takes fields, a protocol ID, a key ID and a counterparty, and returns a public key, OP_CHECKSIG, the fields, a signature, OP_2DROP, OP_DROP. unlock takes a protocol ID, a key ID and a counterparty, the unlocking script is a signature, and the estimate is 73 bytes. RPuzzle: lock takes a value and returns thirteen opcodes and data pushes that end with a 20 byte hash, OP_EQUALVERIFY and OP_CHECKSIG. unlock takes the K value and a private key, the unlocking script is a signature and a public key, and the estimate is 108 bytes.
+</Visibility>
+
+In short:
 
 - `P2PKH` locks an output to one public key hash. It is the script of an ordinary payment.
 - `PushDrop` locks data fields to a public key, which lets an output carry data and still be spent. Overlay protocols use it.
