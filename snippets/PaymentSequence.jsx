@@ -1,5 +1,5 @@
 // Flow of one payment in "Pay from a web app": four boxes of the same size, left to right, linked by arrows.
-// Content only: edit the steps here. Keep each text short and about the same length. Tested on BSV Desktop 3.1.1, 2026-10-15.
+// Content only: edit the steps here. Keep each text short and about the same length. Tested on BSV Desktop 3.1.1 (2026-10-15) and 3.3.1 (2026-10-26).
 import { Fragment } from 'react';
 
 const steps = [

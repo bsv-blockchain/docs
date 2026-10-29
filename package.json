@@ -1,7 +1,8 @@
 {
-  "name": "writedocs-template",
+  "name": "bsv-developer-docs",
   "private": true,
-  "description": "Starter for a Writedocs documentation site, with the generator installed locally in this project.",
+  "description": "Developer documentation for BSV Blockchain: Quick Start and guides for building apps with BRC-100 wallets and the TypeScript SDK.",
+  "license": "Apache-2.0",
   "scripts": {
     "dev": "writedocs dev",
     "validate": "writedocs validate",

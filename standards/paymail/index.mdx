@@ -1,0 +1,44 @@
+---
+title: "Look up a user's identity key with Paymail"
+sidebarTitle: "Paymail"
+description: Use a Paymail handle to discover a user's services and resolve the handle into their identity key.
+---
+
+**Paymail** gives a user a handle that looks like an email address, such as `alice@walletprovider.com`. On BSV today, apps and wallets use Paymail for two things:
+
+- **Service discovery:** given a handle's domain, find out which Paymail capabilities it supports and where.
+- **Identity key lookup:** resolve a handle into the user's identity key, the public key that identifies them to BRC-100 wallets and apps.
+
+## What to Use and What to Skip
+
+Paymail started as a family of protocols, collectively called `bsvalias`, with many capabilities and extensions, such as resolving a handle into a payment address. Those older capabilities are not recommended for new apps. Payments go through the user's [BRC-100 wallet](/concepts/wallet-model/) instead, as in [Accept and send payments](/guides/payments/).
+
+| Capability | For new apps |
+| --- | --- |
+| Service discovery | Use it |
+| Handle to identity key (public key infrastructure) | Use it |
+| Payment addressing and older extensions | Skip them |
+
+## Look Up an Identity Key
+
+The `@bsv/paymail` package provides `PaymailClient`, which discovers a domain's capabilities and resolves a handle:
+
+```bash
+npm install @bsv/paymail
+```
+
+```typescript
+import { PaymailClient } from '@bsv/paymail'
+
+const client = new PaymailClient()
+
+// Resolve the handle into the user's identity key
+const pki = await client.getPki('alice@walletprovider.com')
+console.log(pki.pubkey)
+```
+
+To serve Paymail for your own domain, the same package provides `PaymailRouter`, an Express router for the `/.well-known/bsvalias/*` endpoints.
+
+## The Specification
+
+The official Paymail standard is published at [tsc.bsvblockchain.org](https://tsc.bsvblockchain.org/standards/paymail/). Older copies of the `bsvalias` and BRFC documents on other sites are pastes of the original text, so link the standard instead of them.

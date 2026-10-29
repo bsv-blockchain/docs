@@ -1,7 +1,8 @@
 {
   "$schema": "https://preview.writedocs.io/schema.json",
-  "name": "BSV Docs",
-  "domain": "docs.bsvblockchain.org",
+  "name": "BSV blockchain",
+  "domain": "bsvblockchain.org",
+  "basePath": "/docs",
   "description": "Developer documentation for BSV Blockchain: build apps with BRC-100 wallets and the TypeScript SDK.",
   "styles": {
     "colors": {
@@ -43,21 +44,21 @@
           {
             "group": "Build your first app",
             "pages": [
-              "docs/get-started/quick-start-browser",
-              "docs/get-started/quick-start-server",
-              "docs/get-started/verify",
-              "docs/get-started/project-starter",
-              "docs/get-started/try-it"
+              "get-started/quick-start-browser",
+              "get-started/quick-start-server",
+              "get-started/verify",
+              "get-started/project-starter",
+              "get-started/try-it"
             ]
           },
           {
             "group": "Set up your AI",
             "pages": [
-              "docs/build-with-ai/index",
-              "docs/build-with-ai/simple-mcp",
-              "docs/build-with-ai/prompts",
-              "docs/build-with-ai/llm-resources",
-              "docs/build-with-ai/skill"
+              "build-with-ai/index",
+              "build-with-ai/simple-mcp",
+              "build-with-ai/prompts",
+              "build-with-ai/llm-resources",
+              "build-with-ai/skill"
             ]
           }
         ]
@@ -66,58 +67,41 @@
         "tab": "Guides",
         "icon": "compass",
         "pages": [
-          "docs/guides/index",
+          "guides/index",
           {
             "group": "Use cases",
             "pages": [
-              "docs/guides/payments",
-              "docs/guides/identity-auth",
-              "docs/guides/data-storage",
-              "docs/guides/messaging",
-              "docs/guides/overlays",
-              "docs/guides/digital-product-passports"
+              "guides/payments",
+              "guides/identity-auth",
+              "guides/data-storage",
+              "guides/messaging",
+              "guides/overlays",
+              "guides/digital-product-passports"
             ]
           },
           {
             "group": "Build your app",
             "pages": [
-              "docs/guides/app-frameworks",
-              "docs/guides/wallet-aware-apps",
-              "docs/guides/go-to-mainnet"
+              "guides/app-frameworks",
+              "guides/wallet-aware-apps",
+              "guides/go-to-mainnet"
             ]
           },
           {
-            "group": "Run your own services",
+            "group": "Services and infrastructure",
             "pages": [
-              "docs/guides/services/index",
-              "docs/guides/services/broadcasting",
-              {
-                "group": "Run ts-stack services",
-                "page": "docs/guides/services/stack-services/index",
-                "pages": [
-                  "docs/guides/services/stack-services/overlay-server",
-                  "docs/guides/services/stack-services/message-box-server"
-                ]
-              },
-              {
-                "group": "Run in production",
-                "page": "docs/guides/services/operations/index",
-                "pages": [
-                  "docs/guides/services/operations/edge-security",
-                  "docs/guides/services/operations/scaling"
-                ]
-              },
-              "docs/guides/services/local-stack"
+              "guides/services/index",
+              "guides/services/broadcasting"
             ]
           },
           {
             "group": "Examples",
             "pages": [
-              "docs/showcase/p2p-medical",
-              "docs/showcase/time-anchor",
-              "docs/showcase/beef-inspector"
+              "showcase/p2p-medical",
+              "showcase/time-anchor",
+              "showcase/beef-inspector"
             ],
-            "page": "docs/showcase/index"
+            "page": "showcase/index"
           }
         ]
       },
@@ -132,32 +116,32 @@
               {
                 "group": "About BSV",
                 "pages": [
-                  "docs/learn/what-is-bsv",
-                  "docs/learn/index",
+                  "learn/what-is-bsv",
+                  "learn/index",
                   {
                     "group": "BSV wiki",
-                    "page": "docs/learn/wiki/index",
+                    "page": "learn/wiki/index",
                     "pages": [
-                      "docs/learn/wiki/blockchain",
-                      "docs/learn/wiki/cryptography",
-                      "docs/learn/wiki/bitcoin-transactions"
+                      "learn/wiki/blockchain",
+                      "learn/wiki/cryptography",
+                      "learn/wiki/bitcoin-transactions"
                     ]
                   },
-                  "docs/learn/glossary"
+                  "learn/glossary"
                 ]
               },
               {
                 "group": "Concepts",
                 "pages": [
-                  "docs/concepts/how-your-payment-worked",
-                  "docs/concepts/architecture",
-                  "docs/concepts/wallet-model",
-                  "docs/concepts/transactions",
-                  "docs/concepts/script",
-                  "docs/concepts/keys-identity",
-                  "docs/concepts/spv",
-                  "docs/concepts/overlays",
-                  "docs/concepts/networks"
+                  "concepts/how-your-payment-worked",
+                  "concepts/architecture",
+                  "concepts/wallet-model",
+                  "concepts/transactions",
+                  "concepts/script",
+                  "concepts/keys-identity",
+                  "concepts/spv",
+                  "concepts/overlays",
+                  "concepts/networks"
                 ]
               }
             ]
@@ -170,31 +154,31 @@
                 "product": "All courses",
                 "description": "Every course, with links",
                 "pages": [
-                  "docs/learn/academy/index"
+                  "learn/academy/index"
                 ]
               },
               {
                 "product": "Bitcoin Whitepaper Series",
                 "description": "The Bitcoin whitepaper, section by section (206 pages).",
                 "pages": [
-                  "docs/learn/academy/bitcoin-whitepaper-series/bitcoin-whitepaper-abstract",
-                  "docs/learn/academy/bitcoin-whitepaper-series/bitcoin-whitepaper-abstract/assessment-1"
+                  "learn/academy/bitcoin-whitepaper-series/bitcoin-whitepaper-abstract",
+                  "learn/academy/bitcoin-whitepaper-series/bitcoin-whitepaper-abstract/assessment-1"
                 ]
               },
               {
                 "product": "BSV Theory",
                 "description": "The theory behind BSV's design (95 pages).",
                 "pages": [
-                  "docs/learn/academy/bsv-theory/abstract",
-                  "docs/learn/academy/bsv-theory/abstract/cooperation-in-the-network"
+                  "learn/academy/bsv-theory/abstract",
+                  "learn/academy/bsv-theory/abstract/cooperation-in-the-network"
                 ]
               },
               {
                 "product": "Introduction to Blockchain Technology",
                 "description": "Blockchain basics for newcomers (94 pages).",
                 "pages": [
-                  "docs/learn/academy/introduction-to-blockchain-technology/blockchain-applications-around-the-world",
-                  "docs/learn/academy/introduction-to-blockchain-technology/blockchain-applications-around-the-world/assessment-1"
+                  "learn/academy/introduction-to-blockchain-technology/blockchain-applications-around-the-world",
+                  "learn/academy/introduction-to-blockchain-technology/blockchain-applications-around-the-world/assessment-1"
                 ]
               }
             ]
@@ -205,42 +189,42 @@
         "tab": "SDKs",
         "icon": "code",
         "pages": [
-          "docs/sdk/index",
+          "sdk/index",
           {
             "group": "TypeScript",
             "pages": [
               {
                 "group": "@bsv/simple",
-                "page": "docs/sdk/simple/index",
+                "page": "sdk/simple/index",
                 "pages": [
-                  "docs/sdk/simple/architecture",
-                  "docs/sdk/simple/browser-wallet"
+                  "sdk/simple/architecture",
+                  "sdk/simple/browser-wallet"
                 ]
               },
               {
                 "group": "TypeScript SDK",
-                "page": "docs/sdk/typescript/index",
+                "page": "sdk/typescript/index",
                 "pages": [
-                  "docs/sdk/typescript/setup",
-                  "docs/sdk/typescript/wallet-client"
+                  "sdk/typescript/setup",
+                  "sdk/typescript/wallet-client"
                 ]
               },
               {
                 "group": "Low-level transactions",
-                "page": "docs/sdk/typescript/low-level/index",
+                "page": "sdk/typescript/low-level/index",
                 "pages": [
-                  "docs/sdk/typescript/low-level/transactions",
-                  "docs/sdk/typescript/low-level/hd-keys",
-                  "docs/sdk/typescript/low-level/script-templates"
+                  "sdk/typescript/low-level/transactions",
+                  "sdk/typescript/low-level/hd-keys",
+                  "sdk/typescript/low-level/script-templates"
                 ]
               },
               {
                 "group": "More TypeScript packages",
-                "page": "docs/sdk/packages/index",
+                "page": "sdk/packages/index",
                 "pages": [
-                  "docs/sdk/packages/message-box-client",
-                  "docs/sdk/packages/402-pay",
-                  "docs/sdk/packages/overlay-express"
+                  "sdk/packages/message-box-client",
+                  "sdk/packages/402-pay",
+                  "sdk/packages/overlay-express"
                 ]
               }
             ]
@@ -248,8 +232,8 @@
           {
             "group": "Other languages",
             "pages": [
-              "docs/sdk/go/index",
-              "docs/sdk/python/index"
+              "sdk/go/index",
+              "sdk/python/index"
             ]
           },
           {
@@ -257,10 +241,10 @@
             "pages": [
               {
                 "group": "SDK API reference",
-                "page": "docs/sdk/api/index",
+                "page": "sdk/api/index",
                 "pages": [
-                  "docs/sdk/api/simple/browser-wallet",
-                  "docs/sdk/api/simple/server-wallet"
+                  "sdk/api/simple/browser-wallet",
+                  "sdk/api/simple/server-wallet"
                 ]
               },
               {
@@ -271,8 +255,8 @@
                 "label": "Python SDK (GitHub)",
                 "href": "https://github.com/bsv-blockchain/py-sdk"
               },
-              "docs/sdk/defaults",
-              "docs/sdk/runtimes"
+              "sdk/defaults",
+              "sdk/runtimes"
             ]
           }
         ]
@@ -284,10 +268,10 @@
           {
             "group": "Getting started",
             "pages": [
-              "docs/reference/index",
-              "docs/reference/networks",
-              "docs/reference/errors",
-              "docs/reference/script-opcodes"
+              "reference/index",
+              "reference/networks",
+              "reference/errors",
+              "reference/script-opcodes"
             ]
           },
           {
@@ -302,10 +286,10 @@
             "pages": [
               {
                 "group": "Service APIs overview",
-                "page": "docs/reference/http-apis/index",
+                "page": "reference/http-apis/index",
                 "pages": [
-                  "docs/reference/http-apis/authsocket",
-                  "docs/reference/http-apis/brc-103-mutual-auth"
+                  "reference/http-apis/authsocket",
+                  "reference/http-apis/brc-103-mutual-auth"
                 ]
               },
               {
@@ -362,16 +346,16 @@
           {
             "group": "Standards",
             "pages": [
-              "docs/standards/index",
-              "docs/standards/brc-index",
-              "docs/standards/brc-100",
+              "standards/index",
+              "standards/brc-index",
+              "standards/brc-100",
               {
                 "group": "Paymail specification",
-                "page": "docs/standards/paymail/index",
+                "page": "standards/paymail/index",
                 "pages": [
-                  "docs/standards/paymail/basic-address-resolution",
-                  "docs/standards/paymail/capability-discovery",
-                  "docs/standards/paymail/brfc-specifications"
+                  "standards/paymail/basic-address-resolution",
+                  "standards/paymail/capability-discovery",
+                  "standards/paymail/brfc-specifications"
                 ]
               },
               {
@@ -390,13 +374,13 @@
         "tab": "Wallets",
         "icon": "wallet",
         "pages": [
-          "docs/wallets/index",
+          "wallets/index",
           {
             "group": "Use a wallet",
             "pages": [
-              "docs/wallets/bsv-desktop",
-              "docs/wallets/bsv-browser",
-              "docs/wallets/backup-recovery",
+              "wallets/bsv-desktop",
+              "wallets/bsv-browser",
+              "wallets/backup-recovery",
               {
                 "label": "BRC-100 wallet directory",
                 "href": "https://brc100.org/"
@@ -406,25 +390,25 @@
           {
             "group": "Build a wallet",
             "pages": [
-              "docs/wallet-dev/index",
+              "wallet-dev/index",
               {
                 "group": "Use wallet-toolbox",
-                "page": "docs/wallet-dev/wallet-toolbox/index",
+                "page": "wallet-dev/wallet-toolbox/index",
                 "pages": [
-                  "docs/wallet-dev/wallet-toolbox/utxo-lifecycle",
-                  "docs/wallet-dev/wallet-toolbox/storage-adapter"
+                  "wallet-dev/wallet-toolbox/utxo-lifecycle",
+                  "wallet-dev/wallet-toolbox/storage-adapter"
                 ]
               },
-              "docs/wallet-dev/permissions",
+              "wallet-dev/permissions",
               {
                 "group": "Test conformance",
-                "page": "docs/wallet-dev/conformance/index",
+                "page": "wallet-dev/conformance/index",
                 "pages": [
-                  "docs/wallet-dev/conformance/vector-catalog",
-                  "docs/wallet-dev/conformance/typescript-runner"
+                  "wallet-dev/conformance/vector-catalog",
+                  "wallet-dev/conformance/typescript-runner"
                 ]
               },
-              "docs/wallet-dev/infrastructure"
+              "wallet-dev/infrastructure"
             ]
           }
         ]
@@ -433,19 +417,19 @@
         "tab": "Changelog",
         "icon": "history",
         "pages": [
-          "docs/changelog/index",
-          "docs/changelog/whats-new",
+          "changelog/index",
+          "changelog/whats-new",
           {
             "group": "Products",
             "pages": [
-              "docs/changelog/simple",
-              "docs/changelog/sdk",
-              "docs/changelog/wallet-toolbox",
-              "docs/changelog/overlays",
-              "docs/changelog/messaging",
-              "docs/changelog/payments-middleware",
-              "docs/changelog/wallet-infrastructure",
-              "docs/changelog/other-packages"
+              "changelog/simple",
+              "changelog/sdk",
+              "changelog/wallet-toolbox",
+              "changelog/overlays",
+              "changelog/messaging",
+              "changelog/payments-middleware",
+              "changelog/wallet-infrastructure",
+              "changelog/other-packages"
             ]
           }
         ]
@@ -460,14 +444,14 @@
             "pages": [
               {
                 "group": "Run SV Node",
-                "page": "docs/nodes/sv-node/index",
+                "page": "nodes/sv-node/index",
                 "pages": [
-                  "docs/nodes/sv-node/installation",
-                  "docs/nodes/sv-node/configuration",
-                  "docs/nodes/sv-node/rpc-methods"
+                  "nodes/sv-node/installation",
+                  "nodes/sv-node/configuration",
+                  "nodes/sv-node/rpc-methods"
                 ]
               },
-              "docs/nodes/teranode"
+              "nodes/teranode"
             ]
           }
         ]
@@ -523,40 +507,68 @@
   },
   "redirects": [
     {
-      "source": "/docs/get-started/quick-start",
-      "destination": "/docs/get-started/quick-start-browser"
+      "source": "/guides/services/stack-services",
+      "destination": "/guides/services"
     },
     {
-      "source": "/docs/get-started/what-is-bsv",
-      "destination": "/docs/learn/what-is-bsv"
+      "source": "/guides/services/stack-services/overlay-server",
+      "destination": "/guides/services"
     },
     {
-      "source": "/docs/ai-agent",
-      "destination": "/docs/build-with-ai"
+      "source": "/guides/services/stack-services/message-box-server",
+      "destination": "/guides/services"
     },
     {
-      "source": "/docs/guides/choose-your-stack",
-      "destination": "/docs/sdk"
+      "source": "/guides/services/operations",
+      "destination": "/guides/services"
     },
     {
-      "source": "/docs/get-started/choose-stack",
-      "destination": "/docs/sdk"
+      "source": "/guides/services/operations/edge-security",
+      "destination": "/guides/services"
     },
     {
-      "source": "/docs/concepts/brc-100",
-      "destination": "/docs/concepts/wallet-model"
+      "source": "/guides/services/operations/scaling",
+      "destination": "/guides/services"
     },
     {
-      "source": "/docs/concepts/stack-layers",
-      "destination": "/docs/concepts/architecture"
+      "source": "/guides/services/local-stack",
+      "destination": "/guides/services"
     },
     {
-      "source": "/docs/concepts/beef",
-      "destination": "/docs/concepts/spv"
+      "source": "/get-started/quick-start",
+      "destination": "/get-started/quick-start-browser"
     },
     {
-      "source": "/docs/concepts/paymail",
-      "destination": "/docs/standards/paymail"
+      "source": "/get-started/what-is-bsv",
+      "destination": "/learn/what-is-bsv"
+    },
+    {
+      "source": "/ai-agent",
+      "destination": "/build-with-ai"
+    },
+    {
+      "source": "/guides/choose-your-stack",
+      "destination": "/sdk"
+    },
+    {
+      "source": "/get-started/choose-stack",
+      "destination": "/sdk"
+    },
+    {
+      "source": "/concepts/brc-100",
+      "destination": "/concepts/wallet-model"
+    },
+    {
+      "source": "/concepts/stack-layers",
+      "destination": "/concepts/architecture"
+    },
+    {
+      "source": "/concepts/beef",
+      "destination": "/concepts/spv"
+    },
+    {
+      "source": "/concepts/paymail",
+      "destination": "/standards/paymail"
     }
   ]
 }
