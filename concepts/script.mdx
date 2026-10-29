@@ -42,7 +42,11 @@ The unlocking script that meets this condition is two pushes, a signature and th
 
 ## How a spend is checked
 
-The network checks every input the same way. It runs the unlocking script first, then the locking script on the same stack, and the spend is valid when the script ends with a non zero value on top of the stack. The two scripts run in turn and are not joined into one. For the P2PKH pair, the stack changes like this:
+The network checks every input the same way. It runs the unlocking script first, then the locking script on the same stack, and the spend is valid when the script ends with a non zero value on top of the stack. The two scripts run in turn and are not joined into one.
+
+### The stack step by step
+
+For the P2PKH pair, the stack changes like this:
 
 <BlueTable>
 
@@ -57,6 +61,8 @@ The network checks every input the same way. It runs the unlocking script first,
 | 7 | Locking | `OP_CHECKSIG` | `01` |
 
 </BlueTable>
+
+### Check a spend in code
 
 `Spend` in `@bsv/sdk` is the interpreter that runs these steps in your own code. It needs the output being spent and the input that spends it. This example spends the same output twice, once with the key that owns it and once with a different key:
 
@@ -113,11 +119,17 @@ The second spend fails at step 6. The stranger's public key hashes to a differen
 
 `validate()` returns `true` or throws an error that names the opcode and its position. It never returns `false`, so wrap it in `try` and `catch`. To watch the stack change, call `spend.step()` in a loop. Each call runs one chunk and returns `false` once both scripts are done, and `spend.stack` holds the stack after each step.
 
+### What a passing check means
+
 A passing `Spend` check means the two scripts are satisfied. The network also validates the rest of the transaction, such as the amounts, the lock time and the Merkle path of each input. The signature covers the parts of the transaction that its signature hash flag selects, which [How transactions and fees work](/concepts/transactions/) describes.
 
 ## Script templates
 
-A script template packages one kind of script. It has two methods:
+A script template packages one kind of script.
+
+### What a template provides
+
+A template has two methods:
 
 - `lock` builds a locking script from the parameters of that kind of script.
 - `unlock` returns an object with two functions. `sign` builds the unlocking script for one input once the transaction exists, and `estimateLength` returns the expected size of that script in bytes.
@@ -137,6 +149,8 @@ console.log(await unlock.estimateLength())
 [ 'sign', 'estimateLength' ]
 108
 ```
+
+### Templates in `@bsv/sdk`
 
 `@bsv/sdk` ships these templates:
 
