@@ -86,7 +86,7 @@ The first step is to set up a Node.js project folder with the packages and a tes
     Wrote the test wallet keys to .env.
     ```
 
-    The script does not replace an existing `.env`. The file holds two test identities, one for the wallet and one for the storage server later on this page. `Setup.makeEnv()` also writes two mainnet identities and placeholder API keys, which this page does not use.
+    The script does not replace an existing `.env`. The file holds two test identities, one for the wallet and one for the storage server later on this page. `Setup.makeEnv()` also writes two Mainnet identities and placeholder API keys, which this page does not use.
   </Step>
 </Steps>
 
@@ -270,6 +270,11 @@ A new wallet has nothing to copy yet, so the first step adds one record to the a
     const { wallet, storage } = await openWallet()
 
     const store = storage.getStores().find(s => s.storageName === target)
+    if (!store) {
+      console.log('Use main or backup, for example: node switch.mjs main')
+      await wallet.destroy()
+      process.exit(1)
+    }
     await storage.setActive(store.storageIdentityKey)
     showStores(storage)
 
@@ -286,7 +291,13 @@ A new wallet has nothing to copy yet, so the first step adds one record to the a
     Certificates in the active store: 1
     ```
 
-    `setActive` first copies the current active store to the others, then records the new choice in every store. The choice persists, so `node check.mjs` now also prints `backup: active`. To make `main` the active store again, run `node switch.mjs main`.
+    `setActive` first copies the current active store to the others, then records the new choice in every store. The choice persists, so `node check.mjs` now also prints `backup: active`. The next section expects `main` to be the active store, so switch back now with `node switch.mjs main`:
+
+    ```text
+    main: active
+    backup: backup
+    Certificates in the active store: 1
+    ```
   </Step>
 </Steps>
 
