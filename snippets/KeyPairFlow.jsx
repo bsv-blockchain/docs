@@ -2,7 +2,7 @@ import { Fragment, useState } from 'react';
 
 // From a private key to an address: four stages in a row, pick one to see what it is, its size and how it is made.
 // A switch picks the network, which only changes the last stage. Content only: edit the texts below, the layout does not need to change.
-// Sizes and prefixes were checked with @bsv/sdk 4.0.1: public key 33 bytes compressed, the address holds hash160 of the public key, testnet addresses start with m, Mainnet with 1.
+// Checked with @bsv/sdk 4.0.1: public key 33 bytes compressed, the address is 25 bytes (version byte, hash160, first 4 bytes of hash256 as checksum), version byte 0x00 on Mainnet and 0x6f on testnet.
 
 const copy = {
   netLabel: 'Network',
@@ -109,7 +109,7 @@ export default function KeyPairFlow() {
   const index = stages.findIndex((s) => s.key === pick);
   const s = stages[index];
   const example = s.key === 'address'
-    ? (testnet ? 'Testnet addresses start with m, as in the example run.' : 'Mainnet addresses start with 1.')
+    ? (testnet ? 'Version byte 0x6f, so a testnet address starts with m or n.' : 'Version byte 0x00, so a Mainnet address starts with 1.')
     : null;
 
   return (
@@ -145,8 +145,7 @@ export default function KeyPairFlow() {
           <dt>{copy.size}</dt>
           <dd>
             <div className="kp-size">
-              <span className="kp-bytes">{`${s.size} ${copy.bytes}`}</span>
-              <div className="kp-bar" aria-hidden="true"><span className="kp-fill" style={{ width: `${(s.size / 40) * 100}%` }} /></div>
+              <div className="kp-bar" role="img" aria-label={`${s.size} ${copy.bytes}`}><span className="kp-fill" style={{ width: `${(s.size / 40) * 100}%` }} /></div>
             </div>
           </dd>
         </dl>

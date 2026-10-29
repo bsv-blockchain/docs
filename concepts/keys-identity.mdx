@@ -14,16 +14,16 @@ The examples use `@bsv/sdk` 4.0.1 and run with Node.js. Install it with `npm ins
 
 ## Private keys, public keys and addresses
 
-A private key is a 256 bit number. The public key is computed from it on the secp256k1 curve and is 33 bytes when compressed, so you can share it. An address is the <Hint tip="SHA-256 followed by RIPEMD-160">hash160</Hint> of the public key with a version byte and a checksum added, and the version byte tells testnet from Mainnet.
+A private key is a 256 bit number, and the public key and the address are computed from it.
 
 ### From a private key to an address
 
-Select each stage to see what it is, how big it is and how it is made, then switch the network to see how the last stage changes.
+Select **Private key**, **Public key**, **hash160** and **Address** in turn to see what each one is and how it is made, then switch between **Testnet** and **Mainnet** to see what changes in the address.
 
 <KeyPairFlow />
 
 <Visibility for="agents">
-The diagram has four stages in a row, joined by one way arrows. The private key is a 256 bit number of 32 bytes that signs and is never shared. The public key is 33 bytes when compressed, made from the private key on the secp256k1 curve, and can be shared. The hash160 is 20 bytes, a SHA-256 of the public key followed by a RIPEMD-160, and it is what a P2PKH locking script holds. The address is 25 bytes, a version byte, the hash160 and a 4 byte checksum written in base58. Testnet addresses start with m and Mainnet addresses start with 1.
+The diagram has four stages in a row, joined by one way arrows. The private key is a 256 bit number of 32 bytes that signs and is never shared. The public key is 33 bytes when compressed, made from the private key on the secp256k1 curve, and can be shared. The hash160 is 20 bytes, a SHA-256 of the public key followed by a RIPEMD-160, and it is what a P2PKH locking script holds. The address is 25 bytes, a version byte, the hash160 and a 4 byte checksum written in base58. The version byte is 0x00 on Mainnet, so the address starts with 1, and 0x6f on testnet, so it starts with m or n.
 </Visibility>
 
 ### Sign and verify in code
@@ -41,7 +41,7 @@ const publicKey = privateKey.toPublicKey()
 console.log('public key:', publicKey.toString())
 console.log('address:', publicKey.toAddress('testnet'))
 
-const message = Utils.toArray('Hi Bob', 'utf8')
+const message = Utils.toArray('Hi John', 'utf8')
 const signature = privateKey.sign(message)
 console.log('verifies:', publicKey.verify(message, signature))
 console.log('changed message verifies:', publicKey.verify(Utils.toArray('Hi Eve', 'utf8'), signature))
@@ -53,19 +53,19 @@ console.log('hash160:', Utils.toHex(Hash.hash160(publicKey.encode(true))))
 The keys and the address differ on every run. The signature verifies only for the message it signed and only with the public key that matches the private key that signed it:
 
 ```text
-public key: 027c63fbcc252f2a9f6a12cde260e8cbc0173d7ecbf9f82856bf13e93982a93158
-address: moA1VC9hp5a5g5EkxhRJmFidGWtYEAuVWB
+public key: 0253c2e8d19565159f1eed3065b5dbca07650fdb118eea765f00989735c942d5f7
+address: n3pYTBDNbj3veoBL6qv3bHyW1RcCZLaXdF
 verifies: true
 changed message verifies: false
-sha256: 18bdc796d44d1dbcc0c5b28022c0f8660b2a7c312ce612025468826c5e5a630e
-hash160: 53caef87a9712734119b97d176b45d8d8a7299db
+sha256: 252e026d5cc2767ad46b075ef2de2dfcbd879eb611dc58046f374606e680465f
+hash160: f4a65a06ab8c25519cfcf38ff819474c09e170b8
 ```
 
 The locking script of a payment to an address holds that hash160. [How Script works](/concepts/script/) shows how the network checks the public key and signature that spend it.
 
 ## Hash functions
 
-`@bsv/sdk` has `Hash.sha256` (32 bytes), `Hash.ripemd160` (20 bytes), `Hash.hash160` and `Hash.hash256`, which is SHA-256 applied twice. The address above is a hash160, and the last two lines of `keys.mjs` print a SHA-256 and a hash160.
+`@bsv/sdk` has `Hash.sha256` (32 bytes), `Hash.ripemd160` (20 bytes), `Hash.hash160` and `Hash.hash256`, which is SHA-256 applied twice.
 
 ## Derived keys
 
@@ -79,12 +79,12 @@ Each party keeps a master private key and shares the master public key. To deriv
 2. The shared secret is the key of an <Hint tip="Hash based message authentication code">HMAC</Hint> over the invoice number.
 3. The owner adds the result to the master private key to get the child private key. The other party adds it to the owner's master public key to get the matching child public key.
 
-Step through the derivation between Alice and Bob, then switch what Bob derives with to see the check fail.
+Press **Step** to follow Jane and John to the same child key, then switch to **Another invoice number** or **Another private key** and run it again to watch the check fail.
 
 <DeriveSteps />
 
 <Visibility for="agents">
-The diagram has Alice on the left, Bob on the right and what both sides share in the middle. Step 1, each holds a master private key and the other's public key. Step 2, both compute the same shared secret. Step 3, both run an HMAC over the invoice number order 1042 keyed by the shared secret and get equal results. Step 4, Alice adds the result to her master private key to get the child private key, and Bob adds it to her master public key to get the matching child public key, and the two match. Step 5, Alice signs with the child private key and Bob verifies the signature with the child public key. If Bob uses another invoice number or another private key, the results at step 2 or 3 differ, the keys do not match and the signature does not verify.
+The diagram has Jane on the left, John on the right and what both sides share in the middle. Step 1, each holds a master private key and the other's public key. Step 2, both compute the same shared secret. Step 3, both run an HMAC over the invoice number order 1042 keyed by the shared secret and get equal results. Step 4, Jane adds the result to her master private key to get the child private key, and John adds it to her master public key to get the matching child public key, and the two match. Step 5, Jane signs with the child private key and John verifies the signature with the child public key. If John uses another invoice number or another private key, the results at step 2 or 3 differ, the keys do not match and the signature does not verify.
 </Visibility>
 
 ### Derive keys in code
@@ -92,57 +92,51 @@ The diagram has Alice on the left, Bob on the right and what both sides share in
 ```javascript derive.mjs
 import { PrivateKey, Utils } from '@bsv/sdk'
 
-const alice = PrivateKey.fromRandom()
-const bob = PrivateKey.fromRandom()
+const jane = PrivateKey.fromRandom()
+const john = PrivateKey.fromRandom()
 const invoiceNumber = 'order 1042'
 
-// Alice derives a private key for Bob to check, using only Bob's public key.
-const aliceChild = alice.deriveChild(bob.toPublicKey(), invoiceNumber)
-const signature = aliceChild.sign(Utils.toArray('Hi Bob', 'utf8'))
+// Jane derives a private key for John to check, using only John's public key.
+const janeChild = jane.deriveChild(john.toPublicKey(), invoiceNumber)
+const signature = janeChild.sign(Utils.toArray('Hi John', 'utf8'))
 
-// Bob derives the matching public key from Alice's public key and his own private key.
-const aliceChildPublic = alice.toPublicKey().deriveChild(bob, invoiceNumber)
+// John derives the matching public key from Jane's public key and his own private key.
+const janeChildPublic = jane.toPublicKey().deriveChild(john, invoiceNumber)
 
-console.log('keys match:', aliceChild.toPublicKey().toString() === aliceChildPublic.toString())
-console.log('Bob verifies:', aliceChildPublic.verify(Utils.toArray('Hi Bob', 'utf8'), signature))
+console.log('keys match:', janeChild.toPublicKey().toString() === janeChildPublic.toString())
+console.log('John verifies:', janeChildPublic.verify(Utils.toArray('Hi John', 'utf8'), signature))
 
 // A different invoice number gives a different key.
-const other = alice.toPublicKey().deriveChild(bob, 'order 1043')
-console.log('other invoice, same key:', other.toString() === aliceChildPublic.toString())
+const other = jane.toPublicKey().deriveChild(john, 'order 1043')
+console.log('other invoice, same key:', other.toString() === janeChildPublic.toString())
 
 // Someone with a different private key derives a different key, which does not verify.
 const eve = PrivateKey.fromRandom()
-const eveGuess = alice.toPublicKey().deriveChild(eve, invoiceNumber)
-console.log('Eve verifies:', eveGuess.verify(Utils.toArray('Hi Bob', 'utf8'), signature))
+const eveGuess = jane.toPublicKey().deriveChild(eve, invoiceNumber)
+console.log('Eve verifies:', eveGuess.verify(Utils.toArray('Hi John', 'utf8'), signature))
 ```
 
 ```text
 keys match: true
-Bob verifies: true
+John verifies: true
 other invoice, same key: false
 Eve verifies: false
 ```
 
-Bob never sees Alice's private key, and each pair of parties has its own set of derived keys. This differs from <Hint tip="The standard for hierarchical wallets that derive child keys from one master key">BIP32</Hint>, where anyone holding an extended public key can derive its non hardened public child keys. The invoice number is not secret. What the derivation needs is the shared secret.
+John never sees Jane's private key, and each pair of parties has its own set of derived keys. This differs from <Hint tip="The standard for hierarchical wallets that derive child keys from one master key">BIP32</Hint>, where anyone holding an extended public key can derive its non hardened public child keys. The invoice number is not secret. What the derivation needs is the shared secret.
 
 ## How a wallet organizes derived keys
 
-BRC-43 gives the invoice number a format that a wallet can enforce, `<security level>-<protocol name>-<key ID>`, for example `2-order receipts-1042`. BRC-43 defines what each security level asks the user to approve:
-
-- Level 0 needs no approval.
-- Level 1 asks once per app and protocol.
-- Level 2 asks once for each counterparty as well.
-
-The counterparty is `self`, `anyone` or the public key of another party. With `self`, the wallet derives from its own key, for data only the user needs. With `anyone`, the derivation uses a publicly known private key (the number 1), so anyone can derive the same public key. `ProtoWallet` in `@bsv/sdk` does the derivation and checks the names, and a wallet adds the approval prompts. The [BRC-100 Wallet Interface](/concepts/wallet-model/) has the same calls, `getPublicKey`, `createSignature`, `verifySignature`, `encrypt` and `decrypt`. The derived key signs and it encrypts, and the last lines of the example show both.
+BRC-43 gives the invoice number a format that a wallet can enforce, `<security level>-<protocol name>-<key ID>`, for example `2-order receipts-1042`. The security level sets what the wallet asks the user to approve, and the counterparty is `self`, `anyone` or the public key of another party. `ProtoWallet` in `@bsv/sdk` does the derivation and checks the names, and a wallet adds the approval prompts. The [BRC-100 Wallet Interface](/concepts/wallet-model/) has the same calls, `getPublicKey`, `createSignature`, `verifySignature`, `encrypt` and `decrypt`.
 
 ### Build an invoice number
 
-Change the security level, the protocol name, the key ID and the counterparty to see the invoice number and which checks pass.
+Move the **Security level** from 0 to 2 and pick a **Counterparty** to see what each one means, then edit the **Protocol name** and the **Key ID** to watch the invoice number change. Try a name that ends in "protocol" or has fewer than five characters to see a check fail.
 
 <InvoiceBuilder />
 
 <Visibility for="agents">
-The tool joins a security level of 0, 1 or 2, a protocol name and a key ID with hyphens, for example 2-order receipts-1042, and lists the checks on the name. The protocol name needs at least 5 characters, no double spaces, must not end in protocol, and BRC-43 limits it to letters, numbers and spaces and at most 280 characters. The key ID needs at least 1 character. The counterparty is self, anyone or another party. Level 0 asks the user for nothing, level 1 asks once for the app and the protocol, and level 2 asks once for each counterparty.
+The tool joins a security level of 0, 1 or 2, a protocol name and a key ID with hyphens, for example 2-order receipts-1042, and lists the checks of KeyDeriver in @bsv/sdk 4.0.1. The protocol name has 5 to 400 characters, only letters, numbers and spaces, no double spaces, and does not end in protocol. The key ID has at least 1 character. The counterparty is self, which derives from the wallet's own key, anyone, which uses the publicly known private key 1 so that anyone can derive the same public key, or another party, whose identity public key the wallet needs. Level 0 asks the user for nothing, level 1 asks once for the app and the protocol, and level 2 asks once for the app, the protocol and each counterparty. BRC-43 says 280 characters for the name, and the SDK accepts up to 400.
 </Visibility>
 
 ### Sign and encrypt with a wallet
@@ -150,42 +144,42 @@ The tool joins a security level of 0, 1 or 2, a protocol name and a key ID with 
 ```javascript wallet.mjs
 import { PrivateKey, ProtoWallet, Utils } from '@bsv/sdk'
 
-const alice = new ProtoWallet(PrivateKey.fromRandom())
-const bob = new ProtoWallet(PrivateKey.fromRandom())
+const jane = new ProtoWallet(PrivateKey.fromRandom())
+const john = new ProtoWallet(PrivateKey.fromRandom())
 
-const aliceIdentity = (await alice.getPublicKey({ identityKey: true })).publicKey
-const bobIdentity = (await bob.getPublicKey({ identityKey: true })).publicKey
+const janeIdentity = (await jane.getPublicKey({ identityKey: true })).publicKey
+const johnIdentity = (await john.getPublicKey({ identityKey: true })).publicKey
 
 // protocolID is [security level, protocol name], and the key ID picks one key inside it.
 const protocolID = [2, 'order receipts']
 const keyID = '1042'
 const data = Utils.toArray('Order 1042 received', 'utf8')
 
-const { signature } = await alice.createSignature({ data, protocolID, keyID, counterparty: bobIdentity })
-const { valid } = await bob.verifySignature({ data, signature, protocolID, keyID, counterparty: aliceIdentity })
-console.log('Bob verifies:', valid)
+const { signature } = await jane.createSignature({ data, protocolID, keyID, counterparty: johnIdentity })
+const { valid } = await john.verifySignature({ data, signature, protocolID, keyID, counterparty: janeIdentity })
+console.log('John verifies:', valid)
 
 // The same wallet holds a different key for each counterparty.
-for (const counterparty of ['self', 'anyone', bobIdentity]) {
-  const { publicKey } = await alice.getPublicKey({ protocolID, keyID, counterparty })
-  console.log(counterparty === bobIdentity ? 'Bob' : counterparty, publicKey.slice(0, 12) + '...')
+for (const counterparty of ['self', 'anyone', johnIdentity]) {
+  const { publicKey } = await jane.getPublicKey({ protocolID, keyID, counterparty })
+  console.log(counterparty === johnIdentity ? 'John' : counterparty, publicKey.slice(0, 12) + '...')
 }
 
 // The same derivation encrypts, and only the counterparty can decrypt.
-const { ciphertext } = await alice.encrypt({ plaintext: data, protocolID, keyID, counterparty: bobIdentity })
-const { plaintext } = await bob.decrypt({ ciphertext, protocolID, keyID, counterparty: aliceIdentity })
-console.log('Bob decrypts:', Utils.toUTF8(plaintext))
+const { ciphertext } = await jane.encrypt({ plaintext: data, protocolID, keyID, counterparty: johnIdentity })
+const { plaintext } = await john.decrypt({ ciphertext, protocolID, keyID, counterparty: janeIdentity })
+console.log('John decrypts:', Utils.toUTF8(plaintext))
 ```
 
 ```text
-Bob verifies: true
+John verifies: true
 self 03e081bd8e89...
 anyone 03bed2a7e407...
-Bob 0278068d14d6...
-Bob decrypts: Order 1042 received
+John 0278068d14d6...
+John decrypts: Order 1042 received
 ```
 
-A signature made under one protocol name or key ID does not verify under another. `ProtoWallet` and `KeyDeriver` also check the name. A protocol name has at least 5 characters, no double spaces and does not end in "protocol", and BRC-43 sets further limits on characters and length. So `order receipts protocol` throws `No need to end your protocol name with " protocol"`. `PrivateKey.deriveChild` does not run these checks, it takes any string.
+A signature made under one protocol name or key ID does not verify under another. `ProtoWallet` rejects an invalid name, so `order receipts protocol` throws `No need to end your protocol name with " protocol"`. `PrivateKey.deriveChild` does not run these checks, it takes any string.
 
 ## Identity keys and mutual authentication
 

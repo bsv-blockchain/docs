@@ -1,17 +1,17 @@
 import { useState } from 'react';
 
-// BRC-42 step by step: Alice on the left, Bob on the right, what both get in the middle.
-// A switch changes what goes wrong: Bob uses another invoice number, or a third party tries to derive the key.
+// BRC-42 step by step: Jane on the left, John on the right, what both get in the middle.
+// A switch changes what goes wrong: John uses another invoice number, or a third party tries to derive the key.
 // Content only: edit the texts below, the layout does not need to change. The steps follow PrivateKey.deriveChild and PublicKey.deriveChild of @bsv/sdk 4.0.1:
 // the shared secret is the same on both sides (ECDH), the HMAC is HMAC-SHA256 keyed by the shared secret over the invoice number, and the child private key is the master key plus the HMAC.
 
 const copy = {
-  caseLabel: 'Bob derives the key with',
+  caseLabel: 'John derives the key with',
   same: 'The same invoice number',
   invoice: 'Another invoice number',
   eve: 'Another private key',
-  alice: 'Alice',
-  bob: 'Bob',
+  jane: 'Jane',
+  john: 'John',
   shared: 'Both sides',
   back: 'Back',
   step: 'Step',
@@ -21,42 +21,42 @@ const copy = {
 const INVOICE = 'order 1042';
 
 function buildSteps(mode) {
-  const bobInvoice = mode === 'invoice' ? 'order 1043' : INVOICE;
+  const johnInvoice = mode === 'invoice' ? 'order 1043' : INVOICE;
   const eve = mode === 'eve';
   const bad = mode !== 'same';
   return [
     {
-      note: 'Alice and Bob each hold a master private key and know the other one\'s public key. They agree on the invoice number order 1042.',
-      alice: [{ t: 'Alice master private key' }, { t: 'Bob public key' }],
-      bob: [{ t: eve ? 'Another private key' : 'Bob master private key' }, { t: 'Alice public key' }],
+      note: 'Jane and John each hold a master private key and know the other one\'s public key. They agree on the invoice number order 1042.',
+      jane: [{ t: 'Jane master private key' }, { t: 'John public key' }],
+      john: [{ t: eve ? 'Another private key' : 'John master private key' }, { t: 'Jane public key' }],
       mid: [],
     },
     {
       note: eve
-        ? 'Alice multiplies her private key by Bob\'s public key. A party with another private key gets a different shared secret.'
-        : 'Alice multiplies her private key by Bob\'s public key, and Bob multiplies his by Alice\'s. Both get the same shared secret.',
-      alice: [{ t: 'shared secret', k: 'secret' }],
-      bob: [{ t: eve ? 'another shared secret' : 'shared secret', k: eve ? 'bad' : 'secret' }],
+        ? 'Jane multiplies her private key by John\'s public key. A party with another private key gets a different shared secret.'
+        : 'Jane multiplies her private key by John\'s public key, and John multiplies his by Jane\'s. Both get the same shared secret.',
+      jane: [{ t: 'shared secret', k: 'secret' }],
+      john: [{ t: eve ? 'another shared secret' : 'shared secret', k: eve ? 'bad' : 'secret' }],
       mid: [{ t: eve ? 'different' : 'equal', k: eve ? 'bad' : 'ok' }],
     },
     {
-      note: `Each side runs an HMAC over the invoice number, keyed by its shared secret. ${bad ? (eve ? 'The two results differ because the shared secrets differ.' : 'Bob used order 1043, so the two results differ.') : 'The two results are equal.'}`,
-      alice: [{ t: `HMAC of ${INVOICE}`, k: 'hmac' }],
-      bob: [{ t: `HMAC of ${bobInvoice}`, k: bad ? 'bad' : 'hmac' }],
+      note: `Each side runs an HMAC over the invoice number, keyed by its shared secret. ${bad ? (eve ? 'The two results differ because the shared secrets differ.' : 'John used order 1043, so the two results differ.') : 'The two results are equal.'}`,
+      jane: [{ t: `HMAC of ${INVOICE}`, k: 'hmac' }],
+      john: [{ t: `HMAC of ${johnInvoice}`, k: bad ? 'bad' : 'hmac' }],
       mid: [{ t: bad ? 'different' : 'equal', k: bad ? 'bad' : 'ok' }],
     },
     {
-      note: 'Alice adds her HMAC to her master private key and gets the child private key. Bob adds his HMAC to Alice\'s master public key and gets the matching child public key.',
-      alice: [{ t: 'child private key', k: 'key' }],
-      bob: [{ t: 'Alice child public key', k: bad ? 'bad' : 'key' }],
+      note: 'Jane adds her HMAC to her master private key and gets the child private key. John adds his HMAC to Jane\'s master public key and gets the matching child public key.',
+      jane: [{ t: 'child private key', k: 'key' }],
+      john: [{ t: 'Jane child public key', k: bad ? 'bad' : 'key' }],
       mid: [{ t: bad ? 'do not match' : 'match', k: bad ? 'bad' : 'ok' }],
     },
     {
       note: bad
-        ? 'Alice signs with the child private key. Bob checks the signature with the key he derived, and it does not verify.'
-        : 'Alice signs with the child private key. Bob checks the signature with the child public key he derived, and it verifies.',
-      alice: [{ t: 'signature', k: 'sig' }],
-      bob: [{ t: bad ? 'does not verify' : 'verifies', k: bad ? 'bad' : 'ok' }],
+        ? 'Jane signs with the child private key. John checks the signature with the key he derived, and it does not verify.'
+        : 'Jane signs with the child private key. John checks the signature with the child public key he derived, and it verifies.',
+      jane: [{ t: 'signature', k: 'sig' }],
+      john: [{ t: bad ? 'does not verify' : 'verifies', k: bad ? 'bad' : 'ok' }],
       mid: [],
       end: bad ? 'fail' : 'ok',
     },
@@ -125,7 +125,7 @@ export default function DeriveSteps() {
   const status = cur.end === 'ok' ? 'Verifies' : cur.end === 'fail' ? 'Rejected' : null;
 
   return (
-    <div className="dk" role="group" aria-label="Step by step BRC-42 key derivation between Alice and Bob">
+    <div className="dk" role="group" aria-label="Step by step BRC-42 key derivation between Jane and John">
       <style>{css}</style>
       <div className="dk-top">
         <span className="dk-label">{copy.caseLabel}</span>
@@ -139,15 +139,15 @@ export default function DeriveSteps() {
 
       <div className="dk-body">
         <div className="dk-col">
-          <p className="dk-eyebrow">{copy.alice}</p>
-          {cur.alice.map((c, i) => <div key={`${mode}-a-${at}-${i}`} className="dk-chip" data-k={c.k}>{c.t}</div>)}
+          <p className="dk-eyebrow">{copy.jane}</p>
+          {cur.jane.map((c, i) => <div key={`${mode}-a-${at}-${i}`} className="dk-chip" data-k={c.k}>{c.t}</div>)}
         </div>
         <div className="dk-mid">
           {cur.mid.map((c, i) => <span key={`${mode}-m-${at}-${i}`} className="dk-midchip" data-k={c.k}>{c.t}</span>)}
         </div>
         <div className="dk-col">
-          <p className="dk-eyebrow">{copy.bob}</p>
-          {cur.bob.map((c, i) => <div key={`${mode}-b-${at}-${i}`} className="dk-chip" data-k={c.k}>{c.t}</div>)}
+          <p className="dk-eyebrow">{copy.john}</p>
+          {cur.john.map((c, i) => <div key={`${mode}-b-${at}-${i}`} className="dk-chip" data-k={c.k}>{c.t}</div>)}
         </div>
       </div>
 

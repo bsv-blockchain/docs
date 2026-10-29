@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // BRC-43 invoice number builder: pick a security level, type a protocol name and a key ID, pick a counterparty.
-// The checks that run live are the ones KeyDeriver of @bsv/sdk 4.0.1 threw errors for, plus the character and length rules of BRC-43.
+// The checks that run live are the ones KeyDeriver of @bsv/sdk 4.0.1 enforces, all run against the SDK. The BRC-43 text says 280 characters, the SDK accepts up to 400.
 // Content only: edit the texts below, the layout does not need to change.
 
 const copy = {
@@ -10,10 +10,8 @@ const copy = {
   keyId: 'Key ID',
   counterparty: 'Counterparty',
   result: 'Invoice number',
-  checks: 'Checks',
+  checks: 'Checks of KeyDeriver',
   asks: 'The wallet asks the user',
-  sdk: 'KeyDeriver',
-  brc: 'BRC-43',
 };
 
 const levels = [
@@ -31,12 +29,12 @@ const parties = [
 function checksFor(name, keyId) {
   const norm = name.toLowerCase();
   return [
-    { id: 'len', src: 'sdk', text: 'At least 5 characters', ok: name.trim().length >= 5 },
-    { id: 'dbl', src: 'sdk', text: 'No double spaces', ok: !name.includes('  ') },
-    { id: 'suffix', src: 'sdk', text: 'Does not end in "protocol"', ok: !norm.trim().endsWith(' protocol') && norm.trim() !== 'protocol' },
-    { id: 'chars', src: 'brc', text: 'Letters, numbers and spaces only', ok: /^[A-Za-z0-9 ]*$/.test(name) },
-    { id: 'max', src: 'brc', text: 'At most 280 characters', ok: name.length <= 280 },
-    { id: 'key', src: 'sdk', text: 'Key ID has at least 1 character', ok: keyId.length >= 1 },
+    { id: 'len', text: 'At least 5 characters', ok: name.length >= 5 },
+    { id: 'dbl', text: 'No double spaces', ok: !name.includes('  ') },
+    { id: 'suffix', text: 'Does not end in "protocol"', ok: !norm.trim().endsWith(' protocol') && norm.trim() !== 'protocol' },
+    { id: 'chars', text: 'Letters, numbers and spaces only', ok: /^[A-Za-z0-9 ]*$/.test(name) },
+    { id: 'max', text: 'At most 400 characters', ok: name.length <= 400 },
+    { id: 'key', text: 'Key ID has at least 1 character', ok: keyId.length >= 1 },
   ];
 }
 
@@ -69,7 +67,6 @@ const css = `
 .ib-mark { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 18px; height: 18px; border-radius: 999px; font-size: 11px; font-weight: 800; border: 1px solid; }
 .ib-mark[data-ok="true"] { color: #15803d; border-color: #15803d; background: color-mix(in srgb, #15803d 12%, var(--wd-background)); }
 .ib-mark[data-ok="false"] { color: #c2410c; border-color: #c2410c; background: color-mix(in srgb, #c2410c 12%, var(--wd-background)); }
-.ib-src { margin-left: auto; padding: 1px 7px; border: 1px solid var(--wd-border); border-radius: 999px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.04em; color: var(--wd-text-muted); }
 .ib-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @container (max-width: 640px) { .ib-grid { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .ib-thumb, .ib-opt, .ib-p { transition: none; } }
@@ -127,12 +124,12 @@ export default function InvoiceBuilder() {
             <span className="ib-label">{copy.keyId}</span>
             <input className="ib-input" type="text" value={keyId} onChange={(e) => setKeyId(e.target.value)} spellCheck={false} autoComplete="off" />
           </label>
+          <p className="ib-label">{copy.checks}</p>
           <ul className="ib-checks" aria-label={copy.checks}>
             {checks.map((c) => (
               <li key={c.id}>
                 <span className="ib-mark" data-ok={c.ok} aria-hidden="true">{c.ok ? '✓' : '✕'}</span>
                 <span>{c.text}<span className="ib-sr">{c.ok ? ', passes' : ', fails'}</span></span>
-                <span className="ib-src">{c.src === 'sdk' ? copy.sdk : copy.brc}</span>
               </li>
             ))}
           </ul>
