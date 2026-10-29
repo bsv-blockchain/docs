@@ -28,6 +28,8 @@ The diagram has four stages in a row, joined by one way arrows. The private key 
 
 ### Sign and verify in code
 
+This example creates a key pair, signs a message and checks the signature, then prints a SHA-256 of the message and the hash160 of the public key.
+
 <Callout type="warning">
 Each example generates a new random private key on every run, only to try the code. Never put a private key that holds value in code, and never commit one to version control.
 </Callout>
@@ -89,6 +91,8 @@ The diagram has Jane on the left, John on the right and what both sides share in
 
 ### Derive keys in code
 
+Jane derives a private key for John from his public key and signs with it. John derives the matching public key from hers and checks the signature, then the example repeats the derivation with another invoice number and with another private key.
+
 ```javascript derive.mjs
 import { PrivateKey, Utils } from '@bsv/sdk'
 
@@ -140,6 +144,8 @@ The tool joins a security level of 0, 1 or 2, a protocol name and a key ID with 
 </Visibility>
 
 ### Sign and encrypt with a wallet
+
+Two `ProtoWallet` instances stand in for the wallets of Jane and John. Jane signs and encrypts a message for John under the invoice number from the builder, and John verifies and decrypts it. The loop prints the key Jane's wallet holds for `self`, `anyone` and John.
 
 ```javascript wallet.mjs
 import { PrivateKey, ProtoWallet, Utils } from '@bsv/sdk'
