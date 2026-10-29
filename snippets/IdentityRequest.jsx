@@ -21,15 +21,13 @@ const runs = {
   auth: [
     { note: 'The app has a wallet and calls AuthFetch with the URL of the server. The server runs the auth middleware.', app: [{ t: 'wallet', k: 'key' }, { t: 'AuthFetch.fetch(url)' }], server: [{ t: 'createAuthMiddleware' }], mid: [] },
     { note: 'The two sides prove their identity keys to each other in a handshake (BRC-103), before any data moves.', app: [{ t: 'identity key', k: 'key' }], server: [{ t: 'identity key', k: 'key' }], mid: [{ t: 'handshake', k: 'ok' }] },
-    { note: 'The request goes out signed with the identity key of the app. The signature covers the method, the path, the query, the signed headers and the body (BRC-104).', app: [{ t: 'signed request', k: 'sig' }], server: [{ t: 'request arrives' }], mid: [{ t: 'request', k: 'ok' }] },
-    { note: 'The middleware verifies the signature and puts the identity key of the app in req.auth.identityKey. The route runs.', app: [{ t: 'signed request', k: 'sig' }], server: [{ t: 'req.auth.identityKey', k: 'key' }, { t: 'route handler' }], mid: [{ t: 'verified', k: 'ok' }] },
-    { note: 'The response is signed too and carries the identity key of the server in the x-bsv-auth-identity-key header. AuthFetch checks it and returns the response with status 200.', app: [{ t: '200 response', k: 'ok' }], server: [{ t: 'signed response', k: 'sig' }], mid: [{ t: 'authenticated', k: 'ok' }], end: 'ok' },
+    { note: 'The request goes out signed with the identity key of the app (BRC-104). The middleware verifies the signature, puts that key in req.auth.identityKey and runs the route.', app: [{ t: 'signed request', k: 'sig' }], server: [{ t: 'req.auth.identityKey', k: 'key' }, { t: 'route handler' }], mid: [{ t: 'verified', k: 'ok' }] },
+    { note: 'The response is signed too and carries the identity key of the server in the x-bsv-auth-identity-key header. The app gets status 200.', app: [{ t: '200 response', k: 'ok' }], server: [{ t: 'signed response', k: 'sig' }], mid: [{ t: 'authenticated', k: 'ok' }], end: 'ok' },
   ],
   plain: [
     { note: 'The app calls fetch with the URL of the server. The server runs the auth middleware.', app: [{ t: 'fetch(url)' }], server: [{ t: 'createAuthMiddleware' }], mid: [] },
-    { note: 'The request has no identity key and no signature, so there is no handshake.', app: [{ t: 'plain request' }], server: [{ t: 'request arrives' }], mid: [{ t: 'request' }] },
-    { note: 'The middleware requires authentication by default, so it turns the request away before the route runs.', app: [{ t: 'plain request' }], server: [{ t: 'no identity key', k: 'bad' }], mid: [{ t: 'not verified', k: 'bad' }] },
-    { note: 'The server answers 401 with the code UNAUTHORIZED and the message Mutual-authentication failed!', app: [{ t: '401 UNAUTHORIZED', k: 'bad' }], server: [{ t: 'route handler never runs' }], mid: [{ t: 'rejected', k: 'bad' }], end: 'fail' },
+    { note: 'The request has no identity key and no signature. The middleware requires authentication by default, so it turns the request away.', app: [{ t: 'plain request' }], server: [{ t: 'no identity key', k: 'bad' }], mid: [{ t: 'not verified', k: 'bad' }] },
+    { note: 'The server answers 401 with the code UNAUTHORIZED and the message Mutual-authentication failed!', app: [{ t: '401 UNAUTHORIZED', k: 'bad' }], server: [{ t: 'no identity key', k: 'bad' }], mid: [{ t: 'rejected', k: 'bad' }], end: 'fail' },
   ],
 };
 

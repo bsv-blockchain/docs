@@ -29,7 +29,7 @@ The diagram has four stages in a row, joined by one way arrows. The private key 
 
 ### Sign and verify in code
 
-This example creates a key pair, signs a message and checks the signature, then prints a SHA-256 of the message and the hash160 of the public key.
+This example creates a key pair, signs a message and checks the signature, then prints the hash160 of the public key.
 
 <Callout type="warning">
 Each example generates a new random private key on every run, only to try the code. Never put a private key that holds value in code, and never commit one to version control.
@@ -49,22 +49,20 @@ const signature = privateKey.sign(message)
 console.log('verifies:', publicKey.verify(message, signature))
 console.log('changed message verifies:', publicKey.verify(Utils.toArray('Hi Eve', 'utf8'), signature))
 
-console.log('sha256:', Utils.toHex(Hash.sha256(message)))
 console.log('hash160:', Utils.toHex(Hash.hash160(publicKey.encode(true))))
 ```
 
-The keys and the address differ on every run. The signature verifies only for the message it signed and only with the public key that matches the private key that signed it:
+The signature verifies for the message it signed with the matching public key, and fails for a changed message or for another public key:
 
 ```text
-public key: 0253c2e8d19565159f1eed3065b5dbca07650fdb118eea765f00989735c942d5f7
-address: n3pYTBDNbj3veoBL6qv3bHyW1RcCZLaXdF
+public key: 0273fdc6002ad4fc59d1a9a9cdb11a8da48a8e00cc7e557a2426fd0d8bb0a57e87
+address: n2wE7d97xdfHCNYjnjRCDf7PKV1J8SekN7
 verifies: true
 changed message verifies: false
-sha256: 252e026d5cc2767ad46b075ef2de2dfcbd879eb611dc58046f374606e680465f
-hash160: f4a65a06ab8c25519cfcf38ff819474c09e170b8
+hash160: eaf1d49f4c640a75f6da33e06aec862a43346806
 ```
 
-The locking script of a payment to an address holds that hash160. [How Script works](/concepts/script/) shows how the network checks the public key and signature that spend it.
+[How Script works](/concepts/script/) shows how the network checks the public key and signature that spend an output locked to that hash.
 
 ## Hash functions
 
@@ -72,15 +70,11 @@ The locking script of a payment to an address holds that hash160. [How Script wo
 
 ## Derived keys
 
-An app that signs everything with one key ties all its activity to that key. BRC-42 gives two parties a way to derive a separate key for each other, and for each purpose, from keys they already have. The earlier docs call it type 42.
+An app that signs everything with one key ties all its activity to that key. <Hint tip="The standard for deriving a separate key for each pair of parties">BRC-42</Hint> gives two parties a way to derive a separate key for each other, and for each purpose, from keys they already have.
 
 ### How two parties derive a key
 
-Each party keeps a master private key and shares the master public key. To derive a key, they agree on an invoice number, which is any string that names the purpose, such as `order 1042`. The derivation has three steps:
-
-1. Each party combines its own private key with the other's public key. Both get the same shared secret, using <Hint tip="Elliptic curve Diffie-Hellman, a way for two parties to compute the same secret from their own private key and the other's public key">ECDH</Hint>.
-2. The shared secret is the key of an <Hint tip="Hash based message authentication code">HMAC</Hint> over the invoice number.
-3. The owner adds the result to the master private key to get the child private key. The other party adds it to the owner's master public key to get the matching child public key.
+Each party keeps a master private key and shares the master public key. The two agree on an invoice number, any string that names the purpose, such as `order 1042`. Both get the same shared secret through <Hint tip="Elliptic curve Diffie-Hellman, a way for two parties to compute the same secret from their own private key and the other's public key">ECDH</Hint> and run an <Hint tip="Hash based message authentication code">HMAC</Hint> over the invoice number with it. The owner adds the result to the master private key to get the child private key. The other party adds it to the owner's master public key to get the matching child public key.
 
 Press **Step** to follow Jane and John to the same child key, then switch to **Another invoice number** or **Another private key** and run it again to watch the check fail.
 
@@ -101,21 +95,17 @@ const jane = PrivateKey.fromRandom()
 const john = PrivateKey.fromRandom()
 const invoiceNumber = 'order 1042'
 
-// Jane derives a private key for John to check, using only John's public key.
 const janeChild = jane.deriveChild(john.toPublicKey(), invoiceNumber)
 const signature = janeChild.sign(Utils.toArray('Hi John', 'utf8'))
 
-// John derives the matching public key from Jane's public key and his own private key.
 const janeChildPublic = jane.toPublicKey().deriveChild(john, invoiceNumber)
 
 console.log('keys match:', janeChild.toPublicKey().toString() === janeChildPublic.toString())
 console.log('John verifies:', janeChildPublic.verify(Utils.toArray('Hi John', 'utf8'), signature))
 
-// A different invoice number gives a different key.
 const other = jane.toPublicKey().deriveChild(john, 'order 1043')
 console.log('other invoice, same key:', other.toString() === janeChildPublic.toString())
 
-// Someone with a different private key derives a different key, which does not verify.
 const eve = PrivateKey.fromRandom()
 const eveGuess = jane.toPublicKey().deriveChild(eve, invoiceNumber)
 console.log('Eve verifies:', eveGuess.verify(Utils.toArray('Hi John', 'utf8'), signature))
@@ -132,7 +122,7 @@ John never sees Jane's private key, and each pair of parties has its own set of 
 
 ## How a wallet organizes derived keys
 
-BRC-43 gives the invoice number a format that a wallet can enforce, `<security level>-<protocol name>-<key ID>`, for example `2-order receipts-1042`. The security level sets what the wallet asks the user to approve, and the counterparty is `self`, `anyone` or the public key of another party. `ProtoWallet` in `@bsv/sdk` does the derivation and checks the names, and a wallet adds the approval prompts. The [BRC-100 Wallet Interface](/concepts/wallet-model/) has the same calls, `getPublicKey`, `createSignature`, `verifySignature`, `encrypt` and `decrypt`.
+<Hint tip="The standard format for invoice numbers: a security level, a protocol name and a key ID">BRC-43</Hint> gives the invoice number a format that a wallet can enforce, `<security level>-<protocol name>-<key ID>`, for example `2-order receipts-1042`. The security level and the counterparty decide which key the wallet derives and what it asks the user to approve. `ProtoWallet` in `@bsv/sdk` does the derivation and checks the names through its `KeyDeriver`. BRC-43 leaves the approval prompts to the wallet. The [BRC-100 Wallet Interface](/concepts/wallet-model/) covers the wallet calls for keys and encryption.
 
 ### Build an invoice number
 
@@ -141,12 +131,12 @@ Move the **Security level** from 0 to 2 and pick a **Counterparty** to see what 
 <InvoiceBuilder />
 
 <Visibility for="agents">
-The tool joins a security level of 0, 1 or 2, a protocol name and a key ID with hyphens, for example 2-order receipts-1042, and lists the checks of KeyDeriver in @bsv/sdk 4.0.1. The protocol name has 5 to 400 characters, only letters, numbers and spaces, no double spaces, and does not end in protocol. The key ID has at least 1 character. The counterparty is self, which derives from the wallet's own key, anyone, which uses the publicly known private key 1 so that anyone can derive the same public key, or another party, whose identity public key the wallet needs. Level 0 asks the user for nothing, level 1 asks once for the app and the protocol, and level 2 asks once for the app, the protocol and each counterparty. BRC-43 says 280 characters for the name, and the SDK accepts up to 400.
+The tool joins a security level of 0, 1 or 2, a protocol name and a key ID with hyphens, for example 2-order receipts-1042, and lists the checks of KeyDeriver in @bsv/sdk 4.0.1. The name is trimmed and lowercased in the invoice number. The protocol name has 5 to 400 characters after trimming, only letters, numbers and spaces, no double spaces, and does not end in protocol. The key ID has at least 1 character. The counterparty is self, which derives from the wallet's own key, anyone, which uses the publicly known private key 1 so that anyone can derive the same public key, or another party, whose identity public key the wallet needs. Level 0 asks the user for nothing, level 1 asks once for the app and the protocol, and level 2 asks once for the app, the protocol and each counterparty. BRC-43 says 280 characters for the name, and the SDK accepts up to 400.
 </Visibility>
 
 ### Sign and encrypt with a wallet
 
-Two `ProtoWallet` instances stand in for the wallets of Jane and John. Jane signs and encrypts a message for John under the invoice number from the builder, and John verifies and decrypts it. The loop prints the key Jane's wallet holds for `self`, `anyone` and John.
+Two `ProtoWallet` instances stand in for the wallets of Jane and John. Jane signs and encrypts a message for John under the invoice number from the builder, and John verifies and decrypts it.
 
 ```javascript wallet.mjs
 import { PrivateKey, ProtoWallet, Utils } from '@bsv/sdk'
@@ -166,13 +156,11 @@ const { signature } = await jane.createSignature({ data, protocolID, keyID, coun
 const { valid } = await john.verifySignature({ data, signature, protocolID, keyID, counterparty: janeIdentity })
 console.log('John verifies:', valid)
 
-// The same wallet holds a different key for each counterparty.
 for (const counterparty of ['self', 'anyone', johnIdentity]) {
   const { publicKey } = await jane.getPublicKey({ protocolID, keyID, counterparty })
   console.log(counterparty === johnIdentity ? 'John' : counterparty, publicKey.slice(0, 12) + '...')
 }
 
-// The same derivation encrypts, and only the counterparty can decrypt.
 const { ciphertext } = await jane.encrypt({ plaintext: data, protocolID, keyID, counterparty: johnIdentity })
 const { plaintext } = await john.decrypt({ ciphertext, protocolID, keyID, counterparty: janeIdentity })
 console.log('John decrypts:', Utils.toUTF8(plaintext))
@@ -190,39 +178,36 @@ A signature made under one protocol name or key ID does not verify under another
 
 ## Identity keys and mutual authentication
 
-The identity key is the wallet's root public key, 33 bytes. It stays the same across calls and differs from the keys derived for protocols. An app reads it with `getPublicKey({ identityKey: true })` and uses it to recognize a user.
+The identity key is the root public key of the wallet. It stays the same across calls and differs from the keys derived for protocols. An app reads it with `getPublicKey({ identityKey: true })` and uses it to recognize a user.
 
 ### A request with and without authentication
 
-Two parties prove their identity keys to each other in a handshake that BRC-103 defines, and BRC-104 binds it to HTTP. `AuthFetch` in `@bsv/sdk` is the client, and `@bsv/auth-express-middleware` is the server. Press **Step** to follow a request from the app to the server, then switch to **A plain fetch** to see the server turn it away. [Authenticate users with their wallet](/guides/identity-auth/) walks through the setup.
+Two parties prove their identity keys to each other in a handshake. <Hint tip="The standard for mutual authentication between peers">BRC-103</Hint> defines this exchange between peers, and <Hint tip="The standard that binds BRC-103 to HTTP">BRC-104</Hint> binds it to HTTP. `AuthFetch` in `@bsv/sdk` is the client, and `@bsv/auth-express-middleware` is the server. Follow a request from the app to the server with **Step**, then switch to **A plain fetch** to see the server turn it away. [Authenticate users with their wallet](/guides/identity-auth/) walks through the setup.
 
 <IdentityRequest />
 
 <Visibility for="agents">
-The diagram has the app on the left, the Express server on the right and the result in the middle. With AuthFetch, the app and the server first prove their identity keys to each other in a handshake. The request then goes out signed with the identity key of the app. The middleware verifies the signature and puts the identity key in req.auth.identityKey, and the route runs. The response is signed too and carries the identity key of the server in the x-bsv-auth-identity-key header, and AuthFetch returns it with status 200. With a plain fetch, the request has no identity key and no signature, the middleware turns it away before the route runs, and the server answers 401 with the code UNAUTHORIZED and the message Mutual-authentication failed!
+The diagram has the app on the left, the Express server on the right and the result in the middle. With AuthFetch, the app and the server first prove their identity keys to each other in a handshake. The request then goes out signed with the identity key of the app. The middleware verifies the signature and puts the identity key in req.auth.identityKey, and the route runs. The response is signed too and carries the identity key of the server in the x-bsv-auth-identity-key header, and the app gets status 200. With a plain fetch, the request has no identity key and no signature, the middleware turns it away, and the server answers 401 with the code UNAUTHORIZED and the message Mutual-authentication failed!
 </Visibility>
 
 ### What the identity covers
 
-The signature of a request covers some parts of it and not others:
+In the BRC-104 v0.1 binding, as the ts-stack identity page describes it, the signature covers some parts of a request and not others:
 
-| Part of the request | Covered by the identity |
-|---------------------|-------------------------|
-| Method, path and query | Yes |
-| The signed headers the request declares | Yes |
-| Body | Yes |
-| `Host` header | No |
-| Cookies and most other headers | No |
+| Covered | Not covered |
+|---------|-------------|
+| Method, path and query | `Host` header |
+| Declared signed headers and body | Cookies and most other headers |
 
-Authorize with the authenticated identity key and the covered parts, not with the `Host` header or cookies. BRC-31 is historical guidance and not the current HTTP contract.
+Authorize with the authenticated identity key and the covered parts only. BRC-31 is historical guidance, not the current HTTP contract.
 
 ### Certificates
 
-A certifier signs a certificate that binds fields to the identity key of a user, and a changed field no longer verifies.
+A certifier signs a certificate that binds fields to the identity key of a user, and the fields are encrypted. The certificate verifies, and it no longer verifies if a field changes.
 
 ## Related articles
 
-To learn more about keys and identity, review these articles:
+To learn more about keys and identity in BSV, review these articles:
 
 - [How Script works](/concepts/script/)
 - [How transactions and fees work](/concepts/transactions/)

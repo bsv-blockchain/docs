@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 // BRC-43 invoice number builder: pick a security level, type a protocol name and a key ID, pick a counterparty.
-// The checks that run live are the ones KeyDeriver of @bsv/sdk 4.0.1 enforces, all run against the SDK. The BRC-43 text says 280 characters, the SDK accepts up to 400.
+// The checks that run live are the ones KeyDeriver of @bsv/sdk 4.0.1 enforces, all run against the SDK. The name is trimmed and lowercased in the invoice number, and the checks run on the trimmed name. The BRC-43 text says 280 characters, the SDK accepts up to 400.
 // Content only: edit the texts below, the layout does not need to change.
 
 const copy = {
@@ -21,17 +21,17 @@ const levels = [
 ];
 
 const parties = [
-  { key: 'self', name: 'self', text: 'The wallet derives from its own key. Only the user needs the result.' },
+  { key: 'self', name: 'self', text: 'The wallet derives from its own key.' },
   { key: 'anyone', name: 'anyone', text: 'The derivation uses the publicly known private key 1, so anyone can derive the same public key.' },
   { key: 'other', name: 'Another party', text: 'The wallet needs their identity public key. They derive the matching key with yours.' },
 ];
 
-function checksFor(name, keyId) {
-  const norm = name.toLowerCase();
+function checksFor(raw, keyId) {
+  const name = raw.trim();
   return [
     { id: 'len', text: 'At least 5 characters', ok: name.length >= 5 },
     { id: 'dbl', text: 'No double spaces', ok: !name.includes('  ') },
-    { id: 'suffix', text: 'Does not end in "protocol"', ok: !norm.trim().endsWith(' protocol') && norm.trim() !== 'protocol' },
+    { id: 'suffix', text: 'Does not end in " protocol"', ok: !name.toLowerCase().endsWith(' protocol') },
     { id: 'chars', text: 'Letters, numbers and spaces only', ok: /^[A-Za-z0-9 ]*$/.test(name) },
     { id: 'max', text: 'At most 400 characters', ok: name.length <= 400 },
     { id: 'key', text: 'Key ID has at least 1 character', ok: keyId.length >= 1 },
@@ -93,7 +93,8 @@ export default function InvoiceBuilder() {
   const valid = checks.every((c) => c.ok);
   const p = parties.find((x) => x.key === party);
   const lv = levels.find((x) => x.v === level);
-  const summary = `${level}-${name}-${keyId}`;
+  const clean = name.trim().toLowerCase();
+  const summary = `${level}-${clean}-${keyId}`;
 
   return (
     <div className="ib" role="group" aria-label="Build a BRC-43 invoice number from a security level, a protocol name and a key ID">
@@ -104,7 +105,7 @@ export default function InvoiceBuilder() {
         <p className="ib-inv" data-ok={valid}>
           <span className="ib-p" data-p="level">{level}</span>
           <span className="ib-sep">-</span>
-          <span className="ib-p" data-p="name">{name || ' '}</span>
+          <span className="ib-p" data-p="name">{clean || ' '}</span>
           <span className="ib-sep">-</span>
           <span className="ib-p" data-p="key">{keyId || ' '}</span>
         </p>

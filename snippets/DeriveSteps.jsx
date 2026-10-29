@@ -26,7 +26,7 @@ function buildSteps(mode) {
   const bad = mode !== 'same';
   return [
     {
-      note: 'Jane and John each hold a master private key and know the other one\'s public key. They agree on the invoice number order 1042.',
+      note: 'Jane and John each hold a master private key and know the other one\'s public key. They agree on the invoice number "order 1042".',
       jane: [{ t: 'Jane master private key' }, { t: 'John public key' }],
       john: [{ t: eve ? 'Another private key' : 'John master private key' }, { t: 'Jane public key' }],
       mid: [],

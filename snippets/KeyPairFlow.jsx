@@ -9,7 +9,6 @@ const copy = {
   mainnet: 'Mainnet',
   testnet: 'Testnet',
   oneWay: 'one way',
-  size: 'Size',
   made: 'Made by',
   can: 'You can',
   bytes: 'bytes',
@@ -28,7 +27,7 @@ const stages = [
     key: 'public',
     name: 'Public key',
     size: 33,
-    made: 'The private key multiplied on the secp256k1 curve, toPublicKey(), stored compressed',
+    made: 'Computed from the private key on the secp256k1 curve, toPublicKey(), stored compressed',
     can: 'Share it. Anyone can check your signatures with it.',
     kind: 'public',
   },
@@ -75,9 +74,6 @@ const css = `
 .kp-detail dl { display: grid; grid-template-columns: max-content 1fr; gap: 8px 14px; margin: 0; }
 .kp-detail dt { font-size: 11.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--wd-text-muted); padding-top: 2px; }
 .kp-detail dd { margin: 0; font-size: 13.5px; line-height: 1.5; }
-.kp-size { display: flex; align-items: center; gap: 10px; }
-.kp-bar { position: relative; flex: 1; height: 10px; border: 1px solid var(--wd-border); border-radius: 999px; background: var(--wd-surface); overflow: hidden; }
-.kp-fill { position: absolute; inset: 0 auto 0 0; border-radius: 999px; background: var(--wd-primary); transition: width 0.45s cubic-bezier(0.3, 0.7, 0.2, 1); }
 .kp-example { margin-top: 10px; padding: 8px 10px; border: 1px dashed var(--wd-border); border-radius: 10px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; word-break: break-all; color: var(--wd-text-muted); }
 .kp-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 @keyframes kp-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
@@ -89,8 +85,7 @@ const css = `
   .kp-detail dd { margin-bottom: 8px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .kp-thumb, .kp-node, .kp-fill { transition: none; }
-  .kp-detail { animation: none; }
+  .kp-thumb, .kp-node,   .kp-detail { animation: none; }
 }
 `;
 
@@ -142,12 +137,6 @@ export default function KeyPairFlow() {
           <dd>{s.made}</dd>
           <dt>{copy.can}</dt>
           <dd>{s.can}</dd>
-          <dt>{copy.size}</dt>
-          <dd>
-            <div className="kp-size">
-              <div className="kp-bar" role="img" aria-label={`${s.size} ${copy.bytes}`}><span className="kp-fill" style={{ width: `${(s.size / 40) * 100}%` }} /></div>
-            </div>
-          </dd>
         </dl>
         {example ? <p className="kp-example">{example}</p> : null}
       </div>
