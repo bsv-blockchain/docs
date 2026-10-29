@@ -8,7 +8,7 @@ import ScriptTemplates from '/snippets/ScriptTemplates.jsx';
 
 Every BSV output carries a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> that sets the condition to spend it, and every input carries an <Hint tip="The part of an input that meets the condition set by the locking script of the output it spends">unlocking script</Hint> that meets that condition. Both are written in Script, a small stack based language. A wallet builds these scripts for you, so you meet Script when you lock an output to a custom condition, read what an output says, or find out why a spend was rejected.
 
-The most common script, <Hint tip="Pay to Public Key Hash, an output that only the key behind one address can spend">P2PKH</Hint>, shows how the two work together. `@bsv/sdk` has the classes that build and check them. [How transactions and fees work](/concepts/transactions/) covers the transaction around them. This page was written against `@bsv/sdk` 4.0.1.
+Step through the most common script, <Hint tip="Pay to Public Key Hash, an output that only the key behind one address can spend">P2PKH</Hint>, to see how the two work together, and check a spend in code with `@bsv/sdk`, which has the classes that build and check scripts. [How transactions and fees work](/concepts/transactions/) covers the transaction around them. This page was written against `@bsv/sdk` 4.0.1.
 
 ## A locking and an unlocking script
 
@@ -39,7 +39,7 @@ The locking script holds only the hash of a public key, so it works the same on 
 
 ## How a spend is checked
 
-The network checks every input the same way. It runs the unlocking script first, then the locking script on the same stack, and the spend is valid when the script ends with a nonzero value on top of the stack. The two scripts run in turn and are not joined into one.
+The network checks every input the same way. It runs the unlocking script first, then the locking script on the same stack. The two scripts run in turn and are not joined into one. In `@bsv/sdk`, a spend is valid when the unlocking script only pushes data and the stack ends with exactly one item that is nonzero.
 
 ### The stack step by step
 
@@ -106,7 +106,7 @@ valid: true
 rejected: Script evaluation error: OP_EQUALVERIFY requires the top two stack items to be equal.
 ```
 
-`validate()` returns `true` or throws an error that names the opcode and its position. It never returns `false`, so wrap it in `try` and `catch`. To watch the stack change, call `spend.step()` in a loop. Each call runs one chunk and returns `false` once both scripts are done, and `spend.stack` holds the stack after each step.
+`validate()` returns `true` or throws an error that says why the spend failed, and for a failed opcode it names the opcode and its position. It never returns `false`, so wrap it in `try` and `catch`. To watch the stack change, call `spend.step()` in a loop. Each call runs one chunk and returns `false` once both scripts are done, and `spend.stack` holds the stack after each step.
 
 A passing check means the two scripts are satisfied. The network also validates the rest of the transaction.
 
@@ -116,7 +116,7 @@ A script template packages one kind of script. Its `lock` method builds a lockin
 
 ### Templates in `@bsv/sdk`
 
-Switch between `P2PKH`, `PushDrop` and <Hint tip="A template that locks an output with an R puzzle, which the spender unlocks with the matching K value">`RPuzzle`</Hint> to compare what `lock` and `unlock` take and return.
+Switch between `P2PKH`, <Hint tip="A template that locks data fields to a public key, so an output can carry data and still be spent">`PushDrop`</Hint> and <Hint tip="A template that locks an output with an R puzzle, which the spender unlocks with the matching K value">`RPuzzle`</Hint> to compare what `lock` and `unlock` take and return.
 
 <ScriptTemplates />
 
@@ -153,7 +153,7 @@ The security level in `protocolID` sets how much approval a wallet asks for: non
 
 ## Scripts that carry data
 
-An output can store data in its script. A locking script that starts with `OP_FALSE OP_RETURN` followed by data pushes keeps the data on chain, and no unlocking script can satisfy it, because `OP_RETURN` ends the script with a false value on top of the stack. This example builds one:
+An output can store data in its script. A locking script that starts with `OP_FALSE` <Hint tip="An opcode that ends the script, so nothing can spend the output">`OP_RETURN`</Hint> followed by data pushes keeps the data on chain, and no unlocking script can satisfy it, because `OP_RETURN` ends the script with a false value on top of the stack. This example builds one:
 
 ```javascript data.mjs
 import { Script } from '@bsv/sdk'
