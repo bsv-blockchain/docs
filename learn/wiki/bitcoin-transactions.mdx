@@ -5,7 +5,7 @@ description: "The fields of a transaction, how an input points to an output, wha
 
 import TxBuilder from '/snippets/TxBuilder.jsx';
 
-A transaction spends outputs of earlier transactions and creates new outputs. [How transactions and fees work](/concepts/transactions/) explains how an app builds and pays for one, and [How Script works](/concepts/script/) covers the scripts inside.
+A transaction spends outputs of earlier transactions and creates new outputs. [How transactions and fees work](/concepts/transactions/) explains how an app builds and pays for one, and [How Script works](/concepts/script/) covers the scripts inside. On this page you can read each field of a transaction, build one in an interactive builder and run a short script that signs a spend and parses it back.
 
 The example runs with Node.js after `npm install @bsv/sdk` and was written against `@bsv/sdk` 4.0.1. A transaction cannot be undone once it is confirmed, so the example uses a stand-in earlier transaction and a new random key, and sends nothing.
 
@@ -24,11 +24,11 @@ A transaction builder with three coins of 600, 400 and 1,000 satoshis. The goal 
 | Field | Size | What it holds |
 | --- | --- | --- |
 | Version | 4 bytes | A number set by the sender. The examples on this page use 1 |
-| Input count | 1 to 9 bytes | How many inputs follow, as a variable length integer |
+| Input count | 1 to 9 bytes | How many inputs follow, as a <Hint tip="A number stored in 1, 3, 5 or 9 bytes, depending on its size">variable length integer</Hint> |
 | Inputs | Varies | The outputs being spent |
 | Output count | 1 to 9 bytes | How many outputs follow, as a variable length integer |
 | Outputs | Varies | The new outputs |
-| Locktime | 4 bytes | The earliest block height or time at which a node can include it |
+| Locktime | 4 bytes | The block height or time that must pass before a node can include it |
 
 ### Input fields
 
@@ -56,14 +56,17 @@ Each output holds an amount and the condition for spending it.
 
 A count or length is a variable length integer. It takes 1 byte below 253, 3 bytes up to 65,535, 5 bytes up to 4,294,967,295 and 9 bytes above that.
 
+<Callout type="warning">
+The example creates a throwaway private key on every run. Never send funds to it, and never save a key that holds value in code or in a file you commit.
+</Callout>
+
 ```javascript transaction.mjs
-import { MerklePath, P2PKH, PrivateKey, Transaction } from '@bsv/sdk'
+import { P2PKH, PrivateKey, Transaction } from '@bsv/sdk'
 
 const key = PrivateKey.fromRandom()
 const lock = new P2PKH().lock(key.toPublicKey().toAddress('testnet'))
 
 const earlier = new Transaction(1, [], [{ lockingScript: lock, satoshis: 1000 }], 0)
-earlier.merklePath = MerklePath.fromCoinbaseTxidAndHeight(earlier.id('hex'), 1)
 
 const tx = new Transaction(
   1,
@@ -98,7 +101,7 @@ transaction ID 17f0247741662d2d9723cf0d4ae364a4b3eb9f183384f041164cbc1ad25ddfa8
 
 A transaction ID is the `HASH256` of the serialized transaction, written with its bytes reversed as explorers do. It is not a field of the transaction, because it can only be computed once the transaction is complete. A change to any field, including a signature, gives a different ID.
 
-An input names the output it spends by the transaction ID of the earlier transaction plus the output index, 36 bytes together, called an outpoint. Once an accepted transaction has spent an outpoint, nodes reject any later transaction that names it.
+An input names the output it spends by the transaction ID of the earlier transaction plus the output index, 36 bytes together, called an <Hint tip="The transaction ID and output index that identify one output">outpoint</Hint>. Once an accepted transaction has spent an outpoint, nodes reject any later transaction that names it.
 
 ## Unspent outputs and fees
 
@@ -112,13 +115,13 @@ Locktime is a transaction field and sequence is an input field, and they work to
 
 ## What a signature covers
 
-An input is signed with a sighash flag that says which inputs and outputs the signature commits to. `SIGHASH_ALL` (`0x01`) covers all of them, `SIGHASH_NONE` (`0x02`) covers the inputs and no outputs, `SIGHASH_SINGLE` (`0x03`) covers the output with the same index as the input, and `SIGHASH_ANYONECANPAY` (`0x80`) can be added to cover only the input being signed. `@bsv/sdk` adds `SIGHASH_FORKID` (`0x40`). [How transactions and fees work](/concepts/transactions/) explains what each combination allows.
+An input is signed with a <Hint tip="A byte that says which parts of the transaction a signature covers">sighash flag</Hint> that says which inputs and outputs the signature commits to. `SIGHASH_ALL` (`0x01`) covers all of them, `SIGHASH_NONE` (`0x02`) covers the inputs and no outputs, `SIGHASH_SINGLE` (`0x03`) covers the output with the same index as the input, and `SIGHASH_ANYONECANPAY` (`0x80`) can be added to cover only the input being signed. `@bsv/sdk` adds `SIGHASH_FORKID` (`0x40`). [How transactions and fees work](/concepts/transactions/) explains what each combination allows.
 
 ## Node settings and conflicting spends
 
 Nodes apply local settings that are not part of the consensus rules. A miner chooses a minimum fee, the smallest output value it will accept, the largest transaction it will take and how many unconfirmed ancestors a transaction may have. These settings differ between miners and can change, so a transaction that one node rejects can be accepted by another. Check the current values with the service you broadcast through before you build around them.
 
-A node keeps transactions it has validated but not yet mined in its transaction pool. When two transactions spend the same output, the node keeps the one it saw first and rejects the other, which is the first seen rule.
+A node keeps transactions it has validated but not yet mined in its <Hint tip="Where a node keeps valid transactions that are not in a block yet">transaction pool</Hint>. When two transactions spend the same output, the node keeps the one it saw first and rejects the other, which is the <Hint tip="The rule that a node keeps the first of two transactions that spend the same output">first seen rule</Hint>.
 
 ## Related articles
 
