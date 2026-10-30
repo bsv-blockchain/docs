@@ -84,6 +84,7 @@
             "pages": [
               "guides/app-frameworks",
               "guides/wallet-aware-apps",
+              "guides/wallet-login",
               "guides/go-to-mainnet"
             ]
           },
