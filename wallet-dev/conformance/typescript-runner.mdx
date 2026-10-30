@@ -25,11 +25,13 @@ The first run uses the wallets the dispatcher already builds, so you see a clean
 
 <Steps>
   <Step title="Clone ts-stack">
-    Clone the repository with a shallow history, then work from its root for every command on this page:
+    Clone the repository at the commit this page was written against, then work from its root for every command on this page:
 
     ```bash Terminal
-    git clone --depth 1 https://github.com/bsv-blockchain/ts-stack.git
+    git clone --depth 1 --no-checkout https://github.com/bsv-blockchain/ts-stack.git
     cd ts-stack
+    git fetch --depth 1 origin 389d5d806495903ee56273978ccc7e8ab71ceb86
+    git checkout FETCH_HEAD
     ```
   </Step>
   <Step title="Install the runner dependencies">
@@ -108,6 +110,10 @@ With the reference run clean, change the wallet the dispatcher builds and run th
 
 <Steps>
   <Step title="Build every wallet in one function">
+    <Callout type="warning">
+      The root keys in the vectors are public test values, such as key 1 written in hex. Never fund a wallet built from them and never reuse them for a real wallet.
+    </Callout>
+
     Replace `makeWallet` so that it returns the wallet from `setupTestWallet`, built from the vector's root key:
 
     ```ts dispatchers/wallet.ts
@@ -178,7 +184,7 @@ The six wallet state dispatchers still check fixed values, so their 33 passes sa
     The `test` script sets `NODE_OPTIONS` inline, which the Windows command prompt cannot run, so pnpm stops with `'NODE_OPTIONS' is not recognized as an internal or external command`. Run the script through Git Bash with `pnpm --config.script-shell="C:\Program Files\Git\usr\bin\bash.exe" --filter @bsv/conformance-runner-ts test -t "wallet.brc100"`.
   </Accordion>
   <Accordion title="Build fails with a SHA-256 mismatch">
-    The build of `@bsv/verifast` checks the hash of its files and stops with `bdk-core.mjs SHA-256 mismatch` when Git converted their line endings at checkout, which happens on Windows with `core.autocrlf` set to `true`. Clone again with the conversion off: `git clone -c core.autocrlf=false --depth 1 https://github.com/bsv-blockchain/ts-stack.git`.
+    The build of `@bsv/verifast` checks the hash of its files and stops with `bdk-core.mjs SHA-256 mismatch` when Git converted their line endings at checkout, which happens on Windows with `core.autocrlf` set to `true`. Clone again with the conversion off: `git clone -c core.autocrlf=false --depth 1 --no-checkout https://github.com/bsv-blockchain/ts-stack.git && cd ts-stack && git fetch --depth 1 origin 389d5d806495903ee56273978ccc7e8ab71ceb86 && git checkout FETCH_HEAD`.
   </Accordion>
 </AccordionGroup>
 
