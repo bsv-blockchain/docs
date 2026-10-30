@@ -257,8 +257,16 @@ export async function openWallet (rootKeyHex) {
 }
 ```
 
+Open it in the browser and run the checks of `check.mjs` on the wallet it returns. In Chrome on testnet, with a new key, they print:
+
+```text
+Identity key: 038524fd...50ba47
+Network: testnet
+Outputs: { totalOutputs: 0, outputs: [] }
+```
+
 - A browser has no `.env`, so `rootKeyHex` comes from the key management of your wallet, such as a key the user unlocks. Never ship a key in the app bundle.
-- `databaseName` names the IndexedDB database on the device.
+- `databaseName` becomes the name of this store, as with SQLite. The records go to an IndexedDB database on the device named `wallet-toolbox-testnet`.
 
 </Tab>
 </Tabs>
