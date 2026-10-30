@@ -104,6 +104,28 @@ You build one project with four parts:
 
     The artifact holds the compiled script, the methods and their parameters, and the layout of the state, which is where `count` sits in the locking script. Your scripts load the artifact, not the TypeScript source.
   </Step>
+  <Step title="Look at the compiled script">
+    The artifact's `asm` field is the locking script as Bitcoin Script opcodes. Print it:
+
+    ```bash
+    node -e "console.log(require('./artifacts/Counter.runar.json').asm)"
+    ```
+
+    The whole script is 1,373 bytes, about 450 opcodes and data pushes. These parts of it map back to your class:
+
+    ```text
+    OP_DUP OP_0 OP_NUMEQUAL OP_IF OP_DROP OP_DUP <raw 428 bytes> …
+    … OP_BIN2NUM OP_DUP OP_1ADD OP_NIP …
+    … OP_ELSE OP_1 OP_NUMEQUALVERIFY OP_DUP <raw 428 bytes> …
+    … OP_BIN2NUM OP_DUP OP_0 OP_GREATERTHAN OP_VERIFY OP_DUP OP_1SUB OP_NIP …
+    ```
+
+    - `OP_0 OP_NUMEQUAL OP_IF` picks the method. The unlocking script pushes a number for the method it calls: `0` runs `increment`, and the `OP_ELSE OP_1` branch runs `decrement`.
+    - `<raw 428 bytes>` is the OP_PUSH_TX check Rúnar adds to each method of a stateful contract, printed in short form. It reads the spending transaction so the script can check the new output.
+    - `OP_1ADD` is `this.count++`. `OP_0 OP_GREATERTHAN OP_VERIFY` is `assert(this.count > 0n)`: if `count` is not above zero, the script fails and the network refuses the transaction. `OP_1SUB` is `this.count--`.
+
+    The state is not in `asm`. When the contract is deployed, Rúnar appends `OP_RETURN` and `count` as 8 bytes to the end of the locking script, and each call rewrites those 8 bytes in the new output. To learn how locking and unlocking scripts run, read [How Script works](/concepts/script/).
+  </Step>
   <Step title="Test it">
     Create `tests/Counter.test.ts`:
 
