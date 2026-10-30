@@ -1,9 +1,9 @@
 {
   "$schema": "https://preview.writedocs.io/schema.json",
   "name": "BSV blockchain",
-  "domain": "bsvblockchain.org",
+  "domain": "bsvblockchain.com",
   "basePath": "/docs",
-  "description": "Developer documentation for BSV Blockchain: build apps with BRC-100 wallets and the TypeScript SDK.",
+  "description": "Developer documentation for the BSV blockchain: build apps with BRC-100 wallets and the TypeScript SDK.",
   "styles": {
     "colors": {
       "primary": "#1B1EA9",
