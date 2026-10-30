@@ -1,108 +1,130 @@
 ---
-title: BRC-100 Wallet Interface
-description: The standard interface that lets any app talk to any wallet, without touching a private key.
+title: "BRC-100 wallet interface"
+description: "The standard interface between an app and a wallet, where the app asks for an action, the wallet holds the keys and decides how to do it, and any compliant wallet can answer."
 ---
 
-**BRC-100** is the line between your app's code and wallet code. Your app says what it wants done, in plain method calls; the wallet decides how to do it, including which coins to use, which permissions apply, and how to sign. If you've used <Hint tip="A standard that lets any app connect to any compatible wallet">WalletConnect</Hint> on another chain, this plays a similar role: one interface, many wallets.
+import WalletBoundary from '/snippets/WalletBoundary.jsx';
+import SubstrateProbe from '/snippets/SubstrateProbe.jsx';
 
-<Frame caption="How a desktop and mobile request flow through BRC-100">
-  <img src="https://bsv-blockchain.github.io/ts-stack/assets/diagrams/brc100-wallet-flows.svg" alt="BRC-100 desktop and mobile request flows" />
-</Frame>
+<Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> is the interface between your app's code and a wallet's code. A full BRC-100 wallet exposes the same 28 methods, so the same app code works with [BSV Desktop](/wallets/bsv-desktop/), [BSV Browser](/wallets/bsv-browser/) or a wallet inside your own server. Read this before your app calls a wallet.
 
-## Why This Boundary Exists
+## Why your app does not hold the key
 
-Without a shared standard, every app would need its own integration for every wallet, and every wallet would need to support every app's way of asking for things. BRC-100 gives both sides one contract instead:
+A wallet holds keys and signs transactions. It does not hold coins, since the coins are unspent outputs (<Hint tip="Unspent transaction output">UTXOs</Hint>) on the blockchain that its keys can spend. In BRC-100 the wallet does the work that needs a key, and your app asks.
 
-- Your app calls methods like `createAction`, `getPublicKey`, or `encrypt` without knowing which wallet product is on the other end.
-- A wallet implements that same interface once and can expose it over localhost, `postMessage`, a JSON API, a native bridge, or in-process, whichever fits how it runs.
-- Wallets written in other languages can target the same methods and test against the same conformance suite.
+The diagram follows a request from your app to the wallet. Select a call and press **Play** to see which of the wallet's steps use the key.
 
-In practice, this is what lets `WalletClient` from `@bsv/sdk` connect to any compliant wallet on a user's machine, without your app knowing in advance which one it will find.
+<WalletBoundary />
 
-## What BRC-100 Does Not Cover
+<Visibility for="agents">
+  For `createAction`, the app sends a description and the outputs. The wallet asks the user to approve when its permissions require it, selects the coins, signs and broadcasts. For `getPublicKey` and `encrypt`, the wallet checks the permission for the protocol and derives the key. For `listOutputs`, it checks the permission for the basket and reads the outputs it tracks. The private key never leaves the wallet.
+</Visibility>
 
-BRC-100 standardizes how an app talks to a wallet. It does not define how a wallet recovers if something goes wrong, keys get lost, a device dies. That part is the wallet's own responsibility: it has to preserve both the recoverable keys and the records that go with them (derivation metadata, output history).
+What this means for your app:
 
-If you're building an app, link out to your wallet's own recovery flow rather than trying to back up wallet data yourself, and never collect wallet secrets on your side.
+- The wallet derives keys, signs, encrypts and decrypts, and it selects the coins, sets the fee and broadcasts. When the wallet is a separate application, the private key never reaches your app, so a bug or a leak in your app cannot expose it, and your app does not track outputs.
+- Permissions are applied by the wallet, which uses the `originator` of each request to decide whether to ask the user. In BSV Desktop, a spend waits for **Authorize** in the **Spending Request**.
+- The user can change wallet without your app changing, since the two sides only share the interface.
 
-## How a Request Flows: Desktop
+## What your app can ask a wallet to do
 
-On desktop, a web app typically uses `@bsv/simple/browser` or `WalletClient` from `@bsv/sdk` directly:
+A BRC-100 wallet answers a fixed set of methods, grouped by what they do.
 
-<Steps>
-  <Step title="Call a BRC-100 method">
-    Your app calls something like `createAction`.
-  </Step>
-  <Step title="Find the wallet">
-    `WalletClient` checks the available channels (localhost ports, in-browser messaging) for a running wallet.
-  </Step>
-  <Step title="Reach the wallet">
-    <Hint tip="Such as BSV Desktop">The wallet</Hint> receives the request over a local wallet server running on the user's machine.
-  </Step>
-  <Step title="Read and update state">
-    The wallet may call shared infrastructure (for proofs, broadcast, and so on) to carry out the request.
-  </Step>
-  <Step title="Sign locally">
-    The private key never leaves the wallet process.
-  </Step>
-  <Step title="Return the result">
-    The wallet sends back a result, such as a `txid`, the transaction itself, or a `signableTransaction` if your app needs to add its own signature.
-  </Step>
-</Steps>
+### The five groups of methods
 
-## How a Request Flows: Mobile
-
-On mobile, the pattern is the same from the app's point of view, a wallet app just embeds the web app and exposes the same methods through a bridge instead of localhost:
-
-<Steps>
-  <Step title="Call the same method">
-    Your app calls the same BRC-100 method it would on desktop, unchanged.
-  </Step>
-  <Step title="Bridge to native code">
-    The WebView passes the request to native wallet code.
-  </Step>
-  <Step title="Sign on the device">
-    The native wallet picks its own coins and signs locally.
-  </Step>
-  <Step title="Broadcast and prove">
-    The wallet may still reach out to network services for broadcasting and proofs.
-  </Step>
-  <Step title="Return through the bridge">
-    The result comes back to your web app the same way the request went out.
-  </Step>
-</Steps>
-
-Because both flows expose the same methods, your app's logic doesn't need a separate code path for desktop versus mobile.
-
-## What You Can Ask a Wallet to Do
-
-BRC-100 methods fall into a few groups:
-
-| Group | Purpose | Example methods |
+| Group | Purpose | Methods |
 | --- | --- | --- |
-| Actions | Create, sign, cancel, list, or absorb transactions | `createAction`, `signAction`, `internalizeAction` |
-| Outputs | Query or release the coins your app is tracking | `listOutputs`, `relinquishOutput` |
-| Keys and crypto | Derive keys, encrypt, decrypt, sign | `getPublicKey`, `encrypt`, `createSignature` |
-| Certificates | Issue, list, prove, or discover identity certificates | `acquireCertificate`, `proveCertificate` |
-| Wallet state | Check authentication, chain height, network, version | `getHeight`, `getVersion` |
+| Actions | Build and manage transactions | `createAction`, `signAction`, `abortAction`, `listActions`, `internalizeAction` |
+| Outputs | Query and release tracked outputs | `listOutputs`, `relinquishOutput` |
+| Keys and crypto | Keys, signing and encryption | `getPublicKey`, `encrypt`, `decrypt`, `createHmac`, `verifyHmac`, `createSignature`, `verifySignature`, `revealCounterpartyKeyLinkage`, `revealSpecificKeyLinkage` |
+| Certificates | Identity certificates | `acquireCertificate`, `listCertificates`, `proveCertificate`, `relinquishCertificate`, `discoverByIdentityKey`, `discoverByAttributes` |
+| Wallet state | Authentication, chain and wallet information | `isAuthenticated`, `waitForAuthentication`, `getHeight`, `getHeaderForHeight`, `getNetwork`, `getVersion` |
 
-## What createAction Can Return
+The parameters and results of each method are in the [Wallet API reference](/reference/wallet-api/).
 
-Calling `createAction` ends in one of two ways:
+### What createAction can return
 
-| Outcome | What you get back | What it means |
+`createAction` is how an app asks for a transaction, which BRC-100 calls an action. The result depends on who has to sign:
+
+| Outcome | What the app receives | What happens next |
 | --- | --- | --- |
-| Immediate action | A `txid` and/or the transaction itself | The wallet had everything it needed to fund, sign, and process the transaction on its own. |
-| Signable action | `signableTransaction: { tx, reference }` | Your app still needs to sign specific inputs itself, then call `signAction` to finish. |
+| Immediate action | A `txid` and the transaction as an <Hint tip="Atomic BEEF (BRC-95): one transaction packaged with the proofs of its ancestors">AtomicBEEF</Hint> in `tx` | The wallet funded, signed and processed the transaction. |
+| Signable action, when the request spends an output the wallet does not control, such as one locked to a key your app holds | Only `signableTransaction: { tx, reference }`, with the transaction in `tx` | Your app signs the inputs it controls, then calls `signAction({ reference, spends })` with the unlocking script of each input. The wallet adds its signatures and returns the `txid`. |
 
-Wallets can also chain several actions together before broadcasting any of them, carrying change forward and sending the whole batch at once.
+## How a request reaches the wallet
 
-## Organizing What the Wallet Tracks
+Where the wallet runs decides the channel your request takes: a computer, a phone or your own server.
 
-BRC-100 gives you three different ways to tag things, and they're not interchangeable:
+The diagram shows what `WalletClient('auto')` does on its first call. Switch a substrate on to mark that a wallet answers there, then press **Play** to see which one it keeps. Select **Only XDM** to see the last resort, or **None** to see the call fail.
 
-| Concept | Applies to | Used by |
+<SubstrateProbe />
+
+<Visibility for="agents">
+  `WalletClient` asks `window.CWI`, the wallet wire on port 3301, the secure JSON API on port 2121, the JSON API on port 3321 and the React Native bridge in parallel, keeps the first of them that answers in that order, and asks XDM last.
+</Visibility>
+
+### How an app finds the wallet
+
+BRC-100 defines the methods, not the channel that carries them. A wallet reaches your app over a substrate. `WalletClient` from `@bsv/sdk` supports these:
+
+| Substrate | Where the wallet is | Address |
 | --- | --- | --- |
-| Labels | A whole action or transaction | `createAction`, `listActions` |
-| Tags | One specific output | `createAction`, `listOutputs` |
-| Baskets | A named group of outputs | `listOutputs`, `internalizeAction` |
+| <Hint tip="The wallet injects a window.CWI object into the page">`window.CWI`</Hint> | In the same browser | Not applicable |
+| Wallet wire | A wallet on the user's machine, over a binary protocol | `http://localhost:3301` |
+| JSON API | A wallet on the user's machine, over JSON | `http://localhost:3321`, or `https://localhost:2121` for `secure-json-api` |
+| React Native WebView | A native wallet that embeds the web app, such as BSV Browser | A `postMessage` bridge |
+| <Hint tip="Cross-document messaging">XDM</Hint> | A wallet in another frame or window | Cross-document `postMessage` |
+
+In `@bsv/sdk` 4.x, `new WalletClient('auto', 'YOUR_APP_DOMAIN')` does not connect to a wallet until the first call. On that call it asks every substrate except XDM for `getVersion` in parallel and waits up to one second. It keeps the first one that answers, in the order of the table, and asks XDM last, with a 200 ms wait. When none answers, the call fails with `No wallet available over any communication substrate`.
+
+The second argument is the `originator`, the domain name of your app, with an optional port and without a scheme or a path. `WalletClient` sends it with every method. You can also name one substrate, for example `new WalletClient('json-api', 'YOUR_APP_DOMAIN')`, or pass any object that implements the interface.
+
+### Desktop and phone
+
+On a computer, `WalletClient` reaches a wallet such as BSV Desktop through a localhost port. On a phone, BSV Browser embeds the web app and exposes the same methods through a bridge. Only the substrate changes, so the same app code works on both.
+
+## Where the wallet runs
+
+The interface does not say where the wallet is. It can be a separate application, as above, or an object in your own process, such as a server wallet built with `@bsv/wallet-toolbox`. In that case your process holds the key. The app and the wallet are the same program.
+
+`ProtoWallet` in `@bsv/sdk` is not a full wallet. It holds one private key and implements only the nine methods of the keys and crypto group, so it cannot build a transaction.
+
+<Callout type="warning">
+  The key in this script exists only while it runs. Never paste a real private key into code or commit one.
+</Callout>
+
+To try it, save this standalone script as `roundtrip.mts`, install `@bsv/sdk` with `npm install @bsv/sdk` and run it with Node. It was written against `@bsv/sdk` 4.x, and the function takes any wallet that has `encrypt` and `decrypt`:
+
+```typescript roundtrip.mts
+import { WalletClient, ProtoWallet, PrivateKey } from '@bsv/sdk'
+import type { WalletInterface } from '@bsv/sdk'
+
+async function roundTrip(wallet: Pick<WalletInterface, 'encrypt' | 'decrypt'>) {
+  const args = { protocolID: [1, 'demo app'] as [1, string], keyID: '1', counterparty: 'self' }
+  const { ciphertext } = await wallet.encrypt({ ...args, plaintext: [1, 2, 3] })
+  const { plaintext } = await wallet.decrypt({ ...args, ciphertext })
+  return plaintext
+}
+
+const inProcess = new ProtoWallet(PrivateKey.fromRandom())
+console.log(await roundTrip(inProcess))
+
+const userWallet = new WalletClient('auto', 'YOUR_APP_DOMAIN')
+console.log(await roundTrip(userWallet))
+```
+
+- The first call prints `[ 1, 2, 3 ]`, with a key generated for the run.
+- The second call needs a BRC-100 wallet running, such as BSV Desktop, and the wallet may ask the user to approve the request. It prints `[ 1, 2, 3 ]` too. When no wallet answers, it rejects with `No wallet available over any communication substrate`.
+- Replace `YOUR_APP_DOMAIN` with the domain name of your app, for example `localhost` while you develop. The `.mts` extension makes the script an ES module, which the top-level `await` needs.
+
+## What BRC-100 does not cover
+
+BRC-100 standardizes how an app talks to a wallet. It does not define how a wallet recovers from a lost key or a dead device. That is the wallet's own job, and the wallet has to keep the recoverable keys and the records that go with them, such as the derivation data and the output history. Link to the recovery controls of the user's wallet instead of backing up wallet data in your app. Never collect wallet secrets. For BSV Desktop, see [Back up and recover a wallet](/wallets/backup-recovery/).
+
+## Related articles
+
+To learn more about wallets and keys in BSV, review these articles:
+
+- [How your transaction worked](/concepts/how-your-payment-worked/)
+- [Keys and identity](/concepts/keys-identity/)
+- [Wallet API reference](/reference/wallet-api/)
