@@ -20,7 +20,7 @@ Both services live in the `infra/` folder of the [ts-stack repository](https://g
 
 | Service | What it does | Database | Client class | Run it when |
 | --- | --- | --- | --- | --- |
-| Wallet Infra | Serves the toolbox storage over JSON-RPC: outputs, spent state, baskets, labels and certificates | MySQL | `StorageClient` | Your wallet keeps its records on a server, for one user or many |
+| Wallet Infra | Serves the toolbox storage over <Hint tip="A protocol that sends requests and replies as JSON">JSON-RPC</Hint>: outputs, spent state, baskets, labels and certificates | MySQL | `StorageClient` | Your wallet keeps its records on a server, for one user or many |
 | WAB | Verifies a phone number with a one-time code and returns the user's presentation key. It also stores optional recovery shares and pays a one-time faucet to new users | SQLite for development, MySQL for production | `WABClient` | Your wallet offers phone sign-in and recovery |
 
 </BlueTable>
@@ -212,13 +212,13 @@ Now that the server answers, point a test wallet at it. The script below builds 
     ```
 
     ```text
-    Storage server identity: 03305aeab197fe0bfa5ec4f49d73437e63eba80249eada063491aa387bf1d26283
+    Storage server identity: 03305a…6283
     Storage chain: test
-    Wallet identity key: 03b0a79e0263cce20d13f3c626b3042dd0b06492845fb4d2addb72a4b4da68d5de
+    Wallet identity key: 03b0a7…d5de
     Outputs in the default basket: 0
     ```
 
-    The storage server identity is the public key of the server's `SERVER_PRIVATE_KEY`. The first call from a new identity key creates a user on the server with an empty `default` basket, so the wallet starts with no outputs.
+    The keys above are shortened, and yours differ. The storage server identity is the public key of the server's `SERVER_PRIVATE_KEY`. The first call from a new identity key creates a user on the server with an empty `default` basket, so the wallet starts with no outputs.
   </Step>
 </Steps>
 
@@ -320,6 +320,10 @@ The WAB is ready for a sign-in. The script below plays the part of the wallet wi
 
 <Steps>
   <Step title="Write the sign-in script">
+    <Callout type="warning">
+      The presentation key is one of the factors that unlock a wallet. The script creates a new one, and the WAB keeps it in plain text in `dev.sqlite3`. Use it only on testnet, and keep that file out of git.
+    </Callout>
+
     Save this as `wab-login.mjs` in `wallet-backend-client`:
 
     ```javascript wab-login.mjs
@@ -400,11 +404,11 @@ Run the script a second time with the same phone number. The result shows `accou
 
 Each folder has a `Dockerfile`, a `docker-compose.yml` and an `.env.example` with the main variables. Before you deploy, change what the local setup relaxed:
 
-- Set `BSV_NETWORK=main` only when you move to Mainnet, and use new keys for it.
+- To move to Mainnet, follow [Go to Mainnet](/guides/go-to-mainnet/) and use new keys for both services.
 - Run the WAB with `NODE_ENV=production` and MySQL, through the `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER` and `DB_PASS` variables. `DB_CLIENT` is optional, since `mysql2` is the default.
 - Set `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_VERIFY_SERVICE_SID` to send SMS codes. With all three empty, the WAB offers no phone method, and `DevConsole` never runs in production.
 - Serve both services over HTTPS, and point `STORAGE_URL` at the HTTPS address of Wallet Infra.
-- Fund the WAB's faucet wallet. Every faucet payment is a real transaction from it and cannot be undone. In the WAB, `COMMISSION_FEE` sets the faucet amount in satoshis, and leaving it unset or at `0` keeps 1,000.
+- The WAB's faucet wallet pays each new user from its own balance, and on Mainnet every payment is real and cannot be undone. In the WAB, `COMMISSION_FEE` sets the faucet amount in satoshis, and leaving it unset or at `0` keeps 1,000.
 - In Wallet Infra, `COMMISSION_FEE` is a different setting: a commission in satoshis that the storage server adds to each transaction its wallets create. Above `0`, it needs `COMMISSION_PUBLIC_KEY`, the key that receives the commission.
 - By default, in legacy mode, the WAB stores presentation keys in plain text in its database. To encrypt them at rest, set `WAB_PRESENTATION_KEY_ENCRYPTION_MODE` and `WAB_PRESENTATION_KEY_ENCRYPTION_KEY`, and follow the staged rollout in the WAB README.
 - Back up the MySQL databases, and keep `SHARE_ENCRYPTION_KEY` and the presentation key encryption key backed up apart from them.
