@@ -205,7 +205,7 @@ export default function TxBuilder() {
             ))}
           </div>
           <div className="tb-foot">
-            <span>{info === null ? copy.hover : parts[info].label}</span>
+            <span>{info !== null && parts[info] ? parts[info].label : copy.hover}</span>
             <span className="tb-keys">
               {copy.legend.map((l) => (
                 <span key={l.kind} className="tb-key"><span className="tb-sw tb-byte" data-kind={l.kind} />{l.label}</span>
