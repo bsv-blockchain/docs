@@ -127,7 +127,10 @@ const bitsOf = (bytes) => {
 function changeLast(text) {
   const chars = Array.from(text);
   const last = chars.pop();
-  return chars.join('') + String.fromCodePoint(last.codePointAt(0) + 1);
+  const cp = last.codePointAt(0);
+  let next = cp >= 0x10ffff ? cp - 1 : cp + 1;
+  if (next >= 0xd800 && next <= 0xdfff) next = cp === 0xd7ff ? 0xe000 : 0xd7ff;
+  return chars.join('') + String.fromCodePoint(next);
 }
 
 const css = `
