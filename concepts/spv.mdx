@@ -1,106 +1,152 @@
 ---
 title: "BEEF (BRC-62)"
-description: The binary format that lets your app verify a transaction without running a full node.
+description: "The binary format that sends a transaction together with the proofs an app needs to verify it without running a full node."
 ---
 
-**BEEF** (<Hint tip="Background Evaluation Extended Format">Background Evaluation Extended Format</Hint>, <Hint tip="BSV Request for Comments 62">BRC-62</Hint>) is the binary format BSV uses to send a transaction together with the proof that it is real. A wallet or app that receives a BEEF package can check the transaction against block headers it already has, instead of asking a full node to confirm it. This check is called <Hint tip="Simplified Payment Verification">SPV</Hint>.
+import BeefMerkleTree from '/snippets/BeefMerkleTree.jsx';
+import BeefAnatomy from '/snippets/BeefAnatomy.jsx';
 
-## Why BEEF Exists
+<Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint> is the binary format BSV uses to send a transaction together with the proof that the outputs it spends exist in the chain. An app or wallet that receives a BEEF checks that proof against block headers it already has, instead of asking a node about the transaction. This check is called <Hint tip="Simplified Payment Verification (BRC-67)">SPV</Hint>.
 
-Without BEEF, a recipient has two options when it gets a transaction:
+## How an app verifies a transaction without a node
 
-- Trust whoever sent it, with no way to verify the claim.
-- Query a full node to check every input, which is slow and means running or trusting someone else's node.
+A receiver verifies a BEEF in three checks, and the first one proves that a transaction is in a block.
 
-BEEF removes both problems. The sender bundles the transaction with everything needed to prove it, so the recipient can verify it on its own against block headers.
+### The proof
 
-## What's Inside a BEEF Package
+The diagram shows a block of eight transactions. Select one and press Play to see the hashes a receiver needs to prove it is in the block, which a BEEF carries in a <Hint tip="BSV Unified Merkle Path (BRC-74)">BUMP</Hint>. Then set the root in the block header to **Differs** and play again.
 
-A BEEF package starts with a 4-byte version header, then three parts in a fixed order:
+<BeefMerkleTree />
+
+<Visibility for="agents">
+The diagram shows a block of eight transactions as a Merkle tree, with the block header above the root. Selecting a transaction marks the three hashes its BUMP keeps, which are the siblings along the path to the root. Playing the animation hashes the transaction ID with its first sibling, then with the next sibling, then once more to reach the computed Merkle root. A switch sets whether the root in the block header matches the computed root. When it matches, the transaction is in the block. When it does not, the BEEF is rejected and nothing else in it is read. A block of 4,096 transactions would need 12 hashes, not 4,096.
+</Visibility>
+
+A block header commits to every transaction in its block through the Merkle root, so a <Hint tip="The chain of hashes that links one transaction to the Merkle root of its block">Merkle path</Hint> from a transaction up to that root proves it is in the block. The receiver needs the headers to check it, not the blocks. A block of 4,096 transactions would need 12 hashes, not 4,096.
+
+### The three checks
+
+An app that receives a BEEF runs three checks, in this order:
 
 <Steps>
-  <Step title="Version header">
-    Always `0100BEEF`, so a parser can recognize the format immediately.
+  <Step title="Compute the roots">
+    The app computes one Merkle root for each BUMP in the BEEF.
   </Step>
-  <Step title="Merkle proofs (BUMPs)">
-    One or more <Hint tip="BSV Unified Merkle Path, BRC-74">BUMPs</Hint>, the proofs that specific transactions are included in a mined block.
+  <Step title="Check the headers">
+    The app asks a <Hint tip="The part of the SDK that checks a Merkle root against the block headers of a network">chain tracker</Hint> whether each root belongs to the block at the height in its BUMP. If one does not, the BEEF is rejected and nothing else is checked.
   </Step>
-  <Step title="Ancestor transactions">
-    The minimal chain of parent transactions needed to connect the final transaction to a proven ancestor.
-  </Step>
-  <Step title="The transaction itself">
-    The actual transaction being sent, last in the package.
+  <Step title="Check the transactions without a proof">
+    For each of these, the app confirms that its inputs spend outputs of transactions it has already verified, that every script evaluates to true, and that the <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> in cover the satoshis out plus the fee.
   </Step>
 </Steps>
 
-This order is not arbitrary: it lets the recipient start checking the Merkle proofs as soon as they arrive, before the rest of the package has even finished downloading.
+<Callout type="warning">
+  A BEEF shows that the transaction spends outputs that exist in a block and that its scripts pass. It does not show that nobody spent those outputs in another transaction. [BRC-62](https://bsv.brc.dev/transactions/0062) names this limit and describes the format as intended for micropayments, where the risk is low.
+</Callout>
 
-## BUMPs: the Merkle Proofs
+## What is inside a BEEF
 
-A BUMP is BSV's compact format for a Merkle proof (BRC-74). Two things make it efficient:
+A BEEF is a list of Merkle paths, called BUMPs, followed by a list of transactions.
 
-- It points to a **block height** instead of a block hash, which takes less space.
-- Multiple transactions confirmed in the same block can share one BUMP, instead of each needing its own proof.
+### Layout and order
 
-The `MerklePath` class in `@bsv/sdk` reads and writes BUMPs, including the compound case where several transactions share a proof.
+The diagram shows one BEEF that carries a single payment, as the chain the receiver checks and as the bytes that carry it. Select any part to see what it is and where it sits in the other row.
 
-## Ancestor Transactions: Building the Proof Chain
+<BeefAnatomy />
 
-A transaction's inputs come from previous transactions, so verifying it means tracing those inputs back to something already proven. BEEF includes exactly the ancestors needed for that, no more: each one either has its own BUMP (it's confirmed) or is itself backed by further ancestors in the package.
+<Visibility for="agents">
+The diagram has two rows. The top row is the chain the receiver checks, left to right. The block header is held by the receiver, and the root in the BUMP must match it. The BUMP proves the parent transaction is in the block. The parent transaction's output is spent by the payment transaction, which is the one being sent. The bottom row is the BEEF in byte order. It starts with the 4 byte version 0100beef, then 01 for one BUMP, the BUMP itself, then 02 for two transactions. The counts are VarInts of 1 to 9 bytes. The parent transaction follows with the flag 01 00, which says it has BUMP number 0. The payment transaction comes last with the flag 00, which says it has no BUMP. The BUMP, the parent transaction and the payment transaction share a color in both rows. Selecting a part in either row highlights it in both rows and explains it, including the version, the BUMP count and the transaction count.
+</Visibility>
 
-The result is a chain: your transaction points back to its unconfirmed parents, which point back to confirmed ancestors with proofs attached.
+The Merkle paths come first and each transaction comes after the ones it spends, so a receiver can start verifying from the first bytes, before the whole BEEF has arrived.
 
-## BEEF V2 (BRC-95)
+### Merkle paths
 
-BRC-95 extends the original format with a few additions, and `@bsv/sdk` reads and writes both versions. If your code needs to know which one it's handling, check `Beef.version`.
+Each BUMP records the height of the block, which tells the receiver which header to compare against. It then records, level by level, only the hashes needed to reach the Merkle root, the ones marked in amber in the tree under The proof.
 
-<Hint tip="BEEF for a single transaction, BRC-95">AtomicBEEF</Hint> is a related, narrower format used when only one transaction (plus its proof) needs to move, rather than a whole package.
+One BUMP can hold the paths of several transactions in the same block and share the hashes they have in common. A BEEF with two mined ancestors from the same block therefore carries one BUMP, not two.
 
-## How Verification Happens
+### Ancestors
 
-Because of the fixed ordering, a recipient can verify a BEEF package as a pipeline instead of waiting for everything to arrive first:
+Each input of a transaction spends an output of an earlier transaction, so verifying the transaction means following its inputs back. A BEEF carries those earlier transactions up to the first ones that have a Merkle path. A mined ancestor brings its BUMP and none of its own parents. A transaction that spends unconfirmed outputs brings those parents as well, until every branch ends at a mined transaction.
 
-1. Start parsing the BUMPs as soon as they come in.
-2. Check each BUMP against block headers from a header service (for example, `Chaintracks`).
-3. Validate the ancestor transactions in order, each one checking its inputs against the part of the chain already verified.
-4. Evaluate the final transaction once every input behind it is proven.
+A BEEF whose oldest transactions have no Merkle path has nothing to anchor to, and it does not verify.
 
-If any step fails, verification stops immediately rather than processing the rest of the bytes.
+## BEEF forms and where each one is used
 
-## Using BEEF in Code
+Three forms of BEEF are in use. They share the same Merkle paths and transactions and differ in the prefix and in what they allow, and each BSV interface picks one of them.
+
+### The three forms
+
+| Form | BRC | Starts with | What it is |
+|---|---|---|---|
+| BEEF V1 | [BRC-62](https://bsv.brc.dev/transactions/0062) | `0100beef` | The Merkle paths first, then the transactions in order, each with a flag for its BUMP |
+| BEEF V2 | [BRC-96](https://bsv.brc.dev/transactions/0096) | `0200beef` | A format byte before each transaction: `00` for a raw transaction, `01` for a raw transaction with a BUMP index and `02` for a transaction ID only. A BEEF can hold several separate transaction trees |
+| Atomic BEEF | [BRC-95](https://bsv.brc.dev/transactions/0095) | `01010101`, then the ID of the subject transaction | A complete BEEF whose transactions are all in the ancestry of the subject transaction. Nothing unrelated is allowed |
+
+An entry with only a transaction ID stands for a transaction the receiver already verified. In `@bsv/sdk` it counts only when you pass `true` as the `allowTxidOnly` argument of `isValid` or `verify`, for example `beef.verify(tracker, true)`. Without it, the BEEF does not verify.
+
+In an Atomic BEEF, `@bsv/sdk` writes the transaction ID in the prefix in the byte order of the serialized transaction, which is the reverse of the ID as an explorer shows it.
+
+### Where each form is used
+
+A wallet makes and reads BEEFs for the app, so an app rarely builds one itself. Each interface below uses one form:
+
+| Where | Form |
+|---|---|
+| `tx` in the result of `createAction`, and `tx` in `internalizeAction`, in <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> | Atomic BEEF |
+| `inputBEEF` in `createAction` | BEEF |
+| The request body when you submit a transaction to an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, in [BRC-22](https://bsv.brc.dev/overlays/0022) | BEEF |
+| A payment between two parties, in [BRC-29](https://bsv.brc.dev/payments/0029) | Atomic BEEF |
+| The `x-bsv-beef` header of an HTTP 402 payment, in [BRC-121](https://bsv.brc.dev/payments/0121), encoded as base64 | Atomic BEEF |
+
+## Read and make a BEEF with the SDK
+
+The examples were written against `@bsv/sdk` 4.0.1. To look inside a BEEF without code, paste it into the [BEEF Inspector](/showcase/beef-inspector/), which reads any BEEF and verifies only against Mainnet.
+
+### Read and verify a BEEF
+
+To read a BEEF and check it against the block headers of testnet:
 
 ```typescript
-import { Beef, MerklePath, Transaction, WhatsOnChain } from '@bsv/sdk'
+import { Beef, Utils, WhatsOnChain } from '@bsv/sdk'
 
-declare const tx: Transaction
-declare const bump: MerklePath
+declare const beefHex: string // a BEEF as hex, for example from a wallet or a request
 
-// Build a BEEF package from a transaction and its proof
-const beef = new Beef()
-beef.mergeTransaction(tx)
-beef.mergeBump(bump)
-const bytes = beef.toBinary()
-
-// Parse it back and verify
-const parsed = Beef.fromBinary(bytes)
-const isValid = await parsed.verify(new WhatsOnChain())
+const beef = Beef.fromBinary(Utils.toArray(beefHex, 'hex'))
+const isValid = await beef.verify(new WhatsOnChain('test'))
 ```
 
-## Where You'll Run Into BEEF
+- `Beef.fromBinary` reads V1, V2 and Atomic BEEF. Compare `beef.version` with `BEEF_V1` and `BEEF_V2` to tell which version it is.
+- `verify` returns `false` when a root does not match a header and when the BEEF has no Merkle path to anchor to.
+- `WhatsOnChain` is a chain tracker backed by the WhatsOnChain service. Any object with `isValidRootForHeight` and `currentHeight` methods works in its place, for example one backed by your own header store.
 
-BEEF shows up anywhere a transaction crosses a boundary between systems:
+<Callout type="note">
+  A chain tracker belongs to one network. `new WhatsOnChain()` defaults to Mainnet, so a testnet BEEF checked with it fails. Pass `'test'` on testnet and `'main'` on Mainnet.
+</Callout>
 
-<CardGroup cols={2}>
-  <Card title="Wallet actions" icon="wallet">
-    `createAction` and `internalizeAction` in <Hint tip="The standard wallet-to-application interface">BRC-100</Hint> both move transactions as BEEF.
-  </Card>
-  <Card title="Overlay services" icon="layer-group">
-    Any transaction submitted to an overlay through `engine.submit()` must be BEEF-encoded.
-  </Card>
-  <Card title="HTTP micropayments" icon="credit-card">
-    A payment sent through BRC-121 (HTTP 402) carries its proof as BEEF in the request headers.
-  </Card>
-  <Card title="Peer-to-peer payments" icon="arrow-right-arrow-left">
-    A BRC-29 payment between two parties is transmitted as BEEF.
-  </Card>
-</CardGroup>
+### Make a BEEF
+
+To make a BEEF from a transaction that is signed, has its inputs' source transactions set, and has a `merklePath` on the oldest ancestors:
+
+```typescript
+import { Transaction } from '@bsv/sdk'
+
+declare const tx: Transaction // signed, with sourceTransaction on each input
+
+const beefHex = tx.toHexBEEF()
+const atomicBeef = tx.toAtomicBEEF()
+```
+
+- `toHexBEEF` returns a V1 BEEF as hex, and `toAtomicBEEF` returns an Atomic BEEF as an array of bytes, with `tx` as the subject transaction.
+- A transaction that you read with `Transaction.fromAtomicBEEF` or `Transaction.fromHexBEEF` already has its ancestors attached, so `toHexBEEF` gives back the same BEEF.
+- A `new Beef()` that you fill by hand is V2 by default. Pass `BEEF_V1` to the constructor when the receiver expects V1.
+
+## Related articles
+
+To learn more about verifying transactions in BSV, review these articles:
+
+- [Transactions](/concepts/transactions/)
+- [BRC-100 Wallet Interface](/concepts/wallet-model/)
+- [Overlays](/concepts/overlays/)
+- [BEEF Inspector](/showcase/beef-inspector/)
