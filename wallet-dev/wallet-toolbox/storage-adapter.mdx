@@ -291,13 +291,7 @@ A new wallet has nothing to copy yet, so the first step adds one record to the a
     Certificates in the active store: 1
     ```
 
-    `setActive` first copies the current active store to the others, then records the new choice in every store. The choice persists, so `node check.mjs` now also prints `backup: active`. The next section expects `main` to be the active store, so switch back now with `node switch.mjs main`:
-
-    ```text
-    main: active
-    backup: backup
-    Certificates in the active store: 1
-    ```
+    `setActive` first copies the current active store to the others, then records the new choice in every store. The choice persists, so `node check.mjs` now also prints `backup: active`. The next section expects `main` to be the active store, so switch back now with `node switch.mjs main`. The first two lines list `main` as `active` and `backup` as `backup`, and the certificate count stays the same.
   </Step>
 </Steps>
 
