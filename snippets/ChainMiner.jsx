@@ -164,18 +164,9 @@ function chainFor(blocks, k) {
   return out;
 }
 
-function mineStart() {
-  const bits = BITS[3];
-  const blocks = [];
-  let prev = ZERO;
-  START.forEach((tx) => {
-    const root = rootOf(tx);
-    const nonce = findNonce(prev, root, bits, 3, 0, 5000000);
-    blocks.push({ tx, nonce });
-    prev = headerHash(prev, root, bits, nonce);
-  });
-  return blocks;
-}
+// Nonces found once for the three starting texts at 3 zeros, so the page does not mine on load
+const START_NONCES = [74, 4550, 7165];
+const mineStart = () => START.map((tx, i) => ({ tx, nonce: START_NONCES[i] }));
 
 const css = `
 .cm { container-type: inline-size; margin: 20px 0; display: flex; flex-direction: column; gap: 12px; color: var(--wd-text); font-size: 13px; }
@@ -256,6 +247,7 @@ export default function ChainMiner() {
   const mine = (i) => {
     if (busy !== null) return;
     setBusy(i);
+    setTries(0);
     const c = chainFor(latest.current, k)[i];
     let n = 0;
     const step = () => {
