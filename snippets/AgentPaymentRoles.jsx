@@ -1,5 +1,5 @@
 // Who does what in "Send a payment with an AI agent": two boxes of the same size, side by side.
-// Content only: edit the texts here. Keep each item short. Tested with Claude Code 2.1.286 and BSV Desktop 3.1.1, 2026-10-20; Arcade item with BSV Desktop 3.3.1, 2026-10-26.
+// Content only: edit the texts here. Keep each item short. Tested with Claude Code 2.1.286 and BSV Desktop 3.1.1, 2026-10-20; BSV Broadcaster item with BSV Desktop 3.3.1, 2026-10-26.
 
 const roles = [
   {
