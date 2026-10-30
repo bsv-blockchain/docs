@@ -53,7 +53,7 @@ The package covers both ways, from the wallet interface down to the primitives:
 | Proofs | `Beef` for <Hint tip="Background Evaluation Extended Format (BRC-62), a transaction sent with its proofs">BEEF</Hint>, `MerklePath`, and chain trackers such as `WhatsOnChain` |
 | Broadcasting | `ARC` and `Teranode` |
 | Authentication | `AuthFetch` and `Peer`, for requests signed with the wallet's identity key |
-| <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">Overlay services</Hint> | `LookupResolver` and `TopicBroadcaster` |
+| [Overlay services](/concepts/overlays/) | `LookupResolver` and `TopicBroadcaster` |
 | File storage | `StorageUploader` and `StorageDownloader` |
 
 </BlueTable>
@@ -82,7 +82,7 @@ To build transactions yourself, start from [Build transactions by hand](/sdk/typ
     Create a transaction with inputs, outputs and script templates.
   </Card>
   <Card title="Derive HD keys with BIP32" href="/sdk/typescript/low-level/hd-keys/">
-    Derive keys with BIP32.
+    Derive a tree of keys from one master key with the `HD` class, as BIP32 wallets do.
   </Card>
   <Card title="Write a custom script template" href="/sdk/typescript/low-level/script-templates/">
     Write your own script template, with its locking and unlocking scripts.
