@@ -1,7 +1,7 @@
 {
   "name": "bsv-developer-docs",
   "private": true,
-  "description": "Developer documentation for BSV Blockchain: Quick Start and guides for building apps with BRC-100 wallets and the TypeScript SDK.",
+  "description": "Developer documentation for the BSV blockchain: Quick Start and guides for building apps with BRC-100 wallets and the TypeScript SDK.",
   "license": "Apache-2.0",
   "scripts": {
     "dev": "writedocs dev",

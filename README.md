@@ -1,6 +1,6 @@
 # BSV Developer Docs
 
-Developer documentation for BSV Blockchain: a Quick Start and guides for building apps with BRC-100 wallets and the TypeScript SDK. WriteChoice writes it with the BSV team, and the BSV Association reviews it.
+Developer documentation for the BSV blockchain: a Quick Start and guides for building apps with BRC-100 wallets and the TypeScript SDK. WriteChoice writes it with the BSV team, and the BSV Association reviews it.
 
 This file is for contributors and for AI agents that read the repo or review pull requests. It says how the site is built, where things are, how a page is written and what a reviewer checks. Keep it accurate when the repo changes.
 
