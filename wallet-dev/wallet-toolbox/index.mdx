@@ -33,7 +33,7 @@ The `setup` object it returns gives you each part by name:
 | `storage` | The `WalletStorageManager`, which holds the active store and its backups and can switch between them |
 | `activeStorage` | The `StorageKnex` provider that writes to the SQLite file |
 | `services` | The `Services` the wallet uses on testnet to broadcast, track the chain and look up proofs |
-| `monitor` | The `Monitor`. `Setup` creates it but does not start it |
+| `monitor` | The <Hint tip="The toolbox component that broadcasts queued transactions, gathers proofs and repairs wallet state in the background">Monitor</Hint>. `Setup` creates it but does not start it |
 | `identityKey`, `keyDeriver`, `rootKey` | The keys from `.env`. `identityKey` is the public key that apps see |
 | `chain`, `userId` | `test` for testnet, and the ID of the wallet's user record in the store |
 
@@ -144,11 +144,11 @@ The first step is to create a Node.js project folder with the toolbox, the keys 
   </Step>
 </Steps>
 
-The wallet now answers BRC-100 calls on testnet and keeps its records in `wallet.sqlite`. [Fund the server wallet from BSV Desktop](/get-started/quick-start-server/#fund-the-server-wallet-from-bsv-desktop) gives the same kind of wallet its first coins.
+The wallet now answers BRC-100 calls on testnet and keeps its records in `wallet.sqlite`. To give a wallet like this its first coins, follow [Fund the server wallet from BSV Desktop](/get-started/quick-start-server/#fund-the-server-wallet-from-bsv-desktop). It uses its own `server-wallet.mjs` module in place of `wallet.mjs`.
 
 ## Start the Monitor
 
-With the wallet open, start its <Hint tip="The toolbox component that broadcasts queued transactions, gathers proofs and repairs wallet state in the background">Monitor</Hint>, which finishes the work that wallet methods leave for later, such as delayed broadcasts and <Hint tip="The proof that a transaction is in a block, checked against the block header">Merkle proofs</Hint>. By default, `createAction` leaves the broadcast to the Monitor, so a wallet that sends transactions needs the Monitor running. A script that ends right away needs it too, unless it sends with `acceptDelayedBroadcast: false`.
+With the wallet open, start its Monitor, which finishes the work that wallet methods leave for later, such as delayed broadcasts and <Hint tip="The proof that a transaction is in a block, checked against the block header">Merkle proofs</Hint>. By default, `createAction` leaves the broadcast to the Monitor, so a wallet that sends transactions needs the Monitor running. A script that ends right away needs it too, unless it sends with `acceptDelayedBroadcast: false`.
 
 Create `monitor.mjs`, which starts the Monitor and stops it cleanly on Ctrl+C:
 
