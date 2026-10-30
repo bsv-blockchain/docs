@@ -52,12 +52,12 @@ The app has no network setting, and it creates the transaction on the network of
 The app keeps the addresses in local storage and clears it when you quit, so set them again after each restart.
 
 <Callout type="warning">
-  The overlay and the UHRP host must accept the network of your wallet, and the transaction is created either way. When the UHRP host does not accept it, the **UHRP URL** column of the **Status** table shows **Failed**. When the overlay does not, **Verify Files** shows **File is not verified**.
+  The overlay and the UHRP host must accept the network of your wallet, and the transaction is created either way. When the UHRP host does not accept it, the **UHRP URL** column of the **Status** table shows **Failed**. When the overlay does not, **Verify Files** shows **File is not verified**. The default hosts in the table above do not accept testnet, so on testnet you see both results. No public overlay on testnet runs every topic, so to verify a file on testnet, set the overlay address in the settings drawer to a host that runs the topic . [Track with overlays](/guides/overlays/) shows how to start a local host.
 </Callout>
 
 ## Run it locally
 
-The app needs Node.js 22.12 or newer, npm and a BRC-100 wallet that is running, unlocked and funded. This page uses [BSV Desktop](/wallets/bsv-desktop/) set to testnet.
+The app needs Node.js 22.12 or newer, npm and a BRC-100 wallet that is running, unlocked and funded. This page uses [BSV Desktop](/wallets/bsv-desktop/) set to testnet. To switch the network and fund the wallet with free testnet coins, follow [Send a payment from a web app](/get-started/quick-start-browser/).
 
 <Callout type="warning">
   Use a small file with nothing sensitive in it. The hash is recorded on the blockchain, and a transaction cannot be undone. The app shows the content of the file in a preview, and in development mode it also writes the content to its console.
@@ -123,13 +123,13 @@ The app needs Node.js 22.12 or newer, npm and a BRC-100 wallet that is running, 
       <img src="/images/time-anchor/04-save-to-blockchain.png" alt="The Save Files screen of the File Integrity app with the Save to blockchain button highlighted below the file preview" />
     </Frame>
 
-    A row appears in the **Status** table with the **Transaction ID**, shortened because the full ID is in the log of the file, the **File name**, the **UHRP URL** and the **Timestamp**.
+    A row appears in the **Status** table with the **Transaction ID**, shortened because the full ID is in the log of the file, the **File name**, the **UHRP URL** and the **Timestamp**. On testnet with the default hosts, the **UHRP URL** shows **Failed** and the transaction is created anyway.
   </Step>
   <Step title="Verify the file">
-    Open **Verify Files** and select the same file. The result appears under the **Preview**, and a file with no matching record shows **File is not verified**.
+    Open **Verify Files** and select the same file. The result appears under the **Preview**, and a file with no matching record shows **File is not verified**. On testnet with the default overlay, a file you just saved shows it too, as the warning in "Which network it uses" explains.
   </Step>
   <Step title="Recall the file">
-    When the **UHRP URL** of the saved file is not **Failed**, open **Recall Files**, select its log or enter its UHRP URL, and save the decrypted result.
+    When the **UHRP URL** of the saved file is not **Failed**, open **Recall Files**, select its log or enter its UHRP URL, and save the decrypted result. On testnet with the default host it is **Failed**, so skip this step.
   </Step>
 </Steps>
 
