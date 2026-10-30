@@ -102,7 +102,7 @@ A wallet makes and reads BEEFs for the app, so an app rarely builds one itself. 
 
 ## Read and make a BEEF with the SDK
 
-The examples were written against `@bsv/sdk` 4.0.1. To look inside a BEEF without code, paste it into the [BEEF Inspector](/showcase/beef-inspector/), which reads any BEEF and verifies only against Mainnet.
+The examples were written against `@bsv/sdk` 4.0.1 and run on testnet.
 
 ### Read and verify a BEEF
 
@@ -111,14 +111,22 @@ To read a BEEF and check it against the block headers of testnet:
 ```typescript
 import { Beef, Utils, WhatsOnChain } from '@bsv/sdk'
 
-declare const beefHex: string // a BEEF as hex, for example from a wallet or a request
+const beefHex = 'BEEF_HEX' // replace with a testnet BEEF as hex, for example from a wallet or a request
 
 const beef = Beef.fromBinary(Utils.toArray(beefHex, 'hex'))
 const isValid = await beef.verify(new WhatsOnChain('test'))
+console.log(isValid)
+```
+
+For a BEEF whose Merkle roots match the testnet headers, it prints:
+
+```text
+true
 ```
 
 - `Beef.fromBinary` reads V1, V2 and Atomic BEEF. Compare `beef.version` with `BEEF_V1` and `BEEF_V2` to tell which version it is.
-- `verify` returns `false` when a root does not match a header and when the BEEF has no Merkle path to anchor to.
+- `verify` returns `false` when a root does not match a header and when the BEEF has no Merkle path to anchor to. It covers the first two checks above and the link between each transaction and its inputs. It does not evaluate scripts or compare satoshis, so `true` is not proof that a payment is valid.
+- To run the third check too, read the transaction and call `Transaction.fromHexBEEF(beefHex).verify(new WhatsOnChain('test'))`. It returns `true` when every check passes.
 - `WhatsOnChain` is a chain tracker backed by the WhatsOnChain service. Any object with `isValidRootForHeight` and `currentHeight` methods works in its place, for example one backed by your own header store.
 
 <Callout type="note">
@@ -130,16 +138,28 @@ const isValid = await beef.verify(new WhatsOnChain('test'))
 To make a BEEF from a transaction that is signed, has its inputs' source transactions set, and has a `merklePath` on the oldest ancestors:
 
 ```typescript
-import { Transaction } from '@bsv/sdk'
+import { Transaction, Utils } from '@bsv/sdk'
 
-declare const tx: Transaction // signed, with sourceTransaction on each input
+// replace with a testnet BEEF as hex. In your own app, tx is a signed
+// transaction with sourceTransaction on each input
+const tx = Transaction.fromHexBEEF('BEEF_HEX')
 
 const beefHex = tx.toHexBEEF()
 const atomicBeef = tx.toAtomicBEEF()
+
+console.log(beefHex.slice(0, 8))
+console.log(Utils.toHex(atomicBeef.slice(0, 4)))
+```
+
+It prints the start of each form:
+
+```text
+0100beef
+01010101
 ```
 
 - `toHexBEEF` returns a V1 BEEF as hex, and `toAtomicBEEF` returns an Atomic BEEF as an array of bytes, with `tx` as the subject transaction.
-- A transaction that you read with `Transaction.fromAtomicBEEF` or `Transaction.fromHexBEEF` already has its ancestors attached, so `toHexBEEF` gives back the same BEEF.
+- A transaction that you read with `Transaction.fromAtomicBEEF`, `Transaction.fromHexBEEF` or `Transaction.fromBEEF` already has its ancestors attached. `toHexBEEF` rebuilds a V1 BEEF from them, so a V1 input comes back unchanged, while an Atomic or V2 input comes back as V1, without the Atomic prefix and subject transaction ID. Use `toAtomicBEEF` when the receiver expects Atomic BEEF.
 - A `new Beef()` that you fill by hand is V2 by default. Pass `BEEF_V1` to the constructor when the receiver expects V1.
 
 ## Related articles
@@ -149,4 +169,3 @@ To learn more about verifying transactions in BSV, review these articles:
 - [Transactions](/concepts/transactions/)
 - [BRC-100 Wallet Interface](/concepts/wallet-model/)
 - [Overlays](/concepts/overlays/)
-- [BEEF Inspector](/showcase/beef-inspector/)

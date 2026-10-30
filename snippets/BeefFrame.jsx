@@ -39,7 +39,7 @@ export default function BeefFrame({ hint, label, status, controls, live, childre
           {controls && <div className="bfx-controls">{controls}</div>}
         </div>
       )}
-      {live && <p className="bfx-sr" aria-live="polite">{live}</p>}
+      <p className="bfx-sr" aria-live="polite" aria-atomic="true">{live}</p>
     </div>
   );
 }
