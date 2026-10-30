@@ -6,7 +6,7 @@ description: "The standard interface between an app and a wallet, where the app 
 import WalletBoundary from '/snippets/WalletBoundary.jsx';
 import SubstrateProbe from '/snippets/SubstrateProbe.jsx';
 
-<Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> is the interface between your app's code and a wallet's code. A full BRC-100 wallet exposes the same 28 methods, so the same app code works with [BSV Desktop](/wallets/bsv-desktop/), [BSV Browser](/wallets/bsv-browser/) or a wallet inside your own server. Read this before your app calls a wallet.
+<Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> is the interface between your app's code and a wallet's code. A full BRC-100 wallet exposes the same 28 methods, so the same app code works with [BSV Desktop](/wallets/bsv-desktop/), [BSV Browser](/wallets/bsv-browser/) or a wallet inside your own server. Read this before your app calls a wallet. By the end, you know how a request reaches the wallet and have run one script that makes the same calls to a wallet inside your process and to the user's wallet.
 
 ## Why your app does not hold the key
 
@@ -17,7 +17,7 @@ The diagram follows a request from your app to the wallet. Select a call and pre
 <WalletBoundary />
 
 <Visibility for="agents">
-  For `createAction`, the app sends a description and the outputs. The wallet asks the user to approve when its permissions require it, selects the coins, signs and broadcasts. For `getPublicKey` and `encrypt`, the wallet checks the permission for the protocol and derives the key. For `listOutputs`, it checks the permission for the basket and reads the outputs it tracks. The private key never leaves the wallet.
+  For `createAction`, the app sends a description and the outputs. The wallet asks the user to approve when its permissions require it, selects the coins, signs and broadcasts, unless your app must sign an input first, in which case it returns a signable transaction. For `getPublicKey` and `encrypt`, the wallet checks the permission for the protocol and derives the key. For `listOutputs`, it checks the permission for the basket and reads the outputs it tracks. The private key never leaves the wallet.
 </Visibility>
 
 What this means for your app:
@@ -51,6 +51,16 @@ The parameters and results of each method are in the [Wallet API reference](/ref
 | Immediate action | A `txid` and the transaction as an <Hint tip="Atomic BEEF (BRC-95): one transaction packaged with the proofs of its ancestors">AtomicBEEF</Hint> in `tx` | The wallet funded, signed and processed the transaction. |
 | Signable action, when the request spends an output the wallet does not control, such as one locked to a key your app holds | Only `signableTransaction: { tx, reference }`, with the transaction in `tx` | Your app signs the inputs it controls, then calls `signAction({ reference, spends })` with the unlocking script of each input. The wallet adds its signatures and returns the `txid`. |
 
+### Labels, tags and baskets
+
+Three different indexes group what the wallet tracks, and they are not interchangeable:
+
+| Concept | Applies to | Used by |
+| --- | --- | --- |
+| Labels | A whole action | `createAction`, `listActions` |
+| Tags | One output | `createAction`, `listOutputs` |
+| Baskets | A named group of outputs | `listOutputs`, `internalizeAction` |
+
 ## How a request reaches the wallet
 
 Where the wallet runs decides the channel your request takes: a computer, a phone or your own server.
@@ -71,7 +81,8 @@ BRC-100 defines the methods, not the channel that carries them. A wallet reaches
 | --- | --- | --- |
 | <Hint tip="The wallet injects a window.CWI object into the page">`window.CWI`</Hint> | In the same browser | Not applicable |
 | Wallet wire | A wallet on the user's machine, over a binary protocol | `http://localhost:3301` |
-| JSON API | A wallet on the user's machine, over JSON | `http://localhost:3321`, or `https://localhost:2121` for `secure-json-api` |
+| Secure JSON API | A wallet on the user's machine, over JSON and HTTPS | `https://localhost:2121`, named `secure-json-api` |
+| JSON API | A wallet on the user's machine, over JSON | `http://localhost:3321`, named `json-api` |
 | React Native WebView | A native wallet that embeds the web app, such as BSV Browser | A `postMessage` bridge |
 | <Hint tip="Cross-document messaging">XDM</Hint> | A wallet in another frame or window | Cross-document `postMessage` |
 
@@ -93,7 +104,7 @@ The interface does not say where the wallet is. It can be a separate application
   The key in this script exists only while it runs. Never paste a real private key into code or commit one.
 </Callout>
 
-To try it, save this standalone script as `roundtrip.mts`, install `@bsv/sdk` with `npm install @bsv/sdk` and run it with Node. It was written against `@bsv/sdk` 4.x, and the function takes any wallet that has `encrypt` and `decrypt`:
+To try it, save this standalone script as `roundtrip.mts`, install the packages with `npm install @bsv/sdk tsx` and run it with `npx tsx roundtrip.mts`. It was written against `@bsv/sdk` 4.x, and the function takes any wallet that has `encrypt` and `decrypt`:
 
 ```typescript roundtrip.mts
 import { WalletClient, ProtoWallet, PrivateKey } from '@bsv/sdk'
@@ -115,7 +126,7 @@ console.log(await roundTrip(userWallet))
 
 - The first call prints `[ 1, 2, 3 ]`, with a key generated for the run.
 - The second call needs a BRC-100 wallet running, such as BSV Desktop, and the wallet may ask the user to approve the request. It prints `[ 1, 2, 3 ]` too. When no wallet answers, it rejects with `No wallet available over any communication substrate`.
-- Replace `YOUR_APP_DOMAIN` with the domain name of your app, for example `localhost` while you develop. The `.mts` extension makes the script an ES module, which the top-level `await` needs.
+- Replace `YOUR_APP_DOMAIN` with the domain name of your app, for example `localhost` while you develop. The `.mts` extension makes the script an ES module, which the top-level `await` needs, and `tsx` runs the TypeScript.
 
 ## What BRC-100 does not cover
 
