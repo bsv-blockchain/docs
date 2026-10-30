@@ -3,7 +3,7 @@ title: "BEEF Inspector"
 description: "A browser tool that reads a BEEF payload and shows the transaction inside it, its inputs and outputs, and script diagnostics."
 ---
 
-Paste a hex-encoded <Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint> into the BEEF Inspector to see the transaction inside it: the transaction ID, the size, the number of inputs and outputs, and the scripts of any input that fails. The tool verifies the proofs against Mainnet block headers. The source code is in [bsv-blockchain-demos/beef-inspector](https://github.com/bsv-blockchain-demos/beef-inspector).
+Paste a hex-encoded <Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint> into the BEEF Inspector to see the transaction inside it: the transaction ID, the size, the number of inputs and outputs, and the scripts of any input that fails. The tool verifies the proofs against Mainnet block headers only and does not support testnet yet. Open the [hosted tool](https://inspect.xn--nda.network) or run it from the source code in [bsv-blockchain-demos/beef-inspector](https://github.com/bsv-blockchain-demos/beef-inspector).
 
 ## When to use it
 
@@ -30,7 +30,7 @@ The tool lists these results:
 Parsing runs in your browser. To verify the <Hint tip="The proof that a transaction is in a block, checked against the block header">Merkle proofs</Hint>, the tool uses the default <Hint tip="The part of the SDK that checks proofs against the block headers of a network">chain tracker</Hint> of `@bsv/sdk`, which requests Mainnet block headers from WhatsOnChain. The tool has no setting for the network or the tracker.
 
 <Callout type="info">
-  A testnet BEEF always shows **INVALID**, because its proofs do not match Mainnet block headers, and the error comes from the failed lookup. The transaction details and the structure log still appear, so you can still read a testnet BEEF.
+  The tool does not support testnet yet. A testnet BEEF shows **INVALID**, because its proofs do not match Mainnet block headers, and the error comes from the failed lookup. The transaction details and the structure log still appear, so you can still read a testnet BEEF. To verify one, call `verify` in your own code with a testnet chain tracker, such as `new WhatsOnChain('test')`.
 </Callout>
 
 ### Read the validation result
