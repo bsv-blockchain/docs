@@ -5,7 +5,7 @@ description: "The hash functions, keys and signatures that BSV transactions rely
 
 import HashLab from '/snippets/HashLab.jsx';
 
-BSV transactions use hash functions to fingerprint data and elliptic curve signatures to authorize spends. A hash function gives a fixed size output that cannot be reversed, and a signature lets a key holder approve a spend without revealing the private key.
+BSV transactions use hash functions to fingerprint data and elliptic curve signatures to authorize spends. A hash function gives a fixed size output that cannot be reversed, and a signature lets a key holder approve a spend without revealing the private key. On this page you can hash text with the four BSV hash functions, run two short scripts that hash data and sign a message with `@bsv/sdk`, and see which function each part of a transaction uses.
 
 The examples run with Node.js after `npm install @bsv/sdk` and were written against `@bsv/sdk` 4.0.1.
 
@@ -25,9 +25,9 @@ BSV uses two hash functions and two combinations of them:
 
 | Function | Output | Used for |
 | --- | --- | --- |
-| SHA-256 | 32 bytes | Proof of work, and as the first step of the combinations below |
+| SHA-256 | 32 bytes | The first step of `HASH256` and `HASH160` |
 | RIPEMD-160 | 20 bytes | Shortening a public key, after SHA-256 |
-| `HASH256` | 32 bytes | SHA-256 applied twice. Transaction IDs, block hashes and Merkle trees |
+| `HASH256` | 32 bytes | SHA-256 applied twice. Proof of work, block hashes, transaction IDs and <Hint tip="A tree of hashes in which pairs are hashed together until one hash is left">Merkle trees</Hint> |
 | `HASH160` | 20 bytes | RIPEMD-160 of the SHA-256 of the data. Addresses and <Hint tip="Pay to Public Key Hash">P2PKH</Hint> locking scripts |
 
 ```javascript hashes.mjs
@@ -50,7 +50,7 @@ hash160   bb1be98c142444d7a56aa3981c3942a978e4dc33
 
 ### Hashes in Script
 
-`HASH256` and `HASH160` are also opcodes in Script, so a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> can check that a value hashes to a given digest. [Script opcodes](/reference/script-opcodes/) is the lookup page for them.
+`HASH256` and `HASH160` are also opcodes in Script, so a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> can check that a value hashes to a given digest. [How Script works](/concepts/script/) covers locking scripts.
 
 ## Private keys, public keys and addresses
 
@@ -66,7 +66,7 @@ Never put a private key that holds value in code or in version control. The exam
 
 ### Public keys and addresses
 
-A compressed public key is 33 bytes. An address is built from the public key: `HASH160` of the key, with a version prefix and a checksum, written in base58. A private key can also be written as a Wallet Import Format string, which for a compressed key is 52 characters long. In a pay to public key hash output the address stands for a hash of the key, and the key itself shows up on the chain only when the output is spent.
+A compressed public key is 33 bytes. An address is built from the public key: `HASH160` of the key, with a version prefix and a checksum, written in <Hint tip="A text encoding that leaves out look-alike characters">base58</Hint>. A private key can also be written as a <Hint tip="A text form of a private key that includes a checksum">Wallet Import Format</Hint> string, which for a compressed key is 52 characters long. In a pay to public key hash output the address stands for a hash of the key, and the key itself shows up on the chain only when the output is spent.
 
 Generate keys with `PrivateKey.fromRandom()`. The SDK reduces any value it is given modulo the order of the curve. It does not reject a value that is out of range, so a value at or above the order turns into a different key without an error.
 
@@ -74,7 +74,7 @@ Generate keys with `PrivateKey.fromRandom()`. The SDK reduces any value it is gi
 
 ## The curve
 
-BSV public keys live on the elliptic curve secp256k1, the same curve Bitcoin uses. The curve is `y² = x³ + 7` over a prime field. Two constants matter to a developer:
+BSV public keys live on the elliptic curve <Hint tip="The elliptic curve that BSV public keys live on">secp256k1</Hint>, the same curve Bitcoin uses. The curve is `y² = x³ + 7` over a prime field. Two constants matter to a developer:
 
 - `G`, the base point, which every public key is built from. Its compressed form is `02 79BE667E F9DCBBAC 55A06295 CE870B07 029BFCDB 2DCE28D9 59F2815B 16F81798`.
 - `n`, the order of `G` and the limit for private keys, `FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE BAAEDCE6 AF48A03B BFD25E8C D0364141`.
@@ -110,7 +110,7 @@ false
 
 ### Signatures in a transaction
 
-A signature is two numbers, and transactions carry them in DER encoding, a standard byte format that starts with `0x30`. The length of a signature varies by a byte or two. In a transaction the signature sits in the unlocking script of an input, with one extra byte for the sighash flag that says which parts of the transaction it covers. [How Script works](/concepts/script/) covers how a spend is checked, and [How transactions and fees work](/concepts/transactions/) shows what a signature covers.
+A signature is two numbers, and transactions carry them in <Hint tip="Distinguished Encoding Rules">DER</Hint> encoding, a standard byte format that starts with `0x30`. The length of a signature varies by a byte or two. In a transaction the signature sits in the <Hint tip="The part of an input that meets the condition set by the locking script">unlocking script</Hint> of an input, with one extra byte for the <Hint tip="A byte that says which parts of the transaction a signature covers">sighash flag</Hint> that says which parts of the transaction it covers. [How Script works](/concepts/script/) covers how a spend is checked, and [How transactions and fees work](/concepts/transactions/) shows what a signature covers.
 
 ## Related articles
 
