@@ -5,6 +5,7 @@
 const css = `
 .wlx { --wlx-app: var(--wd-primary, #2563eb); --wlx-wallet: #0e7490; --wlx-key: #c2410c; --wlx-ok: #15803d; --wlx-bad: #b91c1c; --wlx-ink: var(--wd-text, #18181b); --wlx-mute: var(--wd-text-muted, #52525b); --wlx-line: var(--wd-border, #d4d4d8); --wlx-paper: var(--wd-background, #fff); --wlx-well: var(--wd-surface, #fafafa); container-type: inline-size; margin: 32px 0; border: 1px solid var(--wlx-line); border-radius: 14px; overflow: hidden; color: var(--wlx-ink); background: var(--wlx-paper); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 18px 40px -30px rgba(0, 0, 0, 0.4); }
 .wlx * { box-sizing: border-box; }
+[data-theme="dark"] .wlx { --wlx-wallet: #22d3ee; --wlx-key: #fb923c; --wlx-ok: #4ade80; --wlx-bad: #f87171; }
 .wlx-bar { display: flex; align-items: center; gap: 12px; padding: 10px 20px; border-bottom: 1px solid var(--wlx-line); background: var(--wlx-paper); }
 .wlx-tag { padding: 3px 9px; border-radius: 6px; background: color-mix(in srgb, var(--wlx-app) 12%, var(--wlx-paper)); color: var(--wlx-app); font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
 .wlx-hint { font-size: 12.5px; color: var(--wlx-mute); }
