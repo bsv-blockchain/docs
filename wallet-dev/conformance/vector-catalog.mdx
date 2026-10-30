@@ -5,7 +5,7 @@ description: "The BRC-100 test vectors in ts-stack: 955 vectors in 28 files, one
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Find the vectors that test each <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> method and see how many of them your wallet must pass. The set holds 955 vectors in 28 files under [`conformance/vectors/wallet/brc100/`](https://github.com/bsv-blockchain/ts-stack/tree/main/conformance/vectors/wallet/brc100), one file per method, and 816 of them are `required`. This page was written against ts-stack commit `389d5d8` of October 27, 2026.
+Find the vectors that test each <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> method and see how many of them your wallet must pass. The set holds 955 vectors in 28 files under [`conformance/vectors/wallet/brc100/`](https://github.com/bsv-blockchain/ts-stack/tree/389d5d806495903ee56273978ccc7e8ab71ceb86/conformance/vectors/wallet/brc100), one file per method, and 816 of them are `required`. This page was written against ts-stack commit `389d5d8` of October 27, 2026.
 
 ## What each group of methods covers
 
@@ -26,6 +26,10 @@ The files follow the method groups of [BRC-100 Wallet Interface](/concepts/walle
 ## How a vector reads
 
 Each file holds metadata, such as the BRC it covers and the reference it was generated from, and a `vectors` array. This is the first vector of `getpublickey.json`:
+
+<Callout type="warning">
+  The `root_key` in this vector is a public test value. Never fund a wallet built from it and never reuse it for a real wallet.
+</Callout>
 
 ```json getpublickey.json
 {
