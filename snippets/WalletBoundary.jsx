@@ -31,7 +31,7 @@ const calls = [
       { short: 'Signs with the key', text: 'The wallet signs with the private key.', key: true },
       { short: 'Broadcasts', text: 'The wallet broadcasts the transaction and tracks the result.' },
     ],
-    back: 'The txid and the transaction, or a signable transaction.',
+    back: 'The txid and the transaction. When your app must sign an input, the wallet stops before signing and returns a signable transaction instead.',
   },
   {
     name: 'getPublicKey',
