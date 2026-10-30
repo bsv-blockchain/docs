@@ -6,7 +6,7 @@ sidebarTitle: "TypeScript SDK"
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Use `@bsv/sdk` to connect a TypeScript app to the user's wallet, or to build keys, scripts and transactions yourself, in Node, in the browser or in a React app. It is the base library of the BSV TypeScript stack. `@bsv/simple` and `@bsv/wallet-toolbox` are built on it, and it has no runtime dependencies. This page was written against `@bsv/sdk` 4.0.1.
+Use `@bsv/sdk` to connect a TypeScript app to the user's wallet, or to build keys, scripts and transactions yourself, in Node, in the browser or in a React app. It is the base library of the BSV TypeScript stack. `@bsv/simple` and `@bsv/wallet-toolbox` are built on it. It has no runtime dependencies. This page was written against `@bsv/sdk` 4.0.1.
 
 To compare `@bsv/sdk` with the other packages before you choose, see the [SDKs overview](/sdk/).
 
@@ -18,21 +18,21 @@ An app uses the SDK in one of two ways, depending on who holds the private key:
 
 | Task | Through the user's wallet | By hand |
 | --- | --- | --- |
-| Hold the keys and sign | The wallet, after the user approves | Your code |
+| Hold the keys and sign | The wallet, under the user's control | Your code |
 | Choose the coins and the fee | The wallet | Your code |
 | Send the transaction to the network | The wallet | Your code, with a broadcaster |
 | Choose the network | The wallet | Your code |
-| Main classes | `WalletClient` | `PrivateKey`, `Transaction`, `P2PKH` |
+| Main classes | `WalletClient` | `PrivateKey`, `Transaction`, <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">`P2PKH`</Hint> |
 
 </BlueTable>
 
 ### Through the user's wallet
 
-`WalletClient` implements <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> on the app side. It finds a compatible wallet on the user's machine, such as [BSV Desktop](/wallets/bsv-desktop/) or [BSV Browser](/wallets/bsv-browser/), and calls methods such as `createAction` and `getPublicKey` on it. Your app never holds a private key, and the wallet asks the user to approve each spend. Most apps start here, and the [Quick Start](/get-started/quick-start-browser/) sends a first transaction this way.
+`WalletClient` implements <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> on the app side. It finds a compatible wallet, such as [BSV Desktop](/wallets/bsv-desktop/) on the user's computer, or [BSV Browser](/wallets/bsv-browser/) on the phone, where the app runs inside the wallet's browser. It calls methods such as `createAction` and `getPublicKey` on it. Your app never holds a private key, and the wallet asks the user to approve spends according to the permissions the user set. Most apps start here, and the [Quick Start](/get-started/quick-start-browser/) sends a first transaction this way.
 
 ### By hand
 
-Your code holds the key and does the work a wallet would do. It builds each <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint>, gives each input its source transaction, and tracks which <Hint tip="Unspent transaction output">UTXOs</Hint> it has already spent, since two transactions that spend the same output cannot both confirm. Build by hand when you need a custom script or transaction format, cryptography on its own, or <Hint tip="Simplified Payment Verification">SPV</Hint> checks of transactions you receive.
+Your code holds the key and does the work a wallet would do. It builds each <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint>, gives each input its source transaction. It also tracks which <Hint tip="Unspent transaction output">UTXOs</Hint> it has already spent, since two transactions that spend the same output cannot both confirm. Build by hand when you need a custom script or transaction format, cryptography on its own, or <Hint tip="Simplified Payment Verification">SPV</Hint> checks of transactions you receive.
 
 <Callout type="warning">
 When your code holds the private key, it signs with no approval step, and a transaction it broadcasts cannot be undone. Keep the key out of your source code and out of version control, and test on testnet before you use Mainnet.
@@ -60,7 +60,7 @@ The package covers both ways, from the wallet interface down to the primitives:
 
 ## Where it runs
 
-`@bsv/sdk` needs Node.js 22 or newer. It is an ES module package that also ships a CommonJS build and a UMD bundle. Its TypeScript declarations cover both module formats, and it bundles for the browser with tools such as Vite. Setup for each kind of project is in [Install the SDK in Node or React](/sdk/typescript/setup/), and the browsers, bundlers and runtimes it supports are in [Supported runtimes](/sdk/runtimes/).
+In Node, `@bsv/sdk` needs Node.js 22 or newer. It is an ES module package that also ships a CommonJS build and a UMD bundle. Its TypeScript declarations cover both module formats, and it bundles for the browser with tools such as Vite.
 
 ## Pages in this section
 
