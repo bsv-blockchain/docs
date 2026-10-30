@@ -12,9 +12,9 @@ Write a smart contract in TypeScript with [Rúnar](https://runar.build), compile
 
 BSV has no accounts and no contract addresses. A contract lives in a transaction output, and the network runs it with the same script engine that checks every payment.
 
-- **A contract is a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint>.** Rúnar compiles your class to [Bitcoin Script](/concepts/script/) and puts it in an output, together with the satoshis it holds. There is no separate virtual machine.
-- **Calling a method means spending that output.** The spending transaction's unlocking script names the method and passes its arguments, and miners run the unlocking script followed by the locking script. If the script succeeds, the call is valid.
-- **State moves forward from output to output.** The output is a <Hint tip="Unspent transaction output: an output that no transaction has spent yet">UTXO</Hint>, and a UTXO can be spent once. So a call spends the contract's output and must create a new one with the same code and the new state. The script checks this against the spending transaction itself, with a technique called <Hint tip="A way for a script to read the transaction that spends it, by checking a signature over that transaction's data">OP_PUSH_TX</Hint>.
+- A contract is a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint>. Rúnar compiles your class to [Bitcoin Script](/concepts/script/) and puts it in an output, together with the satoshis it holds. There is no separate virtual machine.
+- Calling a method means spending that output. The spending transaction's unlocking script names the method and passes its arguments, and miners run the unlocking script followed by the locking script. If the script succeeds, the call is valid.
+- State moves forward from output to output. The output is a <Hint tip="Unspent transaction output: an output that no transaction has spent yet">UTXO</Hint>, and a UTXO can be spent once. So a call spends the contract's output and must create a new one with the same code and the new state. The script checks this against the spending transaction itself, with a technique called <Hint tip="A way for a script to read the transaction that spends it, by checking a signature over that transaction's data">OP_PUSH_TX</Hint>.
 
 If you come from Ethereum, these are the differences that matter most:
 
@@ -168,7 +168,7 @@ class CounterProvider extends WalletProvider {
     try {
       return await super.fetchRawTx(txid);
     } catch {
-      const res = await fetch(`${BROADCASTER_URL}/tx/${txid}`);
+      const res = await fetch(`${BROADCASTER_URL}/tx/${txid}`, { signal: AbortSignal.timeout(10_000) });
       if (!res.ok) throw new Error(`BSV Broadcaster does not know transaction ${txid}`);
       const { rawTx } = await res.json();
       const hex = Transaction.fromHexEF(rawTx).toHex();
@@ -213,7 +213,7 @@ const SEEN = ['SEEN_ON_NETWORK', 'SEEN_MULTIPLE_NODES', 'MINED', 'IMMUTABLE'];
 
 export async function waitUntilSeen(txid: string): Promise<string> {
   for (let attempt = 0; attempt < 30; attempt++) {
-    const res = await fetch(`${BROADCASTER_URL}/tx/${txid}`);
+    const res = await fetch(`${BROADCASTER_URL}/tx/${txid}`, { signal: AbortSignal.timeout(10_000) });
     if (res.ok) {
       const { txStatus, competingTxs, extraInfo } = await res.json();
       if (competingTxs?.length) {
