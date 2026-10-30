@@ -55,8 +55,8 @@ You build one project with four parts:
     ```bash
     npm init -y
     npm pkg set type=module
-    npm install runar-lang@1.0.0-rc.1 runar-sdk@1.0.0-rc.1 @bsv/sdk@2
-    npm install -D runar-compiler@1.0.0-rc.1 runar-cli@1.0.0-rc.1 runar-testing@1.0.0-rc.1 fast-check vitest tsx typescript @types/node
+    npm install runar-lang@^1.0.0 runar-sdk@^1.0.0 @bsv/sdk@2
+    npm install -D runar-compiler@^1.0.0 runar-cli@^1.0.0 runar-testing@^1.0.0 fast-check vitest tsx typescript @types/node
     ```
 
     `runar-testing` needs `fast-check` and does not install it itself. `runar-sdk` uses `@bsv/sdk` 2, so install the same major version to keep one copy of it. This page was tested on 30 October 2026 with Rúnar 1.0.0-rc.1, `@bsv/sdk` 2.8.11 and Node.js 22.
