@@ -1,0 +1,440 @@
+---
+title: "Deploy a smart contract"
+description: "Write a counter contract in Rúnar, test it, then deploy it on testnet and call it from a Node.js script that BSV Desktop pays for."
+sidebarTitle: "Deploy a smart contract"
+---
+
+import CounterStateFlow from '/snippets/CounterStateFlow.jsx';
+
+Write a smart contract in TypeScript with [Rúnar](https://runar.build), compile it to Bitcoin Script, test it on your machine, then deploy it on testnet and call it from your own Node.js scripts. BSV Desktop holds the keys and pays for every transaction, so your code never touches a private key. The contract is a counter, the same kind of starter contract as `Counter.sol` in Foundry. At the end you have a counter on testnet that you deployed and incremented twice, with a transaction ID on the explorer for each step.
+
+## How smart contracts work on BSV
+
+BSV has no accounts and no contract addresses. A contract lives in a transaction output, and the network runs it with the same script engine that checks every payment.
+
+- A contract is a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint>. Rúnar compiles your class to [Bitcoin Script](/concepts/script/) and puts it in an output, together with the <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> it holds. There is no separate virtual machine.
+- Calling a method means spending that output. The spending transaction's unlocking script names the method and passes its arguments, and miners run the unlocking script followed by the locking script. If the script succeeds, the call is valid.
+- State moves forward from output to output. The output is a <Hint tip="Unspent transaction output: an output that no transaction has spent yet">UTXO</Hint>, and a UTXO can be spent once. So a call spends the contract's output and must create a new one with the same code and the new state. The script checks this against the spending transaction itself, with a technique called <Hint tip="A way for a script to read the transaction that spends it, by checking a signature over that transaction's data">OP_PUSH_TX</Hint>.
+
+If you come from Ethereum, these are the differences that matter most:
+
+| | BSV | Ethereum |
+|---|---|---|
+| Where state lives | In the locking script of the contract's current output | In the storage of a contract at a fixed address |
+| Changing state | Spend the output, create a new one | Write to storage slots in place |
+| Cost | A fee based on the size of the transaction | Gas based on the operations run |
+| Parallelism | Separate outputs are checked in parallel | Transactions run one after another against shared state |
+| Calling another contract | Spend both outputs in one transaction | A direct call, which allows reentrancy |
+
+The trade-off is that only one transaction can spend an output. If two people call the counter from the same output at the same time, one transaction wins and the other is refused, and the loser builds on the new output and tries again. Rúnar's [How Smart Contracts Work on BSV](https://runar.build/docs/bitcoin-bsv-basics/how-smart-contracts-work-on-bsv) explains the mechanics in depth, and [Transactions](/concepts/transactions/) covers inputs and outputs.
+
+## Before you begin
+
+- Node.js 22 or newer.
+- BSV Desktop on testnet with free testnet coins. If you do not have it yet, follow [Set up a testnet wallet](/get-started/quick-start-browser/#set-up-a-testnet-wallet) and [Get free testnet coins](/get-started/quick-start-browser/#get-free-testnet-coins). The whole page spends less than 4,000 testnet satoshis.
+
+<Callout type="danger">
+  A transaction cannot be undone. Everything on this page runs on testnet, where the coins have no value. Each script checks that BSV Desktop is on testnet and stops if it is not.
+</Callout>
+
+## How it works
+
+You build one project with four parts:
+
+- `src/contracts/Counter.runar.ts` is the contract. Rúnar compiles it to `artifacts/Counter.runar.json`.
+- `tests/Counter.test.ts` runs the contract on your machine, with no wallet and no network.
+- `src/wallet.ts` connects to BSV Desktop and to BSV Broadcaster, the service that sends transactions to the network.
+- `src/deploy.ts` creates the contract on testnet, and `src/increment.ts` calls it. Both save the contract's latest output in `deployment.json`, so the next run knows which output to spend.
+
+## Write and test the contract
+
+<Steps>
+  <Step title="Create the project">
+    Create an empty folder, open it in the terminal and install Rúnar and [`@bsv/sdk`](/sdk/):
+
+    ```bash
+    npm init -y
+    npm pkg set type=module
+    npm install runar-lang@^1.0.0 runar-sdk@^1.0.0 @bsv/sdk@2
+    npm install -D runar-compiler@^1.0.0 runar-cli@^1.0.0 runar-testing@^1.0.0 fast-check vitest tsx typescript @types/node
+    ```
+
+    `runar-testing` needs `fast-check` and does not install it itself. `runar-sdk` uses `@bsv/sdk` 2, so install the same major version to keep one copy of it. This page was tested on 30 October 2026 with Rúnar 1.0.0-rc.1, `@bsv/sdk` 2.8.11 and Node.js 22.
+  </Step>
+  <Step title="Write the contract">
+    Create `src/contracts/Counter.runar.ts`:
+
+    ```typescript src/contracts/Counter.runar.ts
+    import { StatefulSmartContract, assert } from 'runar-lang';
+
+    class Counter extends StatefulSmartContract {
+      count: bigint;
+
+      constructor(count: bigint) {
+        super(count);
+        this.count = count;
+      }
+
+      public increment() {
+        this.count++;
+      }
+
+      public decrement() {
+        assert(this.count > 0n);
+        this.count--;
+      }
+    }
+    ```
+
+    - `StatefulSmartContract` makes Rúnar add the state checks to every public method: the spending transaction must create a new output with the same code and the new `count`.
+    - `count` is not `readonly`, so it is state that moves to the next output. A `readonly` property would be fixed when the contract is deployed.
+    - `decrement` fails unless `count` is above zero, so the counter never goes negative. Anyone can call either method, because the contract checks no signature.
+  </Step>
+  <Step title="Compile it">
+    ```bash
+    npx runar compile src/contracts/Counter.runar.ts --output ./artifacts
+    ```
+
+    ```text
+    Compiling: /path/to/project/src/contracts/Counter.runar.ts
+      Artifact written: /path/to/project/artifacts/Counter.runar.json
+
+    Compilation complete: 1 succeeded, 0 failed
+    ```
+
+    The artifact holds the compiled script, the methods and their parameters, and the layout of the state, which is where `count` sits in the locking script. Your scripts load the artifact, not the TypeScript source.
+  </Step>
+  <Step title="Look at the compiled script">
+    The artifact's `asm` field is the locking script as Bitcoin Script opcodes. Print it:
+
+    ```bash
+    node -e "console.log(require('./artifacts/Counter.runar.json').asm)"
+    ```
+
+    The whole script is 1,373 bytes, about 450 opcodes and data pushes. These parts of it map back to your class:
+
+    ```text
+    OP_DUP OP_0 OP_NUMEQUAL OP_IF OP_DROP OP_DUP <raw 428 bytes> …
+    … OP_BIN2NUM OP_DUP OP_1ADD OP_NIP …
+    … OP_ELSE OP_1 OP_NUMEQUALVERIFY OP_DUP <raw 428 bytes> …
+    … OP_BIN2NUM OP_DUP OP_0 OP_GREATERTHAN OP_VERIFY OP_DUP OP_1SUB OP_NIP …
+    ```
+
+    - `OP_0 OP_NUMEQUAL OP_IF` picks the method. The unlocking script pushes a number for the method it calls: `0` runs `increment`, and the `OP_ELSE OP_1` branch runs `decrement`.
+    - `<raw 428 bytes>` is the OP_PUSH_TX check Rúnar adds to each method of a stateful contract, printed in short form. It reads the spending transaction so the script can check the new output.
+    - `OP_1ADD` is `this.count++`. `OP_0 OP_GREATERTHAN OP_VERIFY` is `assert(this.count > 0n)`: if `count` is not above zero, the script fails and the network refuses the transaction. `OP_1SUB` is `this.count--`.
+
+    The state is not in `asm`. When the contract is deployed, Rúnar appends `OP_RETURN` and `count` as 8 bytes to the end of the locking script, and each call rewrites those 8 bytes in the new output. To learn how locking and unlocking scripts run, read [How Script works](/concepts/script/).
+  </Step>
+  <Step title="Test it">
+    Create `tests/Counter.test.ts`:
+
+    ```typescript tests/Counter.test.ts
+    import { describe, it, expect } from 'vitest';
+    import { readFileSync } from 'node:fs';
+    import { TestContract } from 'runar-testing';
+
+    const source = readFileSync('src/contracts/Counter.runar.ts', 'utf8');
+
+    describe('Counter', () => {
+      it('increment from 0 gives count 1', () => {
+        const counter = TestContract.fromSource(source, { count: 0n });
+        const result = counter.call('increment');
+        expect(result.success).toBe(true);
+        expect(counter.state.count).toBe(1n);
+      });
+
+      it('decrement after increment gives 0', () => {
+        const counter = TestContract.fromSource(source, { count: 0n });
+        counter.call('increment');
+        const result = counter.call('decrement');
+        expect(result.success).toBe(true);
+        expect(counter.state.count).toBe(0n);
+      });
+
+      it('decrement at 0 is refused', () => {
+        const counter = TestContract.fromSource(source, { count: 0n });
+        const result = counter.call('decrement');
+        expect(result.success).toBe(false);
+      });
+    });
+    ```
+
+    Run the tests:
+
+    ```bash
+    npx vitest run
+    ```
+
+    ```text
+     Test Files  1 passed (1)
+          Tests  3 passed (3)
+    ```
+
+    The third test shows the contract enforcing its own rule. Your app does not need to stop a decrement at zero, because the network would refuse the transaction.
+  </Step>
+</Steps>
+
+## Connect to BSV Desktop
+
+Create `src/wallet.ts`. Both scripts use it to reach BSV Desktop, to send transactions to BSV Broadcaster and to wait until the network has seen them:
+
+```typescript src/wallet.ts
+import { WalletClient, Teranode, Transaction } from '@bsv/sdk';
+import { WalletProvider, WalletSigner } from 'runar-sdk';
+
+const BROADCASTER_URL = 'https://arcade-v2-testnet-us-1.bsvblockchain.tech';
+
+class CounterProvider extends WalletProvider {
+  protected async fetchRawTx(txid: string): Promise<string> {
+    try {
+      return await super.fetchRawTx(txid);
+    } catch {
+      const res = await fetch(`${BROADCASTER_URL}/tx/${txid}`, { signal: AbortSignal.timeout(10_000) });
+      if (!res.ok) throw new Error(`BSV Broadcaster does not know transaction ${txid}`);
+      const { rawTx } = await res.json();
+      const hex = Transaction.fromHexEF(rawTx).toHex();
+      this.cacheTx(txid, hex);
+      return hex;
+    }
+  }
+
+  async getTransaction(txid: string) {
+    await this.fetchRawTx(txid);
+    return super.getTransaction(txid);
+  }
+}
+
+export async function connect() {
+  const wallet = new WalletClient('auto', 'example.com');
+
+  let network: string;
+  try {
+    ({ network } = await wallet.getNetwork({}));
+  } catch {
+    throw new Error('BSV Desktop is not running');
+  }
+  if (network !== 'testnet') {
+    throw new Error('BSV Desktop is not on testnet');
+  }
+
+  const signer = new WalletSigner({ protocolID: [2, 'runar'], keyID: '1', wallet });
+  const provider = new CounterProvider({
+    wallet,
+    signer,
+    basket: 'counter',
+    network: 'testnet',
+    arcUrl: BROADCASTER_URL,
+    broadcaster: new Teranode(`${BROADCASTER_URL}/tx`),
+  });
+
+  return { wallet, provider, signer };
+}
+
+const SEEN = ['SEEN_ON_NETWORK', 'SEEN_MULTIPLE_NODES', 'MINED', 'IMMUTABLE'];
+
+export async function waitUntilSeen(txid: string): Promise<string> {
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const res = await fetch(`${BROADCASTER_URL}/tx/${txid}`, { signal: AbortSignal.timeout(10_000) }).catch(() => null);
+    if (res?.ok) {
+      const { txStatus, competingTxs, extraInfo } = await res.json();
+      if (competingTxs?.length) {
+        throw new Error(`Refused: ${competingTxs[0]} already spent this output. Is deployment.json up to date?`);
+      }
+      if (txStatus === 'REJECTED' || txStatus === 'DOUBLE_SPEND_ATTEMPTED') {
+        throw new Error(`Refused: ${extraInfo}`);
+      }
+      if (SEEN.includes(txStatus)) return txStatus;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+  }
+  throw new Error(`${txid} is not on the network yet. Check its status again in a minute.`);
+}
+```
+
+- `new WalletClient('auto', 'example.com')` finds BSV Desktop on your machine, as in [Send a payment from a server](/get-started/quick-start-server/). `connect` stops unless the wallet answers and reports testnet.
+- `WalletSigner` asks BSV Desktop to sign with a key it derives for the protocol `runar`, so the key never leaves the wallet. `WalletProvider` keeps the coins Rúnar spends in the wallet <Hint tip="A named group of outputs the wallet tracks">basket</Hint> `counter`.
+- `broadcaster` sends every transaction to [BSV Broadcaster](/guides/services/broadcasting/). `arcUrl` is required on testnet, and the broadcaster replaces it.
+- A new run of a script starts with an empty cache, but it has to spend outputs that earlier runs created. `CounterProvider` reads those earlier transactions from BSV Broadcaster.
+- BSV Broadcaster can accept a transaction and refuse it a moment later, for example when another transaction already spent the same output. `waitUntilSeen` reads the status every 2 seconds, for up to a minute, until the network has seen the transaction, at `SEEN_ON_NETWORK` or a later status, with no competing transaction. A status read that fails or takes longer than 10 seconds is tried again. Only then do the scripts save the new output.
+
+## Deploy the contract
+
+<Steps>
+  <Step title="Write the deploy script">
+    Create `src/deploy.ts`:
+
+    ```typescript src/deploy.ts
+    import { readFileSync, writeFileSync } from 'node:fs';
+    import { RunarContract } from 'runar-sdk';
+    import { connect, waitUntilSeen } from './wallet.ts';
+
+    const artifact = JSON.parse(readFileSync('artifacts/Counter.runar.json', 'utf8'));
+    const { provider, signer } = await connect();
+
+    const counter = new RunarContract(artifact, [0n]);
+    counter.connect(provider, signer);
+
+    const { txid, outputIndex } = await counter.deployWithWallet({
+      satoshis: 1000,
+      description: 'Deploy counter',
+    });
+    const status = await waitUntilSeen(txid);
+
+    writeFileSync('deployment.json', JSON.stringify({ txid, outputIndex, count: '0' }, null, 2));
+    console.log(`Deployed: ${txid}`);
+    console.log(`https://test.whatsonchain.com/tx/${txid}`);
+    console.log(`status: ${status}`);
+    console.log('count: 0');
+    ```
+
+    `new RunarContract(artifact, [0n])` sets the constructor argument, so the counter starts at 0. `deployWithWallet` asks BSV Desktop to create a transaction with the contract as an output holding 1,000 satoshis, paid from your wallet's coins. The 1,000 satoshis stay in the contract and move to each new output.
+  </Step>
+  <Step title="Run it">
+    Keep BSV Desktop open on testnet and run the script:
+
+    ```bash
+    npx tsx src/deploy.ts
+    ```
+
+    The first time an app connects, BSV Desktop can ask you to allow `example.com`, to approve the 1,000 satoshis plus the fee, and to let the app use a key for the protocol `runar`. Check the app name and the amount, then allow each one.
+
+    ```text
+    Deployed: 0ac218d31fc3c53b830e0d29c17ea8fdc548617d3444d1afe2c6f9a6a2cff81c
+    https://test.whatsonchain.com/tx/0ac218d31fc3c53b830e0d29c17ea8fdc548617d3444d1afe2c6f9a6a2cff81c
+    status: SEEN_ON_NETWORK
+    count: 0
+    ```
+
+    Open the link to see the transaction on WhatsOnChain, the testnet explorer. If it shows **This page cannot be found**, wait a minute and reload.
+  </Step>
+  <Step title="Read the status yourself">
+    The script read the status from BSV Broadcaster. You can read it too, with the transaction ID in place of `TXID`:
+
+    ```bash
+    curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx/TXID
+    ```
+
+    ```text
+    {"txid":"0ac218d3…","txStatus":"SEEN_MULTIPLE_NODES","timestamp":"2026-10-30T13:33:12.496674Z","rawTx":"…"}
+    ```
+
+    A transaction counts as done at `SEEN_ON_NETWORK` or a later status, such as `SEEN_MULTIPLE_NODES` or `MINED`, with no `competingTxs`. There is no need to wait for a block. [Broadcast transactions](/guides/services/broadcasting/#statuses) explains the statuses you will see most.
+  </Step>
+</Steps>
+
+## Call the contract
+
+<Steps>
+  <Step title="Write the increment script">
+    Create `src/increment.ts`:
+
+    ```typescript src/increment.ts
+    import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+    import { RunarContract } from 'runar-sdk';
+    import { connect, waitUntilSeen } from './wallet.ts';
+
+    if (!existsSync('deployment.json')) {
+      console.error('Run deploy.ts first.');
+      process.exit(1);
+    }
+    const deployment = JSON.parse(readFileSync('deployment.json', 'utf8'));
+    const artifact = JSON.parse(readFileSync('artifacts/Counter.runar.json', 'utf8'));
+    const { wallet, provider, signer } = await connect();
+
+    const counter = await RunarContract.fromTxId(artifact, deployment.txid, deployment.outputIndex, provider);
+    counter.connect(provider, signer);
+
+    await provider.ensureFunding(500);
+    const { txid, tx } = await counter.call('increment', []);
+
+    const spent = tx.inputs.map((input) => `${input.txid}.${input.outputIndex}`);
+    const { outputs } = await wallet.listOutputs({ basket: 'counter', limit: 1000 });
+    for (const { outpoint } of outputs) {
+      if (spent.includes(outpoint)) await wallet.relinquishOutput({ basket: 'counter', output: outpoint });
+    }
+
+    const status = await waitUntilSeen(txid);
+    const count = String(counter.state.count);
+    writeFileSync('deployment.json', JSON.stringify({ txid, outputIndex: counter.getUtxo()!.outputIndex, count }, null, 2));
+    console.log(`Incremented: ${txid}`);
+    console.log(`https://test.whatsonchain.com/tx/${txid}`);
+    console.log(`status: ${status}`);
+    console.log(`count: ${count}`);
+    ```
+
+    - `RunarContract.fromTxId` loads the contract from the output saved in `deployment.json`, and reads `count` from its state.
+    - `call('increment', [])` builds the transaction that spends the contract's output and creates the next one. Rúnar builds the proof that the new output is correct, and you pass no arguments.
+    - Rúnar pays the fee from funding outputs in the basket `counter`. `ensureFunding(500)` makes sure the basket holds at least 500 satoshis of funding, and asks BSV Desktop to create a funding output for the difference when it holds less. The fee is a few hundred satoshis, and the change goes to the key `WalletSigner` uses, which BSV Desktop does not list in your balance.
+    - Rúnar spends the funding output and the old contract output without going through BSV Desktop, so the wallet still lists them. Right after the broadcast, `relinquishOutput` removes them from the basket, so the next run does not try to spend them again. If BSV Broadcaster then refuses the transaction, the funding output was not spent, and its 500 satoshis stay on the key `WalletSigner` uses.
+    - The script saves the new output in `deployment.json` only after `waitUntilSeen` returns.
+  </Step>
+  <Step title="Run it twice">
+    ```bash
+    npx tsx src/increment.ts
+    ```
+
+    ```text
+    Incremented: 34796302fbc57ce21ce16448feaf1f436199c52d510f915642cf38c15fc947ba
+    https://test.whatsonchain.com/tx/34796302fbc57ce21ce16448feaf1f436199c52d510f915642cf38c15fc947ba
+    status: SEEN_ON_NETWORK
+    count: 1
+    ```
+
+    Run it again:
+
+    ```bash
+    npx tsx src/increment.ts
+    ```
+
+    ```text
+    Incremented: fe7e20197b22803e82a82ba1cad5d83983312244dc599e288c3989badf5a4c6b
+    https://test.whatsonchain.com/tx/fe7e20197b22803e82a82ba1cad5d83983312244dc599e288c3989badf5a4c6b
+    status: SEEN_ON_NETWORK
+    count: 2
+    ```
+
+    Each run spends the output the run before created, so `deployment.json` always points at the latest one. The 1,000 satoshis stay in the contract for good, because no method of `Counter` pays them out.
+  </Step>
+</Steps>
+
+## What happened on chain
+
+You created three transactions. Each one holds the contract in one output, and each call spent the output before it:
+
+<CounterStateFlow />
+
+<Visibility for="agents">
+  Diagram as text. Transaction 1, from deploy.ts, creates the contract output with count 0 and 1,000 satoshis. Transaction 2, from increment.ts, spends that output and creates a new one with the same code, count 1 and 1,000 satoshis. Transaction 3, from increment.ts run again, spends the output of transaction 2 and creates one with count 2. Each arrow means "spent by".
+</Visibility>
+
+The contract has no address. To find it, follow the chain from the deploy transaction, or keep the latest output, as `deployment.json` does. Anyone who knows the latest output can call `increment`, because the contract checks no signature. To limit who can call it, add a public key to the contract and check a signature in each method, as in Rúnar's [Contract Basics](https://runar.build/docs/writing-contracts/contract-basics).
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Error: BSV Desktop is not running">
+    The script could not reach BSV Desktop. Open BSV Desktop, unlock it and run the script again.
+  </Accordion>
+  <Accordion title="Error: BSV Desktop is not on testnet">
+    BSV Desktop is on Mainnet. Switch it to testnet and run the script again. The script stopped before it asked the wallet to spend anything.
+  </Accordion>
+  <Accordion title="Run deploy.ts first.">
+    `increment.ts` found no `deployment.json` in the folder. Run `npx tsx src/deploy.ts` first, from the project folder.
+  </Accordion>
+  <Accordion title="Error: … is not on the network yet. Check its status again in a minute.">
+    The script broadcast the transaction but BSV Broadcaster had not seen it on the network within a minute, so the script did not write `deployment.json`. Read the status of the transaction ID in the error with `curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx/TXID`. Once it shows `SEEN_ON_NETWORK` or a later status, save the output yourself:
+
+    - After `deploy.ts`, create `deployment.json` with that transaction ID as `txid` and `count` `"0"`. Set `outputIndex` to the position of the output that holds 1,000 satoshis, counting from 0. BSV Desktop can put its change before the contract output, so open the transaction on WhatsOnChain to check.
+    - After `increment.ts`, put that transaction ID in `deployment.json` as `txid`, with `outputIndex` `0`, and raise `count` by one.
+
+    If it shows `REJECTED`, leave `deployment.json` as it is and run the script again.
+  </Accordion>
+  <Accordion title="Error: Refused: … already spent this output. Is deployment.json up to date?">
+    `deployment.json` points at an output that another transaction already spent, for example after you restored an old copy of the file or someone else called the counter. BSV Broadcaster refused the transaction, and the script left `deployment.json` as it was. Put the transaction ID that the error names in `deployment.json` as `txid`, with `outputIndex` `0`, which is where a call puts the new contract output, and run the script again. If `deployment.json` was more than one call behind, that output is spent too, and the run is refused again with the next transaction ID in the chain. Repeat until a run succeeds. Each refused run asks BSV Desktop for a new 500-satoshi funding output.
+  </Accordion>
+</AccordionGroup>
+
+## Next steps
+
+With the counter on testnet, write a contract of your own. Rúnar's [Writing Contracts](https://runar.build/docs/writing-contracts/contract-basics) covers types, signatures and the rest of the language, and its [Example Gallery](https://runar.build/docs/examples/gallery) has auctions, escrow and games to start from.
