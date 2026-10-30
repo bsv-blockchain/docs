@@ -12,7 +12,7 @@ Write a smart contract in TypeScript with [Rúnar](https://runar.build), compile
 
 BSV has no accounts and no contract addresses. A contract lives in a transaction output, and the network runs it with the same script engine that checks every payment.
 
-- A contract is a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint>. Rúnar compiles your class to [Bitcoin Script](/concepts/script/) and puts it in an output, together with the satoshis it holds. There is no separate virtual machine.
+- A contract is a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint>. Rúnar compiles your class to [Bitcoin Script](/concepts/script/) and puts it in an output, together with the <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> it holds. There is no separate virtual machine.
 - Calling a method means spending that output. The spending transaction's unlocking script names the method and passes its arguments, and miners run the unlocking script followed by the locking script. If the script succeeds, the call is valid.
 - State moves forward from output to output. The output is a <Hint tip="Unspent transaction output: an output that no transaction has spent yet">UTXO</Hint>, and a UTXO can be spent once. So a call spends the contract's output and must create a new one with the same code and the new state. The script checks this against the spending transaction itself, with a technique called <Hint tip="A way for a script to read the transaction that spends it, by checking a signature over that transaction's data">OP_PUSH_TX</Hint>.
 
@@ -55,8 +55,8 @@ You build one project with four parts:
     ```bash
     npm init -y
     npm pkg set type=module
-    npm install runar-lang@^1.0.0 runar-sdk@^1.0.0 @bsv/sdk@2
-    npm install -D runar-compiler@^1.0.0 runar-cli@^1.0.0 runar-testing@^1.0.0 fast-check vitest tsx typescript @types/node
+    npm install runar-lang@1.0.0-rc.1 runar-sdk@1.0.0-rc.1 @bsv/sdk@2
+    npm install -D runar-compiler@1.0.0-rc.1 runar-cli@1.0.0-rc.1 runar-testing@1.0.0-rc.1 fast-check vitest tsx typescript @types/node
     ```
 
     `runar-testing` needs `fast-check` and does not install it itself. `runar-sdk` uses `@bsv/sdk` 2, so install the same major version to keep one copy of it. This page was tested on 30 October 2026 with Rúnar 1.0.0-rc.1, `@bsv/sdk` 2.8.11 and Node.js 22.
@@ -253,7 +253,7 @@ export async function waitUntilSeen(txid: string): Promise<string> {
 ```
 
 - `new WalletClient('auto', 'example.com')` finds BSV Desktop on your machine, as in [Send a payment from a server](/get-started/quick-start-server/). `connect` stops unless the wallet answers and reports testnet.
-- `WalletSigner` asks BSV Desktop to sign with a key it derives for the protocol `runar`, so the key never leaves the wallet. `WalletProvider` keeps the coins Rúnar spends in the wallet basket `counter`.
+- `WalletSigner` asks BSV Desktop to sign with a key it derives for the protocol `runar`, so the key never leaves the wallet. `WalletProvider` keeps the coins Rúnar spends in the wallet <Hint tip="A named group of outputs the wallet tracks">basket</Hint> `counter`.
 - `broadcaster` sends every transaction to [BSV Broadcaster](/guides/services/broadcasting/). `arcUrl` is required on testnet, and the broadcaster replaces it.
 - A new run of a script starts with an empty cache, but it has to spend outputs that earlier runs created. `CounterProvider` reads those earlier transactions from BSV Broadcaster.
 - BSV Broadcaster can accept a transaction and refuse it a moment later, for example when another transaction already spent the same output. `waitUntilSeen` reads the status every 2 seconds, for up to a minute, until the network has seen the transaction, at `SEEN_ON_NETWORK` or a later status, with no competing transaction. A status read that fails or takes longer than 10 seconds is tried again. Only then do the scripts save the new output.
@@ -423,10 +423,15 @@ The contract has no address. To find it, follow the chain from the deploy transa
     `increment.ts` found no `deployment.json` in the folder. Run `npx tsx src/deploy.ts` first, from the project folder.
   </Accordion>
   <Accordion title="Error: … is not on the network yet. Check its status again in a minute.">
-    The script broadcast the transaction but BSV Broadcaster had not seen it on the network within a minute, so the script did not update `deployment.json`. Read the status of the transaction ID in the error with `curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx/TXID`. Once it shows `SEEN_ON_NETWORK` or a later status, put that transaction ID in `deployment.json` as `txid`, with `outputIndex` `0`, and raise `count` by one. If it shows `REJECTED`, leave `deployment.json` as it is and run the script again.
+    The script broadcast the transaction but BSV Broadcaster had not seen it on the network within a minute, so the script did not write `deployment.json`. Read the status of the transaction ID in the error with `curl -s https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx/TXID`. Once it shows `SEEN_ON_NETWORK` or a later status, save the output yourself:
+
+    - After `deploy.ts`, create `deployment.json` with that transaction ID as `txid` and `count` `"0"`. Set `outputIndex` to the position of the output that holds 1,000 satoshis, counting from 0. BSV Desktop can put its change before the contract output, so open the transaction on WhatsOnChain to check.
+    - After `increment.ts`, put that transaction ID in `deployment.json` as `txid`, with `outputIndex` `0`, and raise `count` by one.
+
+    If it shows `REJECTED`, leave `deployment.json` as it is and run the script again.
   </Accordion>
   <Accordion title="Error: Refused: … already spent this output. Is deployment.json up to date?">
-    `deployment.json` points at an output that another transaction already spent, for example after you restored an old copy of the file or someone else called the counter. BSV Broadcaster refused the transaction, and the script left `deployment.json` as it was. Put the latest output in `deployment.json`: the transaction ID that the error names, with `outputIndex` `0`, which is where a call puts the new contract output.
+    `deployment.json` points at an output that another transaction already spent, for example after you restored an old copy of the file or someone else called the counter. BSV Broadcaster refused the transaction, and the script left `deployment.json` as it was. Put the transaction ID that the error names in `deployment.json` as `txid`, with `outputIndex` `0`, which is where a call puts the new contract output, and run the script again. If `deployment.json` was more than one call behind, that output is spent too, and the run is refused again with the next transaction ID in the chain. Repeat until a run succeeds. Each refused run asks BSV Desktop for a new 500-satoshi funding output.
   </Accordion>
 </AccordionGroup>
 
