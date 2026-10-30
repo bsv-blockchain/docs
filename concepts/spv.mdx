@@ -126,7 +126,7 @@ true
 
 - `Beef.fromBinary` reads V1, V2 and Atomic BEEF. Compare `beef.version` with `BEEF_V1` and `BEEF_V2` to tell which version it is.
 - `verify` returns `false` when a root does not match a header and when the BEEF has no Merkle path to anchor to. It covers the first two checks above and the link between each transaction and its inputs. It does not evaluate scripts or compare satoshis, so `true` is not proof that a payment is valid.
-- To run the third check too, read the transaction and call `Transaction.fromHexBEEF(beefHex).verify(new WhatsOnChain('test'))`. It returns `true` when every check passes.
+- To run the third check too, read the transaction and call `Transaction.fromHexBEEF(beefHex).verify(new WhatsOnChain('test'))`. It evaluates the scripts and returns `true` when they pass. It checks the fee only when you pass a fee model as the second argument.
 - `WhatsOnChain` is a chain tracker backed by the WhatsOnChain service. Any object with `isValidRootForHeight` and `currentHeight` methods works in its place, for example one backed by your own header store.
 
 <Callout type="note">
