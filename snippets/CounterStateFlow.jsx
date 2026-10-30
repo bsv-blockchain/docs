@@ -16,8 +16,8 @@ const steps = [
     count: '1',
   },
   {
-    who: 'increment.ts again',
-    what: 'Spends the output the last run created, not the first one',
+    who: 'increment.ts',
+    what: 'Run again: spends the output the last run created',
     count: '2',
   },
 ];
@@ -47,9 +47,12 @@ export default function CounterStateFlow() {
                 <span className={`${mono} font-semibold`}>{step.who}</span>
               </div>
               <p className="m-0 flex-1 px-4 pt-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">{step.what}</p>
-              <p className="m-0 px-4 pb-4 pt-2 text-sm text-gray-900 dark:text-gray-100">
-                Output: <span className={mono}>count = {step.count}</span>, <span className={mono}>1,000</span> satoshis
-              </p>
+              <dl className="m-0 grid grid-cols-[auto_1fr] gap-x-2 px-4 pb-4 pt-2 text-sm text-gray-900 dark:text-gray-100">
+                <dt className="font-semibold">count</dt>
+                <dd className={`m-0 ${mono}`}>{step.count}</dd>
+                <dt className="font-semibold">value</dt>
+                <dd className="m-0">1,000 satoshis</dd>
+              </dl>
             </li>
             {i < steps.length - 1 && <Arrow />}
           </Fragment>

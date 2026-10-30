@@ -76,7 +76,8 @@
               "guides/data-storage",
               "guides/messaging",
               "guides/overlays",
-              "guides/digital-product-passports"
+              "guides/digital-product-passports",
+              "guides/deploy-smart-contract"
             ]
           },
           {
