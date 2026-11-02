@@ -6,7 +6,7 @@ sidebarTitle: Python SDK
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Use `bsv-sdk` to build BSV keys, scripts, transactions and proofs in Python, from a signed <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">P2PKH</Hint> transaction up to broadcasting it to the network. The docs and examples live in the Python repositories, and this page links them.
+Use `bsv-sdk` to build BSV keys, scripts, transactions and proofs in Python, from a signed <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">P2PKH</Hint> transaction up to peer authentication and overlay tools. The docs and examples live in the Python repositories, and this page links them.
 
 ## What the SDK includes
 
@@ -20,7 +20,7 @@ The package is `bsv-sdk` on PyPI, and you import it as `bsv`:
 | Script and templates | `Script`, a script interpreter, and the `P2PKH`, `P2PK`, `OP_RETURN` and bare multisig templates |
 | Transactions and fees | `Transaction`, `TransactionInput` and `TransactionOutput`, with fee calculation and change outputs |
 | Proofs | <Hint tip="Simplified Payment Verification">SPV</Hint> checks with <Hint tip="Background Evaluation Extended Format (BRC-62), a transaction sent with its proofs">BEEF</Hint> and Merkle proofs |
-| Broadcasting and chain tracking | Broadcasters such as <Hint tip="Authoritative Response Component, a transaction processor that tracks a transaction as the network processes it">ARC</Hint> and chain trackers |
+| Broadcasting and chain tracking | Broadcasters such as <Hint tip="Authoritative Response Component, a transaction processor. BSV Broadcaster replaces it.">ARC</Hint> and chain trackers |
 | Wallet and authentication | Wallet substrates and serializers, and peer authentication with certificates |
 | Overlay services and identity | Lookup and broadcast tools for <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay services</Hint>, an identity client and a registry client |
 
@@ -28,7 +28,7 @@ The package is `bsv-sdk` on PyPI, and you import it as `bsv`:
 
 ## Get started
 
-Install the SDK, then run a first script that signs a transaction without touching the network.
+Install the SDK, then run a first script that signs a transaction and checks its scripts, without touching the network.
 
 <Steps>
   <Step title="Install the SDK">
@@ -106,7 +106,11 @@ These parts of `sign.py` need a closer look:
 - `change=True` makes the output take whatever the input holds beyond the fee, and `tx.fee()` calculates that fee.
 - `verify(scripts_only=True)` runs the locking and unlocking scripts against each other, with no Merkle proof and no network. It is async, so the script runs inside `asyncio.run`.
 
-To send a transaction, call `await tx.broadcast()`. With no argument it uses an ARC broadcaster for Mainnet. While you test, pass a testnet broadcaster, `tx.broadcast(default_broadcaster(is_testnet=True))`, with `default_broadcaster` imported from `bsv.broadcasters`. A broadcast transaction cannot be undone, so test on testnet before you use Mainnet.
+<Callout type="warning">
+A broadcast transaction cannot be undone, and `tx.broadcast()` with no argument sends to Mainnet, through ARC at GorillaPool. Test on testnet before you use Mainnet.
+</Callout>
+
+To send a transaction, call `await tx.broadcast()`. The transaction in `sign.py` cannot be broadcast, because it spends an output that exists only in the script. To broadcast one, build the input from an output you own on testnet. For the endpoints and the broadcaster the BSV Association runs, see [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/).
 
 ## Find the docs and examples
 
@@ -117,7 +121,7 @@ The docs and examples live in the Python repositories, next to the code.
 Start from these repositories and docs:
 
 - [py-sdk](https://github.com/bsv-blockchain/py-sdk), with its README and [releases](https://github.com/bsv-blockchain/py-sdk/releases).
-- [py-sdk docs](https://github.com/bsv-blockchain/py-sdk/tree/master/docs), with a step-by-step tutorial, fee models, and ARC and <Hint tip="A transaction broadcaster for Teranode that is compatible with ARC">Arcade</Hint> broadcasting.
+- [py-sdk docs](https://github.com/bsv-blockchain/py-sdk/tree/master/docs), with a step-by-step tutorial, fee models, and ARC and <Hint tip="The former name of BSV Broadcaster, kept in the Python SDK class Arcade">Arcade</Hint> broadcasting.
 - [bsv-sdk on PyPI](https://pypi.org/project/bsv-sdk/), for versions and release history.
 - [py-wallet-toolbox](https://github.com/bsv-blockchain/py-wallet-toolbox), with its [docs](https://github.com/bsv-blockchain/py-wallet-toolbox/tree/master/docs) and [examples](https://github.com/bsv-blockchain/py-wallet-toolbox/tree/master/examples), for building <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallets in Python.
 
