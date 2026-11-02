@@ -27,7 +27,7 @@ In the browser, `createWallet()` connects to the wallet app the user has, such a
 On the server, `ServerWallet.create()` takes the private key in hex, a `network` and an optional `storageUrl`. The wallet keeps its records on a remote storage server, `https://storage.babbage.systems` unless you set `storageUrl`. The package needs Node 22 or later.
 
 <Callout type="warning">
-On the server, your code holds the key and every transaction goes out with no one approving it. Read the key from an environment variable, keep it out of your repository, and pass `network: 'testnet'` while you test, because the network is `main` when you leave it out.
+On the server, your code holds the key, every transaction goes out with no one approving it, and a broadcast transaction cannot be undone. Read the key from an environment variable and keep it out of your repository. If you use `ServerWalletManager` without that variable, it saves a generated key to `.server-wallet.json` in the working folder, so add that file to `.gitignore`. Pass `network: 'testnet'` while you test, because the network is `main` when you leave it out.
 </Callout>
 
 <Callout type="note">
@@ -46,10 +46,10 @@ The object is built in two layers. A base class, `WalletCore`, has the methods f
 | Tokens | `createToken()`, `sendToken()` | Tokens that carry your own data |
 | Inscriptions | `inscribeText()`, `inscribeJSON()` | Data written on chain |
 | MessageBox | `sendMessageBoxPayment()`, `lookupIdentityByTag()` | Payments and messages through a <Hint tip="A server that holds messages and payments for a recipient until the recipient collects them">message box</Hint> |
-| Certification | `acquireCertificateFrom()` | Certificates from a certifier |
+| Certification | `acquireCertificateFrom()` | Certificates from a <Hint tip="A server that checks a claim about a user and signs a certificate for their identity key">certifier</Hint> |
 | Overlay | `advertiseSHIP()`, `broadcastAction()` | Publishing to <Hint tip="Services that track selected transactions and answer queries about them">overlay</Hint> services |
-| DID | `getDID()`, `resolveDID()` | <Hint tip="Decentralized identifier, a W3C identifier that the holder controls">DIDs</Hint> for an identity key |
-| Credentials | `acquireCredential()` | Verifiable credentials |
+| DID | `getDID()`, `resolveDID()` | <Hint tip="Decentralized identifier, a W3C identifier that the holder controls">DIDs</Hint> for an <Hint tip="The public key that identifies a wallet to apps and other users">identity key</Hint> |
+| Credentials | `acquireCredential()` | <Hint tip="Certificates packaged so a third party can check who issued them">Verifiable credentials</Hint> |
 
 </BlueTable>
 
@@ -58,7 +58,7 @@ Every module reaches the wallet through `getClient()`, which returns the BRC-100
 Some modules also call a service over HTTP:
 
 - Message box: `pay()`, the MessageBox methods and tokens sent to a recipient use `https://messagebox.babbage.systems` unless you set another host.
-- Identity registry: `lookupIdentityByTag()` and `registerIdentityTag()` need a `registryUrl`, which has no default.
+- Identity registry: `lookupIdentityByTag()` and `registerIdentityTag()` need a `registryUrl`, which has no default. If you run the registry yourself with `IdentityRegistry`, put it behind a login: it has no authentication of its own.
 - Certifier and issuer: `acquireCertificateFrom()` and `acquireCredential()` call the server URL you pass to them.
 - Overlay hosts: `broadcastAction()` sends to the hosts of the overlay preset you choose.
 - Wallet storage: a server wallet keeps its records on `https://storage.babbage.systems` unless you set `storageUrl`.
@@ -106,12 +106,12 @@ These parts matter once you build a backend or work with identity:
 
     `ServerWalletManager` creates the server wallet once and keeps its key. It reads the key from `SERVER_PRIVATE_KEY`. Without it, the manager reads `.server-wallet.json` in the working folder, or generates a key and saves it there. Add that file to `.gitignore`, because it holds the private key.
 
-    `IdentityRegistry` stores handles for identity keys, with no authentication. Anyone who reaches it can register or revoke a handle for another key. Put it behind your own login.
+    `IdentityRegistry` stores handles for identity keys, with no authentication. Anyone who reaches it can register or revoke a handle for another key. Put it behind your own login before you expose it.
   </Accordion>
   <Accordion title="Classes that work without a wallet object">
-    - `DID` turns an identity key into a `did:key` identifier and resolves it offline.
+    - `DID` turns an identity key into a `did:key` identifier and resolves it offline. Version 0.7.0 replaced the earlier DID and credential tooling with these classes, so older material that uses `registerDID()` or `did:bsv` identifiers no longer applies.
     - `Certifier`, `CredentialSchema` and `CredentialIssuer` issue and verify certificates and credentials. `MemoryRevocationStore` keeps revocation records in memory, and `FileRevocationStore` keeps them in a file on the server.
-    - `Overlay` creates a topic broadcaster and a lookup resolver for the `mainnet`, `testnet`, `teratestnet` or `local` preset, and uses `mainnet` when you set none.
+    - `Overlay` creates a <Hint tip="A client that sends a transaction to the overlay hosts that accept its topic">topic broadcaster</Hint> and a <Hint tip="A client that asks overlay hosts for data they track">lookup resolver</Hint> for the `mainnet`, `testnet`, `teratestnet` or `local` preset, and uses `mainnet` when you set none.
   </Accordion>
   <Accordion title="Defaults you can set">
     The `createWallet()` options set the values the methods fall back on: the network, the transaction and output descriptions, the token basket and protocol, and the message box host, `https://messagebox.babbage.systems` by default. `ServerWallet.create()` sets only the network, so on the server the other defaults stay as they are.
