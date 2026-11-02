@@ -1,133 +1,92 @@
 ---
 title: "How @bsv/simple is built"
-description: "@bsv/simple wraps a BRC-100 wallet, the @bsv/sdk classes and a few hosted services in one wallet object, for the browser and for the server."
+description: "@bsv/simple puts a BRC-100 wallet, the @bsv/sdk classes and a few hosted services behind one wallet object, in the browser and on the server."
 ---
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-The `@bsv/simple` package is a helper library on top of `@bsv/sdk`. It wraps a <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet in one object with methods such as `pay()`, `send()`, `createToken()` and `inscribeText()`, and builds the <Hint tip="The part of a transaction output that sets the condition to spend it">locking scripts</Hint>, key derivation and service calls behind them. Knowing what it wraps tells you when a method fits your app and when to call `WalletClient` from `@bsv/sdk` yourself. This page was written against `@bsv/simple` 0.7.2.
+`@bsv/simple` is a helper library on top of `@bsv/sdk`. It gives you one wallet object with methods such as `send()`, `pay()` and `createToken()`, and builds the scripts and wallet calls behind each of them. This page shows what that object is made of, so you can tell when a method fits your app and when to call the <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet yourself. It was written against `@bsv/simple` 0.7.2.
 
-For where the package sits in the stack as a whole, see [How the BSV stack fits together](/concepts/architecture/).
+For where the package sits in the stack, see [How the BSV stack fits together](/concepts/architecture/).
 
-## What the wallet object wraps
+## One object, two kinds of wallet
 
-The wallet object has the same methods in the browser and on the server. What changes is the wallet underneath it:
+You create the wallet object in one of two ways. The methods are the same in both, and only the wallet underneath changes:
 
 <BlueTable>
 
-| Entry point | Function that creates the wallet | Wallet underneath | Who holds the private key |
+| Where your code runs | How you create it | Wallet underneath | Who holds the key |
 | --- | --- | --- | --- |
-| `@bsv/simple` or `@bsv/simple/browser` | `createWallet()` | `WalletClient` from `@bsv/sdk` | The user's wallet |
-| `@bsv/simple/server` | `ServerWallet.create()` | `Wallet` from `@bsv/wallet-toolbox` | Your server |
+| Browser | `createWallet()` from `@bsv/simple` | `WalletClient` from `@bsv/sdk`, connected to the user's wallet | The user's wallet app |
+| Server | `ServerWallet.create()` from `@bsv/simple/server` | `Wallet` from `@bsv/wallet-toolbox` | Your server |
 
 </BlueTable>
 
-### In the browser
+In the browser, `createWallet()` connects to the wallet app the user has, such as [BSV Desktop](/wallets/bsv-desktop/) on a computer or [BSV Browser](/wallets/bsv-browser/) on a phone. That app signs each transaction, within the spending limits the user set in it.
 
-The `createWallet()` function creates a `WalletClient` set to `auto`, so the SDK finds the wallet available to the app, such as [BSV Desktop](/wallets/bsv-desktop/) on the user's computer, or [BSV Browser](/wallets/bsv-browser/) on the phone. It then asks that wallet for the user's <Hint tip="The public key that identifies a wallet to an app">identity key</Hint> and builds the wallet object around the client. Your app never holds a private key, and the wallet approves spends according to the permissions the user set.
-
-### On the server
+On the server, `ServerWallet.create()` takes the private key in hex, a `network` and an optional `storageUrl`. The wallet keeps its records on a remote storage server, `https://storage.babbage.systems` unless you set `storageUrl`. The package needs Node 22 or later.
 
 <Callout type="warning">
-A server wallet signs with no approval step, and a transaction it broadcasts cannot be undone. Load the private key from the environment, never from source code or a file under version control.
+On the server, your code holds the key and every transaction goes out with no one approving it. Read the key from an environment variable, keep it out of your repository, and pass `network: 'testnet'` while you test, because the network is `main` when you leave it out.
 </Callout>
 
-The `ServerWallet.create()` method takes a private key in hex, a `network` (`main` or `testnet`) and an optional `storageUrl`, and builds a `@bsv/wallet-toolbox` wallet that keeps its outputs and history on a remote storage server, `https://storage.babbage.systems` unless you pass `storageUrl`. The network defaults to `main` when you leave it out, so pass `testnet` while you test.
+## What the object can do
 
-The root entry point exports only what runs in the browser. `@bsv/simple/server` exports the same classes plus the server ones, and the package needs Node 22 or later.
-
-## What each module adds
-
-The wallet object is built in two layers. A base class, `WalletCore`, holds the core transaction methods. When `createWallet()` or `ServerWallet.create()` runs, it adds the methods of seven modules to the same object, so every method is called on the wallet itself:
+The object is built in two layers. A base class, `WalletCore`, has the methods for sending transactions. When the wallet is created, seven modules add their methods to the same object:
 
 <BlueTable>
 
-| Module | Methods it adds | What it uses underneath |
+| Layer | Examples of methods | What it is for |
 | --- | --- | --- |
-| Tokens | `createToken`, `listTokenDetails`, `sendToken`, `redeemToken`, `sendTokenViaMessageBox`, `listIncomingTokens`, `acceptIncomingToken` | <Hint tip="A script that stores data fields and locks them to a public key, used for tokens">`PushDrop`</Hint> from `@bsv/sdk`, `@bsv/message-box-client` |
-| Inscriptions | `inscribeText`, `inscribeJSON`, `inscribeFileHash`, `inscribeImageHash` | `send()` with data outputs |
-| MessageBox | `certifyForMessageBox`, `sendMessageBoxPayment`, `listIncomingPayments`, `acceptIncomingPayment`, `registerIdentityTag`, `lookupIdentityByTag`, and more | `PeerPayClient` from `@bsv/message-box-client` |
-| Certification | `acquireCertificateFrom`, `listCertificatesFrom`, `relinquishCert` | `MasterCertificate` from `@bsv/sdk` |
-| Overlay | `advertiseSHIP`, `advertiseSLAP`, `broadcastAction`, `withRetry` | `TopicBroadcaster` and `LookupResolver` from `@bsv/sdk`, which reach <Hint tip="Services that track selected transactions and answer queries about them">overlay</Hint> hosts advertised with <Hint tip="Services Host Interconnect Protocol, how an overlay host advertises the topics it accepts">SHIP</Hint> and <Hint tip="Service Lookup Availability Protocol, how an overlay host advertises the lookup services it runs">SLAP</Hint> |
-| DID | `getDID`, `resolveDID` | `@bsv/did`, for <Hint tip="Decentralized identifier, a W3C identifier that the holder controls">DIDs</Hint> |
-| Credentials | `acquireCredential`, `listCredentials` | `MasterCertificate` from `@bsv/sdk`, `@bsv/did` |
+| Base class | `send()`, `pay()`, `getBalance()` | Sending transactions and reading the balance |
+| Tokens | `createToken()`, `sendToken()` | Tokens that carry your own data |
+| Inscriptions | `inscribeText()`, `inscribeJSON()` | Data written on chain |
+| MessageBox | `sendMessageBoxPayment()`, `lookupIdentityByTag()` | Payments and messages through a message box |
+| Certification | `acquireCertificateFrom()` | Certificates from a certifier |
+| Overlay | `advertiseSHIP()`, `broadcastAction()` | Publishing to <Hint tip="Services that track selected transactions and answer queries about them">overlay</Hint> services |
+| DID | `getDID()`, `resolveDID()` | <Hint tip="Decentralized identifier, a W3C identifier that the holder controls">DIDs</Hint> for an identity key |
+| Credentials | `acquireCredential()` | Verifiable credentials |
 
 </BlueTable>
 
-Each module calls the wallet through `getClient()`, so the same module code runs on `WalletClient` in the browser and on the toolbox wallet on the server. The MessageBox and Certification modules also make HTTP calls to their servers. The `getClient()` method is public, and your app can call the BRC-100 methods on it directly.
+Every module reaches the wallet through `getClient()`, which returns the BRC-100 interface of the wallet underneath. That is why the same methods work in the browser and on the server. The MessageBox and Certification modules also call their own servers over HTTP.
 
-## How sending works
+## What happens when you send
 
-The `WalletCore` class holds the identity key, the defaults and the methods every module builds on.
-
-### One transaction with several outputs
-
-The `send()` method takes a list of outputs and turns them into one `createAction` call to the wallet. Each output becomes a script based on the fields it has:
+The `send()` method takes a list of outputs and makes one `createAction` call to the wallet, so they all go in one transaction. Each output becomes a script from the fields you give it:
 
 <BlueTable>
 
 | Fields in the output | Script it becomes |
 | --- | --- |
 | `to` only | <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">P2PKH</Hint> to the address of the public key in `to` |
-| `data` only | An <Hint tip="A script that stores data in a transaction and can never be spent">OP_RETURN</Hint> data output with 0 <Hint tip="The smallest unit of BSV: 1 BSV is 100,000,000 satoshis">satoshis</Hint> |
-| `to` and `data` | A PushDrop token locked to the key in `to`, stored in the `tokens` <Hint tip="A named group of outputs that a wallet tracks together">basket</Hint> by default |
+| `data` only | An <Hint tip="A script that stores data in a transaction and can never be spent">OP_RETURN</Hint> output with 0 <Hint tip="The smallest unit of BSV: 1 BSV is 100,000,000 satoshis">satoshis</Hint> |
+| `to` and `data` | A <Hint tip="A script that stores data fields and locks them to a public key, used for tokens">PushDrop</Hint> token for the key in `to`, kept in the `tokens` <Hint tip="A named group of outputs that a wallet tracks together">basket</Hint> |
 
 </BlueTable>
 
-A basket is how a BRC-100 wallet groups outputs, and `getBalance()` reads them through the wallet's `listOutputs` method. The inscription and token methods build on the same output types.
+The inscription and token methods build on these same outputs.
 
-### Two ways to pay
+To pay someone, there are two options:
 
-The base class sends satoshis in two ways:
-
-- The `pay()` method sends the transaction to the recipient's identity key through `PeerPayClient`, which delivers it to the recipient's <Hint tip="A server that holds encrypted messages and payments for a recipient until the recipient collects them">message box</Hint>. The recipient takes it into their wallet with `acceptIncomingPayment()`. With `@bsv/message-box-client` 2.7.0, the version it installs, `pay()` returns an empty `txid`. Use `send()` or `WalletClient` when you need the transaction ID.
-- The `createPaymentRequest()`, `sendDirectPayment()` and `receiveDirectPayment()` methods use <Hint tip="BSV Request for Comments 29, payments to a key derived for each payment">BRC-29</Hint> key derivation with no message box. The recipient creates the request, the sender's wallet builds the transaction, and the recipient's wallet takes the output into its spendable balance with `internalizeAction`.
-
-### Defaults
-
-The `createWallet()` options set the values the methods fall back on: the network, the transaction and output descriptions, the token basket and protocol, and the message box host (`https://messagebox.babbage.systems`). `ServerWallet.create()` sets only the network, so the other defaults apply as listed.
+- `pay()` delivers the transaction to the recipient's <Hint tip="A server that holds messages and payments for a recipient until the recipient collects them">message box</Hint>, and the recipient accepts it with `acceptIncomingPayment()`. With `@bsv/message-box-client` 2.7.0, the version `@bsv/simple` 0.7.2 installs, `pay()` returns an empty `txid`.
+- `createPaymentRequest()`, `sendDirectPayment()` and `receiveDirectPayment()` work without a message box. They follow <Hint tip="BSV Request for Comments 29, payments to a key derived for each payment">BRC-29</Hint>: the recipient creates a request, the sender's wallet builds the transaction, and the recipient's wallet adds the output to its balance.
 
 <Callout type="note">
-The network that `getWalletInfo()` reports comes from these defaults, not from the wallet, and it is `main` unless you set it. To read the network the user's wallet is on, call `getNetwork()` on `getClient()`.
+`getWalletInfo()` reports the network from the options you passed to `createWallet()`, which is `main` by default, not the network of the user's wallet. To read the wallet's network, call `getNetwork()` on `getClient()`.
 </Callout>
 
-## Classes that work without a wallet object
+## When to use `WalletClient` instead
 
-Some exports do not need a connected wallet:
+`WalletClient` from `@bsv/sdk` is the standard way for an app to talk to the user's wallet, and `@bsv/simple` adds shortcuts on top of it. The shortcuts help when your app does what they do: tokens, inscriptions, message box payments, or a server wallet with ready defaults.
 
-- The `DID` class turns an identity key into a `did:key` identifier and resolves it offline.
-- The `Certifier`, `CredentialSchema` and `CredentialIssuer` classes issue and verify certificates and credentials. `MemoryRevocationStore` keeps revocation records in memory, and `FileRevocationStore` (server only) keeps them in a file.
-- The `Overlay` class creates a topic broadcaster and a lookup resolver for the `mainnet`, `testnet`, `teratestnet` or `local` preset. It uses `mainnet` when no preset is set.
+Call `WalletClient` yourself when you need:
 
-The server entry point also has the pieces for a backend. `ServerWalletManager` and `createServerWalletHandler()` serve a server wallet over HTTP routes, and `IdentityRegistry` stores handles for identity keys. `createServerWalletHandler()` returns Next.js route handlers, and it answers each action with HTTP 403 until your `authorize` callback returns `true` for it.
+- Your own `createAction` arguments, such as inputs, labels or broadcast options. `send()` sets them for you.
+- The transaction ID of a payment, which `pay()` does not return.
+- Fewer packages. `@bsv/simple` also installs `@bsv/wallet-toolbox` and `@bsv/message-box-client`, even in an app that only runs in the browser. It needs `@bsv/sdk` as a peer, 2.4.1 or later in 2.x, any 3.x, or 4.0.1 or later in 4.x.
 
-## Packages it depends on
-
-The `@bsv/sdk` package is a peer dependency. Version 0.7.2 accepts `@bsv/sdk` from 2.4.1 in the 2.x line, any 3.x version, and from 4.0.1 in the 4.x line. The other packages install with it:
-
-<BlueTable>
-
-| Package | What `@bsv/simple` uses it for |
-| --- | --- |
-| `@bsv/sdk` | `WalletClient`, scripts, keys, certificates and the overlay clients |
-| `@bsv/wallet-toolbox` | The wallet inside `ServerWallet` |
-| `@bsv/message-box-client` | `pay()`, the MessageBox methods and tokens sent through a message box |
-| `@bsv/did` | DIDs and credential envelopes |
-| `@bsv/wallet-toolbox-client` | Listed as a dependency and installed, though version 0.7.2 does not import it |
-
-</BlueTable>
-
-## When to call `WalletClient` instead
-
-The `WalletClient` class from `@bsv/sdk` is the standard way for an app to talk to the user's wallet, and `@bsv/simple` adds shortcuts on top of it. Use `@bsv/simple` when its methods match what your app does, such as tokens, inscriptions, message box payments or a server wallet with its defaults.
-
-Call `WalletClient` directly when you need:
-
-- Your own `createAction` arguments, such as inputs, labels or broadcast options. The `send()` method sets them for you. For example, it keeps the outputs in the order you listed them.
-- The transaction ID of a transaction sent to an identity key, or the network from the wallet itself.
-- Fewer installed packages. `@bsv/simple` installs the wallet toolbox, its client build and the message box client even for an app that only runs in the browser.
-
-The two also mix. `getClient()` gives you the BRC-100 interface of the same wallet, so an app can use `@bsv/simple` for most calls and the raw wallet methods for the rest.
+You can also mix both. `getClient()` returns the same wallet as a BRC-100 interface, so your app can use the shortcuts for most calls and the wallet methods for the rest.
 
 ## Related articles
 
