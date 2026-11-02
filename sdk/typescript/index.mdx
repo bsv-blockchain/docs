@@ -34,7 +34,7 @@ An app uses the SDK in one of two ways, depending on who holds the private key:
 
 Your code holds the key and does the work a wallet would do. It builds each <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint>, gives each input its source transaction. It also tracks which <Hint tip="Unspent transaction output">UTXOs</Hint> it has already spent, since two transactions that spend the same output cannot both confirm. Build by hand when you need a custom script or transaction format, cryptography on its own, or <Hint tip="Simplified Payment Verification">SPV</Hint> checks of transactions you receive.
 
-<Callout type="warning">
+<Callout type="danger">
 When your code holds the private key, it signs with no approval step, and a transaction it broadcasts cannot be undone. Keep the key out of your source code and out of version control, and test on testnet before you use Mainnet.
 </Callout>
 
