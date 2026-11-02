@@ -53,7 +53,7 @@ Every module reaches the wallet through `getClient()`, which returns the BRC-100
 
 ## What happens when you send
 
-The `send()` method takes a list of outputs and makes one `createAction` call to the wallet, so they all go in one transaction. Each output becomes a script from the fields you give it:
+The `send()` method takes a list of outputs and makes one `createAction` call to the wallet, so they all go in one transaction, in the order you list them. Each output becomes a script from the fields you give it:
 
 <BlueTable>
 
@@ -87,6 +87,31 @@ Call `WalletClient` yourself when you need:
 - Fewer packages. `@bsv/simple` also installs `@bsv/wallet-toolbox` and `@bsv/message-box-client`, even in an app that only runs in the browser. It needs `@bsv/sdk` as a peer, 2.4.1 or later in 2.x, any 3.x, or 4.0.1 or later in 4.x.
 
 You can also mix both. `getClient()` returns the same wallet as a BRC-100 interface, so your app can use the shortcuts for most calls and the wallet methods for the rest.
+
+## Other parts of the package
+
+The package also has pieces you reach for once you build on it:
+
+<AccordionGroup>
+  <Accordion title="Server helpers for HTTP routes">
+    `@bsv/simple/server` can serve a server wallet over HTTP. `ServerWalletManager` and `createServerWalletHandler()` set up the routes, and `createServerWalletHandler()` returns Next.js route handlers. Each action answers with HTTP 403 until your `authorize` callback returns `true` for it, so a route stays closed until you decide who may call it. `IdentityRegistry` stores handles for identity keys.
+  </Accordion>
+  <Accordion title="Classes that work without a wallet object">
+    - `DID` turns an identity key into a `did:key` identifier and resolves it offline.
+    - `Certifier`, `CredentialSchema` and `CredentialIssuer` issue and verify certificates and credentials. `MemoryRevocationStore` keeps revocation records in memory, and `FileRevocationStore` keeps them in a file on the server.
+    - `Overlay` creates a topic broadcaster and a lookup resolver for the `mainnet`, `testnet`, `teratestnet` or `local` preset, and uses `mainnet` when you set none.
+  </Accordion>
+  <Accordion title="Defaults you can set">
+    The `createWallet()` options set the values the methods fall back on: the network, the transaction and output descriptions, the token basket and protocol, and the message box host, `https://messagebox.babbage.systems` by default. `ServerWallet.create()` sets only the network, so on the server the other defaults stay as they are.
+  </Accordion>
+  <Accordion title="Packages it installs">
+    - `@bsv/sdk`, a peer dependency: `WalletClient`, scripts, keys, certificates and the overlay clients.
+    - `@bsv/wallet-toolbox`: the wallet inside `ServerWallet`.
+    - `@bsv/message-box-client`: `pay()`, the MessageBox methods and tokens sent through a message box.
+    - `@bsv/did`: DIDs and credentials.
+    - `@bsv/wallet-toolbox-client`: listed and installed, though version 0.7.2 does not import it.
+  </Accordion>
+</AccordionGroup>
 
 ## Related articles
 
