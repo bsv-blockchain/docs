@@ -6,11 +6,17 @@ sidebarTitle: "More TypeScript packages"
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Each package below adds one job on top of `@bsv/sdk`, such as messaging, authenticating the callers of an API or running an <Hint tip="A service that indexes an app's transactions. Topic managers decide which outputs it admits, and lookup services answer queries about them">overlay service</Hint>.
+Pick the `@bsv/*` package that adds messaging, API authentication, payments or an <Hint tip="A service that indexes an app's transactions. Topic managers decide which outputs it admits, and lookup services answer queries about them">overlay service</Hint> to an app built on `@bsv/sdk`, and see what each one does and its status.
 
 ## Before you choose a package
 
-Start with `@bsv/sdk` and add the package your app needs next to it, for example `npm install @bsv/sdk @bsv/wallet-helper`. The packages declare Node.js 22 or newer. Two other pages can settle the choice first:
+Start with `@bsv/sdk` and add the package your app needs next to it. In your project folder, run, for example:
+
+```bash
+npm install @bsv/sdk @bsv/wallet-helper
+```
+
+The packages declare Node.js 22 or newer, and this page was written against `@bsv/sdk` 4.0.1. Two other pages can settle the choice first:
 
 - To choose between `@bsv/sdk`, `@bsv/simple` and the other packages, see the [SDKs overview](/sdk/).
 - To build a wallet instead of an app, see [Build a wallet with wallet-toolbox](/wallet-dev/wallet-toolbox/).
@@ -33,7 +39,7 @@ Three packages have a page of their own:
 
 ## Find the other packages by task
 
-The rows link to the package folder in [ts-stack](https://github.com/bsv-blockchain/ts-stack), the repository that holds the TypeScript stack. The status is the maturity that ts-stack and the package README give it. A stable package has a locked API. A beta package can still change its API. An experimental package is in early development. The versions are the latest published on npm in November 2026.
+The rows link to the package folder in [ts-stack](https://github.com/bsv-blockchain/ts-stack), the repository that holds the TypeScript stack. The status is the maturity that ts-stack and the package README give it. A stable package has a locked API. A beta package can still change its API. An experimental package is in early development. The versions are the latest published on npm on 2 November 2026.
 
 ### Authenticate and charge the callers of an API
 
@@ -44,14 +50,14 @@ To know which user calls your Express API, start from the [Authenticate users wi
 | Package | Version | Status | What it does |
 | --- | --- | --- | --- |
 | [`@bsv/auth-express-middleware`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/middleware/auth-express-middleware) | 2.3.0 | Stable | Express middleware for <Hint tip="BSV Request for Comments 103, mutual authentication between two peers">BRC-103</Hint> mutual authentication. It handles the handshake, verifies each authenticated request and signs the response. |
-| [`@bsv/payment-express-middleware`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/middleware/payment-express-middleware) | 2.1.11 | Stable | Express middleware that answers with an HTTP 402 challenge and checks the payment. It runs after `@bsv/auth-express-middleware` and uses the earlier `x-bsv-payment` flow, a different protocol from the BRC-121 flow of `@bsv/402-pay`, so choose one of the two for an API. |
+| [`@bsv/payment-express-middleware`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/middleware/payment-express-middleware) | 2.1.11 | Stable | Express middleware that answers with an HTTP 402 challenge and checks the payment. It runs after `@bsv/auth-express-middleware` and uses the earlier `x-bsv-payment` flow, a different protocol from the <Hint tip="BSV Request for Comments 121, Simple 402 Payments">BRC-121</Hint> flow of `@bsv/402-pay`, so choose one of the two for an API. |
 | [`@bsv/auth`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/middleware/auth) | 0.1.8 | Beta | Wallet login that does not depend on a web framework. The wallet signs a short-lived proof that it controls an identity key, and the server verifies it and accepts it once. |
 
 </BlueTable>
 
 ### Authenticated sockets and Paymail
 
-Open an authenticated Socket.IO connection between a client and a server, or add Paymail support to an Express app, with:
+Open an authenticated Socket.IO connection between a client and a server, or add <Hint tip="A handle that resolves to a user's identity key. Its domain lists the Paymail services it supports">Paymail</Hint> support to an Express app, with:
 
 <BlueTable>
 
@@ -73,7 +79,7 @@ Open an authenticated Socket.IO connection between a client and a server, or add
 | --- | --- | --- | --- |
 | [`@bsv/overlay`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/overlays/overlay) | 2.7.0 | Stable | The engine of an overlay service. It admits transactions through topic managers, keeps the state of the outputs and serves lookup services. |
 | [`@bsv/overlay-topics`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/overlays/topics) | 2.0.3 | Experimental | Topic managers and lookup services for protocols such as identity certificates, key and value storage, message boxes and file storage. |
-| [`@bsv/overlay-discovery-services`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/overlays/overlay-discovery-services) | 2.2.9 | Stable | The <Hint tip="Service Host Interconnect Protocol">SHIP</Hint> and <Hint tip="Service Lookup Availability Protocol">SLAP</Hint> services that let overlay nodes advertise the topics they host and the lookup services they offer. |
+| [`@bsv/overlay-discovery-services`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/overlays/overlay-discovery-services) | 2.2.9 | Stable | The <Hint tip="Services Host Interconnect Protocol">SHIP</Hint> and <Hint tip="Services Lookup Availability Protocol">SLAP</Hint> services that let overlay nodes advertise the topics they host and the lookup services they offer. |
 | [`@bsv/gasp`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/overlays/gasp-core) | 1.3.10 | Stable | The Graph Aware Sync Protocol. It synchronizes transaction data between two parties. Each side fetches only what it does not have and validates what it receives. |
 
 </BlueTable>
@@ -103,12 +109,12 @@ To build transactions or connect your app to a wallet, pick from:
 | Package | Version | Status | What it does |
 | --- | --- | --- | --- |
 | [`create-bsv-app`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/create-bsv-app) | 1.2.0 | Stable | Generates a BSV app with a React, Express or full-stack starter, copies a complete example or adds wallet support to an existing project. See [Start a project from a template](/get-started/project-starter/). |
-| [`@bsv/fund-wallet`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/fund-wallet) | 1.5.5 | Stable | Funds a Metanet wallet with BSV, on the test or the main network, chosen with the `--chain` option. |
+| [`@bsv/fund-wallet`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/fund-wallet) | 1.5.5 | Stable | Funds a Metanet wallet with BSV, on testnet or Mainnet, chosen with the `--chain` option. |
 | [`@bsv/amountinator`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/amountinator) | 2.1.9 | Stable | Converts between satoshis, BSV and fiat currencies with live exchange rates, and formats amounts for a wallet interface. |
 | [`@bsv/teranode-listener`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/network/ts-p2p) | 1.1.9 | Stable | Subscribes to the peer-to-peer topics of Teranode, the next generation BSV node, over libp2p, with support for private networks. |
-| [`@bsv/air-gap`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/air-gap) | 0.1.3 | Experimental | Sends bytes between two devices through a sequence of QR codes, in one direction only. It implements BRC-141, an experimental protocol. |
-| [`@bsv/chirp`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/network/chirp) | 0.1.6 | Experimental | The reference implementation of BRC-167, which publishes large files in hashed chunks and downloads them progressively on top of <Hint tip="Universal Hash Resolution Protocol (BRC-26): file storage where a file is found by the hash of its content">UHRP</Hint>. |
-| [`@bsv/lch`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/content/lch) | 0.3.0 | Experimental | Implements BRC-170, the Licensed Content Header, for encrypted content that buyers pay to open. |
+| [`@bsv/air-gap`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/air-gap) | 0.1.3 | Experimental | Sends bytes between two devices through a sequence of QR codes, in one direction only. It implements <Hint tip="BSV Request for Comments 141, the optical air-gap wire protocol">BRC-141</Hint>, an experimental protocol. |
+| [`@bsv/chirp`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/network/chirp) | 0.1.6 | Experimental | The reference implementation of <Hint tip="BSV Request for Comments 167, the Chunked, Hashed, Interleaved Resolution Protocol">BRC-167</Hint>, which publishes large files in hashed chunks and downloads them progressively on top of <Hint tip="Universal Hash Resolution Protocol (BRC-26): file storage where a file is found by the hash of its content">UHRP</Hint>. |
+| [`@bsv/lch`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/content/lch) | 0.3.0 | Experimental | Implements <Hint tip="BSV Request for Comments 170, the Licensed Content Header protocol">BRC-170</Hint>, the Licensed Content Header, for encrypted content that buyers pay to open. |
 
 </BlueTable>
 
