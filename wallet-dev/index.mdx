@@ -71,12 +71,15 @@ The same vectors are how a port proves it matches the TypeScript reference. [go-
 Two ts-stack servers run only when the wallet needs them:
 
 - Wallet Infra serves the toolbox storage over JSON-RPC, backed by MySQL, with mutual authentication and records scoped to each user. Wallets reach it with `StorageClient`. Run it to host remote storage for many wallet clients.
-- The <Hint tip="Wallet Authentication Backend">WAB</Hint> verifies a user's phone number by SMS code and stores the key shares that let the user sign in and recover the wallet on a new device. Phone verification is the only method the WAB supports today, so run it when your wallet offers phone-based sign-in and recovery.
+- The <Hint tip="Wallet Authentication Backend">WAB</Hint> verifies a user's phone number with a one-time code and returns the user's presentation key. On a new device, the wallet combines that key with the user's password to unlock the root key, and the WAB never sees the password. It can also keep optional recovery shares and pay new users a one-time faucet. Phone verification is the only sign-in method it offers for real users today, so run it when your wallet offers phone sign-in and recovery.
+
+[Run a wallet backend](/wallet-dev/infrastructure/) runs both services on testnet and connects a wallet to each.
 
 ## Related articles
 
 To learn more about building a BRC-100 wallet, review these articles:
 
 - [BRC-100 Wallet Interface](/concepts/wallet-model/)
+- [Run a wallet backend](/wallet-dev/infrastructure/)
 - [Send a payment from a server](/get-started/quick-start-server/)
 - [BSV Desktop](/wallets/bsv-desktop/)
