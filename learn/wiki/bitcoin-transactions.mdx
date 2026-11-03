@@ -95,7 +95,7 @@ transaction ID 17f0247741662d2d9723cf0d4ae364a4b3eb9f183384f041164cbc1ad25ddfa8
 
 - `earlier` is a stand-in transaction with one output of 1,000 satoshis. The new transaction spends it, sends 900 satoshis and leaves 100 as the fee.
 - The transaction ID changes on every run because the key is random.
-- `sequence` is set explicitly because the SDK needs it to sign the input.
+- `sequence` is set to `0xffffffff` to show the field. The SDK uses that value when it is left out.
 
 ## Transaction ID and outpoint
 
