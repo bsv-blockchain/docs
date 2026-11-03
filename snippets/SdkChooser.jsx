@@ -28,7 +28,9 @@ console.log(key.toPublicKey().toAddress('testnet'))`,
     detail: 'go-sdk',
     title: 'Go SDK',
     text: '`go-sdk` builds keys, scripts, transactions and proofs, with a BRC-100 wallet interface and overlay services. Its docs and examples live in the Go repositories.',
-    install: 'go get github.com/bsv-blockchain/go-sdk\ngo mod tidy',
+    install: 'go mod init MODULE_NAME\ngo get github.com/bsv-blockchain/go-sdk\ngo mod tidy',
+    version: 'Tested with `go-sdk` v1.7.3. Replace `MODULE_NAME` with your module path, for example `example.com/hello`.',
+    output: 'A testnet address that starts with m or n.',
     code: `package main
 
 import (
@@ -166,8 +168,8 @@ export default function SdkChooser() {
                 </div>
                 <div>
                   <p className="sc-label">Output</p>
-                  <p className="sc-text">{renderText(current.output)}</p>
-                  <p className="sc-text">{renderText(current.version)}</p>
+                  {current.output ? <p className="sc-text">{renderText(current.output)}</p> : null}
+                  {current.version ? <p className="sc-text">{renderText(current.version)}</p> : null}
                 </div>
               </div>
             ) : null}
