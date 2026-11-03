@@ -12,8 +12,6 @@ Use `@bsv/simple` to add payments, tokens, data on chain and identity to a TypeS
 
 `@bsv/simple` fits an app whose tasks match its methods, such as sending a payment, creating a token or writing data on chain. Call `WalletClient` from `@bsv/sdk` directly when you need your own `createAction()` arguments, such as inputs or labels. The `pay()` method delivers a payment through a <Hint tip="A server that holds messages and payments for a recipient until the recipient collects them">message box</Hint> and returns an empty `txid` with `@bsv/message-box-client` 2.7.0. To get the transaction ID of a payment, call `WalletClient` or use `sendDirectPayment()`, which returns it. You can also mix both, because `getClient()` returns the BRC-100 wallet under the object.
 
-[How @bsv/simple is built](/sdk/simple/architecture/) shows what each method calls, and the [SDKs overview](/sdk/) shows where the package sits among the BSV packages.
-
 ## Two entry points
 
 The package has one entry point for each place your code runs. Both give a wallet object with the same methods:
@@ -50,6 +48,8 @@ The wallet object has these main methods:
 
 </BlueTable>
 
+The arguments and return values of each method are in [BrowserWallet class](/sdk/api/simple/browser-wallet/) and [ServerWallet class](/sdk/api/simple/server-wallet/).
+
 The package also exports classes that work without a wallet object: `DID` for `did:key` identifiers, `Certifier`, `CredentialSchema` and `CredentialIssuer` for certificates, and `Overlay` for overlay broadcast and lookup.
 
 ## Install the package
@@ -62,34 +62,11 @@ npm install @bsv/simple @bsv/sdk
 
 The package also installs `@bsv/wallet-toolbox`, `@bsv/wallet-toolbox-client`, `@bsv/message-box-client` and `@bsv/did` as its own dependencies.
 
-## Pages in this section
+## Next steps
 
-These pages sit under @bsv/simple in the sidebar. Read how the package is built before you choose, then connect a web app:
+Connect a web app first, then go deeper:
 
-<CardGroup cols={2}>
-  <Card title="How @bsv/simple is built" href="/sdk/simple/architecture/">
-    See the wallet underneath each entry point, the services each method calls and when to call `WalletClient` instead.
-  </Card>
-  <Card title="Connect to a browser wallet" href="/sdk/simple/browser-wallet/">
-    Connect `@bsv/simple` to the user's wallet in the browser.
-  </Card>
-</CardGroup>
-
-The class reference sits under SDK reference in the sidebar. Go there to look up the arguments and return values of a method:
-
-<CardGroup cols={2}>
-  <Card title="BrowserWallet class" href="/sdk/api/simple/browser-wallet/">
-    Every method of the wallet object that `createWallet()` returns.
-  </Card>
-  <Card title="ServerWallet class" href="/sdk/api/simple/server-wallet/">
-    Every method of the wallet object that `ServerWallet.create()` returns.
-  </Card>
-</CardGroup>
-
-## Related articles
-
-To learn more about the BSV TypeScript packages, review these articles:
-
-- [How the BSV stack fits together](/concepts/architecture/)
-- [Use the TypeScript SDK](/sdk/typescript/)
-- [Connect your AI tool with MCP](/build-with-ai/simple-mcp/)
+- [Connect to a browser wallet](/sdk/simple/browser-wallet/): connect `@bsv/simple` to the user's wallet, the first page of this section.
+- [How @bsv/simple is built](/sdk/simple/architecture/): the wallet and services under each method, before you build something bigger.
+- [Store data and files](/guides/data-storage/): a guide that writes data on chain with `createWallet()`.
+- [Move your app to Mainnet](/guides/go-to-mainnet/): move a `ServerWallet` from testnet to Mainnet.
