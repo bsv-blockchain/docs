@@ -5,7 +5,7 @@ description: "How a Paymail extension is described in a BRFC document, how its B
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Look up how a Paymail extension is specified and identified. Each extension is described in a <Hint tip="Bitcoin SV Request for Comments, a specification document identified without a central numbering authority">BRFC</Hint> document, and the BRFC ID of that document is the key a Paymail host uses to advertise the extension. You need the ID to read the capabilities of a host or to publish an extension of your own.
+Look up how a Paymail extension is specified and identified. Each extension is described in a <Hint tip="Bitcoin SV Request for Comments, a specification document identified without a central numbering authority">BRFC</Hint> document, and the BRFC ID of that document is the key a Paymail host uses to advertise the extension. To read a host's capabilities, match the published IDs listed below. Compute an ID only when you publish a BRFC of your own.
 
 ## What a BRFC document is
 
@@ -26,6 +26,8 @@ The specification advises against semantic versioning, because a host either sup
 
 ## How a BRFC ID is computed
 
+To find the ID of an existing BRFC, use the ID its document publishes instead of computing it again. Some IDs in the 2019 documents were computed from fewer fields than their metadata lists. For example, `0c4339ef99c2` (Public Key Infrastructure) is the hash of the title alone. The BRFC ID Assignment test case for PayTo, `74524c4d6274`, is also not the key hosts use, which is `7bd25e5a1fc6`.
+
 The BRFC ID is a hash of the metadata, so it changes when the title, the author or the version changes. The [BRFC ID Assignment](https://github.com/bitcoin-sv-specs/brfc-paymail/blob/2e03c8bc49b489d13eda7a3580795b1809cd2f08/src/01-02-brfc-id-assignment.md) section of the 2019 specification defines these steps:
 
 1. Take the `title`, `author` and `version` values, and leave out any that are absent.
@@ -33,7 +35,7 @@ The BRFC ID is a hash of the metadata, so it changes when the title, the author 
 3. Concatenate the values and encode the string as UTF-8 bytes.
 4. Hash the bytes with double SHA-256.
 5. Reverse the bytes of the hash, as Bitcoin does to display a hash, and hex-encode them.
-6. Keep the first 12 hexadecimal characters, which are the last six bytes of the raw hash.
+6. Keep the first 12 hexadecimal characters, which are the last six bytes of the raw hash in reverse order.
 
 This Node.js script runs the same steps with the built-in `crypto` module, on the metadata of the BRFC Specifications document:
 
@@ -57,7 +59,7 @@ Run it with `node brfc-id.mjs`. It prints the ID that the specification gives fo
 57dd1f54fc67
 ```
 
-To find the ID of an existing BRFC, use the ID its document publishes instead of computing it again. Some IDs in the 2019 Paymail documents were computed from fewer fields than the metadata those documents list. For example, the Public Key Infrastructure ID `0c4339ef99c2` comes from the title alone, so its title, author and version give a different value.
+Pass each value as a string. A YAML parser reads `version: 1` as a number.
 
 ## Where the BRFC ID appears
 
@@ -74,9 +76,9 @@ A Paymail host lists the extensions it supports in the `capabilities` object of 
 }
 ```
 
-A client replaces `{alias}` and `{domain.tld}` with the parts of the Paymail handle before it sends a request. The full document, and how a client finds it, are in [Discover Paymail capabilities](/standards/paymail/capability-discovery/).
+A client replaces `{alias}` and `{domain.tld}` with the parts of the Paymail handle before it sends a request. The full document, and how a client finds it, are in [Discover Paymail capabilities](/standards/paymail/capability-discovery/) and in the [Capability Discovery](https://tsc.bsvblockchain.org/standards/paymail/#PaymailStandardDocument-CapabilityDiscovery) section of the standard.
 
-The 2019 specification names two capabilities with words instead of IDs, `pki` and `paymentDestination`, because every Paymail service had to implement them. The 2022 standard treats the sections of the 2019 specification as extensions and lists their BRFC IDs:
+The 2019 specification, <Hint tip="BSV Alias, the working title of the 2019 Paymail specification">bsvalias</Hint>, names two capabilities with words instead of IDs, `pki` and `paymentDestination`, because they were the minimum set a service needed to qualify as a Paymail service. The 2022 standard treats the sections of the 2019 specification as extensions and lists their BRFC IDs:
 
 <BlueTable>
 
@@ -91,13 +93,15 @@ The 2019 specification names two capabilities with words instead of IDs, `pki` a
 
 </BlueTable>
 
+Hosts built on the 2019 specification, and the `@bsv/paymail` package, still use the key `pki` for public key infrastructure, so a client reads both forms. To know which Paymail capabilities a new app uses, see [Paymail](/standards/paymail/).
+
 ## Status of the process
 
-The BRFC process and the ID algorithm come from the 2019 Paymail specification, published as BSV Alias (`bsvalias`). That specification includes a [summary of the process](https://github.com/bitcoin-sv-specs/brfc-paymail/blob/2e03c8bc49b489d13eda7a3580795b1809cd2f08/src/01-brfc-specifications.md) and states that the summary is not the authoritative definition of the BRFC process.
+The BRFC process and the ID algorithm come from the 2019 Paymail specification, published as BSV Alias (`bsvalias`). That specification includes a [summary of the process](https://github.com/bitcoin-sv-specs/brfc-paymail/blob/2e03c8bc49b489d13eda7a3580795b1809cd2f08/src/01-brfc-specifications.md).
 
-The current standard is the [Paymail standard](https://tsc.bsvblockchain.org/standards/paymail/) of the Technical Standards Committee, TS 2021.010-30, version 0.1, published on 12 July 2022 with the status Published. It withdraws the 2019 specification as a whole and [keeps BRFC IDs](https://tsc.bsvblockchain.org/wp-content/uploads/2022/04/Paymail-_BRFC-IDs-as-element-names.pdf) as the keys of the `capabilities` object. It lists BRFC numbering as a dependency marked "to be standardised", and its own BRFC ID as "TBC". To know which Paymail capabilities a new app uses, see [Paymail](/standards/paymail/).
+The current standard is the [Paymail standard](https://tsc.bsvblockchain.org/standards/paymail/) of the Technical Standards Committee, TS 2021.010-30, version 0.1, published on 12 July 2022 with the status Published. It withdraws the 2019 specification as a whole and [uses BRFC IDs](https://tsc.bsvblockchain.org/wp-content/uploads/2022/04/Paymail-_BRFC-IDs-as-element-names.pdf) as the keys of the `capabilities` object for every capability, including the two the 2019 specification named with words. It lists BRFC numbering as a dependency marked "to be standardised", and its own BRFC ID as "TBC". The standard asks extension authors to calculate their BRFC ID and does not define the algorithm, so the steps on this page come from the original 2019 specification.
 
-This page was checked against the Paymail standard and against commit `2e03c8b` of the 2019 specification on 3 November 2026.
+This page was written against TS 2021.010-30, commit `2e03c8b` of the 2019 specification and `@bsv/paymail` 2.4.12.
 
 ## Related articles
 
@@ -105,4 +109,3 @@ To learn more about Paymail in BSV, review these articles:
 
 - [Look up a user's identity key with Paymail](/standards/paymail/)
 - [Discover Paymail capabilities](/standards/paymail/capability-discovery/)
-- [Resolve a Paymail address](/standards/paymail/basic-address-resolution/)
