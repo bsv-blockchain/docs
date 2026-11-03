@@ -10,10 +10,10 @@ Use `@bsv/overlay-express` to run an <Hint tip="A service that indexes an app's 
 
 ## Install
 
-The latest version on npm is 2.8.0, with the status Stable. It needs Node.js 22 or newer and `@bsv/sdk`. This page was written against `@bsv/sdk` 4.0.1. For a local host, add the topics package, which is Experimental, and the storage packages. In a project folder with `"type": "module"` in its `package.json`, run:
+The latest version on npm is 2.8.0, with the status Stable. It needs Node.js 22 or newer and `@bsv/sdk`. This page was written against `@bsv/overlay-express` 2.8.0, `@bsv/overlay-topics` 2.0.3 and `@bsv/sdk` 4.0.1. For a local host, add the topics package, which is Experimental, and the storage packages. In a project folder with `"type": "module"` in its `package.json`, run:
 
 ```bash
-npm install @bsv/overlay-express @bsv/overlay-topics @bsv/sdk mongodb-memory-server better-sqlite3 knex
+npm install @bsv/overlay-express@2.8.0 @bsv/overlay-topics@2.0.3 @bsv/sdk@4.0.1 mongodb-memory-server better-sqlite3 knex
 ```
 
 ## What the package includes
@@ -28,7 +28,7 @@ The package connects the overlay engine to storage, HTTP routes and the network:
 | Topic managers and lookup services | Decide which transaction outputs the host admits and answer queries about them. Prebuilt ones, such as `tm_helloworld`, come from `@bsv/overlay-topics` |
 | Storage | A SQL database through Knex for the host's own data, and MongoDB for the lookup services |
 | HTTP routes | `/submit` and `/lookup` for apps, health routes, a web UI, and `/admin` routes for the operator |
-| Network services | <Hint tip="Graph Aware Sync Protocol, how overlay hosts copy each other's data">GASP</Hint> synchronization with other hosts, and <Hint tip="Services that broadcast transactions and return proofs that they were mined">Arc or BSV Broadcaster</Hint> for broadcasting and proofs |
+| Network services | <Hint tip="Graph Aware Sync Protocol, how overlay hosts copy each other's data">GASP</Hint> synchronization with other hosts, and <Hint tip="Services that broadcast transactions and return proofs that they were mined">ARC or BSV Broadcaster</Hint> for broadcasting and proofs |
 
 </BlueTable>
 
@@ -99,7 +99,7 @@ The example runs a local host on testnet with the `tm_helloworld` topic and the 
     my-overlay is ready and listening on local port 8080
     ```
 
-    The log also has the line `Advertiser not initialized for FQDN localhost:8080 - SHIP and SLAP will be disabled`. This is expected on `localhost`, where the host does not announce itself to other hosts. Next, the log shows `Failed to GASP sync` and `No competent mainnet hosts found by the SLAP trackers`, because a local host has no peers to synchronize with. Both messages are harmless, and the host makes no outside connection while idle on testnet.
+    The log also has a line that starts with `Advertiser not initialized for FQDN localhost:8080`. This is expected on `localhost`, where the host does not announce itself to other hosts. Next, the log shows `Failed to GASP sync` and `No competent mainnet hosts found by the SLAP trackers`, because a local host has no peers to synchronize with. Both messages are harmless, and the host makes no outside connection while idle on testnet.
 
   </Step>
   <Step title="Check the host">
@@ -125,7 +125,7 @@ These settings control the network, the port, the admin access and the synchroni
 | `configurePort` | `3000` | The port the server listens on |
 | Admin token | A random UUID | The fourth argument of the constructor, between 32 and 16,384 bytes. Read the generated one with `server.getAdminToken()` |
 | `configureEnableGASPSync` | `true` | Copies data from other overlay hosts when the host starts |
-| `configureArcApiKey`, `configureArcade` | Not set | Broadcasting and proofs through Arc or BSV Broadcaster, which `configureArcade` configures. Without a provider the host disables the ingest route for their callbacks |
+| `configureArcApiKey`, `configureArcade` | Not set | Broadcasting and proofs through ARC or BSV Broadcaster, which `configureArcade` configures. Without a provider the host disables the ingest route for their callbacks |
 
 </BlueTable>
 
@@ -140,7 +140,7 @@ Call the methods in this order:
 
 Each step fails with its own message when an earlier one is missing, for example `You must configure your SQL database with the .configureKnex() method first!`. The host needs both databases, even when none of your own services uses MongoDB.
 
-The `/admin` routes need the admin token. Send it as a bearer token, `Authorization: Bearer YOUR_ADMIN_TOKEN`, and replace `YOUR_ADMIN_TOKEN` with your token. The host answers like this:
+Every `/admin` route needs the admin token, except `/admin/config`, which answers without one and returns the `adminIdentityKey` and the `nodeName` of the host. Send the token as a bearer token, `Authorization: Bearer YOUR_ADMIN_TOKEN`, and replace `YOUR_ADMIN_TOKEN` with your token. The host answers like this:
 
 <BlueTable>
 
