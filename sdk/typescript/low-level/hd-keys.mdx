@@ -198,7 +198,7 @@ The `Mnemonic` class reads a BIP39 phrase and turns it into the seed of a master
     Replace `YOUR_RECOVERY_PHRASE` with the words of the phrase. To create a new 12-word test phrase instead, this command writes it to `.env` without printing it:
 
     ```bash
-    node -e "import('@bsv/sdk').then(({ Mnemonic }) => require('node:fs').appendFileSync('.env', 'MNEMONIC=' + Mnemonic.fromRandom().toString() + '\n'))"
+    node -e "import('@bsv/sdk').then(({ Mnemonic }) => require('node:fs').appendFileSync('.env', '\nMNEMONIC=' + Mnemonic.fromRandom().toString() + '\n'))"
     ```
 
     For 24 words, pass `256` to `Mnemonic.fromRandom()`.
@@ -215,7 +215,7 @@ The `Mnemonic` class reads a BIP39 phrase and turns it into the seed of a master
     console.log('Master xpub:', master.toPublic().toString())
     ```
 
-    - If the phrase has a passphrase, add it to `.env` as `BIP39_PASSPHRASE=`. Without that line, `toSeed()` uses no passphrase. A different passphrase gives a different master key.
+    - If the phrase has a passphrase, add it to `.env` as `BIP39_PASSPHRASE='YOUR_PASSPHRASE'`, with the single quotes. Without them, Node cuts the value at a `#` and trims spaces at the ends, and the master key changes. Without that line, `toSeed()` uses no passphrase. A different passphrase gives a different master key.
     - The checksum in `Mnemonic.fromString()` catches most typing mistakes, but not every wrong word. Compare the master xpub with the one the original wallet shows before you rely on the key.
   </Step>
   <Step title="Run the import">
@@ -249,6 +249,9 @@ The same phrase and passphrase always give the same master key, so the derivatio
   </Accordion>
   <Accordion title="Extended key that starts with tprv or tpub is rejected">
     The error `Invalid key` from `HD.fromString()` appears with testnet extended keys, because `HD` reads and writes only `xprv` and `xpub` strings. Export the key in its `xprv` or `xpub` form from the tool that created it. The key does not depend on the network, and `toAddress('testnet')` returns its testnet address.
+  </Accordion>
+  <Accordion title="Master xpub differs from the one the original wallet shows">
+    The phrase is right but the passphrase is not the one the wallet used. Check that `BIP39_PASSPHRASE` is in single quotes in `.env`. Without quotes, Node cuts the value at a `#` and trims spaces at the ends, so `toSeed()` gets a different passphrase and no error appears.
   </Accordion>
   <Accordion title="Recovery phrase is rejected">
     The error `Mnemonic does not pass the check - was the mnemonic typed incorrectly? Are there extra spaces?` means a word is wrong, missing or out of order, or the line has extra spaces. Check the phrase in `.env` word by word.
