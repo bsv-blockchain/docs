@@ -6,7 +6,7 @@ sidebarTitle: "@bsv/message-box-client"
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Use `@bsv/message-box-client` to send and receive messages and payments between identities, so two users can exchange them without being online at the same time. A <Hint tip="A server that stores each message until its recipient reads it">MessageBox host</Hint> holds each message. For the full walkthrough, follow [Send messages between users](/guides/messaging/).
+Use `@bsv/message-box-client` to send and receive messages and payments between identities, so two users can exchange them without being online at the same time. A <Hint tip="A server that stores each message until its recipient reads it">MessageBox host</Hint> holds each message. At the end of this page you have run a script that sends, reads and acknowledges a message and another that sends and accepts a 100-satoshi payment, both on testnet with [BSV Desktop](/wallets/bsv-desktop/). For the full walkthrough, follow [Send messages between users](/guides/messaging/).
 
 ## Install
 
@@ -25,13 +25,13 @@ The package covers messages, payments and the permissions that control who can s
 
 | Piece | What it does |
 | --- | --- |
-| `MessageBoxClient` | Sends a message to an <Hint tip="The public key that identifies a user. Other users send to it">identity key</Hint>, lists the messages in a box and acknowledges them. Also sends one message to up to 100 recipients with `sendMessageToRecipients` and receives messages as they arrive with `listenForLiveMessages` and `sendLiveMessage` |
+| `MessageBoxClient` | Sends a message to an <Hint tip="The public key that identifies a user. Other users send to it">identity key</Hint>, lists the messages in a box and acknowledges them. Also sends one message to up to 100 recipients with `sendMessageToRecipients`, which stores the body as plain text, and receives messages as they arrive with `listenForLiveMessages` and `sendLiveMessage` |
 | `PeerPayClient` | Sends a payment between users as a message, and accepts or rejects the payments it receives |
 | Box permissions, `setMessageBoxPermission` | Lets a recipient block a sender with `recipientFee: -1`, or ask a sender to pay a fee for each message |
 
 </BlueTable>
 
-A message goes to an identity key and waits in a box that belongs to that identity. Only the recipient reads and acknowledges it. A third identity that asks for the same box name sees nothing. The client encrypts the body with the wallet, so the host stores only ciphertext.
+A message goes to an identity key and waits in a box that belongs to that identity. Only the recipient reads and acknowledges it. A third identity that asks for the same box name sees nothing. The client encrypts the body of a message with the wallet, so the host stores only ciphertext. A batch sent with `sendMessageToRecipients` is the exception, because it cannot be encrypted.
 
 ## Example on testnet
 
@@ -44,7 +44,7 @@ The default host is a shared service. Do not send personal or sensitive data thr
 <Steps>
   <Step title="Create the message script">
 
-    Create `message-box.ts`. It sends a message, reads it and acknowledges it:
+    Create `message-box.ts`. It sends a message, reads it and acknowledges only that message, so any other message in the box stays:
 
     ```ts message-box.ts
     import { MessageBoxClient } from '@bsv/message-box-client'
@@ -63,9 +63,10 @@ The default host is a shared service. Do not send personal or sensitive data thr
     console.log(sent.status, sent.messageId)
 
     const messages = await client.listMessages({ messageBox: 'inbox' })
-    console.log(messages.map(m => m.body))
+    const mine = messages.filter(m => m.messageId === sent.messageId)
+    console.log(mine.map(m => m.body))
 
-    await client.acknowledgeMessage({ messageIds: messages.map(m => m.messageId) })
+    await client.acknowledgeMessage({ messageIds: [sent.messageId] })
     ```
 
   </Step>
@@ -88,12 +89,12 @@ The default host is a shared service. Do not send personal or sensitive data thr
 
     - The second argument of `WalletClient` is the originator, the name BSV Desktop shows for your app. Without it, a Node script cannot reach the wallet. The client then fails with `Identity key retrieval failed`.
     - `listMessages` returns each message with `messageId`, `body`, `sender`, `createdAt` and `updatedAt`. The field names use camel case.
-    - `acknowledgeMessage` deletes the messages from the box. Acknowledging the same IDs again fails with `Failed to acknowledge messages on all hosts:`.
+    - `acknowledgeMessage` deletes the messages you pass from the box, so acknowledge only messages your app has handled. Acknowledging the same IDs again fails with `Failed to acknowledge messages on all hosts:`.
 
   </Step>
   <Step title="Create the payment script">
 
-    `PeerPayClient` sends a payment as a message. Create `peerpay.ts`. It pays 100 satoshis and accepts the payment:
+    `PeerPayClient` sends a payment as a message. Create `peerpay.ts`. It pays 100 satoshis and accepts that payment, and no other payment waiting for you:
 
     ```ts peerpay.ts
     import { PeerPayClient } from '@bsv/message-box-client'
@@ -110,9 +111,11 @@ The default host is a shared service. Do not send personal or sensitive data thr
 
     await peerPay.sendPayment({ recipient: me, amount: 100 })
     const incoming = await peerPay.listIncomingPayments()
-    console.log(incoming.length, incoming[0].token.amount)
-    const accepted = await peerPay.acceptPayment(incoming[0])
-    console.log(accepted.paymentResult?.accepted)
+    const payment = incoming.find(p => p.sender === me && p.token.amount === 100)
+    if (!payment) throw new Error('The payment did not arrive')
+
+    const accepted = await peerPay.acceptPayment(payment)
+    console.log(payment.token.amount, accepted.paymentResult?.accepted)
     ```
 
   </Step>
@@ -124,11 +127,10 @@ The default host is a shared service. Do not send personal or sensitive data thr
     npx tsx peerpay.ts
     ```
 
-    `sendPayment` opens a spending request in BSV Desktop for the amount plus the network fee. A blockchain transaction cannot be undone once you approve it. The script then prints the number of incoming payments, the amount and the result of the acceptance:
+    `sendPayment` opens a spending request in BSV Desktop for the amount plus the network fee. A blockchain transaction cannot be undone once you approve it. The script then prints the amount and the result of the acceptance:
 
     ```text
-    1 100
-    true
+    100 true
     ```
 
     A recipient must be a full wallet, such as BSV Desktop or a `@bsv/wallet-toolbox` wallet. If the recipient is built on `ProtoWallet`, it cannot accept the payment and the message arrives with `paymentOutcome: 'failed'`.
@@ -144,8 +146,9 @@ The options go in the `MessageBoxClient` constructor or in the call that sends:
 
 | Option | Default | Effect |
 | --- | --- | --- |
-| `host` | `https://message-box-us-1.bsvb.tech` | The MessageBox host that stores the messages. It is the same for `'mainnet'` and `'testnet'`. No testnet overlay tracker works, so the client cannot discover a recipient's host there and you must set `host` explicitly |
+| `host` | `https://message-box-us-1.bsvb.tech` | The MessageBox host that stores the messages. It is the same for `'mainnet'` and `'testnet'`. The client uses it unless an overlay lookup finds another host for the recipient. No testnet overlay tracker works, so this is the host used on testnet |
 | `networkPreset` | `'mainnet'` | The network the client uses for overlay lookups. Use `'testnet'` for the examples on this page |
+| `socketOptions` | Default transport | The live methods work with the default transport in 2.7.0. Version 2.6.0 needed `{ managerOptions: { transports: ['websocket'] } }` |
 | `skipEncryption` | `false` | Required by `sendMessageToRecipients`. A batch cannot be encrypted, so the call fails unless you set `skipEncryption: true`, and the host then stores the body as plain text |
 | `checkPermissions` | `false` | Asks the host for the price of a message before sending. Required for a box that charges a fee |
 | `maximumPayment` | None | The most the client pays for one message. The send fails before any payment when the price is higher |
