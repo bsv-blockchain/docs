@@ -10,10 +10,10 @@ Use `@bsv/message-box-client` to send and receive messages and payments between 
 
 ## Install
 
-The latest version on npm is 2.7.0, with the status Stable. It needs Node.js 22 or newer and `@bsv/sdk`. This page was written against `@bsv/sdk` 4.0.1. The examples use top-level `await` and run with `tsx`, so use an ES module project (`npm pkg set type=module`). In your project folder, run:
+The latest version on npm is 2.7.0, with the status Stable. It needs Node.js 22 or newer and `@bsv/sdk`. This page was written against `@bsv/message-box-client` 2.7.0 and `@bsv/sdk` 4.0.1. The examples use top-level `await` and run with `tsx`, so use an ES module project (`npm pkg set type=module`). In your project folder, run:
 
 ```bash
-npm install @bsv/message-box-client @bsv/sdk
+npm install @bsv/message-box-client@2.7.0 @bsv/sdk@4.0.1
 npm install -D tsx
 ```
 
@@ -38,7 +38,7 @@ A message goes to an identity key and waits in a box that belongs to that identi
 The example runs on testnet with [BSV Desktop](/wallets/bsv-desktop/) open. It sends a message and a payment to your own identity key. A message costs nothing, and a payment spends testnet satoshis.
 
 <Callout type="warning">
-The default host is a shared service. Do not send personal or sensitive data through it.
+BSV Desktop must be on testnet with some testnet coins. A new BSV Desktop wallet opens on Mainnet, where coins have real value, so switch it to testnet and fund it from a faucet first, as the [Quick Start](/get-started/quick-start-browser/) shows. The default host is a shared service, so do not send personal or sensitive data through it.
 </Callout>
 
 <Steps>
