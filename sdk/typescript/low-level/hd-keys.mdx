@@ -5,11 +5,16 @@ description: "Derive child keys and testnet addresses from a BIP32 extended key 
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Derive child keys and testnet addresses from a <Hint tip="Bitcoin Improvement Proposal 32: hierarchical deterministic keys, a tree of keys derived from one master key">BIP32</Hint> master key with the `HD` class of `@bsv/sdk`, then derive the same addresses from an xpub that holds no private key. <Hint tip="The standard interface between apps and wallets">BRC-100</Hint> wallets derive their keys with <Hint tip="BSV Key Derivation Scheme">BRC-42</Hint>, so use BIP32 when your code receives keys from another tool, such as an extended key exported from another wallet, a <Hint tip="Bitcoin Improvement Proposal 39: a list of words that encodes the seed of a master key">BIP39</Hint> recovery phrase, or a service that asks for an xpub. The scripts run offline in a standalone Node project and need no wallet, network or funds.
+Derive child keys and testnet addresses from a <Hint tip="Bitcoin Improvement Proposal 32: hierarchical deterministic keys, a tree of keys derived from one master key">BIP32</Hint> master key with the `HD` class of `@bsv/sdk`, then derive the same addresses from an <Hint tip="Extended public key, a string that starts with xpub">xpub</Hint> that holds no private key. <Hint tip="The standard interface between apps and wallets">BRC-100</Hint> wallets derive their keys with <Hint tip="BSV Key Derivation Scheme">BRC-42</Hint>, so use BIP32 when your code receives keys from another tool, such as an extended key exported from another wallet, a <Hint tip="Bitcoin Improvement Proposal 39: a list of words that encodes the seed of a master key">BIP39</Hint> recovery phrase, or a service that asks for an xpub. The SDK marks `HD` as deprecated in favor of BRC-42, and keeps it for compatibility with BIP32 keys. The scripts run offline in a standalone Node project and need no wallet, network or funds.
 
 ## Before you begin
 
-The scripts need [Node.js](https://nodejs.org/) 22 or newer, which reads a `.env` file with the `--env-file` flag. In an empty folder, run these commands to create an ES module project, install the SDK and keep `.env` out of git:
+You need:
+
+- [Node.js](https://nodejs.org/) 22 or newer, which reads a `.env` file with the `--env-file` flag.
+- An empty folder for the project.
+
+In that folder, run these commands to create an ES module project, install the SDK and keep `.env` out of git:
 
 ```bash
 npm init -y
@@ -22,16 +27,16 @@ This page was written against `@bsv/sdk` 4.0.1.
 
 ## How it works
 
-A BIP32 key is an extended key, a key plus a chain code. An <Hint tip="Extended private key, a string that starts with xprv">xprv</Hint> derives child private keys, and the matching <Hint tip="Extended public key, a string that starts with xpub">xpub</Hint> derives child public keys. A path such as `m/0'/0/1` names one child. In a path, `m` is the key you derive from, and each number below it is a child index from 0 to 2,147,483,647. An apostrophe marks a hardened index, which only an xprv can derive. A path made only of plain indexes can be derived from the xpub too, so a server can watch addresses without holding a private key.
+A BIP32 key is an extended key, a key plus a chain code. An <Hint tip="Extended private key, a string that starts with xprv">xprv</Hint> derives child private keys, and the matching xpub derives child public keys. A path such as `m/0'/0/1` names one child. In a path, `m` is the key you derive from, and each number below it is a child index from 0 to 2,147,483,647. An apostrophe marks a hardened index, which only an xprv can derive. A path made only of plain indexes can be derived from the xpub too, so a server can watch addresses without holding a private key.
 
-Both schemes are in `@bsv/sdk`, and they differ in what a child depends on:
+Both schemes are in `@bsv/sdk`, and they differ in what a child depends on. The BRC-42 column follows [BRC-42](https://bsv.brc.dev/key-derivation/0042):
 
 <BlueTable>
 
 | Aspect | BIP32 (`HD`) | BRC-42 (`KeyDeriver`, `ProtoWallet`) |
 |---|---|---|
-| What names a child key | A path of numeric indexes, such as `m/0'/0/1` | A protocol ID, a key ID and a counterparty |
-| Who can derive public children | Anyone who has the xpub, for plain indexes | The two parties, each from their own key |
+| What names a child key | A path of numeric indexes, such as `m/0'/0/1` | A protocol ID, a key ID and a counterparty, as set by [BRC-43](https://bsv.brc.dev/key-derivation/0043) |
+| Who can derive public children | Anyone who has the xpub, for plain indexes | The two parties, each from their own private key and the other party's public key |
 | Key universes | One per master public key | One for each pair of parties |
 
 </BlueTable>
@@ -60,9 +65,7 @@ The first step is to generate a random master key and store its xprv in `.env`, 
     console.log('Master xpub:', master.toPublic().toString())
     ```
 
-    - The `HD.fromRandom()` call creates a master key from random bytes.
-    - Its `toString()` encodes the key as an xprv string. The script writes it to `.env` and does not print it.
-    - The `toPublic()` method returns the same key without the private part, and its `toString()` is the xpub.
+    The script writes the xprv to `.env` and prints only the xpub, which `toPublic()` returns without the private part.
   </Step>
   <Step title="Run the script">
     Run it from the project folder:
@@ -77,7 +80,7 @@ The first step is to generate a random master key and store its xprv in `.env`, 
     Master xpub: xpub661M...dsvZdn
     ```
 
-    The `.env` file now has an `XPRV=` line. Running the script again adds a second line with a new key, so run it once.
+    The `.env` file now has an `XPRV=` line. Run the script once: a second run adds another `XPRV=` line, and Node reads the last one, so the next steps would use a different key.
   </Step>
 </Steps>
 
@@ -139,7 +142,7 @@ The account xpub derives the same addresses as the xprv for the plain indexes un
     ACCOUNT_XPUB=ACCOUNT_XPUB_FROM_DERIVE
     ```
 
-    Replace `ACCOUNT_XPUB_FROM_DERIVE` with the full `xpub` string. An xpub cannot sign, but it reveals every address under it, so treat it as private data.
+    Replace `ACCOUNT_XPUB_FROM_DERIVE` with the full `xpub` string. An xpub cannot sign, but it reveals every address under it, so treat it as private data. Never give a child private key to anyone who has this xpub: together they reveal the account private key.
   </Step>
   <Step title="Write the watch-only script">
     Save `watch.mjs` in the project folder:
@@ -192,7 +195,13 @@ The `Mnemonic` class reads a BIP39 phrase and turns it into the seed of a master
     MNEMONIC=YOUR_RECOVERY_PHRASE
     ```
 
-    Replace `YOUR_RECOVERY_PHRASE` with the words of the phrase. For a new test phrase, `Mnemonic.fromRandom().toString()` returns 12 words, and `Mnemonic.fromRandom(256).toString()` returns 24.
+    Replace `YOUR_RECOVERY_PHRASE` with the words of the phrase. To create a new 12-word test phrase instead, this command writes it to `.env` without printing it:
+
+    ```bash
+    node -e "import('@bsv/sdk').then(({ Mnemonic }) => require('node:fs').appendFileSync('.env', 'MNEMONIC=' + Mnemonic.fromRandom().toString() + '\n'))"
+    ```
+
+    For 24 words, pass `256` to `Mnemonic.fromRandom()`.
   </Step>
   <Step title="Write the import script">
     Create `from-phrase.mjs` in the project folder:
@@ -200,15 +209,14 @@ The `Mnemonic` class reads a BIP39 phrase and turns it into the seed of a master
     ```javascript from-phrase.mjs
     import { HD, Mnemonic } from '@bsv/sdk'
 
-    const seed = Mnemonic.fromString(process.env.MNEMONIC).toSeed()
+    const seed = Mnemonic.fromString(process.env.MNEMONIC).toSeed(process.env.BIP39_PASSPHRASE)
     const master = HD.fromSeed(seed)
 
     console.log('Master xpub:', master.toPublic().toString())
     ```
 
-    - The `Mnemonic.fromString()` call checks the words and the checksum of the phrase.
-    - Its `toSeed()` returns the 64-byte BIP39 seed. For a phrase protected with a passphrase, call `toSeed('PASSPHRASE')` with that passphrase. A different passphrase gives a different master key.
-    - The `HD.fromSeed()` call builds the master key from the seed, ready for `derive()`.
+    - If the phrase has a passphrase, add it to `.env` as `BIP39_PASSPHRASE=`. Without that line, `toSeed()` uses no passphrase. A different passphrase gives a different master key.
+    - The checksum in `Mnemonic.fromString()` catches most typing mistakes, but not every wrong word. Compare the master xpub with the one the original wallet shows before you rely on the key.
   </Step>
   <Step title="Run the import">
     Pass `.env` to Node again:
@@ -230,6 +238,9 @@ The same phrase and passphrase always give the same master key, so the derivatio
 ## Troubleshooting
 
 <AccordionGroup>
+  <Accordion title="Key is missing when the script starts">
+    The error `BIP32 extended key must be a bounded string` means the script did not get `XPRV` or `ACCOUNT_XPUB`. Run it with `node --env-file=.env`, and check that `.env` has that line.
+  </Accordion>
   <Accordion title="Hardened path fails from an xpub">
     The error `Cannot do private key derivation without private key` means the path has a hardened index, marked with an apostrophe, and the key is an xpub. Derive that level from the xprv, or export the xpub at the last hardened level and derive only plain indexes from it.
   </Accordion>
@@ -237,10 +248,10 @@ The same phrase and passphrase always give the same master key, so the derivatio
     The error `invalid path` means `derive()` could not read the path. It accepts only paths that start with `m` and mark hardened indexes with an apostrophe, so write `m/0'/1` instead of `m/0h/1` or `0'/1`.
   </Accordion>
   <Accordion title="Extended key that starts with tprv or tpub is rejected">
-    The error `Invalid key` from `HD.fromString()` appears with testnet extended keys, because `HD` reads and writes only `xprv` and `xpub` strings. Load the key in its `xprv` or `xpub` form. The key does not depend on the network, and `toAddress('testnet')` returns its testnet address.
+    The error `Invalid key` from `HD.fromString()` appears with testnet extended keys, because `HD` reads and writes only `xprv` and `xpub` strings. Export the key in its `xprv` or `xpub` form from the tool that created it. The key does not depend on the network, and `toAddress('testnet')` returns its testnet address.
   </Accordion>
   <Accordion title="Recovery phrase is rejected">
-    The error `Mnemonic does not pass the check` means a word is wrong, missing or out of order, or the line has extra spaces. Check the phrase in `.env` word by word.
+    The error `Mnemonic does not pass the check - was the mnemonic typed incorrectly? Are there extra spaces?` means a word is wrong, missing or out of order, or the line has extra spaces. Check the phrase in `.env` word by word.
   </Accordion>
 </AccordionGroup>
 
