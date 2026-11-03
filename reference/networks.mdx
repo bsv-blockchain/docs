@@ -11,46 +11,40 @@ This page was written against `@bsv/sdk` 4.0.1 and `@bsv/wallet-toolbox` 2.15.1.
 
 ## Endpoints by network
 
-Each row is one value of `chain` in `@bsv/wallet-toolbox`. The broadcast column lists the public <Hint tip="The BSV Association's transaction broadcaster, which takes a signed transaction over HTTP and follows it until it is mined">BSV Broadcaster</Hint> endpoint of the network:
+Each row is one public network. The BSV Broadcaster and wallet storage of each network are in the sections below:
 
 <BlueTable>
 
-| Network | Explorer | Faucet | BSV Broadcaster | Wallet storage | Address starts with |
-| --- | --- | --- | --- | --- | --- |
-| Mainnet, `main` | [whatsonchain.com](https://whatsonchain.com/) | None | `https://arcade-us-1.bsvblockchain.tech` | `https://storage.babbage.systems` | `1` |
-| testnet, `test` | [test.whatsonchain.com](https://test.whatsonchain.com/) | [bsvfaucet.com](https://bsvfaucet.com/) | `https://arcade-v2-testnet-us-1.bsvblockchain.tech` | None public, see [Wallet storage](#wallet-storage) | `m` or `n` |
-| teratestnet, `ttn` | Not published | [faucet-ttn.bsvblockchain.tech](https://faucet-ttn.bsvblockchain.tech/) | `https://arcade-v2-ttn-us-1.bsvblockchain.tech` | `https://staging-storage.babbage.systems` | `m` or `n` |
-| `stn` | None public | None public | You set `STN_ARCADE_URL` | None public | No `toAddress` option |
-| `tstn` | None public | None public | You set `TSTN_ARCADE_URL` | None public | No `toAddress` option |
-| `regtest` | None public | None public | You set `REGTEST_ARCADE_URL` | None public | No `toAddress` option |
-| `mock` | No network | No network | No network, use `MockServices` | No network | No `toAddress` option |
+| Network | Explorer | Faucet | Address starts with |
+| --- | --- | --- | --- |
+| Mainnet, `main` | [whatsonchain.com](https://whatsonchain.com/) | None | `1` |
+| testnet, `test` | [test.whatsonchain.com](https://test.whatsonchain.com/) | [bsvfaucet.com](https://bsvfaucet.com/) | `m` or `n` |
+| teratestnet, `ttn` | [woc-ttn.bsvblockchain.tech](https://woc-ttn.bsvblockchain.tech/), not yet named by the client as the teratestnet explorer | [faucet-ttn.bsvblockchain.tech](https://faucet-ttn.bsvblockchain.tech/) | `m` or `n` |
 
 </BlueTable>
 
-For `stn`, `tstn` and `regtest`, `@bsv/wallet-toolbox` reads the broadcaster address from the environment variable in the table. It reads the block header service from `STN_CHAINTRACKS_URL`, `TSTN_CHAINTRACKS_URL` or `REGTEST_CHAINTRACKS_URL`, and uses `/chaintracks/v1` on the broadcaster host when that variable is unset.
+`@bsv/wallet-toolbox` also accepts `stn`, `tstn`, `regtest` and `mock` as `chain`. They have no public explorer, faucet or storage. For `stn`, `tstn` and `regtest`, the toolbox reads the broadcaster address from `STN_ARCADE_URL`, `TSTN_ARCADE_URL` or `REGTEST_ARCADE_URL`, and the block header service from `STN_CHAINTRACKS_URL`, `TSTN_CHAINTRACKS_URL` or `REGTEST_CHAINTRACKS_URL`, which falls back to `/chaintracks/v1` on the broadcaster host when unset. `mock` uses no network and needs `MockServices`.
 
 ## Broadcast endpoints
 
-The public BSV Broadcaster endpoints need no API key. Each one answered `GET /health` with `"healthy":true`:
+The public <Hint tip="Transaction broadcaster software that takes a signed transaction over HTTP and follows it until it is mined">BSV Broadcaster</Hint> endpoints need no API key, and [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/) shows how to submit to them. Each one answered `GET /health` with `"healthy":true`. The ones marked in the last column are the hosts `@bsv/wallet-toolbox` uses:
 
 <BlueTable>
 
-| Network | Endpoint |
-| --- | --- |
-| Mainnet | `https://arcade-us-1.bsvblockchain.tech` |
-| Mainnet | `https://arcade-v2-us-1.bsvblockchain.tech` |
-| Mainnet | `https://arcade-eu-1.bsvblockchain.tech` |
-| Mainnet | `https://arcade.gorillapool.io` |
-| testnet | `https://arcade-v2-testnet-us-1.bsvblockchain.tech` |
-| teratestnet | `https://arcade-v2-ttn-us-1.bsvblockchain.tech` |
+| Network | Endpoint | Used by `@bsv/wallet-toolbox` |
+| --- | --- | --- |
+| Mainnet | `https://arcade-v2-us-1.bsvblockchain.tech` | Yes |
+| Mainnet | `https://arcade-us-1.bsvblockchain.tech` | No |
+| Mainnet | `https://arcade-eu-1.bsvblockchain.tech` | No |
+| Mainnet | `https://arcade.gorillapool.io` | No |
+| testnet | `https://arcade-v2-testnet-us-1.bsvblockchain.tech` | Yes |
+| teratestnet | `https://arcade-v2-ttn-us-1.bsvblockchain.tech` | Yes |
 
 </BlueTable>
 
 <Callout type="warning">
-A transaction sent to a Mainnet endpoint spends real BSV, and a blockchain transaction cannot be reversed. Check the network of the endpoint before your code sends anything.
+Any endpoint in a Mainnet row moves real BSV, and nothing it broadcasts can be taken back. Match the endpoint to the network your keys and wallet use before you send.
 </Callout>
-
-How to submit to these endpoints, and which SDK class to use, is in [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/).
 
 ### Defaults in the packages
 
@@ -67,7 +61,7 @@ When your code does not name a broadcaster, the packages pick one by network:
 </BlueTable>
 
 - In `@bsv/sdk`, `tx.broadcast()` with no argument always sends to the Mainnet address. The testnet address comes from `defaultBroadcaster(true)`. Both are <Hint tip="The broadcast API that came before BSV Broadcaster">ARC</Hint> endpoints.
-- In `@bsv/wallet-toolbox`, pass `arcadeUrl` to `createDefaultWalletServicesOptions` to put a BSV Broadcaster endpoint first on Mainnet or testnet.
+- In `@bsv/wallet-toolbox`, `createDefaultWalletServicesOptions` takes a BSV Broadcaster endpoint as its ninth argument, `arcadeUrl`, and puts it first on Mainnet or testnet.
 
 ## Explorer API
 
@@ -83,7 +77,7 @@ Each public network has a WhatsOnChain API for transactions, addresses and block
 
 </BlueTable>
 
-The teratestnet API keeps `test` in its path. The `WhatsOnChain` class of `@bsv/sdk` accepts `'main'` and `'test'`, and the `Services` class of `@bsv/wallet-toolbox` calls WhatsOnChain only on Mainnet and testnet.
+The teratestnet API keeps `test` in its path. The `WhatsOnChain` class of `@bsv/sdk` does not accept a teratestnet value, and the `Services` class of `@bsv/wallet-toolbox` calls WhatsOnChain only on Mainnet and testnet.
 
 ## Wallet storage
 
@@ -98,11 +92,11 @@ The teratestnet API keeps `test` in its path. The `WhatsOnChain` class of `@bsv/
 
 </BlueTable>
 
-The default for `test` is therefore a server that names teratestnet. For a testnet wallet, pass `storageUrl` with your own storage server, or keep the storage local with `Setup.createWalletSQLite`.
+The default for `test` is therefore a server that names teratestnet, and testnet has no package default. For a testnet wallet, pass `storageUrl` with a testnet storage server, or keep the storage local with `Setup.createWalletSQLite`.
 
 ## Address format
 
-One key gives a Mainnet address and a testnet address, and the first character tells them apart:
+The first character tells a Mainnet address from a testnet address made from the same key:
 
 <BlueTable>
 
