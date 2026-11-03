@@ -100,29 +100,30 @@ You can also mix both. `getClient()` returns the same wallet as a BRC-100 interf
 
 These parts matter once you build a backend or work with identity:
 
-<AccordionGroup>
-  <Accordion title="Server helpers for HTTP routes">
-    `@bsv/simple/server` can serve a server wallet over HTTP. `createServerWalletHandler()` returns Next.js route handlers. Each action answers with HTTP 403 until your `authorize` callback returns `true` for it, so a route stays closed until you decide who may call it.
+### Server helpers for HTTP routes
 
-    `ServerWalletManager` creates the server wallet once and keeps its key. It reads the key from `SERVER_PRIVATE_KEY`. Without it, the manager reads `.server-wallet.json` in the working folder, or generates a key and saves it there. Add that file to `.gitignore`, because it holds the private key.
+`@bsv/simple/server` can serve a server wallet over HTTP. `createServerWalletHandler()` returns Next.js route handlers. Each action answers with HTTP 403 until your `authorize` callback returns `true` for it, so a route stays closed until you decide who may call it.
 
-    `IdentityRegistry` stores handles for identity keys, with no authentication. Anyone who reaches it can register or revoke a handle for another key. Put it behind your own login before you expose it.
-  </Accordion>
-  <Accordion title="Classes that work without a wallet object">
-    - `DID` turns an identity key into a `did:key` identifier and resolves it offline. Version 0.7.0 replaced the earlier DID and credential tooling with these classes, so older material that uses `registerDID()` or `did:bsv` identifiers no longer applies.
-    - `Certifier`, `CredentialSchema` and `CredentialIssuer` issue and verify certificates and credentials. `MemoryRevocationStore` keeps revocation records in memory, and `FileRevocationStore` keeps them in a file on the server.
-    - `Overlay` creates a <Hint tip="A client that sends a transaction to the overlay hosts that accept its topic">topic broadcaster</Hint> and a <Hint tip="A client that asks overlay hosts for data they track">lookup resolver</Hint> for the `mainnet`, `testnet`, `teratestnet` or `local` preset, and uses `mainnet` when you set none.
-  </Accordion>
-  <Accordion title="Defaults you can set">
-    The `createWallet()` options set the values the methods fall back on: the network, the transaction and output descriptions, the token basket and protocol, and the message box host, `https://messagebox.babbage.systems` by default. `ServerWallet.create()` sets only the network, so on the server the other defaults stay as they are.
-  </Accordion>
-  <Accordion title="Packages it depends on">
-    - `@bsv/sdk`, a peer dependency: `WalletClient`, scripts, keys, certificates and the overlay clients.
-    - `@bsv/wallet-toolbox`: the wallet inside `ServerWallet`.
-    - `@bsv/message-box-client`: `pay()`, the MessageBox methods and tokens sent through a message box.
-    - `@bsv/did`: DIDs and credentials.
-  </Accordion>
-</AccordionGroup>
+`ServerWalletManager` creates the server wallet once and keeps its key. It reads the key from `SERVER_PRIVATE_KEY`. Without it, the manager reads `.server-wallet.json` in the working folder, or generates a key and saves it there. Add that file to `.gitignore`, because it holds the private key.
+
+`IdentityRegistry` stores handles for identity keys, with no authentication. Anyone who reaches it can register or revoke a handle for another key. Put it behind your own login before you expose it.
+
+### Classes that work without a wallet object
+
+- `DID` turns an identity key into a `did:key` identifier and resolves it offline. Version 0.7.0 replaced the earlier DID and credential tooling with these classes, so older material that uses `registerDID()` or `did:bsv` identifiers no longer applies.
+- `Certifier`, `CredentialSchema` and `CredentialIssuer` issue and verify certificates and credentials. `MemoryRevocationStore` keeps revocation records in memory, and `FileRevocationStore` keeps them in a file on the server.
+- `Overlay` creates a <Hint tip="A client that sends a transaction to the overlay hosts that accept its topic">topic broadcaster</Hint> and a <Hint tip="A client that asks overlay hosts for data they track">lookup resolver</Hint> for the `mainnet`, `testnet`, `teratestnet` or `local` preset, and uses `mainnet` when you set none.
+
+### Defaults you can set
+
+The `createWallet()` options set the values the methods fall back on: the network, the transaction and output descriptions, the token basket and protocol, and the message box host, `https://messagebox.babbage.systems` by default. `ServerWallet.create()` sets only the network, so on the server the other defaults stay as they are.
+
+### Packages it depends on
+
+- `@bsv/sdk`, a peer dependency: `WalletClient`, scripts, keys, certificates and the overlay clients.
+- `@bsv/wallet-toolbox`: the wallet inside `ServerWallet`.
+- `@bsv/message-box-client`: `pay()`, the MessageBox methods and tokens sent through a message box.
+- `@bsv/did`: DIDs and credentials.
 
 ## Related articles
 
