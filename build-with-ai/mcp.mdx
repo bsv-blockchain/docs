@@ -15,7 +15,7 @@ Connect [Claude Code](https://code.claude.com/docs/en/overview) to the BSV docs 
 
 ## How it works
 
-Two MCP servers give the agent BSV knowledge in different ways. The BSV docs server runs at `https://bsv.writedocs.io/mcp`, and `@bsv/mcp` is a package that runs on your machine:
+Two MCP servers give the agent BSV knowledge in different ways. The BSV docs server runs at `https://bsvblockchain.com/docs/mcp`, and `@bsv/mcp` is a package that runs on your machine:
 
 <McpServers />
 
@@ -39,11 +39,11 @@ The docs server runs on this site and needs no login or API key:
     Add the server under the name `bsv-docs`:
 
     ```bash
-    claude mcp add --transport http bsv-docs https://bsv.writedocs.io/mcp
+    claude mcp add --transport http bsv-docs https://bsvblockchain.com/docs/mcp
     ```
 
     ```text
-    Added HTTP MCP server bsv-docs with URL: https://bsv.writedocs.io/mcp to local config
+    Added HTTP MCP server bsv-docs with URL: https://bsvblockchain.com/docs/mcp to local config
     File modified: /Users/you/.claude.json [project: /Users/you/my-app]
     ```
 
@@ -59,7 +59,7 @@ The docs server runs on this site and needs no login or API key:
     ```text
     Checking MCP server health…
 
-    bsv-docs: https://bsv.writedocs.io/mcp (HTTP) - ✔ Connected
+    bsv-docs: https://bsvblockchain.com/docs/mcp (HTTP) - ✔ Connected
     ```
   </Step>
 </Steps>
@@ -75,7 +75,7 @@ The agent now has three tools to read the docs:
 Ask Claude Code a BSV question in the same project, and it calls `search_docs` and `get_doc` before it answers. For a first payment, the docs lead the agent to [Send a payment from a web app](/get-started/quick-start-browser/), where a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/) approves the payment and no private key goes in your code.
 
 <Callout type="note">
-  The page addresses in the results use `docs.bsvblockchain.org`. To read a page, the agent passes its path to `get_doc`, which works with or without the site address.
+  The page addresses in the results use `bsvblockchain.com/docs`. To read a page, the agent passes its path to `get_doc`, which works with or without the site address.
 </Callout>
 
 ## Add @bsv/mcp
@@ -107,7 +107,7 @@ Ask Claude Code a BSV question in the same project, and it calls `search_docs` a
     ```text
     Checking MCP server health…
 
-    bsv-docs: https://bsv.writedocs.io/mcp (HTTP) - ✔ Connected
+    bsv-docs: https://bsvblockchain.com/docs/mcp (HTTP) - ✔ Connected
     bsv-mcp: npx -y @bsv/mcp - ✔ Connected
     ```
   </Step>
@@ -205,7 +205,7 @@ Cursor, Windsurf and VS Code take the same two servers as JSON. Each configurati
           "env": { "BSV_NETWORK": "testnet" }
         },
         "bsv-docs": {
-          "url": "https://bsv.writedocs.io/mcp"
+          "url": "https://bsvblockchain.com/docs/mcp"
         }
       }
     }
@@ -223,7 +223,7 @@ Cursor, Windsurf and VS Code take the same two servers as JSON. Each configurati
           "env": { "BSV_NETWORK": "testnet" }
         },
         "bsv-docs": {
-          "serverUrl": "https://bsv.writedocs.io/mcp"
+          "serverUrl": "https://bsvblockchain.com/docs/mcp"
         }
       }
     }
@@ -242,7 +242,7 @@ Cursor, Windsurf and VS Code take the same two servers as JSON. Each configurati
         },
         "bsv-docs": {
           "type": "http",
-          "url": "https://bsv.writedocs.io/mcp"
+          "url": "https://bsvblockchain.com/docs/mcp"
         }
       }
     }

@@ -52,7 +52,7 @@ With the plugin, do not also add the servers with `claude mcp add`, or Claude Co
 To connect only the two servers in Claude Code, without the skill, run these commands in your project folder instead of installing the plugin. The docs server runs on this site and needs no login, and `@bsv/mcp` runs through `npx` and needs Node.js 22 or newer:
 
 ```bash
-claude mcp add --transport http bsv-docs https://bsv.writedocs.io/mcp
+claude mcp add --transport http bsv-docs https://bsvblockchain.com/docs/mcp
 claude mcp add bsv-mcp -e BSV_NETWORK=testnet -- npx -y @bsv/mcp
 ```
 

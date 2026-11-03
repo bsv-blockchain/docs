@@ -1,6 +1,6 @@
 # BSV Developer Docs
 
-Developer documentation for BSV Blockchain: a Quick Start and guides for building apps with BRC-100 wallets and the TypeScript SDK. WriteChoice writes it with the BSV team, and the BSV Association reviews it.
+Developer documentation for the BSV blockchain: a Quick Start and guides for building apps with BRC-100 wallets and the TypeScript SDK. WriteChoice writes it with the BSV team, and the BSV Association reviews it.
 
 This file is for contributors and for AI agents that read the repo or review pull requests. It says how the site is built, where things are, how a page is written and what a reviewer checks. Keep it accurate when the repo changes.
 
@@ -80,7 +80,7 @@ Run `npm run check` before you open a pull request.
 - `mcp` turns on the docs MCP server, and `contextMenu` turns on the page context menu
 - Any `.css` file in the repo loads on every page, so keep unfinished drafts out of it
 - An internal link has the form `/section/page/`, with a trailing slash. It resolves to `section/page.mdx` or to `section/page/index.mdx`
-- The site is served at `bsvblockchain.org/docs`: `basePath` in `writedocs.json` is `/docs`, and the main site passes every request under `/docs` to this build. Writedocs adds `/docs` to every link, image and asset address, so never write it yourself: `/docs/guides/payments/` comes out as `/docs/docs/guides/payments/` and `npm run broken-links` reports it. The same goes for `redirects`. An address computed in a React snippet is the exception, because Writedocs does not change it: write `/docs` into that one
+- The site is served at `bsvblockchain.com/docs`: `domain` in `writedocs.json` is `bsvblockchain.com`, `basePath` is `/docs`, and bsvblockchain.com passes every request under `/docs` to this build. Writedocs adds `/docs` to every link, image and asset address, so never write it yourself: `/docs/guides/payments/` comes out as `/docs/docs/guides/payments/` and `npm run broken-links` reports it. The same goes for `redirects`. An address computed in a React snippet is the exception, because Writedocs does not change it: write `/docs` into that one
 
 ## Anatomy of a page
 
