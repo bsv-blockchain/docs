@@ -6,7 +6,7 @@ sidebarTitle: "Install the SDK"
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Add `@bsv/sdk` to a Node project, with ES modules or CommonJS, or to a React app built with Vite, and confirm it loads with a script that hashes a string. Do this before you write SDK code in a project, or when you need to check that your toolchain resolves the package. The check runs offline, with no wallet, no key and no network call, so it proves that the package loads and nothing more. This page was written against `@bsv/sdk` 4.0.1.
+Add `@bsv/sdk` to a Node project, with ES modules or CommonJS, or to a React app built with Vite, and confirm it loads with a script that hashes a string. Do this before you write SDK code in a project, or when you need to check that your toolchain resolves the package. The check runs offline, with no wallet, no key and no network call, so it proves that the package loads and nothing more. This page was written against `@bsv/sdk` 4.0.1, TypeScript 7.0.2 and Vite 8.3.5.
 
 ## Before you begin
 
@@ -38,7 +38,7 @@ The first step is to add the package from npm. In a terminal, in the folder that
 npm install @bsv/sdk
 ```
 
-npm adds one package:
+In a new Node project, npm adds one package:
 
 ```text
 added 1 package, and audited 2 packages in 6s
@@ -50,7 +50,7 @@ To see the installed version, run `npm ls @bsv/sdk` in the same folder. Its last
 
 ## Load the SDK in your project
 
-With the package installed, load it the way your project loads modules. Each tab hashes the text `hello BSV` with <Hint tip="Secure Hash Algorithm 256, a hash function that returns 32 bytes">SHA-256</Hint>. `Hash.sha256` returns the hash as a `number[]` of bytes, and `Utils.toHex` turns it into a hexadecimal string. The hash is the same on every machine, so you can compare yours with the one shown:
+With the package installed, load it the way your project loads modules. Each tab hashes the text `hello BSV` with SHA-256. `Hash.sha256` returns the hash as a `number[]` of bytes, and `Utils.toHex` turns it into a hexadecimal string. The hash is the same on every machine, so you can compare yours with the one shown:
 
 <Tabs>
   <Tab title="Node, ES modules">
@@ -150,7 +150,7 @@ With the package installed, load it the way your project loads modules. Each tab
         - `"module": "nodenext"` makes the compiler write `import` when `package.json` has `"type": "module"` and `require` when it has `"type": "commonjs"`, so the same source works for both formats.
       </Step>
       <Step title="Write the script">
-        Create `src/index.ts`:
+        Add the script in `src/index.ts`:
 
         ```typescript src/index.ts
         import { Hash, Utils } from '@bsv/sdk'
@@ -176,6 +176,8 @@ With the package installed, load it the way your project loads modules. Each tab
     </Steps>
   </Tab>
   <Tab title="React with Vite">
+    For a Next.js app, [Integrate BSV with web frameworks](/guides/app-frameworks/) shows the setup.
+
     <Steps>
       <Step title="Write the component">
         Replace the contents of `src/App.tsx` in your Vite project. The component hashes the text of the field on every change:
@@ -199,13 +201,13 @@ With the package installed, load it the way your project loads modules. Each tab
         ```
       </Step>
       <Step title="Build the app">
-        Build the app from the project folder:
+        From the project folder, run the production build:
 
         ```bash
         npm run build
         ```
 
-        Vite bundles the ES module build of the SDK. The end of the output looks like this, with other file names and times:
+        Vite bundles the ES module build of the SDK. The end of the output looks like this, with other file names, sizes and times:
 
         ```text
         ✓ 232 modules transformed.
@@ -240,7 +242,7 @@ A matching hash means the SDK is installed and your project resolves it.
     Node stops with `SyntaxError: Cannot use import statement outside a module`. The nearest `package.json` has `"type": "commonjs"`, so Node reads `index.js` as CommonJS. Run `npm pkg set type=module`, or use `require` as in the CommonJS tab.
   </Accordion>
   <Accordion title="TypeScript cannot find the Buffer type">
-    `tsc` stops with `Cannot find name 'Buffer'` in a file under `node_modules/@bsv/sdk/dist/types`. The SDK declarations use the Node `Buffer` type, and the compiler did not load the Node type definitions. Install `@types/node` and add `"types": ["node"]` to `compilerOptions` in `tsconfig.json`.
+    `tsc` stops with `Cannot find name 'Buffer'` in `BinaryFetchClient.d.ts` under `node_modules/@bsv/sdk/dist`. The SDK declarations use the Node `Buffer` type, and the compiler did not load the Node type definitions. Install `@types/node` and add `"types": ["node"]` to `compilerOptions` in `tsconfig.json`.
   </Accordion>
 </AccordionGroup>
 
