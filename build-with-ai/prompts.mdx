@@ -68,7 +68,8 @@ With the project ready, make the request and check what the agent builds:
     - connects to the wallet with `new WalletClient(...)` from `@bsv/sdk`, with no private key, recovery phrase or `.env` secret;
     - stops unless the `network` field returned by `wallet.getNetwork()` is `testnet`;
     - sends the payment with `wallet.createAction(...)`, to the address and amount you expect;
-    - after the wallet returns the transaction ID, sends the transaction to BSV Broadcaster and reads its status there.
+    - after the wallet returns the transaction ID, sends the transaction to BSV Broadcaster and reads its status there;
+    - reports the payment as final only at `SEEN_ON_NETWORK`, `MINED` or `IMMUTABLE`, and stops with an error on `REJECTED` or `DOUBLE_SPEND_ATTEMPTED`.
 
     The script is the agent's own, so names and messages vary from run to run.
   </Step>
