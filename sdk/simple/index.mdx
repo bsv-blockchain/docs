@@ -1,18 +1,18 @@
 ---
 title: "Build apps with @bsv/simple"
-description: "@bsv/simple is a TypeScript helper library on top of @bsv/sdk that gives a browser or server app one wallet object with methods for payments, tokens, onchain data, message box payments, identity and overlays."
+description: "@bsv/simple is a TypeScript helper library on top of @bsv/sdk that gives a browser or server app one wallet object with methods for payments, tokens, data on chain, message box payments, identity and overlays."
 sidebarTitle: "@bsv/simple"
 ---
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Use `@bsv/simple` to add payments, tokens, onchain data and identity to a TypeScript app through one wallet object, in the browser or on a server. It is a helper library on top of `@bsv/sdk`. In the browser it wraps `WalletClient`, which talks to the user's <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet. On a server it wraps a `Wallet` from `@bsv/wallet-toolbox`. Each method builds the scripts and wallet calls for one common task. This page was written against `@bsv/simple` 0.7.2 and `@bsv/sdk` 4.0.1.
+Use `@bsv/simple` to add payments, tokens, data on chain and identity to a TypeScript app through one wallet object, in the browser or on a server. It is a helper library on top of `@bsv/sdk`. In the browser it wraps `WalletClient`, which talks to the user's <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet. On a server it wraps a `Wallet` from `@bsv/wallet-toolbox`. Each method builds the scripts and wallet calls for one common task. This page was written against `@bsv/simple` 0.7.2 and `@bsv/sdk` 4.0.1.
 
 ## When it fits your app
 
-`@bsv/simple` fits an app whose tasks match its methods, such as sending a payment, creating a token or writing data on chain. When you need to set the wallet call yourself, such as your own `createAction()` inputs or labels, call `WalletClient` from `@bsv/sdk` directly. You can also mix both, because `getClient()` returns the BRC-100 wallet under the object.
+`@bsv/simple` fits an app whose tasks match its methods, such as sending a payment, creating a token or writing data on chain. Call `WalletClient` from `@bsv/sdk` directly when you need your own `createAction()` arguments, such as inputs or labels. The `pay()` method delivers a payment through a <Hint tip="A server that holds messages and payments for a recipient until the recipient collects them">message box</Hint> and returns an empty `txid` with `@bsv/message-box-client` 2.7.0. To get the transaction ID of a payment, call `WalletClient` or use `sendDirectPayment()`, which returns it. You can also mix both, because `getClient()` returns the BRC-100 wallet under the object.
 
-To compare the two before you choose, see [Use the TypeScript SDK](/sdk/typescript/) and the [SDKs overview](/sdk/).
+[How @bsv/simple is built](/sdk/simple/architecture/) shows what each method calls, and the [SDKs overview](/sdk/) shows where the package sits among the BSV packages.
 
 ## Two entry points
 
@@ -27,15 +27,15 @@ The package has one entry point for each place your code runs. Both give a walle
 
 </BlueTable>
 
-The package root, `@bsv/simple`, exports the browser API and the error classes, without the server classes. In Node.js, the package needs version 22 or later.
+The package root, `@bsv/simple`, exports the same browser API plus the error classes, such as `WalletError`. Import `@bsv/simple/server` only in Node.js server code. In Node.js, the package needs version 22 or later.
 
 <Callout type="warning">
-A server wallet signs every transaction with no one approving it, and a broadcast transaction cannot be undone. Keep its private key out of your repository. `ServerWallet.create()` uses Mainnet when you leave out `network`, so pass `network: 'testnet'` while you test.
+A server wallet signs every transaction with no one approving it, and a broadcast transaction cannot be undone. Keep its private key out of your repository. `ServerWallet.create()` uses Mainnet when you leave out `network`, so pass `network: 'testnet'` and a testnet `storageUrl` while you test. The default storage, `https://storage.babbage.systems`, serves Mainnet.
 </Callout>
 
 ## What it covers
 
-The wallet object has methods for these tasks, in the browser and on the server:
+The wallet object has these main methods:
 
 <BlueTable>
 
@@ -44,15 +44,13 @@ The wallet object has methods for these tasks, in the browser and on the server:
 | Payments and balance | `send()`, `pay()`, `createPaymentRequest()`, `sendDirectPayment()`, `receiveDirectPayment()`, `getBalance()` |
 | Tokens | `createToken()`, `listTokenDetails()`, `sendToken()`, `redeemToken()`, `sendTokenViaMessageBox()`, `listIncomingTokens()`, `acceptIncomingToken()` |
 | Data on chain | `inscribeText()`, `inscribeJSON()`, `inscribeFileHash()`, `inscribeImageHash()` |
-| Peer-to-peer payments and handles | `certifyForMessageBox()`, `sendMessageBoxPayment()`, `listIncomingPayments()`, `acceptIncomingPayment()`, `registerIdentityTag()`, `lookupIdentityByTag()`, through a <Hint tip="A server that holds messages and payments for a recipient until the recipient collects them">message box</Hint> |
-| Identity and certificates | `getDID()`, `resolveDID()`, `acquireCertificateFrom()`, `listCertificatesFrom()`, `relinquishCert()`, `acquireCredential()`, `listCredentials()` |
-| Publishing and lookup | `advertiseSHIP()`, `advertiseSLAP()`, `broadcastAction()`, `withRetry()`, for <Hint tip="Services that track selected transactions and answer queries about them">overlay services</Hint> |
+| Peer-to-peer payments and handles | Through a message box: `certifyForMessageBox()`, `sendMessageBoxPayment()`, `listIncomingPayments()`, `acceptIncomingPayment()`, `registerIdentityTag()`, `lookupIdentityByTag()` |
+| Identity and certificates | For a <Hint tip="Decentralized identifier, a W3C identifier that the holder controls">DID</Hint>, certificates and credentials: `getDID()`, `resolveDID()`, `acquireCertificateFrom()`, `listCertificatesFrom()`, `relinquishCert()`, `acquireCredential()`, `listCredentials()` |
+| Publishing and lookup | For <Hint tip="Services that track selected transactions and answer queries about them">overlay services</Hint>: `advertiseSHIP()`, `advertiseSLAP()`, `broadcastAction()`, `withRetry()` |
 
 </BlueTable>
 
 The package also exports classes that work without a wallet object: `DID` for `did:key` identifiers, `Certifier`, `CredentialSchema` and `CredentialIssuer` for certificates, and `Overlay` for overlay broadcast and lookup.
-
-The `pay()` method delivers the payment through a message box and returns an empty `txid` with `@bsv/message-box-client` 2.7.0. When your app needs the transaction ID of a payment, use `sendDirectPayment()`, which returns it, or `WalletClient`.
 
 ## Install the package
 
@@ -62,22 +60,22 @@ Install `@bsv/simple` with `@bsv/sdk`, its peer dependency:
 npm install @bsv/simple @bsv/sdk
 ```
 
-The package also installs `@bsv/wallet-toolbox` and `@bsv/message-box-client` as its own dependencies.
+The package also installs `@bsv/wallet-toolbox`, `@bsv/wallet-toolbox-client`, `@bsv/message-box-client` and `@bsv/did` as its own dependencies.
 
 ## Pages in this section
 
-These pages sit under this page in the sidebar. Go to **How @bsv/simple is built** to see what the wallet object is made of before you choose, and to **Browser wallet** when you are ready to connect a web app:
+These pages sit under @bsv/simple in the sidebar. Read how the package is built before you choose, then connect a web app:
 
 <CardGroup cols={2}>
   <Card title="How @bsv/simple is built" href="/sdk/simple/architecture/">
     See the wallet underneath each entry point, the services each method calls and when to call `WalletClient` instead.
   </Card>
-  <Card title="Browser wallet" href="/sdk/simple/browser-wallet/">
+  <Card title="Connect to a browser wallet" href="/sdk/simple/browser-wallet/">
     Connect `@bsv/simple` to the user's wallet in the browser.
   </Card>
 </CardGroup>
 
-The class reference sits under **SDK reference** in the sidebar. Go there to look up the arguments and return values of a method:
+The class reference sits under SDK reference in the sidebar. Go there to look up the arguments and return values of a method:
 
 <CardGroup cols={2}>
   <Card title="BrowserWallet class" href="/sdk/api/simple/browser-wallet/">
