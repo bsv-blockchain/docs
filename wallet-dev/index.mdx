@@ -71,7 +71,7 @@ The same vectors are how a port proves it matches the TypeScript reference. [go-
 Two ts-stack servers run only when the wallet needs them:
 
 - Wallet Infra serves the toolbox storage over JSON-RPC, backed by MySQL, with mutual authentication and records scoped to each user. Wallets reach it with `StorageClient`. Run it to host remote storage for many wallet clients.
-- The <Hint tip="Wallet Authentication Backend">WAB</Hint> verifies a user's phone number with a one-time code and returns the user's presentation key. On a new device, the wallet combines that key with the user's password to unlock the root key, and the WAB never sees the password. It can also keep optional recovery shares and pay new users a one-time faucet. Phone verification is the only sign-in method it offers for real users today, so run it when your wallet offers phone sign-in and recovery.
+- The <Hint tip="Wallet Authentication Backend">WAB</Hint> verifies a user's phone number with a one-time code and returns the user's <Hint tip="A 256-bit key the WAB gives back after the phone check. It is one of three factors, with the password and a recovery key, and any two of them unlock the wallet">presentation key</Hint>. On a new device, the wallet combines that key with the user's password to unlock the root key, and the WAB never sees the password. It can also keep optional recovery shares and pay new users a one-time faucet. Phone verification is the only sign-in method it offers for real users today, so run it when your wallet offers phone sign-in and recovery.
 
 [Run a wallet backend](/wallet-dev/infrastructure/) runs both services on testnet and connects a wallet to each.
 
