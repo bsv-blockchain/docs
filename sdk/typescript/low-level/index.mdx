@@ -49,29 +49,12 @@ Several calls fall back to Mainnet when you pass no argument. Pass the testnet v
 
 </BlueTable>
 
-Give `Teranode` the `/tx` address of the endpoint, as the BSV Broadcaster guide shows. The `ARC` class calls a path that BSV Broadcaster does not serve.
+Give `Teranode` the `/tx` address of the endpoint, as the BSV Broadcaster guide shows. The `ARC` class calls a path that BSV Broadcaster does not serve. The testnet endpoint of every other service is in [Network endpoints](/reference/networks/).
 
-## Pages in this section
+## Next steps
 
-These three pages sit under Low-level transactions in the sidebar, in the order most readers need them. Each one uses the classes above:
+Start with a transaction, then derive keys or write a script when your app needs them:
 
-<CardGroup cols={3}>
-  <Card title="Build a transaction from inputs and outputs" href="/sdk/typescript/low-level/transactions/">
-    Start here. Create a transaction from inputs, outputs and script templates, compute its fee, sign it and broadcast it.
-  </Card>
-  <Card title="Derive HD keys with BIP32" href="/sdk/typescript/low-level/hd-keys/">
-    Go here when your keys come from a BIP32 extended key or a BIP39 recovery phrase. `@bsv/sdk` marks the `HD` class as deprecated in favor of BRC-42 key derivation.
-  </Card>
-  <Card title="Write a custom script template" href="/sdk/typescript/low-level/script-templates/">
-    Go here when `P2PKH` and `RPuzzle` do not cover your spending condition, to write the locking script and the unlocking script that spends it.
-  </Card>
-</CardGroup>
-
-## Related articles
-
-To learn more about transactions in BSV, review these articles:
-
-- [How transactions and fees work](/concepts/transactions/)
-- [Network endpoints](/reference/networks/)
-- [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/)
-- [BEEF (BRC-62)](/concepts/spv/)
+- [Build a transaction from inputs and outputs](/sdk/typescript/low-level/transactions/)
+- [Derive HD keys with BIP32](/sdk/typescript/low-level/hd-keys/)
+- [Write a custom script template](/sdk/typescript/low-level/script-templates/)
