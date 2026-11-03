@@ -18,50 +18,52 @@ Without a wallet, your code does each job a wallet would do. The SDK gives you a
 | --- | --- | --- |
 | Keys | `PrivateKey` creates and loads keys, and `toAddress()` returns an address | Store each key outside your source code and version control |
 | Inputs | Each input points at the output it spends, with a `sourceTransaction` and a `sourceOutputIndex` | Keep the full source transaction of every output you spend, since `fee()` throws an error when an input has none |
-| Scripts | The `P2PKH` and `RPuzzle` templates build a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> and the unlocking script that spends it | Write your own template for any other spending condition |
+| Scripts | The <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">`P2PKH`</Hint> and `RPuzzle` templates build a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> and the unlocking script that spends it | Write your own template for a condition these do not cover |
 | Fee and change | `fee()` computes the fee with a fee model such as `SatoshisPerKilobyte`, and puts what is left in the outputs marked `change: true` | Call `fee()` before `sign()`, which throws an error while a change output has no amount |
 | Broadcasting | `broadcast()` sends the signed transaction through a broadcaster class, such as `Teranode` | Check the `status` of the result, since a failed broadcast returns `status: 'error'` instead of throwing |
 | Spent outputs | No store of your outputs | Record which <Hint tip="Unspent transaction output">UTXOs</Hint> you have spent, since two transactions that spend the same output cannot both confirm |
-| Verification | `verify()` checks the scripts and follows each source transaction back to one with a `MerklePath`, and `Beef` packs a transaction with its proofs as <Hint tip="Background Evaluation Extended Format (BRC-62), a transaction sent with its proofs">BEEF</Hint> | Keep the proofs of the transactions you receive, so that <Hint tip="Simplified Payment Verification">SPV</Hint> can reach a mined transaction |
+| Verification | `verify()` checks the scripts and follows each source transaction back to one with a `MerklePath`, and `Beef` packs a transaction with its proofs as <Hint tip="Background Evaluation Extended Format (BRC-62), a transaction sent with its proofs">BEEF</Hint> | Keep each transaction you receive with its source transactions and proofs, as BEEF, so that `verify()` can reach a mined transaction through <Hint tip="Simplified Payment Verification">SPV</Hint> |
 
 </BlueTable>
 
-How inputs, the fee and change fit together is explained in [How transactions and fees work](/concepts/transactions/).
+[How transactions and fees work](/concepts/transactions/) explains how inputs, the fee and change fit together.
+
+For cryptography without a transaction, `@bsv/sdk` also exports `Hash`, `ECDSA` and `Signature`, `Schnorr`, `SymmetricKey` for AES-GCM encryption, `PrivateKey.deriveSharedSecret` for ECDH, and `KeyDeriver` for BRC-42 key derivation.
 
 ## Calls that default to Mainnet
 
 <Callout type="warning">
-A transaction your code signs goes out with no approval step, and a blockchain transaction cannot be reversed. With no argument, `broadcast()` sends to Mainnet. Test on testnet, pass a testnet broadcaster, and keep Mainnet keys out of test code.
+A transaction your code signs goes out with no approval step, and a blockchain transaction cannot be reversed. Test on testnet with the values below, and keep Mainnet keys out of test code.
 </Callout>
 
-Several methods pick a network service when you pass no argument, and each default points at Mainnet. Pass the testnet value while you test:
+Several calls fall back to Mainnet when you pass no argument. Pass the testnet value while you test:
 
 <BlueTable>
 
 | Call with no argument | What it uses | What to pass on testnet |
 | --- | --- | --- |
 | `key.toAddress()` | A Mainnet address, starting with `1` | `key.toAddress('testnet')`, which starts with `m` or `n` |
-| `tx.fee()` | `LivePolicy`, which reads the rate from the policy of GorillaPool's Mainnet <Hint tip="A transaction broadcast service. The ARC class of @bsv/sdk talks to it">ARC</Hint> endpoint and falls back to 100 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> per kilobyte | A fee model with the rate of your endpoint, such as `new SatoshisPerKilobyte(1)` |
-| `tx.broadcast()` | An `ARC` broadcaster for GorillaPool's Mainnet endpoint | A `Teranode` broadcaster with a testnet endpoint of BSV Broadcaster |
+| `tx.fee()` | `LivePolicy`, which reads the rate from the policy of GorillaPool's Mainnet <Hint tip="The broadcast API that came before BSV Broadcaster. The ARC class of @bsv/sdk calls it">ARC</Hint> endpoint and falls back to 100 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> per kilobyte | A fee model with the rate of your endpoint, such as `new SatoshisPerKilobyte(1)` |
+| `tx.broadcast()` | An `ARC` broadcaster for GorillaPool's Mainnet endpoint | `new Teranode('https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx')`, the testnet endpoint of [BSV Broadcaster](/guides/services/broadcasting/) |
 | `tx.verify()` | A `WhatsOnChain` chain tracker on Mainnet | `new WhatsOnChain('test')` |
 
 </BlueTable>
 
-To send through BSV Broadcaster, give `Teranode` the `/tx` address of the endpoint, as [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/) shows. The `ARC` class calls a path that BSV Broadcaster does not serve.
+Give `Teranode` the `/tx` address of the endpoint, as the BSV Broadcaster guide shows. The `ARC` class calls a path that BSV Broadcaster does not serve.
 
 ## Pages in this section
 
-Start with a transaction, then go to keys or scripts when you need them:
+These three pages sit under Low-level transactions in the sidebar, in the order most readers need them. Each one uses the classes above:
 
 <CardGroup cols={3}>
-  <Card title="Build a transaction from inputs and outputs" href="/sdk/typescript/low-level/transactions/">
-    Create a transaction with inputs, outputs and script templates, then compute its fee and sign it.
+  <Card title="Build a transaction" href="/sdk/typescript/low-level/transactions/">
+    Start here. Create a transaction from inputs, outputs and script templates, compute its fee, sign it and broadcast it.
   </Card>
   <Card title="Derive HD keys with BIP32" href="/sdk/typescript/low-level/hd-keys/">
-    Derive a tree of keys from one master key with the `HD` class, which 4.0.1 marks as deprecated in favor of BRC-42 key derivation.
+    Go here when your keys come from a BIP32 extended key or a BIP39 recovery phrase. `@bsv/sdk` marks the `HD` class as deprecated in favor of BRC-42 key derivation.
   </Card>
-  <Card title="Write a custom script template" href="/sdk/typescript/low-level/script-templates/">
-    Write your own template, with its locking script and the unlocking script that spends it.
+  <Card title="Custom script templates" href="/sdk/typescript/low-level/script-templates/">
+    Go here when `P2PKH` and `RPuzzle` do not cover your spending condition, to write the locking script and the unlocking script that spends it.
   </Card>
 </CardGroup>
 
@@ -70,5 +72,6 @@ Start with a transaction, then go to keys or scripts when you need them:
 To learn more about transactions in BSV, review these articles:
 
 - [How transactions and fees work](/concepts/transactions/)
+- [Network endpoints](/reference/networks/)
 - [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/)
 - [BEEF (BRC-62)](/concepts/spv/)
