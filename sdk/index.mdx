@@ -10,6 +10,10 @@ Use the BSV SDKs to create keys and transactions, or to call a user's wallet, fr
 
 ## Choose your SDK
 
+<Callout type="warning">
+Every sample creates a random private key. Treat it as a throwaway testnet key: never reuse it, and never paste a real key into the script.
+</Callout>
+
 <SdkChooser />
 
 <Visibility for="agents">
@@ -23,6 +27,8 @@ Use the BSV SDKs to create keys and transactions, or to call a user's wallet, fr
 
 Each sample creates a random key and prints its testnet address, with no network call.
 
+Tested with `@bsv/sdk` 4.0.1, `go-sdk` v1.7.3 and `bsv-sdk` 2.4.0. Each sample prints a testnet address that starts with m or n.
+
 ```bash
 npm install @bsv/sdk
 ```
@@ -34,7 +40,10 @@ const key = PrivateKey.fromRandom()
 console.log(key.toPublicKey().toAddress('testnet'))
 ```
 
+Replace `MODULE_NAME` with your module path, for example `example.com/hello`.
+
 ```bash
+go mod init MODULE_NAME
 go get github.com/bsv-blockchain/go-sdk
 go mod tidy
 ```

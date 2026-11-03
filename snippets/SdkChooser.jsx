@@ -14,6 +14,8 @@ const options = [
     title: 'TypeScript SDK',
     text: "`@bsv/sdk` is the base library of the TypeScript stack. Ask the user's wallet to sign through `WalletClient`, or build keys, scripts and transactions yourself, in Node, the browser or React.",
     install: 'npm install @bsv/sdk',
+    version: 'Tested with `@bsv/sdk` 4.0.1.',
+    output: 'A testnet address that starts with m or n.',
     code: `import { PrivateKey } from '@bsv/sdk'
 
 const key = PrivateKey.fromRandom()
@@ -57,6 +59,8 @@ func main() {
     title: 'Python SDK',
     text: '`bsv-sdk` builds keys, scripts, transactions and proofs, with broadcasting and wallets. Its docs and examples live in the Python repositories.',
     install: 'pip install bsv-sdk',
+    version: 'Tested with `bsv-sdk` 2.4.0.',
+    output: 'A testnet address that starts with m or n.',
     code: `from bsv import Network, PrivateKey
 
 key = PrivateKey()
@@ -159,6 +163,11 @@ export default function SdkChooser() {
                 <div>
                   <p className="sc-label">Create a key and print its testnet address</p>
                   <pre className="sc-code"><code>{current.code}</code></pre>
+                </div>
+                <div>
+                  <p className="sc-label">Output</p>
+                  <p className="sc-text">{renderText(current.output)}</p>
+                  <p className="sc-text">{renderText(current.version)}</p>
                 </div>
               </div>
             ) : null}
