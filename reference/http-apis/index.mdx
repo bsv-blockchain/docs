@@ -5,7 +5,7 @@ description: "Look up the HTTP and WebSocket APIs of BSV services: broadcasting,
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Find the reference, guide or specification for each BSV service API. The services expose HTTP APIs, and AuthSocket uses WebSocket. For the hosts to call on each network, see [Network endpoints](/reference/networks/).
+Find the reference, guide or specification for each BSV service API. The services expose HTTP APIs, and <Hint tip="A WebSocket protocol on Socket.IO with BRC-103 mutual authentication">AuthSocket</Hint> uses WebSocket. For the hosts to call on each network, see [Network endpoints](/reference/networks/).
 
 ## HTTP APIs
 
@@ -15,7 +15,7 @@ Find the reference, guide or specification for each BSV service API. The service
 |---------|--------------|-----------|------------------------|
 | ARC | Submits one transaction or a batch to <Hint tip="The broadcaster that came before BSV Broadcaster. BSV Broadcaster keeps most of its request and response shapes, but the ARC class of @bsv/sdk does not work with it">ARC</Hint> and reports the status of a transaction by its ID | [ARC broadcast](/reference/arc/) | [Broadcast with BSV Broadcaster](/guides/services/broadcasting/) |
 | Overlay | Accepts <Hint tip="Background Evaluation Extended Format (BRC-62): a transaction with the evidence a host needs to verify it.">BEEF</Hint> transactions into an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, answers lookup queries, lists the topic managers and lookup services it hosts, and exposes admin routes | [Overlay](/reference/overlay/) | [Run an overlay with @bsv/overlay-express](/sdk/packages/overlay-express/) |
-| MessageBox | Holds messages for a named box until the recipient lists and acknowledges them, and registers devices and permissions | [MessageBox](/reference/message-box/) | [Send messages with @bsv/message-box-client](/sdk/packages/message-box-client/) |
+| MessageBox | Holds messages for a named box on a <Hint tip="A store-and-forward messaging service: it holds each message until its recipient reads it">MessageBox</Hint> server until the recipient lists and acknowledges them, and registers devices and permissions | [MessageBox](/reference/message-box/) | [Send messages with @bsv/message-box-client](/sdk/packages/message-box-client/) |
 | Merkle service | Watches transaction IDs and sends each <Hint tip="BSV Unified Merkle Path (BRC-74): a compact proof that a transaction is in a block">BUMP</Hint> to a callback URL when the proof is available | [Merkle service](/reference/merkle-service/) | [Merkle service specification](https://bsv-blockchain.github.io/ts-stack/specs/merkle-service/) |
 | File storage | Uploads a file to a <Hint tip="Universal Hash Resolution Protocol (BRC-26): file storage where a file is found by the hash of its content">UHRP</Hint> storage server, finds who hosts a hash, lists uploads and renews an advertisement | [UHRP storage](/reference/uhrp/) | [UHRP specification](https://bsv-blockchain.github.io/ts-stack/specs/uhrp/) |
 | Wallet storage | Exposes a remote wallet storage provider over HTTP: actions, outputs, certificates and sync | [Wallet storage](/reference/wallet-storage/) | [Plug in your own storage](/wallet-dev/wallet-toolbox/storage-adapter/) |
@@ -46,4 +46,3 @@ BRC-29 and GASP have no page on this site. Their specifications are in ts-stack:
 To learn more about service APIs in BSV, review these articles:
 
 - [How the stack fits](/concepts/architecture/)
-- [BRC specifications index](/standards/brc-index/)
