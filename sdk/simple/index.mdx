@@ -27,8 +27,8 @@ The package has one entry point for each place your code runs. Both give a walle
 
 The package root, `@bsv/simple`, exports the same browser API plus the error classes, such as `WalletError`. Import `@bsv/simple/server` only in Node.js server code. In Node.js, the package needs version 22 or later.
 
-<Callout type="warning">
-A server wallet signs every transaction with no one approving it, and a broadcast transaction cannot be undone. Keep its private key out of your repository. `ServerWallet.create()` uses Mainnet when you leave out `network`, so pass `network: 'testnet'` and a testnet `storageUrl` while you test. The default storage, `https://storage.babbage.systems`, serves Mainnet.
+<Callout type="danger">
+A server wallet signs every transaction with no one approving it, and a broadcast transaction cannot be undone. Keep its private key out of your repository. `ServerWallet.create()` uses Mainnet when you leave out `network`, so pass `network: 'testnet'` while you test. The default `storageUrl`, `https://storage.babbage.systems`, serves Mainnet, and the package has no testnet default, so also pass the address of a testnet storage server. [Network endpoints](/reference/networks/) shows which storage server serves which network.
 </Callout>
 
 ## What it covers
@@ -48,8 +48,6 @@ The wallet object has these main methods:
 
 </BlueTable>
 
-The arguments and return values of each method are in [BrowserWallet class](/sdk/api/simple/browser-wallet/) and [ServerWallet class](/sdk/api/simple/server-wallet/).
-
 The package also exports classes that work without a wallet object: `DID` for `did:key` identifiers, `Certifier`, `CredentialSchema` and `CredentialIssuer` for certificates, and `Overlay` for overlay broadcast and lookup.
 
 ## Install the package
@@ -64,9 +62,8 @@ The package also installs `@bsv/wallet-toolbox`, `@bsv/wallet-toolbox-client`, `
 
 ## Next steps
 
-Connect a web app to the user's wallet first, then see how the package works and use it in a guide:
+See how the package works, then use it in a guide:
 
-- [Connect to a browser wallet](/sdk/simple/browser-wallet/)
 - [How @bsv/simple is built](/sdk/simple/architecture/)
 - [Store data and files](/guides/data-storage/)
 - [Move your app to Mainnet](/guides/go-to-mainnet/)
