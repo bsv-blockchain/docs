@@ -55,7 +55,7 @@ A domain that delegates Paymail to another host publishes an SRV record with the
 
 </BlueTable>
 
-DNS answers can be forged, so the 2022 standard ties the SRV record to <Hint tip="DNS Security Extensions, signatures that let a resolver check that a DNS answer is authentic">DNSSEC</Hint> and to TLS. It sets these rules for your app:
+DNS answers can be forged, so the 2022 standard ties the SRV record to <Hint tip="DNS Security Extensions, signatures that let a resolver check that a DNS answer is authentic">DNSSEC</Hint> and to <Hint tip="Transport Layer Security, the encryption and certificate check behind HTTPS">TLS</Hint>. It sets these rules for your app:
 
 - An SRV record is a delegation, and a delegation must be served with a valid DNSSEC signature chain. Your app resolves the A or AAAA record of the target and continues with the target as the host. When the target has neither record, host discovery fails.
 - Your app ignores an SRV record served without a valid DNSSEC signature chain, and continues with the domain itself as the host.
@@ -64,7 +64,7 @@ DNS answers can be forged, so the 2022 standard ties the SRV record to <Hint tip
 
 The 2019 specification, published as BSV Alias (`bsvalias`), also accepts an SRV record without DNSSEC when its target is the domain itself or `www.<domain>`, and relies on the TLS certificate in that case. Its [Host Discovery](https://github.com/bitcoin-sv-specs/brfc-paymail/blob/2e03c8bc49b489d13eda7a3580795b1809cd2f08/src/02-01-host-discovery.md) section lists the full procedure.
 
-To see a real record, query a DNS over HTTPS resolver from any terminal:
+To see a real record, query a <Hint tip="DNS over HTTPS, a DNS lookup sent as an HTTPS request to a public resolver">DNS over HTTPS</Hint> resolver from any terminal:
 
 ```bash
 curl "https://dns.google/resolve?name=_bsvalias._tcp.handcash.io&type=SRV"
@@ -76,7 +76,7 @@ The resolver returns the record as JSON:
 {"Status":0,"TC":false,"RD":true,"RA":true,"AD":true,"CD":false,"Question":[{"name":"_bsvalias._tcp.handcash.io.","type":33}],"Answer":[{"name":"_bsvalias._tcp.handcash.io.","type":33,"TTL":300,"data":"10 100 443 cloud.handcash.io."}],"Comment":"Response from 172.64.33.138."}
 ```
 
-The `data` field holds the priority, the weight, the port and the target, so Paymail for `handcash.io` runs on `cloud.handcash.io`, port 443. `"AD":true` means the resolver validated the DNSSEC signature chain of the answer, which the 2022 standard requires for a target on another domain. The `Comment` field names the server that answered and changes between requests.
+The `data` field holds the priority, the weight, the port and the target, so Paymail for `handcash.io` runs on `cloud.handcash.io`, port 443. `"AD":true` means the resolver validated the DNSSEC signature chain of the answer, which the 2022 standard requires for every SRV record. The `Comment` field names the server that answered and changes between requests.
 
 ## Read the capabilities document
 
@@ -95,7 +95,7 @@ The host returns one JSON document:
 The document has two fields:
 
 - `bsvalias` is the version of the document format, `"1.0"`. The 2019 specification added it for forward compatibility and leaves its interpretation unspecified.
-- `capabilities` is an object with one key for each capability the host supports. A key is the BRFC ID of the specification that defines the capability, such as `a9f510c16bde` for Verify Public Key Owner, or one of the two words in the [table of names](#names-in-the-2019-and-2022-versions). [BRFC specification process](/standards/paymail/brfc-specifications/) lists the published IDs.
+- `capabilities` is an object with one key for each capability the host supports. A key is the BRFC ID of the specification that defines the capability, such as `a9f510c16bde` for Verify Public Key Owner, or one of the two words in the [table of names](#names-in-the-2019-and-2022-versions). The [2022 standard](https://tsc.bsvblockchain.org/standards/paymail/) lists the IDs of the capabilities it defines.
 
 The specification behind each key defines its value, which takes one of three forms:
 
