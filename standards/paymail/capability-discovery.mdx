@@ -10,16 +10,41 @@ Find which Paymail capabilities a host supports, and the endpoint URL of each on
 
 ## How discovery works
 
-Discovery has two phases, host discovery and capability discovery:
+A client goes from the handle to the capability URL in four steps:
 
-1. Split the handle at `@` into the alias and the domain.
-2. Look up the DNS <Hint tip="Service record, a DNS record that names the host and port of a service">SRV</Hint> record `_bsvalias._tcp.<domain>`. Its target and port name the host that serves Paymail for the domain. When the domain has no SRV record, the host is the domain itself, on port 443.
-3. Send a `GET` request for the capabilities document on that host, at `https://<host>:<port>/.well-known/bsvalias` in the 2019 specification. The host answers with a JSON document that lists its capabilities.
-4. Pick the capability your app needs, replace the placeholders in its URL template with the parts of the handle, and call that URL.
+<Steps>
+  <Step title="Split the handle">
+    Split the handle at `@` into the alias and the domain.
+  </Step>
+  <Step title="Find the host">
+    Look up the DNS <Hint tip="Service record, a DNS record that names the host and port of a service">SRV</Hint> record `_bsvalias._tcp.<domain>`. Its target and port name the host that serves Paymail for the domain. When the domain has no SRV record, the host is the domain itself, on port 443.
 
-The names in these steps come from two versions of the specification. TS 2021.010-30, published in 2022, withdraws the 2019 specification and changes three names. It moves the document to `/.well-known/bsvalias.json`, names the alias token `{local-part}`, and keys `pki` and `paymentDestination` by their <Hint tip="Bitcoin SV Request for Comments, a specification document identified without a central numbering authority">BRFC</Hint> IDs, `0c4339ef99c2` and `759684b1a19a`. The host in the examples on this page and `@bsv/paymail` 2.4.12 use the 2019 forms, and that host answers `404` at `/.well-known/bsvalias.json`.
+    The host can be a different domain from the one in the handle. A domain owner who uses a Paymail service provider delegates to it with one SRV record, so a client that only requests the document on the domain itself misses those hosts.
+  </Step>
+  <Step title="Read the capabilities document">
+    Send a `GET` request for the capabilities document on that host. The host answers with a JSON document that lists its capabilities.
+  </Step>
+  <Step title="Call the capability">
+    Pick the capability your app needs, replace the placeholders in its URL template with the parts of the handle, and call that URL.
+  </Step>
+</Steps>
 
-The host can be a different domain from the one in the handle. A domain owner who uses a Paymail service provider delegates to it with one SRV record, so a client that only requests `https://<domain>/.well-known/bsvalias` misses those hosts.
+### Names in the 2019 and 2022 versions
+
+TS 2021.010-30, published in 2022, withdraws the 2019 specification and changes three names, including the keys of two capabilities, which it names by their <Hint tip="Bitcoin SV Request for Comments, a specification document identified without a central numbering authority">BRFC</Hint> IDs. The host in the examples on this page and `@bsv/paymail` 2.4.12 use the 2019 names:
+
+<BlueTable>
+
+| Name | 2019 specification | 2022 standard |
+| --- | --- | --- |
+| Path of the capabilities document | `/.well-known/bsvalias` | `/.well-known/bsvalias.json` |
+| Alias token in URL templates | `{alias}` | `{local-part}` |
+| Key of public key infrastructure | `pki` | `0c4339ef99c2` |
+| Key of basic address resolution | `paymentDestination` | `759684b1a19a` |
+
+</BlueTable>
+
+That host answers `404` at `/.well-known/bsvalias.json`.
 
 ## Find the host with a DNS SRV record
 
