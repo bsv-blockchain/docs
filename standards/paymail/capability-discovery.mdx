@@ -23,7 +23,7 @@ Paymail discovery has two phases. In host discovery, your app finds the host tha
 
 ### Names in the 2019 and 2022 versions
 
-TS 2021.010-30, published in 2022, withdraws the 2019 specification. It changes the path of the document and the alias token, and keys two capabilities by their <Hint tip="Bitcoin SV Request for Comments, a specification document identified without a central numbering authority">BRFC</Hint> IDs instead of words. The host in the examples below and `@bsv/paymail` 2.4.12 use the 2019 names, and that host answers `404` at `/.well-known/bsvalias.json`:
+TS 2021.010-30, published in 2022, withdraws the 2019 specification. It changes the path of the document and the alias token, and keys two capabilities by their <Hint tip="Bitcoin SV Request for Comments, a specification document identified without a central numbering authority">BRFC</Hint> IDs instead of words. `@bsv/paymail` 2.4.12 uses the 2019 names:
 
 <BlueTable>
 
@@ -64,33 +64,23 @@ DNS answers can be forged, so the 2022 standard ties the SRV record to <Hint tip
 
 The 2019 specification, published as BSV Alias (`bsvalias`), also accepts an SRV record without DNSSEC when its target is the domain itself or `www.<domain>`, and relies on the TLS certificate in that case. Its [Host Discovery](https://github.com/bitcoin-sv-specs/brfc-paymail/blob/2e03c8bc49b489d13eda7a3580795b1809cd2f08/src/02-01-host-discovery.md) section lists the full procedure.
 
-To see a real record, query a <Hint tip="DNS over HTTPS, a DNS lookup sent as an HTTPS request to a public resolver">DNS over HTTPS</Hint> resolver from any terminal:
+To see the record of a domain, query a <Hint tip="DNS over HTTPS, a DNS lookup sent as an HTTPS request to a public resolver">DNS over HTTPS</Hint> resolver from any terminal, with `<domain>` replaced by the Paymail domain to check:
 
 ```bash
-curl "https://dns.google/resolve?name=_bsvalias._tcp.handcash.io&type=SRV"
+curl "https://dns.google/resolve?name=_bsvalias._tcp.<domain>&type=SRV"
 ```
 
-The resolver returns the record as JSON:
-
-```json
-{"Status":0,"TC":false,"RD":true,"RA":true,"AD":true,"CD":false,"Question":[{"name":"_bsvalias._tcp.handcash.io.","type":33}],"Answer":[{"name":"_bsvalias._tcp.handcash.io.","type":33,"TTL":300,"data":"10 100 443 cloud.handcash.io."}],"Comment":"Response from 172.64.33.138."}
-```
-
-The `data` field holds the priority, the weight, the port and the target, so Paymail for `handcash.io` runs on `cloud.handcash.io`, port 443. `"AD":true` means the resolver validated the DNSSEC signature chain of the answer, which the 2022 standard requires for every SRV record. The `Comment` field names the server that answered and changes between requests.
+The resolver returns JSON. When the domain has an SRV record, the `Answer` array holds it, and its `data` field gives the priority, the weight, the port and the target, in that order. The target and the port are the host your app calls next. `"AD":true` means the resolver validated the DNSSEC signature chain of the answer, which the 2022 standard requires for every SRV record.
 
 ## Read the capabilities document
 
 The host serves the capabilities document over HTTPS, with the status `200`, or `304` when your app sent cache headers and the document has not changed. Request it from the host you found in host discovery:
 
 ```bash
-curl https://cloud.handcash.io/.well-known/bsvalias
+curl https://<host>/.well-known/bsvalias
 ```
 
-The host returns one JSON document:
-
-```json
-{"bsvalias":"1.0","capabilities":{"6745385c3fc0":false,"pki":"https://cloud.handcash.io/api/bsvalias/id/{alias}@{domain.tld}","paymentDestination":"https://cloud.handcash.io/api/bsvalias/address/{alias}@{domain.tld}","a9f510c16bde":"https://cloud.handcash.io/api/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}","f12f968c92d6":"https://cloud.handcash.io/api/bsvalias/public-profile/{alias}@{domain.tld}","5f1323cddf31":"https://cloud.handcash.io/api/bsvalias/receive-transaction/{alias}@{domain.tld}","2a40af698840":"https://cloud.handcash.io/api/bsvalias/p2p-payment-destination/{alias}@{domain.tld}","5c55a7fdb7bb":"https://cloud.handcash.io/api/bsvalias/receive-beef/{alias}@{domain.tld}"}}
-```
+Replace `<host>` with the target of the SRV record, or with the domain when it has no SRV record, and add `:<port>` when the port is not 443. The host returns one JSON document.
 
 The document has two fields:
 
@@ -99,7 +89,7 @@ The document has two fields:
 
 The specification behind each key defines its value, which takes one of three forms:
 
-- A URL template, the usual form, such as the value of `pki` above.
+- A URL template, the usual form, such as `https://example.com/api/bsvalias/id/{alias}@{domain.tld}` for `pki`.
 - A flag, such as `"6745385c3fc0": false`. In Payer Validation, `true` means the host enforces sender validation, and any other value means it does not.
 - An object with several fields, such as `{"callback": "https://example.org/{alias}@{domain.tld}/payment-destination-response"}` for Payee Approvals (`3d7c2ca83a46`) in the 2022 standard.
 
@@ -135,30 +125,20 @@ Create this file in the project folder:
 ```javascript capabilities.mjs
 import { PaymailClient } from '@bsv/paymail'
 
+const DOMAIN = 'example.com'
+
 const client = new PaymailClient()
 
-const capabilities = await client.getCapabilities('handcash.io')
+const capabilities = await client.getCapabilities(DOMAIN)
 console.log(capabilities)
 
-const pkiTemplate = await client.ensureCapabilityFor('handcash.io', 'pki')
+const pkiTemplate = await client.ensureCapabilityFor(DOMAIN, 'pki')
 console.log(pkiTemplate)
 ```
 
-Run it with `node capabilities.mjs`. The script only reads public DNS and a public JSON document, so it needs no wallet, no key and no funds, and works the same on any network. It prints the capabilities of the domain, then the URL template of `pki`:
+Replace `example.com` in `DOMAIN` with the Paymail domain to check. Run the script with `node capabilities.mjs`. It only reads public DNS and a public JSON document, so it needs no wallet, no key and no funds, and works the same on any network.
 
-```text
-{
-  '6745385c3fc0': false,
-  pki: 'https://cloud.handcash.io/api/bsvalias/id/{alias}@{domain.tld}',
-  paymentDestination: 'https://cloud.handcash.io/api/bsvalias/address/{alias}@{domain.tld}',
-  a9f510c16bde: 'https://cloud.handcash.io/api/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}',
-  f12f968c92d6: 'https://cloud.handcash.io/api/bsvalias/public-profile/{alias}@{domain.tld}',
-  '5f1323cddf31': 'https://cloud.handcash.io/api/bsvalias/receive-transaction/{alias}@{domain.tld}',
-  '2a40af698840': 'https://cloud.handcash.io/api/bsvalias/p2p-payment-destination/{alias}@{domain.tld}',
-  '5c55a7fdb7bb': 'https://cloud.handcash.io/api/bsvalias/receive-beef/{alias}@{domain.tld}'
-}
-https://cloud.handcash.io/api/bsvalias/id/{alias}@{domain.tld}
-```
+The script prints the `capabilities` object of the domain, with each key mapped to its URL template or flag, then the URL template of `pki`, with `{alias}` and `{domain.tld}` still in it. For a domain that does not support `pki`, the second call throws the error described below.
 
 The two methods take a domain, not a handle:
 
@@ -183,7 +163,7 @@ The package exports a class for each capability it implements, and `getCode()` r
 `@bsv/paymail` 2.4.12 accepts only a document whose `bsvalias` is exactly `"1.0"` and whose capability values are strings or booleans. A host that lists one capability with an object value, such as Payee Approvals in the 2022 standard, makes `getCapabilities` and every method that depends on it fail with `Validation error: capability values must be bounded strings or booleans`. To read such a host, request the document yourself as in [Read the capabilities document](#read-the-capabilities-document).
 </Callout>
 
-This page was written against the 2022 standard, TS 2021.010-30, commit `2e03c8b` of the 2019 specification and `@bsv/paymail` 2.4.12 with `@bsv/sdk` 4.0.1. The script ran on Node.js 24.19.0, and the outputs on this page are from 4 November 2026. A host can change its document at any time, so your output can differ.
+This page was written against the 2022 standard, TS 2021.010-30, commit `2e03c8b` of the 2019 specification and `@bsv/paymail` 2.4.12 with `@bsv/sdk` 4.0.1. The script ran on Node.js 24.19.0 on 4 November 2026.
 
 ## Related articles
 
