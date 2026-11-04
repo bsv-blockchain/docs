@@ -28,11 +28,11 @@ Without a wallet, your code does each job a wallet would do. The SDK gives you a
 
 [How transactions and fees work](/concepts/transactions/) explains how inputs, the fee and change fit together.
 
-For cryptography without a transaction, `@bsv/sdk` also exports `Hash`, `ECDSA` and `Signature`, `Schnorr`, `SymmetricKey` for AES-GCM encryption, `PrivateKey.deriveSharedSecret` for ECDH, and `KeyDeriver` for BRC-42 key derivation.
+For cryptography without a transaction, `@bsv/sdk` also exports `Hash`, `ECDSA` and `Signature`, `Schnorr`, `SymmetricKey` for <Hint tip="Advanced Encryption Standard in Galois/Counter Mode, a symmetric cipher that also checks the data was not changed">AES-GCM</Hint> encryption, `PrivateKey.deriveSharedSecret` for <Hint tip="Elliptic-curve Diffie-Hellman, a way for two keys to derive the same shared secret">ECDH</Hint>, and `KeyDeriver` for <Hint tip="BSV Request for Comments 42, key derivation that two parties can compute from their own keys">BRC-42</Hint> key derivation.
 
 ## Calls that default to Mainnet
 
-<Callout type="warning">
+<Callout type="danger">
 A transaction your code signs goes out with no approval step, and a blockchain transaction cannot be reversed. Test on testnet with the values below, and keep Mainnet keys out of test code.
 </Callout>
 
