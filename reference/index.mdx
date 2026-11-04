@@ -20,8 +20,8 @@ Each row names a reference and what you look up in it. The Wallet API and the se
 | Wallet | Each wallet method, such as `createAction`, `listOutputs` and `getNetwork`, with its request and response | [Wallet API (BRC-100)](/reference/wallet-api/) |
 | Service API | Submitting transactions to <Hint tip="The broadcast API that came before BSV Broadcaster">ARC</Hint>, one at a time or in a batch, and reading their status | [ARC broadcast](/reference/arc/) |
 | Service API | Submitting tagged <Hint tip="Background Evaluation Extended Format (BRC-62), a transaction sent with its proofs">BEEF</Hint> transactions to an <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay service</Hint>, querying its lookup services and managing it through its admin routes | [Overlay](/reference/overlay/) |
-| Service API | Sending, listing and acknowledging messages, and setting who may send to a box | [MessageBox](/reference/message-box/) |
-| Service API | Registering a transaction ID to receive its Merkle proof at a callback URL | [Merkle service](/reference/merkle-service/) |
+| Service API | Sending, listing and acknowledging messages in a <Hint tip="Holds each message until its recipient reads it">MessageBox</Hint>, and setting who may send to it | [MessageBox](/reference/message-box/) |
+| Service API | Registering a transaction ID to receive its <Hint tip="The proof that a transaction is in a block, checked against the block header">Merkle proof</Hint> at a callback URL | [Merkle service](/reference/merkle-service/) |
 | Service API | Uploading, finding and renewing files that a <Hint tip="Universal Hash Resolution Protocol (BRC-26), storage that addresses a file by its SHA-256 hash">UHRP</Hint> host serves | [UHRP storage](/reference/uhrp/) |
 | Service API | The HTTP interface of a remote wallet storage provider: actions, outputs, certificates and sync | [Wallet storage](/reference/wallet-storage/) |
 | Service API | The `402 Payment Required` exchange and the `x-bsv-*` headers of a paid request | [BRC-121 payments](/reference/brc-121/) |
