@@ -1,6 +1,6 @@
 ---
 title: "Discover Paymail capabilities"
-description: "How a Paymail client finds the host of a domain with a DNS SRV lookup, reads its capabilities document, and fills in the endpoint URL templates."
+description: "How your app finds the Paymail host of a domain with a DNS SRV lookup, reads its capabilities document, and fills in the endpoint URL templates."
 sidebarTitle: "Capability discovery"
 ---
 
@@ -55,12 +55,12 @@ A domain that delegates Paymail to another host publishes an SRV record with the
 
 </BlueTable>
 
-DNS answers can be forged, so the 2022 standard ties the SRV record to <Hint tip="DNS Security Extensions, signatures that let a resolver check that a DNS answer is authentic">DNSSEC</Hint> and to TLS. It sets these rules for a client:
+DNS answers can be forged, so the 2022 standard ties the SRV record to <Hint tip="DNS Security Extensions, signatures that let a resolver check that a DNS answer is authentic">DNSSEC</Hint> and to TLS. It sets these rules for your app:
 
-- An SRV record is a delegation, and a delegation must be served with a valid DNSSEC signature chain. The client resolves the A or AAAA record of the target and continues with the target as the host. When the target has neither record, host discovery fails.
-- The client ignores an SRV record served without a valid DNSSEC signature chain, and continues with the domain itself as the host.
-- When the domain has no SRV record, the client resolves the A or AAAA record of the domain and continues with the domain as the host. When neither record exists, host discovery fails.
-- The TLS certificate of the host must be valid and must match the host name the client expects. When it does not match, capability discovery fails. Clients must support TLS and DNSSEC.
+- An SRV record is a delegation, and a delegation must be served with a valid DNSSEC signature chain. Your app resolves the A or AAAA record of the target and continues with the target as the host. When the target has neither record, host discovery fails.
+- Your app ignores an SRV record served without a valid DNSSEC signature chain, and continues with the domain itself as the host.
+- When the domain has no SRV record, your app resolves the A or AAAA record of the domain and continues with the domain as the host. When neither record exists, host discovery fails.
+- The TLS certificate of the host must be valid and must match the host name your app expects. When it does not match, capability discovery fails. Your app must support TLS and DNSSEC.
 
 The 2019 specification, published as BSV Alias (`bsvalias`), also accepts an SRV record without DNSSEC when its target is the domain itself or `www.<domain>`, and relies on the TLS certificate in that case. Its [Host Discovery](https://github.com/bitcoin-sv-specs/brfc-paymail/blob/2e03c8bc49b489d13eda7a3580795b1809cd2f08/src/02-01-host-discovery.md) section lists the full procedure.
 
@@ -80,7 +80,7 @@ The `data` field holds the priority, the weight, the port and the target, so Pay
 
 ## Read the capabilities document
 
-The host serves the capabilities document over HTTPS, with the status `200`, or `304` when the client sent cache headers and the document has not changed. Request it from the host you found in host discovery:
+The host serves the capabilities document over HTTPS, with the status `200`, or `304` when your app sent cache headers and the document has not changed. Request it from the host you found in host discovery:
 
 ```bash
 curl https://cloud.handcash.io/.well-known/bsvalias
@@ -171,11 +171,11 @@ The package exports a class for each capability it implements, and `getCode()` r
 
 `PaymailClient` 2.4.12 makes these choices, which differ from the 2022 standard in places:
 
-- DNS lookup goes through DNS over HTTPS (DoH), at `https://dns.google.com/resolve` by default. The second argument of the constructor takes `dohServerBaseUrl` to use another resolver, or `dns`, an object with a `resolveSrv` function such as the `node:dns` module, which the client tries first. The client uses a `dns` answer only when the target is the domain or one of its subdomains, and asks the DoH resolver otherwise.
+- DNS lookup goes through DNS over HTTPS (DoH), at `https://dns.google.com/resolve` by default. The second argument of the constructor takes `dohServerBaseUrl` to use another resolver, or `dns`, an object with a `resolveSrv` function such as the `node:dns` module, which `PaymailClient` tries first. It uses a `dns` answer only when the target is the domain or one of its subdomains, and asks the DoH resolver otherwise.
 - With the default DoH resolver, the fallback to the domain on port 443 happens only when the resolver answers that the SRV name does not exist. Other answers without an SRV record, such as an empty answer, fail with `<domain> is not correctly configured: insecure domain`.
-- An SRV record without DNSSEC is accepted when the target is the domain or one of its subdomains. For a target on another domain without DNSSEC, the client fails with the same `insecure domain` error, where the 2022 standard falls back to the domain.
+- An SRV record without DNSSEC is accepted when the target is the domain or one of its subdomains. For a target on another domain without DNSSEC, `PaymailClient` fails with the same `insecure domain` error, where the 2022 standard falls back to the domain.
 - The document request goes to `https://<host>:<port>/.well-known/bsvalias` over HTTPS only, does not follow redirects, stops after 30 seconds, and reads at most 1 MiB. A response with an error status throws a `PaymailServerResponseError` that carries the response body.
-- Capabilities are cached for five minutes per domain in the client instance, for up to 256 domains, and calls for the same domain at the same time share one request. Reuse one client to keep the cache.
+- Capabilities are cached for five minutes per domain in the `PaymailClient` instance, for up to 256 domains, and calls for the same domain at the same time share one request. Reuse one `PaymailClient` to keep the cache.
 - For local development, the domain `localhost` skips DNS and is requested over HTTP on port 3000, or on the port given as the third argument of the constructor.
 - The package methods replace only `{alias}`, `{domain.tld}` and `{pubkey}`, and look up the key `pki`, not `0c4339ef99c2`. For a host that uses `{local-part}` or lists only the BRFC ID of PKI, read the document and fill in the template yourself.
 
