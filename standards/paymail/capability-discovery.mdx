@@ -80,7 +80,7 @@ The host serves the capabilities document over HTTPS, with the status `200`, or 
 curl https://<host>/.well-known/bsvalias
 ```
 
-Replace `<host>` with the target of the SRV record, or with the domain when it has no SRV record, and add `:<port>` when the port is not 443. The host returns one JSON document.
+Replace `<host>` with the target of the SRV record, or with the domain when it has no SRV record, and add `:<port>` when the port is not 443. This is the 2019 path. A host built to the 2022 standard serves the document at `/.well-known/bsvalias.json`, so request that path for it. The host returns one JSON document.
 
 The document has two fields:
 
@@ -160,7 +160,7 @@ The package exports a class for each capability it implements, and `getCode()` r
 - The package methods replace only `{alias}`, `{domain.tld}` and `{pubkey}`, and look up the key `pki`, not `0c4339ef99c2`. For a host that uses `{local-part}` or lists only the BRFC ID of PKI, read the document and fill in the template yourself.
 
 <Callout type="warning">
-`@bsv/paymail` 2.4.12 accepts only a document whose `bsvalias` is exactly `"1.0"` and whose capability values are strings or booleans. A host that lists one capability with an object value, such as Payee Approvals in the 2022 standard, makes `getCapabilities` and every method that depends on it fail with `Validation error: capability values must be bounded strings or booleans`. To read such a host, request the document yourself as in [Read the capabilities document](#read-the-capabilities-document).
+`@bsv/paymail` 2.4.12 accepts only a document whose `bsvalias` is exactly `"1.0"` and whose capability values are strings or booleans. A host that lists one capability with an object value, such as Payee Approvals in the 2022 standard, makes `getCapabilities` and every method that depends on it fail with `Validation error: capability values must be bounded strings or booleans`. To read such a host, request the document yourself as in [Read the capabilities document](#read-the-capabilities-document), at `/.well-known/bsvalias.json` for a host built to the 2022 standard.
 </Callout>
 
 This page was written against the 2022 standard, TS 2021.010-30, commit `2e03c8b` of the 2019 specification and `@bsv/paymail` 2.4.12 with `@bsv/sdk` 4.0.1. The script ran on Node.js 24.19.0 on 4 November 2026.
