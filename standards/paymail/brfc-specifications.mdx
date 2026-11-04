@@ -93,7 +93,7 @@ The 2019 specification, <Hint tip="BSV Alias, the working title of the 2019 Paym
 
 </BlueTable>
 
-Hosts built on the 2019 specification, and the `@bsv/paymail` package, still use the key `pki` for public key infrastructure, so a client reads both forms.
+Hosts built on the 2019 specification use the keys `pki` and `paymentDestination` instead of `0c4339ef99c2` and `759684b1a19a`, and `@bsv/paymail` 2.4.12 still uses `pki`, so a client reads both forms of each.
 
 ## Status of the process
 
@@ -101,7 +101,7 @@ The BRFC process and the ID algorithm come from the 2019 Paymail specification, 
 
 The current standard is the [Paymail standard](https://tsc.bsvblockchain.org/standards/paymail/) of the Technical Standards Committee, TS 2021.010-30, version 0.1, published on 12 July 2022 with the status Published. It withdraws the 2019 specification as a whole and [uses BRFC IDs](https://tsc.bsvblockchain.org/wp-content/uploads/2022/04/Paymail-_BRFC-IDs-as-element-names.pdf) as the keys of the `capabilities` object for every capability, including the two the 2019 specification named with words. It lists BRFC numbering as a dependency marked "to be standardised", and its own BRFC ID as "TBC". The standard asks extension authors to calculate their BRFC ID and does not define the algorithm, so the steps on this page come from the original 2019 specification.
 
-This page was written against TS 2021.010-30, commit `2e03c8b` of the 2019 specification and `@bsv/paymail` 2.4.12.
+This page was written against TS 2021.010-30, commit `2e03c8b` of the 2019 specification and `@bsv/paymail` 2.4.12. The code sample ran on Node.js 24.19.0.
 
 ## Related articles
 
