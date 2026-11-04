@@ -33,7 +33,7 @@ For cryptography without a transaction, `@bsv/sdk` also exports `Hash`, `ECDSA` 
 ## Calls that default to Mainnet
 
 <Callout type="danger">
-A transaction your code signs goes out with no approval step, and a blockchain transaction cannot be reversed. Test on testnet with the values below, and keep Mainnet keys out of test code.
+A transaction your code signs goes out with no approval step, and a broadcast transaction cannot be undone. Test on testnet with the values below, and keep Mainnet keys out of test code.
 </Callout>
 
 Several calls fall back to Mainnet when you pass no argument. Pass the testnet value while you test:
