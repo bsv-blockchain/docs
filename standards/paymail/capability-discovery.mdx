@@ -14,14 +14,16 @@ Discovery has two phases, host discovery and capability discovery:
 
 1. Split the handle at `@` into the alias and the domain.
 2. Look up the DNS <Hint tip="Service record, a DNS record that names the host and port of a service">SRV</Hint> record `_bsvalias._tcp.<domain>`. Its target and port name the host that serves Paymail for the domain. When the domain has no SRV record, the host is the domain itself, on port 443.
-3. Send a `GET` request to `https://<host>:<port>/.well-known/bsvalias`. The host answers with a JSON document that lists its capabilities.
+3. Send a `GET` request for the capabilities document on that host, at `https://<host>:<port>/.well-known/bsvalias` in the 2019 specification. The host answers with a JSON document that lists its capabilities.
 4. Pick the capability your app needs, replace the placeholders in its URL template with the parts of the handle, and call that URL.
+
+The names in these steps come from two versions of the specification. TS 2021.010-30, published in 2022, withdraws the 2019 specification and changes three names. It moves the document to `/.well-known/bsvalias.json`, names the alias token `{local-part}`, and keys `pki` and `paymentDestination` by their <Hint tip="Bitcoin SV Request for Comments, a specification document identified without a central numbering authority">BRFC</Hint> IDs, `0c4339ef99c2` and `759684b1a19a`. The host in the examples on this page and `@bsv/paymail` 2.4.12 use the 2019 forms, and that host answers `404` at `/.well-known/bsvalias.json`.
 
 The host can be a different domain from the one in the handle. A domain owner who uses a Paymail service provider delegates to it with one SRV record, so a client that only requests `https://<domain>/.well-known/bsvalias` misses those hosts.
 
 ## Find the host with a DNS SRV record
 
-A domain that delegates Paymail to another host publishes an SRV record with these values, as the [Paymail standard](https://tsc.bsvblockchain.org/standards/paymail/) defines them:
+A domain that delegates Paymail to another host publishes an SRV record with these values, as the [2022 standard](https://tsc.bsvblockchain.org/standards/paymail/) defines them:
 
 <BlueTable>
 
@@ -29,6 +31,7 @@ A domain that delegates Paymail to another host publishes an SRV record with the
 | --- | --- |
 | Service | `_bsvalias` |
 | Proto | `_tcp` |
+| Class | `IN` |
 | Name | The domain of the handle, such as `example.com.` |
 | Port | `443` |
 | Target | The host that serves Paymail for the domain |
@@ -37,9 +40,9 @@ A domain that delegates Paymail to another host publishes an SRV record with the
 
 </BlueTable>
 
-DNS answers can be forged, so the standard ties the SRV record to <Hint tip="DNS Security Extensions, signatures that let a resolver check that a DNS answer is authentic">DNSSEC</Hint> and to TLS. The current standard, TS 2021.010-30, sets these rules for a client:
+DNS answers can be forged, so the 2022 standard ties the SRV record to <Hint tip="DNS Security Extensions, signatures that let a resolver check that a DNS answer is authentic">DNSSEC</Hint> and to TLS. It sets these rules for a client:
 
-- An SRV record is a delegation, and a delegation must be served with a valid DNSSEC signature chain. The client resolves the A or AAAA record of the target and continues with the target as the host.
+- An SRV record is a delegation, and a delegation must be served with a valid DNSSEC signature chain. The client resolves the A or AAAA record of the target and continues with the target as the host. When the target has neither record, host discovery fails.
 - The client ignores an SRV record served without a valid DNSSEC signature chain, and continues with the domain itself as the host.
 - When the domain has no SRV record, the client resolves the A or AAAA record of the domain and continues with the domain as the host. When neither record exists, host discovery fails.
 - The TLS certificate of the host must be valid and must match the host name the client expects. When it does not match, capability discovery fails. Clients must support TLS and DNSSEC.
@@ -54,11 +57,11 @@ curl "https://dns.google/resolve?name=_bsvalias._tcp.handcash.io&type=SRV"
 
 The resolver returns the record as JSON:
 
-```text
+```json
 {"Status":0,"TC":false,"RD":true,"RA":true,"AD":true,"CD":false,"Question":[{"name":"_bsvalias._tcp.handcash.io.","type":33}],"Answer":[{"name":"_bsvalias._tcp.handcash.io.","type":33,"TTL":300,"data":"10 100 443 cloud.handcash.io."}],"Comment":"Response from 172.64.33.138."}
 ```
 
-The `data` field holds the priority, the weight, the port and the target, so Paymail for `handcash.io` runs on `cloud.handcash.io`, port 443. `"AD":true` means the resolver validated the DNSSEC signature chain of the answer, which the standard requires for a target on another domain. The `Comment` field names the server that answered and changes between requests.
+The `data` field holds the priority, the weight, the port and the target, so Paymail for `handcash.io` runs on `cloud.handcash.io`, port 443. `"AD":true` means the resolver validated the DNSSEC signature chain of the answer, which the 2022 standard requires for a target on another domain. The `Comment` field names the server that answered and changes between requests.
 
 ## Read the capabilities document
 
@@ -70,24 +73,22 @@ curl https://cloud.handcash.io/.well-known/bsvalias
 
 The host returns one JSON document:
 
-```text
+```json
 {"bsvalias":"1.0","capabilities":{"6745385c3fc0":false,"pki":"https://cloud.handcash.io/api/bsvalias/id/{alias}@{domain.tld}","paymentDestination":"https://cloud.handcash.io/api/bsvalias/address/{alias}@{domain.tld}","a9f510c16bde":"https://cloud.handcash.io/api/bsvalias/verifypubkey/{alias}@{domain.tld}/{pubkey}","f12f968c92d6":"https://cloud.handcash.io/api/bsvalias/public-profile/{alias}@{domain.tld}","5f1323cddf31":"https://cloud.handcash.io/api/bsvalias/receive-transaction/{alias}@{domain.tld}","2a40af698840":"https://cloud.handcash.io/api/bsvalias/p2p-payment-destination/{alias}@{domain.tld}","5c55a7fdb7bb":"https://cloud.handcash.io/api/bsvalias/receive-beef/{alias}@{domain.tld}"}}
 ```
 
 The document has two fields:
 
 - `bsvalias` is the version of the document format, `"1.0"`. The 2019 specification added it for forward compatibility and leaves its interpretation unspecified.
-- `capabilities` is an object with one key for each capability the host supports. A key is the <Hint tip="Bitcoin SV Request for Comments, a specification document identified by a hash instead of a central number">BRFC</Hint> ID of the specification that defines the capability, such as `a9f510c16bde` for Verify Public Key Owner. The 2019 specification names its two required capabilities with words instead, `pki` and `paymentDestination`, and hosts built on it still use those words. [BRFC specification process](/standards/paymail/brfc-specifications/) lists the published IDs.
+- `capabilities` is an object with one key for each capability the host supports. A key is the BRFC ID of the specification that defines the capability, such as `a9f510c16bde` for Verify Public Key Owner. The 2019 specification names its two required capabilities with words instead, `pki` and `paymentDestination`, and hosts built on it still use those words. [BRFC specification process](/standards/paymail/brfc-specifications/) lists the published IDs.
 
 The specification behind each key defines its value, which takes one of three forms:
 
 - A URL template, the usual form, such as the value of `pki` above.
 - A flag, such as `"6745385c3fc0": false`. In Payer Validation, `true` means the host enforces sender validation, and any other value means it does not.
-- An object with several fields, such as `{"callback": "https://example.org/{alias}@{domain.tld}/payment-destination-response"}` for Payee Approvals (`3d7c2ca83a46`) in the standard.
+- An object with several fields, such as `{"callback": "https://example.org/{alias}@{domain.tld}/payment-destination-response"}` for Payee Approvals (`3d7c2ca83a46`) in the 2022 standard.
 
 The document describes what the host software supports, not what each account has turned on. A host that lists a capability but has not enabled it for an alias should answer `404` to a request for that alias, the same answer as for an alias that does not exist.
-
-The 2022 standard names the path `/.well-known/bsvalias.json`. `@bsv/paymail` 2.4.12 requests `/.well-known/bsvalias`, the path of the 2019 specification, and the host in the example serves the document there.
 
 ### Fill in a URL template
 
@@ -95,25 +96,26 @@ Replace each placeholder in a template with the matching value, wherever it appe
 
 <BlueTable>
 
-| Placeholder | Replace it with | Example value for `alice@handcash.io` |
+| Placeholder | Replace it with | Example value for `alice@example.com` |
 | --- | --- | --- |
 | `{alias}` | The part of the handle before `@` | `alice` |
-| `{domain.tld}` | The domain of the handle | `handcash.io` |
+| `{local-part}` | The part of the handle before `@`, the name the 2022 standard gives `{alias}` | `alice` |
+| `{domain.tld}` | The domain of the handle | `example.com` |
 | `{pubkey}` | A compressed public key in hex, in Verify Public Key Owner (`a9f510c16bde`) | The key the app wants to check |
 
 </BlueTable>
 
-For `alice@handcash.io`, the `pki` template above becomes `https://cloud.handcash.io/api/bsvalias/id/alice@handcash.io`. The domain in the URL is still the domain of the handle, even though the request goes to the host. The 2022 standard names the alias token `{local-part}` in its host rules, while the 2019 specification, its examples and `@bsv/paymail` 2.4.12 use `{alias}`.
+For `alice@example.com`, the template `https://example.com/api/bsvalias/id/{alias}@{domain.tld}` becomes `https://example.com/api/bsvalias/id/alice@example.com`. When the host is another domain, the URL still carries the domain of the handle, even though the request goes to the host.
 
 ## Discover capabilities with `@bsv/paymail`
 
-The `@bsv/paymail` package runs host discovery and capability discovery in `PaymailClient`. Install it in a Node.js project, with `@bsv/sdk` as its peer dependency:
+The `@bsv/paymail` package runs host discovery and capability discovery in `PaymailClient`. The package needs Node.js 22 or newer. Install it in a Node.js project, with `@bsv/sdk` as its peer dependency:
 
 ```bash
 npm install @bsv/paymail @bsv/sdk
 ```
 
-The package needs Node.js 22 or newer. Create this file in the project folder:
+Create this file in the project folder:
 
 ```javascript capabilities.mjs
 import { PaymailClient } from '@bsv/paymail'
@@ -127,7 +129,7 @@ const pkiTemplate = await client.ensureCapabilityFor('handcash.io', 'pki')
 console.log(pkiTemplate)
 ```
 
-Run it with `node capabilities.mjs`. It prints the capabilities of the domain, then the URL template of `pki`:
+Run it with `node capabilities.mjs`. The script only reads public DNS and a public JSON document, so it needs no wallet, no key and no funds, and works the same on any network. It prints the capabilities of the domain, then the URL template of `pki`:
 
 ```text
 {
@@ -146,26 +148,27 @@ https://cloud.handcash.io/api/bsvalias/id/{alias}@{domain.tld}
 The two methods take a domain, not a handle:
 
 - `getCapabilities(domain)` runs both phases and returns the `capabilities` object. `getDomainCapabilities` is the same method under another name.
-- `ensureCapabilityFor(domain, code)` returns the URL template of one capability. It throws a `PaymailServerResponseError` with the message `Domain "<domain>" does not support capability "<code>"` when the key is missing or its value is not a string, so a flag such as `6745385c3fc0` throws too.
+- `ensureCapabilityFor(domain, code)` returns the URL template of one capability. It throws a `PaymailServerResponseError` with the message `Domain "<domain>" does not support capability "<code>"` when the key is missing or its value is not a string, so a flag such as `6745385c3fc0` throws too. It also rejects a template that is not HTTPS or that points to `localhost`, a `.local` name or an IP address.
 
 The package exports a class for each capability it implements, and `getCode()` returns its key, such as `pki` for `PublicKeyInfrastructureCapability`. Methods such as `getPki` and `verifyPublicKey` run discovery themselves and fill in `{alias}`, `{domain.tld}` and `{pubkey}`, so call them directly when the package implements the capability you need.
 
 ### How `PaymailClient` resolves a host
 
-`PaymailClient` 2.4.12 makes these choices, which differ from the standard in places:
+`PaymailClient` 2.4.12 makes these choices, which differ from the 2022 standard in places:
 
-- DNS lookup goes through DNS over HTTPS, at `https://dns.google.com/resolve` by default. The second argument of the constructor takes `dohServerBaseUrl` to use another resolver, or `dns`, an object with a `resolveSrv` function such as the `node:dns` module, which the client tries first.
-- The fallback to the domain on port 443 happens only when the resolver answers that the SRV name does not exist. Other answers without an SRV record, such as an empty answer, fail with `<domain> is not correctly configured: insecure domain`.
-- An SRV record without DNSSEC is accepted when the target is the domain or one of its subdomains. For a target on another domain without DNSSEC, the client fails with the same `insecure domain` error, where the standard falls back to the domain.
+- DNS lookup goes through DNS over HTTPS (DoH), at `https://dns.google.com/resolve` by default. The second argument of the constructor takes `dohServerBaseUrl` to use another resolver, or `dns`, an object with a `resolveSrv` function such as the `node:dns` module, which the client tries first. The client uses a `dns` answer only when the target is the domain or one of its subdomains, and asks the DoH resolver otherwise.
+- With the default DoH resolver, the fallback to the domain on port 443 happens only when the resolver answers that the SRV name does not exist. Other answers without an SRV record, such as an empty answer, fail with `<domain> is not correctly configured: insecure domain`.
+- An SRV record without DNSSEC is accepted when the target is the domain or one of its subdomains. For a target on another domain without DNSSEC, the client fails with the same `insecure domain` error, where the 2022 standard falls back to the domain.
 - The document request goes to `https://<host>:<port>/.well-known/bsvalias` over HTTPS only, does not follow redirects, stops after 30 seconds, and reads at most 1 MiB. A response with an error status throws a `PaymailServerResponseError` that carries the response body.
 - Capabilities are cached for five minutes per domain in the client instance, for up to 256 domains, and calls for the same domain at the same time share one request. Reuse one client to keep the cache.
 - For local development, the domain `localhost` skips DNS and is requested over HTTP on port 3000, or on the port given as the third argument of the constructor.
+- The package methods replace only `{alias}`, `{domain.tld}` and `{pubkey}`, and look up the key `pki`, not `0c4339ef99c2`. For a host that uses `{local-part}` or lists only the BRFC ID of PKI, read the document and fill in the template yourself.
 
 <Callout type="warning">
-`@bsv/paymail` 2.4.12 accepts only a document whose `bsvalias` is exactly `"1.0"` and whose capability values are strings or booleans. A host that lists one capability with an object value, such as Payee Approvals in the standard, makes `getCapabilities` and every method that depends on it fail with `Validation error: capability values must be bounded strings or booleans`. To read such a host, request the document yourself as in [Read the capabilities document](#read-the-capabilities-document).
+`@bsv/paymail` 2.4.12 accepts only a document whose `bsvalias` is exactly `"1.0"` and whose capability values are strings or booleans. A host that lists one capability with an object value, such as Payee Approvals in the 2022 standard, makes `getCapabilities` and every method that depends on it fail with `Validation error: capability values must be bounded strings or booleans`. To read such a host, request the document yourself as in [Read the capabilities document](#read-the-capabilities-document).
 </Callout>
 
-This page was written against TS 2021.010-30, commit `2e03c8b` of the 2019 specification and `@bsv/paymail` 2.4.12 with `@bsv/sdk` 4.0.1. The script ran on Node.js 24.19.0, and the outputs on this page are from 4 November 2026.
+This page was written against the 2022 standard, TS 2021.010-30, commit `2e03c8b` of the 2019 specification and `@bsv/paymail` 2.4.12 with `@bsv/sdk` 4.0.1. The script ran on Node.js 24.19.0, and the outputs on this page are from 4 November 2026. A host can change its document at any time, so your output can differ.
 
 ## Related articles
 
