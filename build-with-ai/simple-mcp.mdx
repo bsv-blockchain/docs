@@ -73,7 +73,7 @@ Ask Claude Code a BSV question in the same project, and it calls `search_docs` a
 
 ## Add Simple MCP
 
-[Simple MCP](https://github.com/bsv-blockchain/simple-mcp) is a separate server for `@bsv/simple`, a library built on top of the BSV SDK. This section uses version 0.0.2 of the `@bsv/simple-mcp` package, which writes code for `@bsv/simple` 0.2.x, while npm has 0.7.0. Its server wallet setup uses a random private key when the `SERVER_PRIVATE_KEY` variable is not set. Its payment code failed in our test on testnet with `@bsv/simple` 0.7.0, since the payment was sent but never reached the recipient.
+[Simple MCP](https://github.com/bsv-blockchain/simple-mcp) is a separate server for `@bsv/simple`, a library built on top of the BSV SDK. This section uses version 0.0.2 of the `@bsv/simple-mcp` package, which writes code for `@bsv/simple` 0.2.x, while npm has 0.7.2. Its server wallet setup uses a random private key when the `SERVER_PRIVATE_KEY` variable is not set. Its payment code failed in our test on testnet with `@bsv/simple` 0.7.0, since the payment was sent but never reached the recipient.
 
 <Callout type="warning">
   Simple MCP writes Mainnet code only, so a payment it generates spends real BSV and cannot be undone. Read and adapt anything it generates before you run it.
