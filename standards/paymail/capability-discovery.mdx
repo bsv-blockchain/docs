@@ -10,20 +10,20 @@ Find which Paymail capabilities a host supports, and the endpoint URL of each on
 
 ## How discovery works
 
-Paymail discovery has two phases. First your app finds the host that serves Paymail for the domain in the handle, then that host says what it supports:
+Paymail discovery has two phases. In host discovery, your app finds the host that serves Paymail for the domain in the handle. In capability discovery, that host says what it supports:
 
 <BlueTable>
 
 | Phase | What happens | Details |
 | --- | --- | --- |
-| Find the host | Your app splits the handle, such as `alice@example.com`, at `@` into the alias and the domain, and looks up the DNS <Hint tip="Service record, a DNS record that names the host and port of a service">SRV</Hint> record `_bsvalias._tcp.<domain>`. The record names the host and port that serve Paymail, which can belong to a Paymail provider. With no SRV record, the host is the domain itself, on port 443. | [Find the host with a DNS SRV record](#find-the-host-with-a-dns-srv-record) |
-| Read the capabilities | Your app requests the capabilities document from that host. The host answers with the capabilities it supports and a URL template for each one. Your app fills the template of the capability it needs with the alias and the domain, and calls that URL. | [Read the capabilities document](#read-the-capabilities-document) |
+| Host discovery | Your app splits the handle, such as `alice@example.com`, at `@` into the alias and the domain, and looks up the DNS <Hint tip="Service record, a DNS record that names the host and port of a service">SRV</Hint> record `_bsvalias._tcp.<domain>`. The record names the host and port that serve Paymail, which can belong to a Paymail provider. With no SRV record, the host is the domain itself, on port 443. | [Find the host with a DNS SRV record](#find-the-host-with-a-dns-srv-record) |
+| Capability discovery | Your app requests the capabilities document from that host. The host answers with the capabilities it supports and a URL template for each one. Your app fills the template of the capability it needs with the alias and the domain, and calls that URL. | [Read the capabilities document](#read-the-capabilities-document) |
 
 </BlueTable>
 
 ### Names in the 2019 and 2022 versions
 
-TS 2021.010-30, published in 2022, withdraws the 2019 specification and changes three names, including the keys of two capabilities, which it names by their <Hint tip="Bitcoin SV Request for Comments, a specification document identified without a central numbering authority">BRFC</Hint> IDs. The host in the examples on this page and `@bsv/paymail` 2.4.12 use the 2019 names:
+TS 2021.010-30, published in 2022, withdraws the 2019 specification. It changes the path of the document and the alias token, and keys two capabilities by their <Hint tip="Bitcoin SV Request for Comments, a specification document identified without a central numbering authority">BRFC</Hint> IDs instead of words. The host in the examples below and `@bsv/paymail` 2.4.12 use the 2019 names, and that host answers `404` at `/.well-known/bsvalias.json`:
 
 <BlueTable>
 
@@ -35,8 +35,6 @@ TS 2021.010-30, published in 2022, withdraws the 2019 specification and changes 
 | Key of basic address resolution | `paymentDestination` | `759684b1a19a` |
 
 </BlueTable>
-
-That host answers `404` at `/.well-known/bsvalias.json`.
 
 ## Find the host with a DNS SRV record
 
@@ -82,7 +80,7 @@ The `data` field holds the priority, the weight, the port and the target, so Pay
 
 ## Read the capabilities document
 
-The host serves the capabilities document over HTTPS, with the status `200`, or `304` when the client sent cache headers and the document has not changed. Request it from the host that host discovery returned:
+The host serves the capabilities document over HTTPS, with the status `200`, or `304` when the client sent cache headers and the document has not changed. Request it from the host you found in host discovery:
 
 ```bash
 curl https://cloud.handcash.io/.well-known/bsvalias
@@ -97,7 +95,7 @@ The host returns one JSON document:
 The document has two fields:
 
 - `bsvalias` is the version of the document format, `"1.0"`. The 2019 specification added it for forward compatibility and leaves its interpretation unspecified.
-- `capabilities` is an object with one key for each capability the host supports. A key is the BRFC ID of the specification that defines the capability, such as `a9f510c16bde` for Verify Public Key Owner. The 2019 specification names its two required capabilities with words instead, `pki` and `paymentDestination`, and hosts built on it still use those words. [BRFC specification process](/standards/paymail/brfc-specifications/) lists the published IDs.
+- `capabilities` is an object with one key for each capability the host supports. A key is the BRFC ID of the specification that defines the capability, such as `a9f510c16bde` for Verify Public Key Owner, or one of the two words in the [table of names](#names-in-the-2019-and-2022-versions). [BRFC specification process](/standards/paymail/brfc-specifications/) lists the published IDs.
 
 The specification behind each key defines its value, which takes one of three forms:
 
