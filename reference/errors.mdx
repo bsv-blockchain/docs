@@ -26,7 +26,13 @@ Every `WERR_*` error carries `isError: true`, a `name` and a `message`. What els
 
 ### Catch a wallet error
 
-Check `name` or the numeric `code`, not `instanceof`. `@bsv/sdk` and `@bsv/wallet-toolbox` each define their own class for the same error name, and the `@bsv/sdk` `WERR_*` classes do not extend `WalletError`, so `instanceof` matches only the class of the package that built the error. The numeric codes are exported from `@bsv/sdk` as `walletErrors`:
+Check `name` or the numeric `code`, not `instanceof`. `@bsv/sdk` and `@bsv/wallet-toolbox` each define their own class for the same error name, and the `@bsv/sdk` `WERR_*` classes do not extend `WalletError`, so `instanceof` matches only the class of the package that built the error. The numeric codes are exported from `@bsv/sdk` as `walletErrors`. Install the package if your app does not have it yet:
+
+```bash
+npm install @bsv/sdk
+```
+
+This helper checks both:
 
 ```javascript
 import { walletErrors } from '@bsv/sdk'
@@ -48,7 +54,7 @@ These are the values of `walletErrors` in `@bsv/sdk`:
 |------------------------|------|---------|
 | `unknownError` | 1 | Any error without one of the codes below |
 | `unsupportedAction` | 2 | The wallet does not support the call |
-| `invalidHmac` | 3 | An HMAC did not verify |
+| `invalidHmac` | 3 | An <Hint tip="Hash based message authentication code">HMAC</Hint> did not verify |
 | `invalidSignature` | 4 | A signature did not verify |
 | `reviewActions` | 5 | Same as `WERR_REVIEW_ACTIONS` |
 | `invalidParameter` | 6 | Same as `WERR_INVALID_PARAMETER` |
@@ -71,7 +77,7 @@ An error that both packages define, such as `WERR_INSUFFICIENT_FUNDS`, has the s
 | `WERR_MISSING_PARAMETER` | `The required <parameter> parameter is missing.` | A required value was not given. The `parameter` field names it. Supply that value |
 | `WERR_BAD_REQUEST` | `The request is invalid.` or a specific message | The toolbox refused the request, for example `task <name> has already been added.` when a monitor task is added twice |
 | `WERR_INVALID_PUBLIC_KEY` | `The provided public key "<key>" is invalid or malformed.` or the same without the key | A public key in the request could not be read. The toolbox rebuilds this error from the answer of a remote storage server and does not throw it itself. The message holds the key only on Mainnet. The `key` field always holds the key that failed. Check that your app passed a valid public key |
-| `WERR_INVALID_OPERATION` | `An invalid operation was requested.` or a specific message | The wallet cannot do what was asked in its current state. With the message `wallet funding changed repeatedly during action planning; retry createAction`, call `createAction` again. See [How the toolbox tracks UTXOs](/wallet-dev/wallet-toolbox/utxo-lifecycle/) for why it happens |
+| `WERR_INVALID_OPERATION` | `An invalid operation was requested.` or a specific message | The wallet cannot do what was asked in its current state. With the message `wallet funding changed repeatedly during action planning; retry createAction`, call `createAction` again. The <Hint tip="Unspent transaction output">UTXOs</Hint> that fund the wallet changed while it planned the action, as [How the toolbox tracks UTXOs](/wallet-dev/wallet-toolbox/utxo-lifecycle/) explains |
 | `WERR_NOT_IMPLEMENTED` | `Not implemented.` or a specific message | The wallet does not support this call or option. With `recovery of out-of-session signAction reference data is not yet implemented.`, the wallet no longer holds the `reference` that `createAction` returned, so call `signAction` on the same wallet instance that created the action |
 
 </BlueTable>
@@ -85,7 +91,7 @@ An error that both packages define, such as `WERR_INSUFFICIENT_FUNDS`, has the s
 | `WERR_INSUFFICIENT_FUNDS` | `Insufficient funds in the available inputs to cover the cost of the required outputs…` | The wallet cannot pay the outputs and the fee. The message goes on with `(<more> more satoshis are needed, for a total of <total>)`. The `moreSatoshisNeeded` and `totalSatoshisNeeded` fields hold the two amounts in <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint>. Fund the wallet on the network your app uses with at least `moreSatoshisNeeded`, plus some margin for the fee of the extra inputs. The guide to [moving your app to Mainnet](/guides/go-to-mainnet/) covers this error on a wallet that is on the wrong network |
 | `WERR_REVIEW_ACTIONS` | `Undelayed createAction or signAction results require review.` | `createAction` or `signAction` ran with `acceptDelayedBroadcast: false`, and the broadcast did not succeed. The toolbox also throws it from `internalizeAction`. Read the `status` of each entry in `reviewActionResults`, described below. The `txid`, `tx`, `sendWithResults` and `noSendChange` fields match the result the call would have returned |
 | `WERR_BROADCAST_UNAVAILABLE` | `Unable to broadcast transaction at this time.` | The transaction could not be broadcast. The toolbox rebuilds this error from the answer of a remote storage server and does not throw it itself. The message says the failure is temporary, so try again later |
-| `WERR_INVALID_MERKLE_ROOT` | `Invalid merkleRoot <root> for block <hash> at height <height> for txid <txid>.` | A <Hint tip="A service that checks a merkle root against the block headers of the network">chain tracker</Hint> did not accept the merkle root of a stored proof. The toolbox throws it while it builds the proof data for a transaction. Check which chain tracker the wallet uses, and the `blockHash`, `blockHeight` and `txid` fields |
+| `WERR_INVALID_MERKLE_ROOT` | `Invalid merkleRoot <root> for block <hash> at height <height> for txid <txid>.` | A <Hint tip="A service that checks a merkle root against the block headers of the network">chain tracker</Hint> did not accept the <Hint tip="One hash that stands for all the transactions in a block">merkle root</Hint> of a stored proof. The toolbox throws it while it builds the proof data for a transaction. Check which chain tracker the wallet uses, and the `blockHash`, `blockHeight` and `txid` fields |
 
 </BlueTable>
 
@@ -112,7 +118,7 @@ For an operation that sends a transaction to an <Hint tip="Built from topic mana
 |-------|---------|----------------------|
 | `WERR_NOT_ACTIVE` | `WalletStorageManager is not accessing user's active storage…` or a specific message | The call needs the active storage of the user, and the wallet is not writing to it or has conflicting active stores. See [Plug in your own storage](/wallet-dev/wallet-toolbox/storage-adapter/) for the fix with `setActive` |
 | `WERR_NETWORK_CHAIN` | `Configured network chain is invalid or does not match across services.` | `WalletStorageManager.syncToWriter` or `syncFromReader` found that the two stores are on different chains, and stopped before moving any data. The message names each store and its chain. Sync only stores of the same chain |
-| `WERR_UTXO_REVIEW_INCONCLUSIVE` | `UTXO review was inconclusive for <unknown> of <checked> candidates…` | A review of the wallet's <Hint tip="Unspent transaction output">UTXOs</Hint> could not get a clear answer for every output, so it changed nothing. The message ends with `no outputs were changed.` The `checked`, `confirmedSpent` and `unknown` fields hold the counts. Run the review again later |
+| `WERR_UTXO_REVIEW_INCONCLUSIVE` | `UTXO review was inconclusive for <unknown> of <checked> candidates…` | A review of the wallet's UTXOs could not get a clear answer for every output, so it changed nothing. The message ends with `no outputs were changed.` The `checked`, `confirmedSpent` and `unknown` fields hold the counts. Run the review again later |
 | `WERR_ACTION_BATCH_STATE` | `Action batch cannot continue because it is <state>.` | An <Hint tip="A storage optimization of the toolbox that groups the work of several actions. The Wallet option actionBatchMode sets it">action batch</Hint> is no longer usable. The `state` field is one of `missing`, `expired`, `hard-expired`, `aborted`, `committed`, `inactive` or `conflicted`, and `batchId` names the batch. The toolbox resumes an `expired` batch when the storage supports it. For any other state it aborts the batch and stops using it, so a later action does not join it |
 
 </BlueTable>
@@ -157,7 +163,7 @@ Some failures are not `WERR_*` errors. These come from `@bsv/sdk` and from the p
 
 </BlueTable>
 
-### @bsv/simple
+### `@bsv/simple`
 
 `@bsv/simple` 0.7.2 throws these errors. Most of its methods add a prefix to the error they catch:
 
