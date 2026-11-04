@@ -19,7 +19,7 @@ Each row is one public network. The BSV Broadcaster and wallet storage of each n
 | --- | --- | --- | --- |
 | Mainnet, `main` | [whatsonchain.com](https://whatsonchain.com/) | None | `1` |
 | testnet, `test` | [test.whatsonchain.com](https://test.whatsonchain.com/) | [bsvfaucet.com](https://bsvfaucet.com/) | `m` or `n` |
-| teratestnet, `ttn` | [woc-ttn.bsvblockchain.tech](https://woc-ttn.bsvblockchain.tech/), not yet named by the client as the teratestnet explorer | [faucet-ttn.bsvblockchain.tech](https://faucet-ttn.bsvblockchain.tech/) | `m` or `n` |
+| teratestnet, `ttn` | [woc-ttn.bsvblockchain.tech](https://woc-ttn.bsvblockchain.tech/) | [faucet-ttn.bsvblockchain.tech](https://faucet-ttn.bsvblockchain.tech/) | `m` or `n` |
 
 </BlueTable>
 
@@ -42,8 +42,8 @@ The public <Hint tip="Transaction broadcaster software that takes a signed trans
 
 </BlueTable>
 
-<Callout type="warning">
-Any endpoint in a Mainnet row moves real BSV, and nothing it broadcasts can be taken back. Match the endpoint to the network your keys and wallet use before you send.
+<Callout type="danger">
+Any endpoint in a Mainnet row moves real BSV, and a broadcast transaction cannot be undone. Match the endpoint to the network your keys and wallet use before you send.
 </Callout>
 
 ### Defaults in the packages
