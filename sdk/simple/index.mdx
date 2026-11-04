@@ -28,7 +28,7 @@ The package has one entry point for each place your code runs. Both give a walle
 The package root, `@bsv/simple`, exports the same browser API plus the error classes, such as `WalletError`. Import `@bsv/simple/server` only in Node.js server code. In Node.js, the package needs version 22 or later.
 
 <Callout type="danger">
-A server wallet signs every transaction with no one approving it, and a broadcast transaction cannot be undone. Keep its private key out of your repository. `ServerWallet.create()` uses Mainnet when you leave out `network`, so pass `network: 'testnet'` while you test. The default `storageUrl`, `https://storage.babbage.systems`, serves Mainnet, and the package has no testnet default, so also pass the address of a testnet storage server. [Network endpoints](/reference/networks/) shows which storage server serves which network.
+A server wallet signs every transaction with no one approving it, and a broadcast transaction cannot be undone. Keep its private key out of your repository. `ServerWallet.create()` uses Mainnet when you leave out `network`, so pass `network: 'testnet'` while you test. The default `storageUrl`, `https://storage.babbage.systems`, serves Mainnet, and the package has no testnet default, so also pass the address of a testnet storage server. [Run a wallet backend](/wallet-dev/infrastructure/) runs one on your machine with `BSV_NETWORK=test`.
 </Callout>
 
 ## What it covers
