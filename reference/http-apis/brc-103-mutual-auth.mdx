@@ -44,7 +44,7 @@ Select a fact to see its detail:
 
 ## Handshake messages
 
-The handshake takes two messages, and a third exchange when a peer asks for certificates. Over HTTP each message is the JSON body of a request or response at `/.well-known/auth`, with no authentication headers. Over Socket.IO each message is a frame on the `authMessage` event, as described in [AuthSocket WebSocket protocol](/reference/http-apis/authsocket/).
+The handshake takes two messages, and a third exchange when a peer asks for certificates. Over HTTP, where <Hint tip="The standard that binds BRC-103 to HTTP">BRC-104</Hint> binds the protocol, each message is the JSON body of a request or response at `/.well-known/auth`, with no authentication headers. Over Socket.IO each message is a frame on the `authMessage` event, as described in [AuthSocket WebSocket protocol](/reference/http-apis/authsocket/).
 
 ### Initial request
 
@@ -66,11 +66,13 @@ The peer that starts the exchange sends an `initialRequest` message. It is unsig
 {
   "version": "0.1",
   "messageType": "initialRequest",
-  "identityKey": "<identity key, 66 hexadecimal characters>",
-  "initialNonce": "<random nonce, base64>",
+  "identityKey": "IDENTITY_KEY",
+  "initialNonce": "INITIAL_NONCE",
   "requestedCertificates": { "certifiers": [], "types": {} }
 }
 ```
+
+Replace `IDENTITY_KEY` with the identity key of the sender and `INITIAL_NONCE` with a new random nonce, base64 encoded.
 
 ### Initial response
 
