@@ -10,24 +10,16 @@ Find which Paymail capabilities a host supports, and the endpoint URL of each on
 
 ## How discovery works
 
-A client goes from the handle to the capability URL in four steps:
+Paymail discovery has two phases. First the client finds the host that serves Paymail for the domain in the handle, then it asks that host what it supports:
 
-<Steps>
-  <Step title="Split the handle">
-    Split the handle at `@` into the alias and the domain.
-  </Step>
-  <Step title="Find the host">
-    Look up the DNS <Hint tip="Service record, a DNS record that names the host and port of a service">SRV</Hint> record `_bsvalias._tcp.<domain>`. Its target and port name the host that serves Paymail for the domain. When the domain has no SRV record, the host is the domain itself, on port 443.
+<BlueTable>
 
-    The host can be a different domain from the one in the handle. A domain owner who uses a Paymail service provider delegates to it with one SRV record, so a client that only requests the document on the domain itself misses those hosts.
-  </Step>
-  <Step title="Read the capabilities document">
-    Send a `GET` request for the capabilities document on that host. The host answers with a JSON document that lists its capabilities.
-  </Step>
-  <Step title="Call the capability">
-    Pick the capability your app needs, replace the placeholders in its URL template with the parts of the handle, and call that URL.
-  </Step>
-</Steps>
+| Phase | What the client does | Details |
+| --- | --- | --- |
+| Find the host | Splits the handle, such as `alice@example.com`, at `@` into the alias and the domain. Looks up the DNS <Hint tip="Service record, a DNS record that names the host and port of a service">SRV</Hint> record `_bsvalias._tcp.<domain>` to get the host and port. With no SRV record, uses the domain itself on port 443. The host can belong to a Paymail provider instead of the domain owner. | [Find the host with a DNS SRV record](#find-the-host-with-a-dns-srv-record) |
+| Read the capabilities | Requests the capabilities document from that host. Picks the capability the app needs, fills its URL template with the alias and the domain, and calls that URL. | [Read the capabilities document](#read-the-capabilities-document) |
+
+</BlueTable>
 
 ### Names in the 2019 and 2022 versions
 
