@@ -20,10 +20,10 @@ Select a fact to see its detail:
   title="BRC-103"
   badge="Mutual authentication"
   items={[
-    { label: 'Message format', value: 'JSON AuthMessage', detail: 'Every message is a JSON **AuthMessage**. The examples on this page use version **0.1**.' },
+    { label: 'Message format', value: 'JSON AuthMessage', detail: 'Every message is a JSON `AuthMessage`. The examples on this page use version `0.1`.' },
     { label: 'Transports', value: 'HTTP and Socket.IO', detail: 'BRC-104 binds the protocol to HTTP. Socket.IO carries the same messages as frames.', links: [{ label: 'AuthSocket WebSocket protocol', href: '/reference/http-apis/authsocket/' }, { label: 'BRC-104', href: 'https://bsv.brc.dev/peer-to-peer/0104' }] },
     { label: 'Handshake', value: 'POST /.well-known/auth', detail: 'The initial request and the initial response, before any signed message.' },
-    { label: 'Implementations', value: '@bsv/sdk and two wrappers', detail: '**Peer** and **AuthFetch** in @bsv/sdk, **@bsv/auth-express-middleware** for Express servers, and **@bsv/authsocket** for Socket.IO.' },
+    { label: 'Implementations', value: '@bsv/sdk and two wrappers', detail: '`Peer` and `AuthFetch` in @bsv/sdk, `@bsv/auth-express-middleware` for Express servers, and `@bsv/authsocket` for Socket.IO.' },
     { label: 'Specifications', value: 'BRC-103, BRC-104, AsyncAPI', detail: 'BRC-103 defines the protocol. The AsyncAPI file in ts-stack lists the channels and payloads.', links: [{ label: 'BRC-103', href: 'https://bsv.brc.dev/peer-to-peer/0103' }, { label: 'BRC-104', href: 'https://bsv.brc.dev/peer-to-peer/0104' }, { label: 'brc103-mutual-auth.yaml', href: 'https://github.com/bsv-blockchain/ts-stack/blob/main/specs/auth/brc103-mutual-auth.yaml' }] },
   ]}
 />
