@@ -76,7 +76,7 @@ A Paymail host lists the extensions it supports in the `capabilities` object of 
 }
 ```
 
-A client replaces `{alias}` and `{domain.tld}` with the parts of the Paymail handle before it sends a request. The full document, and how a client finds it, are in [Discover Paymail capabilities](/standards/paymail/capability-discovery/) and in the [Capability Discovery](https://tsc.bsvblockchain.org/standards/paymail/#PaymailStandardDocument-CapabilityDiscovery) section of the standard.
+Your app replaces `{alias}` and `{domain.tld}` with the parts of the Paymail handle before it sends a request. The full document, and how your app finds it, are in [Discover Paymail capabilities](/standards/paymail/capability-discovery/) and in the [Capability Discovery](https://tsc.bsvblockchain.org/standards/paymail/#PaymailStandardDocument-CapabilityDiscovery) section of the standard.
 
 The 2019 specification, <Hint tip="BSV Alias, the working title of the 2019 Paymail specification">bsvalias</Hint>, names two capabilities with words instead of IDs, `pki` and `paymentDestination`, because they were the minimum set a service needed to qualify as a Paymail service. The 2022 standard treats the sections of the 2019 specification as extensions and lists their BRFC IDs:
 
@@ -93,7 +93,7 @@ The 2019 specification, <Hint tip="BSV Alias, the working title of the 2019 Paym
 
 </BlueTable>
 
-Hosts built on the 2019 specification use the keys `pki` and `paymentDestination` instead of `0c4339ef99c2` and `759684b1a19a`, and `@bsv/paymail` 2.4.12 still uses `pki`, so a client reads both forms of each.
+Hosts built on the 2019 specification use the keys `pki` and `paymentDestination` instead of `0c4339ef99c2` and `759684b1a19a`, and `@bsv/paymail` 2.4.12 still uses `pki`, so your app reads both forms of each.
 
 ## Status of the process
 
