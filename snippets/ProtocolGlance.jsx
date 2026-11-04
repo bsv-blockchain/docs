@@ -1,9 +1,14 @@
 // "At a glance" panel for a protocol reference page: a row of facts, each one a button that opens its detail below.
 // Props: `title` (the protocol name), `badge` (short label next to it), `items` (label, value, detail and optional links [{ label, href }]).
 // The facts stay readable without a click: the first one opens by default, and the pages keep the same rows in a Markdown table for agents.
-// Wrap a term in ** ** in `detail` to show it in bold.
+// Wrap a code term in backticks in `detail` to show it in code style.
+// An address in `links` that starts with / gets the base path of the site, because Writedocs does not change an address built in a snippet.
 
-const bold = (t) => t.split(/\*\*(.+?)\*\*/).map((part, i) => (i % 2 ? <strong key={i}>{part}</strong> : part));
+import { useState } from 'react';
+
+const BASE_PATH = '/docs';
+
+const withCode = (t) => t.split(/`(.+?)`/).map((part, i) => (i % 2 ? <code key={i}>{part}</code> : part));
 
 const css = `
 .pg { container-type: inline-size; margin: 24px 0; border: 1px solid var(--wd-border); border-radius: 16px; background: var(--wd-surface); color: var(--wd-text); overflow: hidden; }
@@ -19,7 +24,7 @@ const css = `
 .pg-value { font-size: 13.5px; font-weight: 600; line-height: 1.3; color: var(--wd-text); word-break: break-word; }
 .pg-panel { margin: 0 14px 14px; padding: 12px 14px; border-left: 3px solid var(--wd-primary); border-radius: 0 10px 10px 0; background: color-mix(in srgb, var(--wd-primary) 6%, transparent); }
 .pg-detail { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--wd-text-muted); }
-.pg-detail strong { color: var(--wd-text); font-weight: 600; }
+.pg-detail code { padding: 1px 5px; border-radius: 5px; background: color-mix(in srgb, var(--wd-primary) 12%, transparent); color: var(--wd-text); font-size: 12.5px; }
 .pg-links { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; padding: 0; list-style: none; }
 .pg-link { display: inline-block; padding: 4px 11px; border: 1px solid var(--wd-primary); border-radius: 999px; font-size: 12.5px; font-weight: 600; color: var(--wd-primary); text-decoration: none; }
 .pg-link:hover { background: var(--wd-primary); color: var(--wd-background); }
@@ -53,12 +58,12 @@ export default function ProtocolGlance({ title, badge, items }) {
         ))}
       </ul>
       <div className="pg-panel" id="pg-panel" aria-live="polite">
-        <p className="pg-detail">{bold(current.detail)}</p>
+        <p className="pg-detail">{withCode(current.detail)}</p>
         {current.links && current.links.length ? (
           <ul className="pg-links">
             {current.links.map((l) => (
               <li key={l.href} style={{ margin: 0 }}>
-                <a className="pg-link" href={l.href}>{l.label}</a>
+                <a className="pg-link" href={l.href.startsWith('/') ? BASE_PATH + l.href : l.href}>{l.label}</a>
               </li>
             ))}
           </ul>
