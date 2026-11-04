@@ -26,8 +26,12 @@ In the browser, `createWallet()` connects to the wallet app the user has, such a
 
 On the server, `ServerWallet.create()` takes the private key in hex, a `network` and an optional `storageUrl`. The wallet keeps its records on a remote storage server, `https://storage.babbage.systems` unless you set `storageUrl`. The package needs Node 22 or later.
 
+<Callout type="danger">
+On the server, every transaction goes out with no one approving it, and a broadcast transaction cannot be undone. Pass `network: 'testnet'` while you test, because the network is `main` when you leave it out.
+</Callout>
+
 <Callout type="warning">
-On the server, your code holds the key, every transaction goes out with no one approving it, and a broadcast transaction cannot be undone. Read the key from an environment variable and keep it out of your repository. If you use `ServerWalletManager` without that variable, it saves a generated key to `.server-wallet.json` in the working folder, so add that file to `.gitignore`. Pass `network: 'testnet'` while you test, because the network is `main` when you leave it out.
+On the server, your code holds the private key. Read it from an environment variable and keep it out of your repository. If you use `ServerWalletManager` without that variable, it saves a generated key to `.server-wallet.json` in the working folder, so add that file to `.gitignore`.
 </Callout>
 
 <Callout type="note">
@@ -131,5 +135,3 @@ To learn more about how wallets and packages fit together in BSV, review these a
 
 - [How the BSV stack fits together](/concepts/architecture/)
 - [BRC-100 Wallet Interface](/concepts/wallet-model/)
-- [SDKs overview](/sdk/)
-- [Connect your AI tool with MCP](/build-with-ai/simple-mcp/)
