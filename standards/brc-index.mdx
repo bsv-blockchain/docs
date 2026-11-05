@@ -6,7 +6,7 @@ sidebarTitle: "BRC index"
 
 import { BrcTable, BrcRow } from '/snippets/BrcTable.jsx';
 
-A <Hint tip="BSV Request for Comments">BRC</Hint> is a numbered specification for how BSV wallets, apps and services work together, such as <Hint tip="BSV Request for Comments 100, the standard wallet-to-application interface">BRC-100</Hint> for the interface between an app and a wallet.
+Find a <Hint tip="BSV Request for Comments">BRC</Hint> by number or title and open its abstract and specification. A BRC is a numbered specification for how BSV wallets, apps and services work together, such as <Hint tip="BSV Request for Comments 100, the standard wallet-to-application interface">BRC-100</Hint> for the interface between an app and a wallet.
 
 To open a BRC from its number, add the number to `brc.dev/`, for example `brc.dev/100`, which redirects to the specification on `bsv.brc.dev`.
 
@@ -77,7 +77,7 @@ Block Media Format (BMF) is an open format for composable, on-chain-native audio
 </BrcRow>
 
 <BrcRow number="BRC-227" title="Frictionless On-Chain Onboarding via Pre-Funded Claimable Tokens" href="https://bsv.brc.dev/apps/0227">
-This BRC specifies a protocol for onboarding a person who has no wallet and no coins directly into ownership of a real on-chain asset, by clicking a link. A publisher pre-funds a batch of voucher outputs; each voucher becomes a claim link. A recipient claims by having the voucher fund an on-chain acquisition (e.g. a covenant-token mint under BRC-226&lt;sup&gt;1&lt;/sup&gt;) while a key they generate in the moment owns the result, payer and owner are decoupled. The voucher keys are deterministically derived from the publisher's private key, so every issued link and every unclaimed voucher is recoverable from the publisher's key alone, with no separate backup. The blockchain "cold-start" problem, you already need a wallet and coins to receive your first asset, dissolves: the gifter pays; the recipient just claims.
+This BRC specifies a protocol for onboarding a person who has no wallet and no coins directly into ownership of a real on-chain asset, by clicking a link. A publisher pre-funds a batch of voucher outputs; each voucher becomes a claim link. A recipient claims by having the voucher fund an on-chain acquisition (e.g. a covenant-token mint under BRC-226) while a key they generate in the moment owns the result, payer and owner are decoupled. The voucher keys are deterministically derived from the publisher's private key, so every issued link and every unclaimed voucher is recoverable from the publisher's key alone, with no separate backup. The blockchain "cold-start" problem, you already need a wallet and coins to receive your first asset, dissolves: the gifter pays; the recipient just claims.
 </BrcRow>
 
 <BrcRow number="BRC-300" title="Sponsored Onboarding and Wallet Choice" href="https://bsv.brc.dev/apps/0300">
@@ -249,7 +249,7 @@ This specification defines the canonical `color` wallet module for fungible asse
 </BrcRow>
 
 <BrcRow number="BRC-208" title="Vault Sub-Accounts" href="https://bsv.brc.dev/wallet/0208">
-This standard defines how a wallet keeps any number of accounts under one vault master, the single secret the user backs up. Each account is a complete BRC-100 wallet with its own identity key, outputs, and history. How account roots derive from the master depends on what the master is:
+This standard defines how a wallet keeps any number of accounts under one vault master, the single secret the user backs up. Each account is a complete BRC-100 wallet with its own identity key, outputs, and history.
 </BrcRow>
 
 <BrcRow number="BRC-209" title="1Color Minimal Resource Profile" href="https://bsv.brc.dev/wallet/0209">
@@ -369,7 +369,7 @@ This BRC defines Atomic Background Evaluation Extended Format (Atomic BEEF) Tran
 </BrcRow>
 
 <BrcRow number="BRC-96" title="BEEF V2 Txid Only Extension" href="https://bsv.brc.dev/transactions/0096">
-The BEEF serialization format (as defined in BRC-62) is essentially two things:
+The BEEF serialization format (as defined in BRC-62) is essentially two things: an array of mined transaction proof validation data (BUMPs, BRC-74) and an array of serialized Bitcoin transactions.
 </BrcRow>
 
 <BrcRow number="BRC-119" title="SubTree Unified Merkle Path (STUMP) Format" href="https://bsv.brc.dev/transactions/0119">
@@ -565,7 +565,7 @@ This BRC defines how inscriptions attach content to a BRC-159 token: an `ord` en
 </BrcRow>
 
 <BrcRow number="BRC-161" title="BSV-21 Fungible Tokens (JSON / Legacy)" href="https://bsv.brc.dev/tokens/0161">
-This document specifies the legacy JSON wire encoding of BSV-21 fungible tokens: an `ord` inscription with content type `application/bsv-20`. Token balances live in UTXOs. Each token is identified by the outpoint of its deploy output. Two supply models are supported:
+This document specifies the legacy JSON wire encoding of BSV-21 fungible tokens: an `ord` inscription with content type `application/bsv-20`. Token balances live in UTXOs. Each token is identified by the outpoint of its deploy output.
 </BrcRow>
 
 <BrcRow number="BRC-162" title="1Color" href="https://bsv.brc.dev/tokens/0162">
@@ -689,7 +689,7 @@ A domain declares the overlay services it hosts in a `metanet.overlays` object i
 </BrcRow>
 
 <BrcRow number="BRC-183" title="A Framework for Strict and Federated Overlays" href="https://bsv.brc.dev/overlays/0183">
-Overlay remains the general term for topic-oriented networks and services that interpret, track, exchange, and query Bitcoin transaction data under application-defined rules. Within that general category, this document names two models:
+Overlay remains the general term for topic-oriented networks and services that interpret, track, exchange, and query Bitcoin transaction data under application-defined rules.
 </BrcRow>
 
 <BrcRow number="BRC-193" title="Incremental Lookup and Resumable Live Results" href="https://bsv.brc.dev/overlays/0193"></BrcRow>
@@ -905,7 +905,7 @@ This technical standard describes a method for hierarchical key derivation calle
 </BrcRow>
 
 <BrcRow number="BRC-42" title="BSV Key Derivation Scheme (BKDS)" href="https://bsv.brc.dev/key-derivation/0042">
-This technical standard defines a key derivation method that allows two parties to derive multiple keys for each other in an open-ended manner. The method employs invoice numbers as a simple way for multiple keys to be derived. A sender can derive a public key for a recipient without knowing the recipient's corresponding private key, and the recipient can later use the sender's public key and the same invoice number to derive a corresponding private key. The method removes the limit of 4 billion keys per child that is present in BIP32&lt;sup&gt;1&lt;/sup&gt;, improves the privacy of the involved parties by employing ECDH shared secrets, and enables an open-ended invoice numbering scheme for key derivation that can be further standardized for specific use-cases. The method can be used for private invoicing, digital signatures, symmetric cryptography, and other applications in Bitcoin and CBDC ecosystems.
+This technical standard defines a key derivation method that allows two parties to derive multiple keys for each other in an open-ended manner. The method employs invoice numbers as a simple way for multiple keys to be derived. A sender can derive a public key for a recipient without knowing the recipient's corresponding private key, and the recipient can later use the sender's public key and the same invoice number to derive a corresponding private key. The method removes the limit of 4 billion keys per child that is present in BIP32, improves the privacy of the involved parties by employing ECDH shared secrets, and enables an open-ended invoice numbering scheme for key derivation that can be further standardized for specific use-cases. The method can be used for private invoicing, digital signatures, symmetric cryptography, and other applications in Bitcoin and CBDC ecosystems.
 </BrcRow>
 
 <BrcRow number="BRC-43" title="Security Levels, Protocol IDs, Key IDs and Counterparties" href="https://bsv.brc.dev/key-derivation/0043">
