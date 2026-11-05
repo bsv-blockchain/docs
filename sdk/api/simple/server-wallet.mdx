@@ -9,10 +9,10 @@ import BlueTable from '/snippets/BlueTable.jsx';
 
 ## Create a server wallet
 
-Install the package, which runs on Node.js 22 or later:
+Install `@bsv/simple` with its peer dependency, `@bsv/sdk`. Both need Node.js 22 or later:
 
 ```bash
-npm install @bsv/simple
+npm install @bsv/simple @bsv/sdk
 ```
 
 Import `ServerWallet` from `@bsv/simple/server`, the entry point for Node.js, and call `ServerWallet.create()`. Pass `network: 'testnet'` while you build, because the network is `main` when you leave it out.
@@ -95,7 +95,7 @@ A server wallet signs and sends every transaction on its own, and a broadcast tr
 | `createPaymentRequest(options: { satoshis: number; memo?: string }): PaymentRequest` | Returns a request for a payment to this wallet, with the BRC-29 derivation data the payer needs. Runs locally. Throws `WERR_INVALID_PARAMETER` from `@bsv/sdk` when `satoshis` is not a whole number of at least 1 or `memo` is over 2,000 bytes. |
 | `sendDirectPayment(request: PaymentRequest): Promise<DirectPaymentResult>` | Pays a request with a P2PKH output to the key derived for the recipient, plus an OP_RETURN output for a `memo`. Send the result to the recipient for `receiveDirectPayment()`. Errors start with `Direct payment failed:`. |
 | `receiveDirectPayment(payment: IncomingPayment): Promise<void>` | Adds a payment made with `sendDirectPayment()` to the spendable balance, with the label `direct_payment`. Errors start with `Failed to receive direct payment:`. |
-| `fundServerWallet(request: PaymentRequest, basket?: string): Promise<TransactionResult>` | Pays a request that a server wallet created with `createPaymentRequest()`, to fund that server wallet. The transaction is the one `sendDirectPayment()` builds, and `basket` keeps the output in a basket of the paying wallet. Errors start with `Server wallet funding failed:`. When the paying wallet is [BSV Desktop](/wallets/bsv-desktop/), the payment is rejected with `The tx parameter must be valid AtomicBEEF`. |
+| `fundServerWallet(request: PaymentRequest, basket?: string): Promise<TransactionResult>` | Pays a request that a server wallet created with `createPaymentRequest()`, to fund that server wallet. The transaction is the one `sendDirectPayment()` builds, and `basket` keeps the output in a basket of the paying wallet. Errors start with `Server wallet funding failed:`. |
 | `receivePayment(payment: IncomingPayment): Promise<void>` | <Badge stroke color="red">Deprecated</Badge> Use `receiveDirectPayment()`. Adds the payment with the label `server_funding`. Throws a `TypeError` for an invalid field and an `Error` with `Receiving wallet did not accept the payment`. |
 
 </BlueTable>
