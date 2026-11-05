@@ -5,7 +5,7 @@ description: "What BRC-100 defines between an app and a wallet, the methods, lim
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-<Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> is the specification of how an app and a wallet talk to each other: what an app can ask, what the wallet answers, and how a request names the app that sends it. The full text is on [`bsv.brc.dev`](https://bsv.brc.dev/wallet/0100). To see how an app finds and reaches a wallet, read [BRC-100 wallet interface](/concepts/wallet-model/).
+Learn what <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> defines between an app and a wallet, and what each wallet decides, so you know which behavior you can rely on across wallets. The full text of the specification is on [`bsv.brc.dev`](https://bsv.brc.dev/wallet/0100). To see how an app finds and reaches a wallet, read [BRC-100 wallet interface](/concepts/wallet-model/).
 
 ## What the standard defines
 
@@ -43,11 +43,11 @@ An error has a `status` of `error`, a `code`, a `description` and an optional `c
 
 ### Who is asking
 
-Every request carries the originator, the domain of the app that sends it, so the wallet can check permissions and ask the user. A method that uses keys also takes a privileged option. Where a wallet implements it, it selects a second set of keys, kept apart from the everyday ones, and the wallet expects a reason for it.
+A request names the app that sends it with the originator, the domain of the app, so the wallet can check permissions and ask the user. The originator is an optional parameter of every method, and each wallet decides how to handle a request that has none. A method that uses keys also takes a privileged option. Where a wallet implements it, it selects a second set of keys, kept apart from the everyday ones, and the wallet expects a reason for it.
 
 ### The binary format
 
-For a wallet reached over a binary channel, BRC-100 also defines how a request looks as bytes. The call codes are listed in the ABI section of the specification. A request is one frame: one byte with the call code, one byte with the length of the originator, the originator domain in UTF-8, then the parameters of the method. A response starts with one byte for the error code, 0 for success, followed by the result, or by the error message when the code is not 0. A transport that carries JSON, such as the HTTP JSON API of the Wallet API reference, does not use the frame.
+For a wallet reached over a binary channel, BRC-100 also defines how a request looks as bytes. The call codes are listed in the <Hint tip="Application Binary Interface: the exact byte layout of a request and a response">ABI</Hint> section of the specification. A request is one frame: one byte with the call code, one byte with the length of the originator, the originator domain in UTF-8, then the parameters of the method. A response starts with one byte for the error code, 0 for success, followed by the result, or by the error message when the code is not 0. A transport that carries JSON, such as the HTTP JSON API of the Wallet API reference, does not use the frame.
 
 For example, a `getPublicKey` request from `example.com` starts with these bytes:
 
@@ -65,8 +65,8 @@ BRC-100 points to these standards instead of repeating them. They define the key
 
 | BRC | Used for |
 |-----|----------|
-| [BRC-2](https://bsv.brc.dev/wallet/0002) | Encryption and decryption with AES-256-GCM, using keys derived between the two parties. |
-| [BRC-3](https://bsv.brc.dev/wallet/0003) | Digital signatures with ECDSA, private to one counterparty or verifiable by anyone. |
+| [BRC-2](https://bsv.brc.dev/wallet/0002) | Encryption and decryption with <Hint tip="AES with a 256-bit key in Galois/Counter Mode, an encryption that also detects tampering">AES-256-GCM</Hint>, using keys derived between the two parties. |
+| [BRC-3](https://bsv.brc.dev/wallet/0003) | Digital signatures with <Hint tip="Elliptic Curve Digital Signature Algorithm, the signature scheme BSV uses">ECDSA</Hint>, private to one counterparty or verifiable by anyone. |
 | [BRC-29](https://bsv.brc.dev/payments/0029) | Payments to a derived key, and how a wallet internalizes a received payment. |
 | [BRC-42](https://bsv.brc.dev/key-derivation/0042) | Key derivation between two parties, the BSV Key Derivation Scheme. |
 | [BRC-43](https://bsv.brc.dev/key-derivation/0043) | Security levels, protocol IDs, key IDs and counterparties, which decide who may use which key. |
