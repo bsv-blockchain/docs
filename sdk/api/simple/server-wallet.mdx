@@ -29,6 +29,18 @@ const wallet = await ServerWallet.create({
   network: 'testnet',
   storageUrl: process.env.STORAGE_URL!
 })
+
+console.log(wallet.getStatus())
+```
+
+Run it with `node --env-file=.env wallet.ts` on Node.js 24 or with a TypeScript runner such as `tsx`. It prints the status of the new wallet, here with the identity key shortened:
+
+```text
+{
+  isConnected: true,
+  identityKey: '03addccf...31d5f9',
+  network: 'testnet'
+}
 ```
 
 `SERVER_PRIVATE_KEY` holds the key in hex, and `generatePrivateKey()` from `@bsv/simple/server` returns a new random one. `STORAGE_URL` is a testnet storage server, since the package has no testnet default. To run one on your machine, see [Run a wallet backend](/wallet-dev/infrastructure/).
@@ -70,7 +82,7 @@ These methods come from `WalletCore`, the base class of both wallet objects. The
 | `getClient(): WalletInterface` | Returns the toolbox `Wallet` typed as the <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> `WalletInterface`, for libraries that take a BRC-100 wallet or for wallet methods the object does not wrap. |
 | `getIdentityKey(): string` | Returns `identityKey`. |
 | `getAddress(): string` | Returns the <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">P2PKH</Hint> address of the identity key, always in the Mainnet format, even on testnet. |
-| `getStatus(): WalletStatus` | Returns `identityKey`, `network` (the value passed to `create()`) and `isConnected`, which is always `true`. |
+| `getStatus(): WalletStatus` | Returns `identityKey` (typed `string \| null`), `network` (the value passed to `create()`) and `isConnected`, which is always `true`. |
 | `getWalletInfo(): WalletInfo` | Returns the same values as `getStatus()`, plus `address`. |
 | `getBalance(basket?: string): Promise<BalanceResult>` | Returns the balance in <Hint tip="The smallest unit of BSV: 1 BSV is 100,000,000 satoshis">satoshis</Hint>. Without `basket`, both satoshi fields hold the wallet balance and both output counts are `0`. With `basket`, it reads every output and throws when the basket holds more than 100,000 outputs or changes during the read. |
 | `derivePublicKey(protocolID, keyID, counterparty?, forSelf?): Promise<string>` | Returns a derived public key in hex. `counterparty` defaults to `anyone` and `forSelf` to `false`. |
@@ -95,7 +107,7 @@ A server wallet signs and sends every transaction on its own, and a broadcast tr
 | `createPaymentRequest(options: { satoshis: number; memo?: string }): PaymentRequest` | Returns a request for a payment to this wallet, with the BRC-29 derivation data the payer needs. Runs locally. Throws `WERR_INVALID_PARAMETER` from `@bsv/sdk` when `satoshis` is not a whole number of at least 1 or `memo` is over 2,000 bytes. |
 | `sendDirectPayment(request: PaymentRequest): Promise<DirectPaymentResult>` | Pays a request with a P2PKH output to the key derived for the recipient, plus an OP_RETURN output for a `memo`. Send the result to the recipient for `receiveDirectPayment()`. Errors start with `Direct payment failed:`. |
 | `receiveDirectPayment(payment: IncomingPayment): Promise<void>` | Adds a payment made with `sendDirectPayment()` to the spendable balance, with the label `direct_payment`. Errors start with `Failed to receive direct payment:`. |
-| `fundServerWallet(request: PaymentRequest, basket?: string): Promise<TransactionResult>` | Pays a request that a server wallet created with `createPaymentRequest()`, to fund that server wallet. The transaction is the one `sendDirectPayment()` builds, and `basket` keeps the output in a basket of the paying wallet. Errors start with `Server wallet funding failed:`. |
+| `fundServerWallet(request: PaymentRequest, basket?: string): Promise<TransactionResult>` | Pays a request that a server wallet created with `createPaymentRequest()`, to fund that server wallet: output 0 pays `satoshis` to the key derived for the server, and an OP_RETURN output carries the `memo`. `basket` keeps the payment output in a basket of the paying wallet. Returns `txid`, `tx` and `outputs`. To credit the payment, the server calls `receiveDirectPayment()` with `tx`, the payer's identity key as `senderIdentityKey`, the `derivationPrefix` and `derivationSuffix` of the request and `outputIndex: 0`. Errors start with `Server wallet funding failed:`. |
 | `receivePayment(payment: IncomingPayment): Promise<void>` | <Badge stroke color="red">Deprecated</Badge> Use `receiveDirectPayment()`. Adds the payment with the label `server_funding`. Throws a `TypeError` for an invalid field and an `Error` with `Receiving wallet did not accept the payment`. |
 
 </BlueTable>

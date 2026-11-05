@@ -21,6 +21,18 @@ Import `createWallet()` from `@bsv/simple/browser` or from the package root, `@b
 import { createWallet } from '@bsv/simple/browser'
 
 const wallet = await createWallet({ network: 'testnet' })
+
+console.log(JSON.stringify(wallet.getStatus(), null, 2))
+```
+
+With the user's wallet on testnet, the browser console shows the status of the wallet object, here with the identity key shortened:
+
+```json
+{
+  "isConnected": true,
+  "identityKey": "0210765c...053fc4",
+  "network": "testnet"
+}
 ```
 
 `createWallet()` asks the user's wallet for its <Hint tip="The public key that identifies a wallet to apps and other users">identity key</Hint>, so it resolves only once a wallet answers. `network: 'testnet'` changes what `getStatus()` and `getWalletInfo()` report, not the network of the user's wallet, which the user switches in the wallet itself.
@@ -58,7 +70,7 @@ These methods come from `WalletCore`, the base class of both wallet objects. The
 | `getClient(): WalletInterface` | Returns the `WalletClient` connected to the user's wallet, typed as the BRC-100 `WalletInterface`, for wallet methods the object does not wrap. |
 | `getIdentityKey(): string` | Returns `identityKey`. |
 | `getAddress(): string` | Returns the <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">P2PKH</Hint> address of the identity key, always in the Mainnet format, even on testnet. |
-| `getStatus(): WalletStatus` | Returns `identityKey`, `network` and `isConnected`, which is always `true`. `network` is the option of `createWallet()`, `main` by default, not the network of the user's wallet. To read that, call `getClient().getNetwork({})`. |
+| `getStatus(): WalletStatus` | Returns `identityKey` (typed `string \| null`), `network` and `isConnected`, which is always `true`. `network` is the option of `createWallet()`, `main` by default, not the network of the user's wallet. To read that, call `getClient().getNetwork({})`. |
 | `getWalletInfo(): WalletInfo` | Returns the same values as `getStatus()`, plus `address`. |
 | `getBalance(basket?: string): Promise<BalanceResult>` | Returns the balance in <Hint tip="The smallest unit of BSV: 1 BSV is 100,000,000 satoshis">satoshis</Hint>. Without `basket`, both satoshi fields hold the wallet balance and both output counts are `0`. With `basket`, it reads every output and throws when the basket holds more than 100,000 outputs or changes during the read. |
 | `derivePublicKey(protocolID, keyID, counterparty?, forSelf?): Promise<string>` | Returns a derived public key in hex. `counterparty` defaults to `anyone` and `forSelf` to `false`. |
@@ -79,7 +91,7 @@ The user's wallet signs each transaction, and a broadcast transaction cannot be 
 | `createPaymentRequest(options: { satoshis: number; memo?: string }): PaymentRequest` | Returns a request for a payment to this wallet, with the BRC-29 derivation data the payer needs. Runs locally. Throws `WERR_INVALID_PARAMETER` from `@bsv/sdk` when `satoshis` is not a whole number of at least 1 or `memo` is over 2,000 bytes. |
 | `sendDirectPayment(request: PaymentRequest): Promise<DirectPaymentResult>` | Pays a request with a P2PKH output to the key derived for the recipient, plus an OP_RETURN output for a `memo`. Send the result to the recipient for `receiveDirectPayment()`. Errors start with `Direct payment failed:`. |
 | `receiveDirectPayment(payment: IncomingPayment): Promise<void>` | Adds a payment made with `sendDirectPayment()` to the spendable balance, with the label `direct_payment`. Errors start with `Failed to receive direct payment:`. |
-| `fundServerWallet(request: PaymentRequest, basket?: string): Promise<TransactionResult>` | Pays a request that a server wallet created with `createPaymentRequest()`, to fund that server wallet. The transaction is the one `sendDirectPayment()` builds, and `basket` keeps the output in a basket of the paying wallet. Errors start with `Server wallet funding failed:`. |
+| `fundServerWallet(request: PaymentRequest, basket?: string): Promise<TransactionResult>` | Pays a request that a server wallet created with `createPaymentRequest()`, to fund that server wallet: output 0 pays `satoshis` to the key derived for the server, and an OP_RETURN output carries the `memo`. `basket` keeps the payment output in a basket of the paying wallet. Returns `txid`, `tx` and `outputs`. To credit the payment, the server calls `receiveDirectPayment()` with `tx`, the payer's identity key as `senderIdentityKey`, the `derivationPrefix` and `derivationSuffix` of the request and `outputIndex: 0`. Errors start with `Server wallet funding failed:`. |
 
 </BlueTable>
 
