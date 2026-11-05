@@ -17,6 +17,10 @@ The three routes install the same release, 1.2.3 at the time of writing. Pick th
 
 <SvNodeInstallRoutes />
 
+<Visibility for="agents">
+Three routes install the same release, 1.2.3. Linux binary: the release as published, Linux on x86_64 only with no Windows binary, a checksum to verify the download, and `bitcoind` runs straight from the archive. Docker image: a container from the official image, pinned by tag, which generates a `bitcoin.conf`, keeps data in `/data` and is the route for hosts without a Linux binary. Build from source: a build you control, for a custom build, needing GCC 10.2 or later and the build dependencies, and about 30 minutes on a GitHub-hosted runner.
+</Visibility>
+
 There is no Windows binary for 1.2.3, so on Windows run the Docker image.
 
 ## Install the software
@@ -36,7 +40,13 @@ curl -O https://download.bitcoinsv.io/bitcoinsv/1.2.3/bitcoin-sv-1.2.3-x86_64-li
 sha256sum bitcoin-sv-1.2.3-x86_64-linux-gnu.tar.gz
 ```
 
-The hash must be `13f222f5b466fe4af2bb867628354e4ae9711a10019e89fc7bf018b90e30b3c8`. Compare it with the signed `SHA256SUMS.asc` on the same server.
+The output must be this line:
+
+```text
+13f222f5b466fe4af2bb867628354e4ae9711a10019e89fc7bf018b90e30b3c8  bitcoin-sv-1.2.3-x86_64-linux-gnu.tar.gz
+```
+
+The server also lists a signed `SHA256SUMS.asc` next to the tarball, for checking the hash against a signature.
 </Step>
 <Step title="Unpack and start on testnet">
 In the folder that holds the tarball, unpack it and start `bitcoind` on testnet. The archive holds `bitcoind`, `bitcoin-cli` and `bitcoin-tx` in `bin/`:
@@ -47,6 +57,16 @@ bitcoin-sv-1.2.3/bin/bitcoind -testnet -excessiveblocksize=10GB -maxstackmemoryu
 ```
 
 SV Node 1.2.3 refuses to start unless these three parameters are set, and exits with "Mandatory consensus parameter is not set" otherwise. [Configure SV Node](/nodes/sv-node/configuration) explains them.
+
+To confirm the release, run `bitcoind --version` from the unpacked folder:
+
+```bash
+bitcoin-sv-1.2.3/bin/bitcoind --version | head -1
+```
+
+```text
+Bitcoin SV version v1.2.3
+```
 </Step>
 </Steps>
 
@@ -78,14 +98,22 @@ After that you can remove the container and run the same command again, and the 
 
 ### Build from source
 
-The build instructions live in the repository for each release. Read `doc/build-unix.md` at the tag you install, for example [v1.2.3](https://github.com/bitcoin-sv/bitcoin-sv/blob/v1.2.3/doc/build-unix.md).
+The build instructions live in the repository for each release. The steps below follow `doc/build-unix.md` at [v1.2.3](https://github.com/bitcoin-sv/bitcoin-sv/blob/v1.2.3/doc/build-unix.md), the file to read at the tag you install.
 
 <Steps>
 <Step title="Check the toolchain and dependencies">
 The build needs GCC 10.2 or later (C++20), plus the libssl, libboost and libevent development packages. The repository lists optional dependencies such as ZMQ and Berkeley DB, and the package commands for Debian, Ubuntu and CentOS.
 </Step>
+<Step title="Get the source">
+Clone the release tag:
+
+```bash
+git clone --depth 1 --branch v1.2.3 https://github.com/bitcoin-sv/bitcoin-sv.git
+cd bitcoin-sv
+```
+</Step>
 <Step title="Build">
-Run these from the source root of the release you checked out:
+From the source root:
 
 ```bash
 ./autogen.sh
@@ -93,7 +121,16 @@ Run these from the source root of the release you checked out:
 make
 ```
 
-Installing the binaries with `make install` is optional.
+`make` puts `bitcoind` and `bitcoin-cli` in `src/`. Installing the binaries with `make install` is optional.
+</Step>
+<Step title="Start on testnet">
+Start the built `bitcoind` with the same three required parameters as the binary route:
+
+```bash
+src/bitcoind -testnet -excessiveblocksize=10GB -maxstackmemoryusageconsensus=100MB -minminingtxfee=0.00000001
+```
+
+A build from the release tag reports its version as `v1.2.3-dev`.
 </Step>
 </Steps>
 

@@ -14,7 +14,7 @@ const routes = [
   },
   {
     name: 'Docker image',
-    what: 'The shortest path',
+    what: 'A container from the official image',
     points: [
       'Pinned by tag, for example 1.2.3',
       'Generates a bitcoin.conf and keeps data in /data',
@@ -28,7 +28,7 @@ const routes = [
     points: [
       'For a custom build',
       'Needs GCC 10.2 or later and the build dependencies',
-      'About 30 minutes on a hosted CI runner',
+      'About 30 minutes on a GitHub-hosted runner (ubuntu-24.04)',
     ],
     href: '#build-from-source',
   },
