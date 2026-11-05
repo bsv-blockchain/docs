@@ -29,7 +29,7 @@ console.log(key.toPublicKey().toAddress('testnet'))`,
     title: 'Go SDK',
     text: '`go-sdk` builds keys, scripts, transactions and proofs, with a BRC-100 wallet interface and overlay services. Its docs and examples live in the Go repositories.',
     install: 'go mod init MODULE_NAME\ngo get github.com/bsv-blockchain/go-sdk',
-    version: 'Tested with `go-sdk` v1.7.3. Replace `MODULE_NAME` with your module path, for example `example.com/hello`.',
+    version: 'Tested with `go-sdk` v1.7.3. Replace `MODULE_NAME` with your module path, for example `example.com/hello`. Save the sample as `main.go`, run `go mod tidy` once, then run `go run .`.',
     output: 'A testnet address that starts with m or n.',
     code: `package main
 
