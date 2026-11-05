@@ -14,13 +14,13 @@ RPC gives full control of the node and its wallet. It can stop the node, dump pr
 
 ## Call the API
 
-Enable the server with `server=1` and credentials in `bitcoin.conf`, as described in [Configure SV Node](/nodes/sv-node/configuration/). The default RPC port is 8332 on Mainnet and 18332 on testnet and regtest. Send a JSON-RPC POST with HTTP basic authentication. The example below runs against a node started with `-regtest`, and the same request works on testnet at the same port.
+Enable the server with `server=1` and credentials in `bitcoin.conf`, as described in [Configure SV Node](/nodes/sv-node/configuration/). The default RPC port is 8332 on Mainnet and 18332 on testnet and regtest. Send a JSON-RPC POST with HTTP basic authentication. The example below runs against a node on testnet, and the same request works on regtest at the same port.
 
 ```bash
 curl --user RPC_USERNAME:RPC_PASSWORD -H "content-type: application/json" -d '{"jsonrpc":"1.0","id":"1","method":"getblockcount","params":[]}' http://127.0.0.1:18332/
 ```
 
-Replace `RPC_USERNAME` and `RPC_PASSWORD` with the `rpcuser` and `rpcpassword` values of your `bitcoin.conf`. On a new regtest chain the node answers `{"result":0,"error":null,"id":"1"}`, where the result is the block count. On testnet the result is the current testnet block count instead. Wrong credentials return HTTP 401. `bitcoin-cli` takes the same method names and positional arguments, for example `bitcoin-cli -regtest getblockcount`.
+Replace `RPC_USERNAME` and `RPC_PASSWORD` with the `rpcuser` and `rpcpassword` values of your `bitcoin.conf`. On testnet the node answers `{"result":2192,"error":null,"id":"1"}`, where the result is the number of blocks it has synced so far, so yours differs while the node catches up. On a new regtest chain the result is `0`. Wrong credentials return HTTP 401. `bitcoin-cli` takes the same method names and positional arguments, for example `bitcoin-cli -testnet getblockcount`.
 
 <Callout type="note">
 `getinfo` still works in 1.2.3 but its help text marks it deprecated. Use `getblockchaininfo`, `getnetworkinfo` and `getmininginfo` instead.
