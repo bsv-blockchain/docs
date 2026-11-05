@@ -6,7 +6,7 @@ sidebarTitle: "Basic address resolution"
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Basic Address Resolution turns a Paymail handle such as `alice@example.com` into the <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> a payment to that user must use. The sender sends a request to the host of the handle, and the host answers with the locking script in hex. The capability belongs to the 2019 payment addressing capabilities, which are not recommended for new apps. Payments in new apps go through the user's <Hint tip="BSV Request for Comments 100, the standard interface between a wallet and an app">BRC-100</Hint> wallet. Use this page to build the request for a host that still serves the capability and to check the locking script it returns.
+Basic Address Resolution turns a Paymail handle such as `alice@example.com` into the <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> a payment to that user must use. The sender sends a request to the host of the handle, and the host answers with the locking script in hex. The capability belongs to the 2019 payment addressing capabilities, which are not recommended for new apps. Payments in new apps go through the user's <Hint tip="BSV Request for Comments 100, the standard interface between a wallet and an app">BRC-100</Hint> wallet. To pay a handle on a host that still serves the capability, the sender builds the request below and checks the locking script the host returns.
 
 ## Find the endpoint
 
