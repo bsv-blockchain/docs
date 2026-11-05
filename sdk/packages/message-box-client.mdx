@@ -159,7 +159,7 @@ The options go in the `MessageBoxClient` constructor or in the call that sends:
 
 Check these two limits before you rely on the package in an app:
 
-- `rejectPayment` refunds the amount less 1,000 satoshis, so a payment under 1,000 satoshis cannot be refunded.
+- `rejectPayment` refunds the amount less 1,000 satoshis. A payment under 2,000 satoshis is acknowledged and not refunded, because the refund would be under 1,000 satoshis.
 - The built-in `notifications` box charges the sender a host fee of 10 satoshis. On testnet the wallet pays the fee, but the host answers `ERR_INTERNALIZE_FAILED` and does not deliver the message. Use a box with no host fee. A box where only the recipient sets a fee works.
 
 ## Related articles
