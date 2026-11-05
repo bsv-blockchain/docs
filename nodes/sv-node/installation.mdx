@@ -46,7 +46,7 @@ The output must be this line:
 13f222f5b466fe4af2bb867628354e4ae9711a10019e89fc7bf018b90e30b3c8  bitcoin-sv-1.2.3-x86_64-linux-gnu.tar.gz
 ```
 
-The server also lists a signed `SHA256SUMS.asc` next to the tarball, for checking the hash against a signature.
+The same hash is in the signed `SHA256SUMS.asc` next to the tarball on the server. It is a clear-signed PGP file, so you can check the signature with `gpg --verify SHA256SUMS.asc` once you hold the publisher's public key.
 </Step>
 <Step title="Unpack and start on testnet">
 In the folder that holds the tarball, unpack it and start `bitcoind` on testnet. The archive holds `bitcoind`, `bitcoin-cli` and `bitcoin-tx` in `bin/`:
@@ -83,6 +83,20 @@ docker run -d --name bitcoind-testnet bitcoinsv/bitcoin-sv:1.2.3 bitcoind -testn
 ```
 
 SV Node 1.2.3 refuses to start unless `minminingtxfee` is set. Without it the container exits with "Mandatory policy parameter is not set". The value above is the one used for testnet in the SV Node configuration examples. The image sets the two consensus parameters in the `bitcoin.conf` it generates.
+
+Confirm the node is running and syncing. `bitcoin-cli` inside the container reads its credentials from the generated file, so point it there with `-conf`:
+
+```bash
+docker ps --filter name=bitcoind-testnet --format '{{.Names}} {{.Status}}'
+docker exec bitcoind-testnet bitcoin-cli -conf=/data/bitcoin.conf -testnet getblockcount
+```
+
+```text
+bitcoind-testnet Up 40 seconds
+3419
+```
+
+The second line is the number of blocks the node has synced so far, so yours differs and grows while the node catches up. Without `-conf`, `bitcoin-cli` fails with "Could not locate RPC credentials". `docker logs bitcoind-testnet` shows the node connecting to peers and the new best block of each sync step.
 </Step>
 <Step title="Keep the blockchain data">
 A container is ephemeral, so without a volume the node starts from an empty chain every time. The image keeps its data and a generated `bitcoin.conf` in `/data`, so remove the container from the previous step and start it again with a volume mounted there:
