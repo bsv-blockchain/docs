@@ -50,7 +50,15 @@ Install the SDK, then run a first script that signs a transaction and checks its
     ```python sign.py
     import asyncio
 
-    from bsv import Network, P2PKH, PrivateKey, Transaction, TransactionInput, TransactionOutput
+    from bsv import (
+        Network,
+        P2PKH,
+        PrivateKey,
+        SatoshisPerKilobyte,
+        Transaction,
+        TransactionInput,
+        TransactionOutput,
+    )
 
 
     async def main():
@@ -71,7 +79,7 @@ Install the SDK, then run a first script that signs a transaction and checks its
         tx_output = TransactionOutput(locking_script=P2PKH().lock(address), change=True)
         tx = Transaction([tx_input], [tx_output], version=1)
 
-        tx.fee()
+        tx.fee(SatoshisPerKilobyte(100))
         tx.sign()
 
         print("Transaction ID:", tx.txid())
@@ -103,7 +111,7 @@ These parts of `sign.py` need a closer look:
 
 - `priv_key.address(network=Network.TESTNET)` derives a testnet address from the key. If you leave out `network`, the address is a Mainnet address.
 - The script builds its own source transaction with one output of 10,000 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV.">satoshis</Hint>, so the input has something to spend. To spend a real output, load the transaction that created one of your own <Hint tip="Unspent transaction output">UTXOs</Hint> instead.
-- `change=True` makes the output take whatever the input holds beyond the fee, and `tx.fee()` calculates that fee.
+- `change=True` makes the output take whatever the input holds beyond the fee, and `tx.fee(SatoshisPerKilobyte(100))` calculates that fee at 100 satoshis per kilobyte. The fee model is passed in on purpose: `tx.fee()` with no argument asks the live ARC policy over the network.
 - `verify(scripts_only=True)` runs the locking and unlocking scripts against each other, with no Merkle proof and no network. It is async, so the script runs inside `asyncio.run`.
 
 <Callout type="warning">
