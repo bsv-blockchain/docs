@@ -3,7 +3,7 @@ title: "What is Teranode"
 description: "Teranode is horizontally scalable node software for the BSV network, built as separate services that can run on one host or across several."
 ---
 
-Teranode is node software for the BSV network, built to scale horizontally. It splits the work of a node into separate services that can run on one host or across several.
+Teranode is node software for the BSV network, built to scale horizontally. It splits the work of a node into separate services that can run on one host or across several. Use this page to understand how a Teranode node is built and to find the documentation for running one.
 
 ## What Teranode is
 
@@ -12,7 +12,7 @@ In vertical scaling, a single node grows by getting a bigger machine, as in [SV 
 - Propagation receives and forwards transactions across the network.
 - Validator checks transactions against the network rules and updates their status in the <Hint tip="Unspent transaction output">UTXO</Hint> store.
 - Block Validation processes new blocks and checks them before they are added to the blockchain.
-- Block Assembly creates subtrees and assembles block templates for miners.
+- Block Assembly creates <Hint tip="A batch of transaction IDs with its Merkle root, a part of the block's Merkle tree">subtrees</Hint> and assembles block templates for miners.
 - Blockchain manages block updates and keeps the node's copy of the blockchain.
 
 Services talk to each other through gRPC and Kafka. The documentation states a design goal of over 1 million transactions per second, which it aims to reach by spreading the work across machines. Block Assembly and Blockchain are the exceptions: they run as one instance per node.
@@ -24,7 +24,7 @@ The Teranode documentation describes two setups:
 - Docker on one host, for testing, joining a network or evaluating Teranode. The [teranode-quickstart](https://github.com/bsv-blockchain/teranode-quickstart) repository wraps Docker Compose in scripts for setup, start, status checks and RPC access.
 - Kubernetes operator, for multi-node production deployments and horizontally scaled setups.
 
-The quickstart supports four networks: Mainnet, testnet, <Hint tip="A test network for Teranode">teratestnet</Hint> and regtest. The quickstart recommends 256 GB of RAM (128 GB at the minimum) and 2 TB or more of disk for a Mainnet node, and 8 GB of RAM for a regtest node. Check the [requirements table in the quickstart](https://github.com/bsv-blockchain/teranode-quickstart#prerequisites) before you pick a network.
+The quickstart supports four networks: Mainnet, testnet, <Hint tip="A test network for Teranode">teratestnet</Hint> and <Hint tip="A private chain on your own machine, used for local tests">regtest</Hint>. The quickstart recommends 256 GB of RAM (128 GB at the minimum) and 2 TB or more of disk for a Mainnet node, and 8 GB of RAM for a regtest node. Check the [requirements table in the quickstart](https://github.com/bsv-blockchain/teranode-quickstart#prerequisites) before you pick a network.
 
 ## Find the documentation and get help
 
