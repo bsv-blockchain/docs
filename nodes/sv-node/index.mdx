@@ -3,33 +3,33 @@ title: Run SV Node
 description: What SV Node is, whether you need your own node, and how to install, configure and call it.
 ---
 
-SV Node is node software for the BSV network. A release ships `bitcoind`, the node itself, `bitcoin-cli` to control it and `bitcoin-tx` to build transactions. It connects to the peer-to-peer network, validates and relays transactions and blocks, stores the chain, and exposes an RPC interface, an optional REST interface and optional ZeroMQ notifications. Miners run it, and the existing documentation lists it as the minimum a miner needs.
+This page helps you decide whether to run your own SV Node, then sends you to the install, configure and RPC pages. SV Node is node software for the BSV network. A release ships `bitcoind`, the node itself, `bitcoin-cli` to control it and `bitcoin-tx` to build transactions. It connects to the peer-to-peer network, validates and relays transactions and blocks, stores the chain, and exposes an RPC interface, an optional REST interface and optional ZeroMQ notifications. Miners run it.
 
 ## Decide whether you need your own node
 
-The existing BSV documentation recommends that non-mining entities, such as exchanges and apps, move away from daily reliance on the node software, because of the traffic on the network. It points them to <Hint tip="Simplified Payment Verification: a client checks transactions against block headers without storing the whole chain.">SPV</Hint> wallets, and to services such as ARC that process transactions for you. Run SV Node when you mine, or when you want a node of your own with its RPC interface.
+Non-mining entities, such as exchanges and apps, do not need to run a node for daily operation. Use <Hint tip="Simplified Payment Verification: a client checks transactions against block headers without storing the whole chain.">SPV</Hint> wallets, and services such as <Hint tip="A transaction broadcast API of miners. The backend of the demo forwards BEEF transactions to it">ARC</Hint> that process transactions for you. Run SV Node when you mine, or when you want a node of your own with its RPC interface.
 
 ## Run SV Node
 
 Install, configure and call a node on three pages, in this order:
 
 <CardGroup cols={3}>
-<Card title="Install SV Node" href="/nodes/sv-node/installation">
+<Card title="Install SV Node" href="/nodes/sv-node/installation/">
 Get the Linux binary, the Docker image or the source for a release.
 </Card>
-<Card title="Configure SV Node" href="/nodes/sv-node/configuration">
+<Card title="Configure SV Node" href="/nodes/sv-node/configuration/">
 Set the required parameters, the network and the RPC server.
 </Card>
-<Card title="SV Node RPC methods" href="/nodes/sv-node/rpc-methods">
+<Card title="SV Node RPC methods" href="/nodes/sv-node/rpc-methods/">
 Look up the methods you can call on a running node.
 </Card>
 </CardGroup>
 
 ## Know the networks
 
-The same software runs on Mainnet, testnet and regtest, and on the Scaling Test Network with `-stn`. On regtest you mine blocks on demand with the `generate` RPC method, so it needs no peers. Start on testnet or regtest, because a Mainnet node has to download the whole chain.
+The same software runs on Mainnet, testnet and regtest, and on the Scaling Test Network with `-stn`. On regtest you mine blocks on demand with the `generate` RPC method, so it needs no peers. Start on testnet or regtest: Mainnet coins have real value, so a mistake costs real funds, and its chain is far larger than testnet's. Regtest needs no download and no peers.
 
-## See also
+## Related articles
 
 To learn more about the rules the network applies to every node in BSV, review these articles:
 
