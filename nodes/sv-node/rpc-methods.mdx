@@ -6,7 +6,7 @@ description: Look up the JSON-RPC methods of SV Node 1.2.3 by group, and how to 
 import BlueTable from '/snippets/BlueTable.jsx';
 import SvNodeRpcGroups from '/snippets/SvNodeRpcGroups.jsx';
 
-SV Node exposes a JSON-RPC API for reading the chain, relaying transactions, mining and managing its wallet. The tables below list the methods that `bitcoin-cli help` shows in SV Node 1.2.3, grouped as the node groups them, with the first line of each method's help text. Run `bitcoin-cli help <method>` for the arguments and the result of one method.
+SV Node exposes a JSON-RPC API for reading the chain, relaying transactions, mining and managing its wallet. The tables below list the methods that `bitcoin-cli help` shows in SV Node 1.2.3, grouped as the node groups them, with the first line of each method's help text. Run `bitcoin-cli help METHOD_NAME` for the arguments and the result of one method, replacing `METHOD_NAME` with a method from the tables.
 
 <Callout type="warning">
 RPC gives full control of the node and its wallet. It can stop the node, dump private keys and spend funds. Keep the port on `127.0.0.1` or a private network and never publish it.
@@ -14,13 +14,13 @@ RPC gives full control of the node and its wallet. It can stop the node, dump pr
 
 ## Call the API
 
-Enable the server with `server=1` and credentials in `bitcoin.conf`, as described in [Configure SV Node](/nodes/sv-node/configuration). The default RPC port is 8332 on Mainnet and 18332 on testnet and regtest. Send a JSON-RPC POST with HTTP basic authentication.
+Enable the server with `server=1` and credentials in `bitcoin.conf`, as described in [Configure SV Node](/nodes/sv-node/configuration/). The default RPC port is 8332 on Mainnet and 18332 on testnet and regtest. Send a JSON-RPC POST with HTTP basic authentication. The example below runs against a node started with `-regtest`, and the same request works on testnet at the same port.
 
 ```bash
 curl --user RPC_USERNAME:RPC_PASSWORD -H "content-type: application/json" -d '{"jsonrpc":"1.0","id":"1","method":"getblockcount","params":[]}' http://127.0.0.1:18332/
 ```
 
-Replace `RPC_USERNAME` and `RPC_PASSWORD` with the `rpcuser` and `rpcpassword` values of your `bitcoin.conf`. On a new regtest chain the node answers `{"result":0,"error":null,"id":"1"}`, where the result is the block count. Wrong credentials return HTTP 401. `bitcoin-cli` takes the same method names and positional arguments, for example `bitcoin-cli -regtest getblockcount`.
+Replace `RPC_USERNAME` and `RPC_PASSWORD` with the `rpcuser` and `rpcpassword` values of your `bitcoin.conf`. On a new regtest chain the node answers `{"result":0,"error":null,"id":"1"}`, where the result is the block count. On testnet the result is the current testnet block count instead. Wrong credentials return HTTP 401. `bitcoin-cli` takes the same method names and positional arguments, for example `bitcoin-cli -regtest getblockcount`.
 
 <Callout type="note">
 `getinfo` still works in 1.2.3 but its help text marks it deprecated. Use `getblockchaininfo`, `getnetworkinfo` and `getmininginfo` instead.
@@ -303,7 +303,7 @@ These methods read the safe mode status and override it for a block:
 
 ### Methods not in the default list
 
-These answer `bitcoin-cli help <method>` in 1.2.3 but are not in the default list. Run that command for their arguments:
+These answer `bitcoin-cli help METHOD_NAME` in 1.2.3 but are not in the default list. Run that command for their arguments:
 
 <BlueTable>
 
@@ -322,5 +322,5 @@ These answer `bitcoin-cli help <method>` in 1.2.3 but are not in the default lis
 
 To learn more about running SV Node in BSV, review these articles:
 
-- [Configure SV Node](/nodes/sv-node/configuration)
-- [Install SV Node](/nodes/sv-node/installation)
+- [Configure SV Node](/nodes/sv-node/configuration/)
+- [Install SV Node](/nodes/sv-node/installation/)
