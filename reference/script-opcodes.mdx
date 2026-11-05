@@ -44,11 +44,11 @@ A byte from `0x01` to `0x4b` has no name and pushes the next 1 to 75 bytes as on
 | `OP_ELSE` | `0x67` | Runs if the matching `OP_IF` or `OP_NOTIF` branch did not. |
 | `OP_ENDIF` | `0x68` | Ends a conditional block. An unbalanced conditional makes the script invalid. |
 | `OP_VERIFY` | `0x69` | Fails the script if the top value is not true, otherwise removes it. |
-| `OP_RETURN` | `0x6a` | Before Genesis it fails the script. From Genesis it ends evaluation, and at the top level the script succeeds and the rest is ignored. |
+| `OP_RETURN` | `0x6a` | Before Genesis it fails the script. From Genesis it ends evaluation without an error and the rest of the script is ignored, but the spend is valid only if the top stack item is true. |
 
 </BlueTable>
 
-A common convention for carrying data in an output is the prefix `OP_FALSE OP_RETURN`, followed by the data.
+A common convention for carrying data in an output is the prefix `OP_FALSE OP_RETURN`, followed by the data. The `OP_FALSE` leaves a false item on the stack, so the output can never be spent.
 
 ## Stack
 
@@ -226,9 +226,9 @@ Executing a reserved opcode makes a script invalid. The no-op opcodes are ignore
 
 `@bsv/sdk` exports `OP`, which maps opcode names to byte values in decimal. This page was written against `@bsv/sdk` 4.0.1: every name and hex value on this page matches its `OP`, and the SDK also defines names this page does not list, such as `OP_NOP11`.
 
-Run the snippet with Node.js after `npm install @bsv/sdk`. It prints 118, the decimal value of `0x76`.
+Install the SDK with `npm install @bsv/sdk@4.0.1`, save the snippet as `op.mjs` and run `node op.mjs`. It prints 118, the decimal value of `0x76`.
 
-```ts
+```js
 import { OP } from '@bsv/sdk'
 
 console.log(OP.OP_DUP)
