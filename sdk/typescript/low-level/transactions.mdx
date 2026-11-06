@@ -90,7 +90,7 @@ Funding is a step you do by hand in the browser, because the faucet asks you to 
 
 <Steps>
   <Step title="Request coins from the faucet">
-    Follow [Get free testnet coins](/get-started/quick-start-browser/#get-free-testnet-coins) in the web app guide, and paste the address that `create-key.mjs` printed in **Destination address**, instead of the address of BSV Desktop. The faucet allows one request every 24 hours.
+    Follow [Get free testnet coins](/get-started/quick-start-browser/#get-free-testnet-coins) in the web app guide, and paste the address that `create-key.mjs` printed in **Destination address**, instead of the address of BSV Desktop. Request more than 1,000 satoshis, such as `1000000`, since `send.mjs` pays 1,000 satoshis plus the fee. The faucet allows one request every 24 hours.
   </Step>
   <Step title="Copy the transaction ID">
     The faucet confirms with a **Successfully sent** message and a transaction ID. Copy the ID, since `send.mjs` needs it to find the source transaction.
@@ -172,7 +172,7 @@ With the address funded, build `send.mjs` part by part in the same folder, so th
     console.log(`Spends output ${sourceOutputIndex} of ${fundingTxid}, fee ${tx.getFee()} satoshis`)
     ```
 
-    - `new SatoshisPerKilobyte(1)` pays 1 satoshi for each 1,000 bytes, the lowest rate that the testnet endpoint of BSV Broadcaster accepted when this page was written. Read the policy of your endpoint, as [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/) shows. With no argument, `fee()` reads the rate of a Mainnet endpoint.
+    - `new SatoshisPerKilobyte(1)` pays 1 satoshi for each 1,000 bytes, the lowest rate that the testnet endpoint of BSV Broadcaster accepted on 6 November 2026. Read the policy of your endpoint, as [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/) shows. With no argument, `fee()` reads the rate of a Mainnet endpoint.
     - `fee()` sets the amount of the change output. Call it before `sign()`, which throws an error while a change output has no amount.
   </Step>
   <Step title="Broadcast the transaction">
@@ -191,7 +191,7 @@ With the address funded, build `send.mjs` part by part in the same folder, so th
     - A failed broadcast returns `status: 'error'` with a `code` and a `description` instead of throwing, so the script checks the status first.
   </Step>
   <Step title="Run the script">
-    Run `send.mjs` with the transaction ID of the faucet payment. Replace `FUNDING_TXID` with the ID you copied from the faucet:
+    Run `send.mjs` with the transaction ID of the faucet payment. Replace `FUNDING_TXID` with the ID you copied from the faucet. An output can be spent only once, so run the script once for each faucet payment:
 
     ```bash
     node send.mjs FUNDING_TXID
