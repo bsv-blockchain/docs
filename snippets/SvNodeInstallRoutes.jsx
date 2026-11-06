@@ -28,7 +28,6 @@ const routes = [
     points: [
       'For a custom build',
       'Needs GCC 10.2 or later and the build dependencies',
-      'About 30 minutes on a GitHub-hosted runner (ubuntu-24.04)',
     ],
     href: '#build-from-source',
   },
