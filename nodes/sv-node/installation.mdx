@@ -56,7 +56,7 @@ tar xzf bitcoin-sv-1.2.3-x86_64-linux-gnu.tar.gz
 bitcoin-sv-1.2.3/bin/bitcoind -testnet -excessiveblocksize=10GB -maxstackmemoryusageconsensus=100MB -minminingtxfee=0.00000001
 ```
 
-SV Node 1.2.3 refuses to start unless these three parameters are set, and exits with "Mandatory consensus parameter is not set" otherwise. [Configure SV Node](/nodes/sv-node/configuration) explains them.
+SV Node 1.2.3 refuses to start unless these three parameters are set, and exits with "Mandatory consensus parameter is not set" otherwise. [Configure SV Node](/nodes/sv-node/configuration/) explains them.
 
 To confirm the release, run `bitcoind --version` from the unpacked folder:
 
@@ -154,5 +154,5 @@ To skip installing the toolchain, the `bitcoinsv/bitcoin-sv-src` images on Docke
 
 With the node installed, set its parameters and then look up the calls you can make.
 
-- [Configure SV Node](/nodes/sv-node/configuration)
-- [SV Node RPC methods](/nodes/sv-node/rpc-methods)
+- [Configure SV Node](/nodes/sv-node/configuration/)
+- [SV Node RPC methods](/nodes/sv-node/rpc-methods/)
