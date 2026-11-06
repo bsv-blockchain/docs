@@ -28,7 +28,7 @@ Replace `RPC_USERNAME` and `RPC_PASSWORD` with the `rpcuser` and `rpcpassword` v
 
 ## Look up a method
 
-The node groups its 148 methods in 11 groups. Pick a group to jump to its table, which lists each signature with the first line of the node's help text.
+The tables list 151 methods in 11 groups. Pick a group to jump to its table, which lists each signature with the first line of the node's help text.
 
 <SvNodeRpcGroups />
 
@@ -178,7 +178,7 @@ These methods cover multisig addresses, message signing and script checks:
 
 ### Wallet
 
-These methods work on the wallet that the node loads. Several account methods are marked DEPRECATED in the node's help text:
+These methods work on the wallet that the node loads. Several account methods are marked DEPRECATED in the node's help text. `walletlock`, `walletpassphrase` and `walletpassphrasechange` show in `help` only when the loaded wallet is encrypted, and `encryptwallet` only when it is not. The tables list all 151: `bitcoin-cli help` shows 148 on an unencrypted wallet and 150 on an encrypted one.
 
 <BlueTable>
 
@@ -227,6 +227,9 @@ These methods work on the wallet that the node loads. Several account methods ar
 | `setaccount "address" "account"` | DEPRECATED. |
 | `settxfee amount` | Set the transaction fee per kB. |
 | `signmessage "address" "message"` | Signs a message with the private key of an address. |
+| `walletlock` | Removes the wallet encryption key from memory, locking the wallet. |
+| `walletpassphrase "passphrase" timeout` | Stores the wallet decryption key in memory for 'timeout' seconds. |
+| `walletpassphrasechange "oldpassphrase" "newpassphrase"` | Changes the wallet passphrase from 'oldpassphrase' to 'newpassphrase'. |
 
 </BlueTable>
 

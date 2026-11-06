@@ -1,5 +1,5 @@
 // The method groups of SV Node 1.2.3, in "SV Node RPC methods": a grid of links, each jumping to the table of that group.
-// Content only: edit the texts here. Counts come from `bitcoin-cli help` of 1.2.3 (148 methods) and must match the tables of the page.
+// Content only: edit the texts here. Counts come from `bitcoin-cli help` of 1.2.3 (151 methods in all: `help` shows 148 on an unencrypted wallet, 150 on an encrypted one) and must match the tables of the page.
 
 const groups = [
   { name: 'Blockchain', count: 31, text: 'Blocks, headers, the mempool and proofs', href: '#blockchain' },
@@ -8,7 +8,7 @@ const groups = [
   { name: 'Raw transactions', count: 8, text: 'Create, decode, fund, sign and send', href: '#raw-transactions' },
   { name: 'Control', count: 8, text: 'Status, settings, uptime and stop', href: '#control' },
   { name: 'Utilities', count: 6, text: 'Multisig, message signing and script checks', href: '#utilities' },
-  { name: 'Wallet', count: 43, text: 'Addresses, balances, payments and keys', href: '#wallet' },
+  { name: 'Wallet', count: 46, text: 'Addresses, balances, payments and keys', href: '#wallet' },
   { name: 'Generating blocks', count: 2, text: 'Mine blocks on demand', href: '#generating-blocks' },
   { name: 'Miner ID', count: 14, text: 'Miner IDs and miner info transactions', href: '#miner-id' },
   { name: 'Frozen transactions', count: 8, text: 'Confiscation and blacklist lists', href: '#frozen-transactions' },
