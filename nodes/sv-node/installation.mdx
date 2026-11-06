@@ -18,7 +18,7 @@ The three routes install the same release, 1.2.3 at the time of writing. Pick th
 <SvNodeInstallRoutes />
 
 <Visibility for="agents">
-Three routes install the same release, 1.2.3. Linux binary: the release as published, Linux on x86_64 only with no Windows binary, a checksum to verify the download, and `bitcoind` runs straight from the archive. Docker image: a container from the official image, pinned by tag, which generates a `bitcoin.conf`, keeps data in `/data` and is the route for hosts without a Linux binary. Build from source: a build you control, for a custom build, needing GCC 10.2 or later and the build dependencies, and about 30 minutes on a GitHub-hosted runner.
+Three routes install the same release, 1.2.3. Linux binary: the release as published, Linux on x86_64 only with no Windows binary, a checksum to verify the download, and `bitcoind` runs straight from the archive. Docker image: a container from the official image, pinned by tag, which generates a `bitcoin.conf`, keeps data in `/data` and is the route for hosts without a Linux binary. Build from source: a build you control, for a custom build, needing GCC 10.2 or later and the build dependencies.
 </Visibility>
 
 There is no Windows binary for 1.2.3, so on Windows run the Docker image.
