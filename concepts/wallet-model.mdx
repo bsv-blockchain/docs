@@ -1,12 +1,12 @@
 ---
-title: "BRC-100 wallet interface"
+title: "BRC-100: Wallet Application Interface"
 description: "The standard interface between an app and a wallet, where the app asks for an action, the wallet holds the keys and decides how to do it, and any compliant wallet can answer."
 ---
 
 import WalletBoundary from '/snippets/WalletBoundary.jsx';
 import SubstrateProbe from '/snippets/SubstrateProbe.jsx';
 
-<Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> is the interface between your app's code and a wallet's code. A full BRC-100 wallet exposes the same 28 methods, so the same app code works with [BSV Desktop](/wallets/bsv-desktop/), [BSV Browser](/wallets/bsv-browser/) or a wallet inside your own server. Read this before your app calls a wallet. By the end, you know how a request reaches the wallet and have run one script that makes the same calls to a wallet inside your process and to the user's wallet.
+The Wallet Application Interface (<Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>) is the interface between your app's code and a wallet's code. A full BRC-100 wallet exposes the same 28 methods, so the same app code works with [BSV Desktop](/wallets/bsv-desktop/), [BSV Browser](/wallets/bsv-browser/) or a wallet inside your own server. Read this before your app calls a wallet. By the end, you know how a request reaches the wallet and have run one script that makes the same calls to a wallet inside your process and to the user's wallet.
 
 ## Why your app does not hold the key
 
