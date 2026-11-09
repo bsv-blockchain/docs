@@ -216,7 +216,7 @@ Your transaction is on testnet, with 1,000 satoshis and the change paid back to 
 The three lines that `send.mjs` prints describe the transaction you sent:
 
 - The first line gives the index of the faucet output that the input spent, and the fee in satoshis, rounded up from the size of the transaction.
-- `Transaction ID` comes from BSV Broadcaster's answer. The ID means that BSV Broadcaster checked the transaction and accepted it for delivery, not that a miner has included it in a block.
+- `Transaction ID` is the ID of the signed transaction, which the SDK computes on your machine. It is printed after BSV Broadcaster answers with success, which means it accepted the transaction for delivery, not that a miner has included it in a block.
 - The explorer link opens the transaction on the WhatsOnChain testnet explorer, with one input and two outputs: 1,000 satoshis and the change, both to your address.
 
 To follow the transaction until it is mined, ask BSV Broadcaster for its status, as [Follow the transaction](/guides/services/broadcasting/#follow-the-transaction) shows.
