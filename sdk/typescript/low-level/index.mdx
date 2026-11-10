@@ -1,6 +1,6 @@
 ---
 title: "Build transactions by hand"
-description: "Build BSV transactions, keys and scripts directly with @bsv/sdk, without a wallet, when your code needs full control of each input, output and script."
+description: "Build BSV blockchain transactions, keys and scripts directly with @bsv/sdk, without a wallet, when your code needs full control of each input, output and script."
 sidebarTitle: "Low-level transactions"
 ---
 
@@ -43,7 +43,7 @@ Several calls fall back to Mainnet when you pass no argument. Pass the testnet v
 | Call with no argument | What it uses | What to pass on testnet |
 | --- | --- | --- |
 | `key.toAddress()` | A Mainnet address, starting with `1` | `key.toAddress('testnet')`, which starts with `m` or `n` |
-| `tx.fee()` | `LivePolicy`, which reads the rate from the policy of GorillaPool's Mainnet <Hint tip="The broadcast API that came before BSV Broadcaster. The ARC class of @bsv/sdk calls it">ARC</Hint> endpoint and falls back to 100 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> per kilobyte | A fee model with the rate of your endpoint, such as `new SatoshisPerKilobyte(1)` |
+| `tx.fee()` | `LivePolicy`, which reads the rate from the policy of GorillaPool's Mainnet <Hint tip="The broadcast API that came before BSV Broadcaster. The ARC class of @bsv/sdk calls it">ARC</Hint> endpoint and falls back to 100 <Hint tip="The smallest unit of BitcoinSV (BSV). 100,000,000 satoshis make 1 BSV">satoshis</Hint> per kilobyte | A fee model with the rate of your endpoint, such as `new SatoshisPerKilobyte(1)` |
 | `tx.broadcast()` | An `ARC` broadcaster for GorillaPool's Mainnet endpoint | `new Teranode('https://arcade-v2-testnet-us-1.bsvblockchain.tech/tx')`, the testnet endpoint of [BSV Broadcaster](/guides/services/broadcasting/) |
 | `tx.verify()` | A `WhatsOnChain` chain tracker on Mainnet | `new WhatsOnChain('test')` |
 

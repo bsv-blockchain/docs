@@ -6,7 +6,7 @@ description: "Understand locking and unlocking scripts, how a spend is checked o
 import ScriptStepper from '/snippets/ScriptStepper.jsx';
 import ScriptTemplates from '/snippets/ScriptTemplates.jsx';
 
-Every BSV output carries a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> that sets the condition to spend it, and every input carries an <Hint tip="The part of an input that meets the condition set by the locking script of the output it spends">unlocking script</Hint> that meets that condition. Both are written in Script, a small stack based language. A wallet builds these scripts for you, so you meet Script when you lock an output to a custom condition, read what an output says, or find out why a spend was rejected.
+Every output on the BSV blockchain carries a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> that sets the condition to spend it, and every input carries an <Hint tip="The part of an input that meets the condition set by the locking script of the output it spends">unlocking script</Hint> that meets that condition. Both are written in Script, a small stack based language. A wallet builds these scripts for you, so you meet Script when you lock an output to a custom condition, read what an output says, or find out why a spend was rejected.
 
 Step through the most common script, <Hint tip="Pay to Public Key Hash, an output that only the key behind one address can spend">P2PKH</Hint>, to see how the two work together, and check a spend in code with `@bsv/sdk`, which has the classes that build and check scripts. [How transactions and fees work](/concepts/transactions/) covers the transaction around them. This page was written against `@bsv/sdk` 4.0.1.
 
@@ -99,7 +99,7 @@ await check(owner)
 await check(stranger)
 ```
 
-`source` stands in for the earlier transaction, with one output of 1,000 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> locked to the owner. The input sets a `sequence` because the `P2PKH` template cannot sign an input without one. Running the file prints:
+`source` stands in for the earlier transaction, with one output of 1,000 <Hint tip="The smallest unit of BitcoinSV (BSV). 100,000,000 satoshis make 1 BSV">satoshis</Hint> locked to the owner. The input sets a `sequence` because the `P2PKH` template cannot sign an input without one. Running the file prints:
 
 ```text
 valid: true
@@ -177,7 +177,7 @@ A <Hint tip="BSV Request for Comments 100, the standard interface between a wall
 
 ## Related articles
 
-To learn more about Script in BSV, review these articles:
+To learn more about Script on the BSV blockchain, review these articles:
 
 - [How transactions and fees work](/concepts/transactions/)
 - [How keys and identity work](/concepts/keys-identity/)

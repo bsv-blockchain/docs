@@ -24,7 +24,7 @@ export default function AgentToolkit() {
     <figure className="not-prose my-8">
       <ul
         className="m-0 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-3"
-        aria-label="What each piece of the BSV AI toolkit gives the agent"
+        aria-label="What each piece of the BSV blockchain AI toolkit gives the agent"
       >
         {pieces.map((piece) => (
           <li key={piece.name} className="m-0 flex flex-col overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">

@@ -1,12 +1,12 @@
 ---
 title: Use the Go SDK
-description: "go-sdk is the Go library for BSV apps: keys, scripts, transactions, proofs, a wallet interface and overlay services, with its docs and examples in the Go repositories."
+description: "go-sdk is the Go library for BSV blockchain apps: keys, scripts, transactions, proofs, a wallet interface and overlay services, with its docs and examples in the Go repositories."
 sidebarTitle: Go SDK
 ---
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Use `go-sdk` to build BSV keys, scripts, transactions and proofs in Go, from a signed <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">P2PKH</Hint> transaction up to a <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet interface and <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay services</Hint>. The docs and examples live in the Go repositories, and this page links them.
+Use `go-sdk` to build keys, scripts, transactions and proofs for the BSV blockchain in Go, from a signed <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">P2PKH</Hint> transaction up to a <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet interface and <Hint tip="Built from topic managers, which decide what is admitted, and lookup services, which query what was admitted.">overlay services</Hint>. The docs and examples live in the Go repositories, and this page links them.
 
 ## What the SDK includes
 
@@ -128,7 +128,7 @@ Add the SDK to a Go module, then run a first program that signs a transaction an
 These parts of `main.go` need a closer look:
 
 - `NewAddressFromPublicKey(priv.PubKey(), false)` derives a testnet address from the public key. `true` gives a Mainnet address.
-- `AddInputFrom` describes the output the input spends: its transaction ID, its index, its locking script as a hex string and its value in <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV.">satoshis</Hint>. Here the output exists only in the program, so the transaction ID is a placeholder of zeros. To spend a real output, use the values of one of your own <Hint tip="Unspent transaction output">UTXOs</Hint>.
+- `AddInputFrom` describes the output the input spends: its transaction ID, its index, its locking script as a hex string and its value in <Hint tip="The smallest unit of BitcoinSV (BSV). 100,000,000 satoshis make 1 BSV.">satoshis</Hint>. Here the output exists only in the program, so the transaction ID is a placeholder of zeros. To spend a real output, use the values of one of your own <Hint tip="Unspent transaction output">UTXOs</Hint>.
 - `p2pkh.Unlock(priv, nil)` gives the input a signing template, and `tx.Sign()` signs every input that has one.
 - `PayToAddress` adds an output of 9,000 satoshis. The 1,000 satoshis left between the input and the output are the fee.
 
@@ -136,7 +136,7 @@ These parts of `main.go` need a closer look:
 A broadcast transaction cannot be undone, and the `broadcaster` examples in the repository send to Mainnet. Test on testnet before you use Mainnet.
 </Callout>
 
-To send a transaction, use a broadcaster from the `transaction/broadcaster` package. The transaction in `main.go` cannot be broadcast, because it spends an output that exists only in the program. The WhatsOnChain broadcaster takes a `Network` field, and `broadcaster.WOCTestnet` selects testnet. For the broadcaster the BSV Association runs, see [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/).
+To send a transaction, use a broadcaster from the `transaction/broadcaster` package. The transaction in `main.go` cannot be broadcast, because it spends an output that exists only in the program. The WhatsOnChain broadcaster takes a `Network` field, and `broadcaster.WOCTestnet` selects testnet. For the broadcaster BSV Association runs, see [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/).
 
 ## Find the docs and examples
 
@@ -175,9 +175,9 @@ Each of these folders in [`docs/examples`](https://github.com/bsv-blockchain/go-
 
 ## Related articles
 
-To learn more about the SDKs in BSV, review these articles:
+To learn more about the SDKs on the BSV blockchain, review these articles:
 
 - [SDKs overview](/sdk/)
 - [Use the Python SDK](/sdk/python/)
 - [Use the TypeScript SDK](/sdk/typescript/)
-- [How the BSV stack fits together](/concepts/architecture/)
+- [How the BSV blockchain stack fits together](/concepts/architecture/)

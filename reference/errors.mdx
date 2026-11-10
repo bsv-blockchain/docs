@@ -1,6 +1,6 @@
 ---
 title: "Error codes"
-description: "The errors a BSV wallet returns through the BRC-100 interface, what each one means and what to check, from @bsv/sdk and @bsv/wallet-toolbox."
+description: "The errors a BSV blockchain wallet returns through the BRC-100 interface, what each one means and what to check, from @bsv/sdk and @bsv/wallet-toolbox."
 ---
 
 import BlueTable from '/snippets/BlueTable.jsx';
@@ -88,7 +88,7 @@ An error that both packages define, such as `WERR_INSUFFICIENT_FUNDS`, has the s
 
 | Error | Message | Cause and what to do |
 |-------|---------|----------------------|
-| `WERR_INSUFFICIENT_FUNDS` | `Insufficient funds in the available inputs to cover the cost of the required outputs…` | The wallet cannot pay the outputs and the fee. The message goes on with `(<more> more satoshis are needed, for a total of <total>)`. The `moreSatoshisNeeded` and `totalSatoshisNeeded` fields hold the two amounts in <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint>. Fund the wallet on the network your app uses with at least `moreSatoshisNeeded`, plus some margin for the fee of the extra inputs. The guide to [moving your app to Mainnet](/guides/go-to-mainnet/) covers this error on a wallet that is on the wrong network |
+| `WERR_INSUFFICIENT_FUNDS` | `Insufficient funds in the available inputs to cover the cost of the required outputs…` | The wallet cannot pay the outputs and the fee. The message goes on with `(<more> more satoshis are needed, for a total of <total>)`. The `moreSatoshisNeeded` and `totalSatoshisNeeded` fields hold the two amounts in <Hint tip="The smallest unit of BitcoinSV (BSV). 100,000,000 satoshis make 1 BSV">satoshis</Hint>. Fund the wallet on the network your app uses with at least `moreSatoshisNeeded`, plus some margin for the fee of the extra inputs. The guide to [moving your app to Mainnet](/guides/go-to-mainnet/) covers this error on a wallet that is on the wrong network |
 | `WERR_REVIEW_ACTIONS` | `Undelayed createAction or signAction results require review.` | `createAction` or `signAction` ran with `acceptDelayedBroadcast: false`, and the broadcast did not succeed. The toolbox also throws it from `internalizeAction`. Read the `status` of each entry in `reviewActionResults`, described below. The `txid`, `tx`, `sendWithResults` and `noSendChange` fields match the result the call would have returned |
 | `WERR_BROADCAST_UNAVAILABLE` | `Unable to broadcast transaction at this time.` | The transaction could not be broadcast. The toolbox rebuilds this error from the answer of a remote storage server and does not throw it itself. The message says the failure is temporary, so try again later |
 | `WERR_INVALID_MERKLE_ROOT` | `Invalid merkleRoot <root> for block <hash> at height <height> for txid <txid>.` | A <Hint tip="A service that checks a merkle root against the block headers of the network">chain tracker</Hint> did not accept the <Hint tip="One hash that stands for all the transactions in a block">merkle root</Hint> of a stored proof. The toolbox throws it while it builds the proof data for a transaction. Check which chain tracker the wallet uses, and the `blockHash`, `blockHeight` and `txid` fields |
@@ -186,7 +186,7 @@ BSV Broadcaster reports the status of a transaction, not a wallet error. Its sta
 
 ## Related articles
 
-To learn more about wallet calls and how the wallet tracks outputs in BSV, review these articles:
+To learn more about wallet calls and how the wallet tracks outputs on the BSV blockchain, review these articles:
 
 - [Wallet API (BRC-100)](/reference/wallet-api/)
 - [How the toolbox tracks UTXOs](/wallet-dev/wallet-toolbox/utxo-lifecycle/)

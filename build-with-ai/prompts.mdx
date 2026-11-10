@@ -1,12 +1,12 @@
 ---
 title: "Send a payment with an AI agent"
-description: "Have an AI agent build and run a first BSV testnet payment from the BSV docs, while you give it your address and approve the payment in BSV Desktop."
+description: "Have an AI agent build and run a first testnet payment from the BSV blockchain docs, while you give it your address and approve the payment in BSV Desktop."
 sidebarTitle: "Pay with an AI agent"
 ---
 
 import AgentPaymentRoles from '/snippets/AgentPaymentRoles.jsx';
 
-Ask an AI agent for your first BSV payment and let it read these docs, write the scripts and run them, while you keep the steps that move coins. The agent connects to your testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/), and no private key goes in the code. Use it when you build with [Claude Code](https://code.claude.com/docs/en/overview) and want to see how it handles a payment before you trust it with a real project. The example runs standalone in an empty folder, and at the end you have a testnet payment you approved and its transaction ID on the explorer.
+Ask an AI agent for your first BitcoinSV (BSV) payment and let it read these docs, write the scripts and run them, while you keep the steps that move coins. The agent connects to your testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/), and no private key goes in the code. Use it when you build with [Claude Code](https://code.claude.com/docs/en/overview) and want to see how it handles a payment before you trust it with a real project. The example runs standalone in an empty folder, and at the end you have a testnet payment you approved and its transaction ID on the explorer.
 
 ## Before you begin
 
@@ -25,14 +25,14 @@ The agent does the work that happens in code, and you do the work that happens i
 - You, work in the wallet: get testnet coins if the wallet is empty, give the agent your testnet address and approve the payment in BSV Desktop with **Authorize**.
 </Visibility>
 
-The agent reads the docs through the BSV docs server, follows the rules in your project, and stops to ask you for each step on your side.
+The agent reads the docs through the BSV blockchain docs server, follows the rules in your project, and stops to ask you for each step on your side.
 
 ## Set up the project
 
 Create an empty folder for the agent and open it in the terminal, then complete these steps in it:
 
 <Steps>
-  <Step title="Connect the BSV docs server">
+  <Step title="Connect the BSV blockchain docs server">
     Add the docs server, as in [Connect your AI tool with MCP](/build-with-ai/mcp/):
 
     ```bash
@@ -43,8 +43,8 @@ Create an empty folder for the agent and open it in the terminal, then complete 
     Added HTTP MCP server bsv-docs with URL: https://bsvblockchain.com/docs/mcp to local config
     ```
   </Step>
-  <Step title="Add the BSV rules">
-    Create `CLAUDE.md` in the folder and paste the BSV rules from [Give agents the docs in Markdown](/build-with-ai/llm-resources/). With the `bsv-dev` skill installed, the agent offers you the same rules, and you add them to the file yourself ([Install the BSV agent skill](/build-with-ai/skill/)). Claude Code reads this file at the start of every session. The rules tell the agent to read the BSV docs, build on testnet, keep private keys out of the code and ask you for the coins and the approval.
+  <Step title="Add the bsv-dev rules">
+    Create `CLAUDE.md` in the folder and paste the `bsv-dev` rules from [Give agents the docs in Markdown](/build-with-ai/llm-resources/). With the `bsv-dev` skill installed, the agent offers you the same rules, and you add them to the file yourself ([Install the BSV blockchain agent skill](/build-with-ai/skill/)). Claude Code reads this file at the start of every session. The rules tell the agent to read the BSV blockchain docs, build on testnet, keep private keys out of the code and ask you for the coins and the approval.
   </Step>
 </Steps>
 

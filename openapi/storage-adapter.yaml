@@ -524,7 +524,7 @@ components:
         chain:
           type: string
           enum: ["main", "test"]
-          description: BSV chain this storage is associated with.
+          description: BSV blockchain network this storage is associated with.
         dbtype:
           type: string
           enum: ["SQLite", "MySQL", "Postgres", "IndexedDB"]

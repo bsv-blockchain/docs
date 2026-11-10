@@ -1,11 +1,11 @@
 ---
 title: "Network endpoints"
-description: "The explorer, faucet, broadcast endpoints, wallet storage and address format of every BSV network that @bsv/sdk and @bsv/wallet-toolbox support."
+description: "The explorer, faucet, broadcast endpoints, wallet storage and address format of every BSV blockchain network that @bsv/sdk and @bsv/wallet-toolbox support."
 ---
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Look up the explorer, <Hint tip="A site that sends free test coins to an address">faucet</Hint>, broadcast endpoint, wallet storage and address format of each BSV network. Use it when you point code, a wallet or a test script at a network, and take every value from the same row. What each network is for, and the name each package gives it, is in [How BSV networks differ](/concepts/networks/).
+Look up the explorer, <Hint tip="A site that sends free test coins to an address">faucet</Hint>, broadcast endpoint, wallet storage and address format of each BSV blockchain network. Use it when you point code, a wallet or a test script at a network, and take every value from the same row. What each network is for, and the name each package gives it, is in [How BSV blockchain networks differ](/concepts/networks/).
 
 This page was written against `@bsv/sdk` 4.0.1 and `@bsv/wallet-toolbox` 2.15.1. Every endpoint on it was checked on 3 November 2026.
 
@@ -43,7 +43,7 @@ The public <Hint tip="Transaction broadcaster software that takes a signed trans
 </BlueTable>
 
 <Callout type="danger">
-Any endpoint in a Mainnet row moves real BSV, and a broadcast transaction cannot be undone. Match the endpoint to the network your keys and wallet use before you send.
+Any endpoint in a Mainnet row moves real BitcoinSV (BSV), and a broadcast transaction cannot be undone. Match the endpoint to the network your keys and wallet use before you send.
 </Callout>
 
 ### Defaults in the packages
@@ -108,12 +108,12 @@ The first character tells a Mainnet address from a testnet address made from the
 
 </BlueTable>
 
-`toAddress` in `@bsv/sdk` throws `Invalid prefix` for `'ttn'`, `'teratestnet'`, `'stn'` and `'regtest'`. Teratestnet uses the testnet format, and its explorer API accepts an address that starts with `m` and rejects one that starts with `1`. An address shows only how it was encoded, not the network your code is on, as [How BSV networks differ](/concepts/networks/#how-to-tell-which-network-you-are-on) explains.
+`toAddress` in `@bsv/sdk` throws `Invalid prefix` for `'ttn'`, `'teratestnet'`, `'stn'` and `'regtest'`. Teratestnet uses the testnet format, and its explorer API accepts an address that starts with `m` and rejects one that starts with `1`. An address shows only how it was encoded, not the network your code is on, as [How BSV blockchain networks differ](/concepts/networks/#how-to-tell-which-network-you-are-on) explains.
 
 ## Related articles
 
-To learn more about BSV networks and their services, review these articles:
+To learn more about BSV blockchain networks and their services, review these articles:
 
-- [How BSV networks differ](/concepts/networks/)
+- [How BSV blockchain networks differ](/concepts/networks/)
 - [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/)
 - [Verify your payment on the explorer](/get-started/verify/)

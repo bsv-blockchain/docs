@@ -6,7 +6,7 @@ description: "Overlays track the transactions of one app or protocol, so the app
 import OverlayCompare from '/snippets/OverlayCompare.jsx';
 import OverlayParts from '/snippets/OverlayParts.jsx';
 
-An overlay is a service that tracks the transactions of one app or protocol. Your app sends it the transactions it creates, the overlay keeps the outputs that follow your rules, and your app queries it later to read them back. It is how a BSV app keeps track of its own data, such as tokens, records or file references, without indexing every block on the chain. This page was written against `@bsv/sdk` 3.2.1.
+An overlay is a service that tracks the transactions of one app or protocol. Your app sends it the transactions it creates, the overlay keeps the outputs that follow your rules, and your app queries it later to read them back. It is how a BSV blockchain app keeps track of its own data, such as tokens, records or file references, without indexing every block on the chain. This page was written against `@bsv/sdk` 3.2.1.
 
 ## Why apps track their own transactions
 
@@ -18,7 +18,7 @@ A node keeps the whole chain, but it does not know which transactions belong to 
 The comparison has two columns. Index the chain yourself: you process every transaction on the network, you run the indexer or trust someone else's, you trust that the index left nothing out, and costs grow with the whole network. Use an overlay: you process only the transactions your app sends, the overlay checks each one, usually with SPV, it applies your own rules, and costs grow with your app.
 </Visibility>
 
-The state of a BSV app lives in <Hint tip="Unspent transaction output">UTXOs</Hint>, not in an account that a node updates. An output can be spent only once, and the miners reject a second spend. So when the overlay sees that an output it tracks was spent, it knows the state changed, and an app that holds an old copy finds out as soon as it tries to spend that output.
+The state of a BSV blockchain app lives in <Hint tip="Unspent transaction output">UTXOs</Hint>, not in an account that a node updates. An output can be spent only once, and the miners reject a second spend. So when the overlay sees that an output it tracks was spent, it knows the state changed, and an app that holds an old copy finds out as soon as it tries to spend that output.
 
 ## The two parts of an overlay
 
@@ -65,8 +65,8 @@ When no public host runs your topic, you run one. `@bsv/overlay-express` runs a 
 
 ## Related articles
 
-To learn more about overlays in BSV, review these articles:
+To learn more about overlays on the BSV blockchain, review these articles:
 
 - [Track transactions with overlays](/guides/overlays/)
-- [How the BSV stack fits together](/concepts/architecture/)
+- [How the BSV blockchain stack fits together](/concepts/architecture/)
 - [BEEF (BRC-62)](/concepts/spv/)

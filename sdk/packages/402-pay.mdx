@@ -6,7 +6,7 @@ sidebarTitle: "@bsv/402-pay"
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Use `@bsv/402-pay` to charge for HTTP routes with BSV micropayments. A server answers a priced route with the status `402 Payment Required` and the price. A client pays from a <Hint tip="BSV Request for Comments 100, the standard wallet interface for applications">BRC-100</Hint> wallet and repeats the request. The package follows <Hint tip="The BSV standard for HTTP 402 micropayments">BRC-121</Hint> and has a server side and a client side. For the full walkthrough, follow [Gate an API behind payments](/guides/payments/).
+Use `@bsv/402-pay` to charge for HTTP routes with BitcoinSV (BSV) micropayments. A server answers a priced route with the status `402 Payment Required` and the price. A client pays from a <Hint tip="BSV Request for Comments 100, the standard wallet interface for applications">BRC-100</Hint> wallet and repeats the request. The package follows <Hint tip="The BSV blockchain standard for HTTP 402 micropayments">BRC-121</Hint> and has a server side and a client side. For the full walkthrough, follow [Gate an API behind payments](/guides/payments/).
 
 ## Install
 
@@ -176,12 +176,12 @@ A payment is valid for 30 seconds. If a client sends the same payment headers tw
 
 Check these two limits before you use the package:
 
-- A `ServerWallet` from `@bsv/simple` needs a storage server on the same network as its wallet. The default storage is a Mainnet server, so a testnet payment fails with `The tx parameter must be valid AtomicBEEF` and the server answers `503`. Set `storageUrl: 'https://go-wallet-testnet-us-1.bsvblockchain.tech'` to accept a testnet payment. BSV hosts that server, so check it before you rely on it. The SQLite wallet in the example does not use a hosted server.
+- A `ServerWallet` from `@bsv/simple` needs a storage server on the same network as its wallet. The default storage is a Mainnet server, so a testnet payment fails with `The tx parameter must be valid AtomicBEEF` and the server answers `503`. Set `storageUrl: 'https://go-wallet-testnet-us-1.bsvblockchain.tech'` to accept a testnet payment. It is a hosted server, so check it before you rely on it. The SQLite wallet in the example does not use a hosted server.
 - For routes that already use <Hint tip="BSV Request for Comments 103, mutual authentication between two peers">BRC-103</Hint> authentication, use `@bsv/payment-express-middleware` with `@bsv/auth-express-middleware`. That is a different flow.
 
 ## Related articles
 
-To learn more about paying for APIs in BSV, review these articles:
+To learn more about paying for APIs on the BSV blockchain, review these articles:
 
 - [Gate an API behind payments](/guides/payments/)
 - [Find more TypeScript packages](/sdk/packages/)

@@ -1,6 +1,6 @@
 ---
 title: "How keys and identity work"
-description: "Understand private and public keys, how BRC-42 derives a separate key for each counterparty, and how an identity key authenticates a user on BSV."
+description: "Understand private and public keys, how BRC-42 derives a separate key for each counterparty, and how an identity key authenticates a user on the BSV blockchain."
 sidebarTitle: "Keys and identity"
 ---
 
@@ -9,9 +9,9 @@ import DeriveSteps from '/snippets/DeriveSteps.jsx';
 import InvoiceBuilder from '/snippets/InvoiceBuilder.jsx';
 import IdentityRequest from '/snippets/IdentityRequest.jsx';
 
-On BSV, a private key proves control. It signs the inputs that spend an output and the messages an app sends, and the matching public key lets anyone check those signatures. A wallet holds the keys for your app. You work with them when you derive a key for another party, identify a user or debug a failed signature. By the end of this page you can derive a key for a counterparty with `ProtoWallet` and recognize a user by their identity key.
+On the BSV blockchain, a private key proves control. It signs the inputs that spend an output and the messages an app sends, and the matching public key lets anyone check those signatures. A wallet holds the keys for your app. You work with them when you derive a key for another party, identify a user or debug a failed signature. By the end of this page you can derive a key for a counterparty with `ProtoWallet` and recognize a user by their identity key.
 
-The examples use `@bsv/sdk` 4.0.1 and run with Node.js. Install it with `npm install @bsv/sdk@4.0.1`, save each example as an `.mjs` file and run it with `node`. [How the BSV stack fits together](/concepts/architecture/) shows where the wallet sits.
+The examples use `@bsv/sdk` 4.0.1 and run with Node.js. Install it with `npm install @bsv/sdk@4.0.1`, save each example as an `.mjs` file and run it with `node`. [How the BSV blockchain stack fits together](/concepts/architecture/) shows where the wallet sits.
 
 ## Private keys, public keys and addresses
 
@@ -209,7 +209,7 @@ A certifier signs a certificate that binds fields to the identity key of a user,
 
 ## Related articles
 
-To learn more about keys and identity in BSV, review these articles:
+To learn more about keys and identity on the BSV blockchain, review these articles:
 
 - [How Script works](/concepts/script/)
 - [How transactions and fees work](/concepts/transactions/)

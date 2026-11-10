@@ -1,12 +1,12 @@
 ---
 title: "Connect your AI tool with MCP"
-description: "Give Claude Code the BSV docs and the @bsv/mcp tools through MCP servers, so your agent reads these pages, checks BSV Broadcaster and reviews your project on testnet."
+description: "Give Claude Code the BSV blockchain docs and the @bsv/mcp tools through MCP servers, so your agent reads these pages, checks BSV Broadcaster and reviews your project on testnet."
 sidebarTitle: "Connect with MCP"
 ---
 
 import McpServers from '/snippets/McpServers.jsx';
 
-Connect [Claude Code](https://code.claude.com/docs/en/overview) to the BSV docs and to the BSV tools through MCP, the [Model Context Protocol](https://modelcontextprotocol.io/) an AI tool uses to call an outside server for information. With them, your agent searches and reads these pages before it writes BSV code, and checks transactions and projects with BSV tools. Use it when an AI agent builds your BSV app. Without a source, the agent can pick the wrong network or put a private key in your code. At the end, the docs server and `@bsv/mcp` are connected to your project, and the agent has checked a project against the BSV guardrails.
+Connect [Claude Code](https://code.claude.com/docs/en/overview) to the BSV blockchain docs and tools through MCP, the [Model Context Protocol](https://modelcontextprotocol.io/) an AI tool uses to call an outside server for information. With them, your agent searches and reads these pages before it writes code for the BSV blockchain, and checks transactions and projects with those tools. Use it when an AI agent builds your BSV blockchain app. Without a source, the agent can pick the wrong network or put a private key in your code. At the end, the docs server and `@bsv/mcp` are connected to your project, and the agent has checked a project against the BSV blockchain guardrails.
 
 ## Before you begin
 
@@ -15,22 +15,22 @@ Connect [Claude Code](https://code.claude.com/docs/en/overview) to the BSV docs 
 
 ## How it works
 
-Two MCP servers give the agent BSV knowledge in different ways. The BSV docs server runs at `https://bsvblockchain.com/docs/mcp`, and `@bsv/mcp` is a package that runs on your machine:
+Two MCP servers give the agent knowledge of the BSV blockchain in different ways. The BSV blockchain docs server runs at `https://bsvblockchain.com/docs/mcp`, and `@bsv/mcp` is a package that runs on your machine:
 
 <McpServers />
 
 <Visibility for="agents">
-- BSV docs server: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides, starting on testnet.
+- BSV blockchain docs server: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides, starting on testnet.
 - `@bsv/mcp`: gives tools for BSV Broadcaster (formerly Arcade), a guardrail check, BRCs and versions, with dated facts. Use it for actions and live values, on testnet by default.
 </Visibility>
 
 Claude Code adds each server to the current project only, so run the commands in your project folder.
 
 <Callout type="note">
-  The `bsv-dev` plugin of [Install the BSV agent skill](/build-with-ai/skill/) already connects both servers, as `plugin:bsv-dev:bsv-docs` and `plugin:bsv-dev:bsv-mcp`. With the plugin, skip the two `claude mcp add` commands on this page, or Claude Code starts a second copy of `bsv-mcp`. The tools, the guardrail check and the settings below are the same.
+  The `bsv-dev` plugin of [Install the BSV blockchain agent skill](/build-with-ai/skill/) already connects both servers, as `plugin:bsv-dev:bsv-docs` and `plugin:bsv-dev:bsv-mcp`. With the plugin, skip the two `claude mcp add` commands on this page, or Claude Code starts a second copy of `bsv-mcp`. The tools, the guardrail check and the settings below are the same.
 </Callout>
 
-## Connect the BSV docs server
+## Connect the BSV blockchain docs server
 
 The docs server runs on this site and needs no login or API key:
 
@@ -47,7 +47,7 @@ The docs server runs on this site and needs no login or API key:
     File modified: /Users/you/.claude.json [project: /Users/you/my-app]
     ```
 
-    The name is the one Claude Code shows for the server. Keep `bsv-docs`, since the BSV rules and the skill look for the server under that name.
+    The name is the one Claude Code shows for the server. Keep `bsv-docs`, since the `bsv-dev` rules and the skill look for the server under that name.
   </Step>
   <Step title="Check the connection">
     List the servers in the project:
@@ -72,7 +72,7 @@ The agent now has three tools to read the docs:
 | `search_docs` | Searches the docs by keywords and returns the best matching pages with a snippet of each, 5 by default and up to 20 |
 | `get_doc` | Returns one or more pages in full, as Markdown, by path or address |
 
-Ask Claude Code a BSV question in the same project, and it calls `search_docs` and `get_doc` before it answers. For a first payment, the docs lead the agent to [Send a payment from a web app](/get-started/quick-start-browser/), where a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/) approves the payment and no private key goes in your code.
+Ask Claude Code a question about the BSV blockchain in the same project, and it calls `search_docs` and `get_doc` before it answers. For a first payment, the docs lead the agent to [Send a payment from a web app](/get-started/quick-start-browser/), where a testnet wallet in [BSV Desktop](https://desktop.bsvb.tech/) approves the payment and no private key goes in your code.
 
 <Callout type="note">
   The page addresses in the results use `bsvblockchain.com/docs`. To read a page, the agent passes its path to `get_doc`, which works with or without the site address.
@@ -80,7 +80,7 @@ Ask Claude Code a BSV question in the same project, and it calls `search_docs` a
 
 ## Add @bsv/mcp
 
-`@bsv/mcp` is the BSV Association's MCP server for building apps, testnet first. Its source is in [bsv-blockchain/bsv-ai-toolkit](https://github.com/bsv-blockchain/bsv-ai-toolkit). It replaces `@bsv/simple-mcp`, as described in [Where Simple MCP went](#where-simple-mcp-went). This section uses `@bsv/mcp` 2.0.1.
+`@bsv/mcp` is BSV Association's MCP server for building apps, testnet first. Its source is in [bsv-blockchain/bsv-ai-toolkit](https://github.com/bsv-blockchain/bsv-ai-toolkit). It replaces `@bsv/simple-mcp`, as described in [Where Simple MCP went](#where-simple-mcp-went). This section uses `@bsv/mcp` 2.0.1.
 
 <Steps>
   <Step title="Add the server">
@@ -121,23 +121,23 @@ The agent now has ten tools. The four `broadcaster_*` tools work with BSV Broadc
 | `broadcaster_status` | Reads the status of a transaction from BSV Broadcaster and says whether it is final for an app: `SEEN_ON_NETWORK` or later with no competing transaction |
 | `broadcaster_policy` | Reads the fee rate and the size limits of a BSV Broadcaster endpoint |
 | `broadcaster_health` | Reads the version, block height and upstream nodes of a BSV Broadcaster endpoint |
-| `check_guardrails` | Checks a project against the BSV guardrails `G-01` to `G-38` and lists each finding with its fix. It reads the project and changes nothing |
+| `check_guardrails` | Checks a project against the BSV blockchain guardrails `G-01` to `G-38` and lists each finding with its fix. It reads the project and changes nothing |
 | `brc_lookup` | Returns a BRC as Markdown, by number |
 | `versions_check` | Compares the pinned package versions, the Rúnar commit and the BSV Broadcaster version of each known endpoint with the latest ones |
 | `docs_url` | Finds the live address of a page of these docs from its id |
-| `code_search`, `find_function_definition` | Search local clones of the BSV repositories, made with `setup.sh` from the repository, in the folder set in `BSV_REPOS_DIR` |
+| `code_search`, `find_function_definition` | Search local clones of the BSV blockchain repositories, made with `setup.sh` from the repository, in the folder set in `BSV_REPOS_DIR` |
 
 The server also has 16 resources for the agent to read. Ten are dated facts, `bsv://facts/*`, on networks, BSV Broadcaster (`bsv://facts/bsv-broadcaster`), fees, WhatsOnChain, wallet limits, consensus, Rúnar, 1Color tokens, <Hint tip="Two parties lock funds in one output and exchange signed updates off the network. Only the last update is broadcast">payment channels</Hint> and versions. Each fact starts with the date it was verified, so the agent can tell how current it is. The other six are the guardrails, `bsv://guardrails`, the custody shapes, the threat model, the docs index, and the `@bsv/simple` 0.7 API and its traps. Two templates read one guardrail, as `bsv://guardrails#G-09` for example, and any BRC, as `bsv://brc/{id}`.
 
 It also has five prompts: `review_against_guardrails` runs the guardrail check and fixes the errors, `tokenize_with_1color` gives the encoding of 1Color token outputs, and `integrate_simple`, `add_simple_feature` and `debug_simple` work with `@bsv/simple`.
 
 <Callout type="warning">
-  `broadcaster_submit` refuses a Mainnet broadcast, before it contacts BSV Broadcaster, unless `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` is set in the shell that starts the agent. The gate goes by the network of the call, never by the address: the `network` the agent passes, or `BSV_NETWORK` when it passes none. A custom `BSV_BROADCASTER_URL` that points at Mainnet needs `BSV_NETWORK=mainnet`. Under `BSV_NETWORK=testnet`, the server treats that endpoint as testnet, and the gate does not apply. A Mainnet broadcast spends real BSV and cannot be undone.
+  `broadcaster_submit` refuses a Mainnet broadcast, before it contacts BSV Broadcaster, unless `BSV_MCP_ALLOW_MAINNET_BROADCAST=1` is set in the shell that starts the agent. The gate goes by the network of the call, never by the address: the `network` the agent passes, or `BSV_NETWORK` when it passes none. A custom `BSV_BROADCASTER_URL` that points at Mainnet needs `BSV_NETWORK=mainnet`. Under `BSV_NETWORK=testnet`, the server treats that endpoint as testnet, and the gate does not apply. A Mainnet broadcast spends real BitcoinSV (BSV) and cannot be undone.
 </Callout>
 
 ## Check a project against the guardrails
 
-The guardrails are the rules a BSV app follows, such as broadcasting through BSV Broadcaster and keeping keys in the wallet. `check_guardrails` is the quickest tool to try, since it needs no wallet and no coins:
+The guardrails are the rules a BSV blockchain app follows, such as broadcasting through BSV Broadcaster and keeping keys in the wallet. `check_guardrails` is the quickest tool to try, since it needs no wallet and no coins:
 
 <Steps>
   <Step title="Ask for the check">
@@ -180,7 +180,7 @@ A project is ready when the report shows 0 errors. The repository's tipping samp
 | `BSV_NETWORK` | `testnet` | `testnet` or `mainnet`. Picks the default BSV Broadcaster endpoint and gates Mainnet broadcasts. Any other value stops the server |
 | `BSV_BROADCASTER_URL` | Per network | BSV Broadcaster base URL. Default on testnet `https://arcade-v2-testnet-us-1.bsvblockchain.tech`, on Mainnet `https://arcade-us-1.bsvblockchain.tech`. A host that belongs to the other network stops the server |
 | `BSV_MCP_ALLOW_MAINNET_BROADCAST` | Not set | `1` lets `broadcaster_submit` broadcast on Mainnet |
-| `BSV_REPOS_DIR` | Not set | The folder of BSV repository clones made with `setup.sh`, for `code_search` and `find_function_definition` |
+| `BSV_REPOS_DIR` | Not set | The folder of BSV blockchain repository clones made with `setup.sh`, for `code_search` and `find_function_definition` |
 
 The server still reads `ARCADE_URL`, the former name of `BSV_BROADCASTER_URL`, when `BSV_BROADCASTER_URL` is not set. It is deprecated, and the server logs a warning when it uses it.
 
@@ -287,8 +287,8 @@ The code generators have no replacement. The prompts guide the agent to write th
 
 ## Next steps
 
-With both servers connected, give the agent the BSV playbook, which in Claude Code replaces these servers with the plugin's, then let it build a first payment:
+With both servers connected, give the agent the BSV blockchain playbook, which in Claude Code replaces these servers with the plugin's, then let it build a first payment:
 
-- [Install the BSV agent skill](/build-with-ai/skill/)
+- [Install the BSV blockchain agent skill](/build-with-ai/skill/)
 - [Send a payment with an AI agent](/build-with-ai/prompts/)
 - [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/)

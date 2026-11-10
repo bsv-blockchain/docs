@@ -1,10 +1,10 @@
 ---
 title: "Give agents the docs in Markdown"
-description: "Read the BSV docs as Markdown through llms.txt and a .md copy of every page, and give an AI agent rules that keep it on testnet."
+description: "Read the BSV blockchain docs as Markdown through llms.txt and a .md copy of every page, and give an AI agent rules that keep it on testnet."
 sidebarTitle: "Docs for agents"
 ---
 
-The site publishes every page of these docs as plain Markdown, so an AI agent can read the guides before it writes BSV code. It works with any AI tool that can open a web address or read pasted text, with no setup. Without the docs, an agent can write code for the wrong network or put a private key in your code. At the end, your agent knows where to find the pages it needs, and your project has rules that keep it on testnet.
+The site publishes every page of these docs as plain Markdown, so an AI agent can read the guides before it writes code for the BSV blockchain. It works with any AI tool that can open a web address or read pasted text, with no setup. Without the docs, an agent can write code for the wrong network or put a private key in your code. At the end, your agent knows where to find the pages it needs, and your project has rules that keep it on testnet.
 
 ## Find the docs in Markdown
 
@@ -52,7 +52,7 @@ Add these nine rules to the instructions file your agent reads in every session,
 <!-- bsv-dev rules: end -->
 ```
 
-These rules are the ones the `bsv-dev` skill ships, as `CLAUDE.md.snippet`, `AGENTS.md.snippet` and `bsv.mdc` for Cursor. In rule 5, shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. The begin and end lines let you or a tool find the block and update it. With the skill installed, the agent offers you these rules for your project, and you add them yourself: see [Install the BSV agent skill](/build-with-ai/skill/).
+These rules are the ones the `bsv-dev` skill ships, as `CLAUDE.md.snippet`, `AGENTS.md.snippet` and `bsv.mdc` for Cursor. In rule 5, shape A means that the user's own wallet holds the keys, and shape B means a server wallet that the app runs. The begin and end lines let you or a tool find the block and update it. With the skill installed, the agent offers you these rules for your project, and you add them yourself: see [Install the BSV blockchain agent skill](/build-with-ai/skill/).
 
 <Callout type="note">
   Rules 2 and 9 apply when the `bsv-docs` and `bsv-mcp` servers are connected. Without `bsv-mcp`, the agent cannot run `check_guardrails`, so connect both servers as in [Connect your AI tool with MCP](/build-with-ai/mcp/).
@@ -64,4 +64,4 @@ With the docs and the rules in place, your agent can build a first payment from 
 
 - [Send a payment from a web app](/get-started/quick-start-browser/)
 - [Connect your AI tool with MCP](/build-with-ai/mcp/)
-- [Install the BSV agent skill](/build-with-ai/skill/)
+- [Install the BSV blockchain agent skill](/build-with-ai/skill/)

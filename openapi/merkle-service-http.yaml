@@ -7,7 +7,7 @@ info:
     OpenAPI 3.1 specification for the BSV Merkle Service REST API.
 
     The Merkle Service is a Go microservice that accepts transaction IDs and
-    delivers merkle proofs (BSV-standard BUMP format) to caller-supplied
+    delivers merkle proofs (BSV blockchain standard BUMP format) to caller-supplied
     callback URLs when those proofs become available.
 
     ## Architecture
