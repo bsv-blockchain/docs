@@ -11,6 +11,21 @@ Install SV Node, the BSV node software, so you can run `bitcoind` on testnet or 
 Start on testnet. Pass `-testnet` to `bitcoind` until you have confirmed your setup, and never point a test setup at Mainnet funds.
 </Callout>
 
+## Check the system requirements
+
+Size the host for the work the node will do before you install. These are the recommended requirements from internal testing of `bitcoind`, and they are expected to change as the network scales.
+
+| | Development (regtest and testnet only) | Production, minimum | Production, recommended |
+| --- | --- | --- | --- |
+| Use | Follow the chain with the most proof of work and handle a small volume of other tasks, such as RPC requests | Handle a medium workload and stay in real-time sync with the chain tip | Handle a high workload, run with `txindex` enabled, or mine |
+| Processor | 4 cores, 8 threads | 8 cores, 16 threads | 10 cores, 20 threads or more |
+| Memory | 16 GB RAM and 10 GB swap | 64 GB RAM and 64 GB swap | 64 GB RAM and 64 GB swap |
+| Network | 10 Mbit/s or more, up and down | 100 Mbit/s or more, up and down | 1 Gbit/s or more, up and down |
+| Disk, pruned | 10 GB magnetic disk | 500 GB SSD | 1 TB SSD |
+| Disk, unpruned | 20 GB magnetic disk | 16 TB SSD | 32 TB SSD |
+
+For the two production columns, more RAM and less swap is better, as long as the host keeps 128 GB of memory in total. From release 1.0.14, the prune settings fine-tune how much disk the node uses. If you mine, also give your nodes the highest connectivity you can to other miners.
+
 ## Choose how to install
 
 The three routes install the same release, 1.2.3 at the time of writing. Pick the one that fits your host, then follow its steps below.
