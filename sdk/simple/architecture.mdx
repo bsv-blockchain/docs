@@ -7,7 +7,7 @@ import BlueTable from '/snippets/BlueTable.jsx';
 
 `@bsv/simple` is a helper library on top of `@bsv/sdk`. It gives you one wallet object with methods such as `send()`, `pay()` and `createToken()`, and builds the scripts and wallet calls behind each of them. This page shows what that object is made of, so you can tell when a method fits your app and when to call the <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet yourself. It was written against `@bsv/simple` 0.7.2.
 
-For where the package sits in the stack, see [How the BSV stack fits together](/concepts/architecture/).
+For where the package sits in the stack, see [How the BSV blockchain stack fits together](/concepts/architecture/).
 
 ## One object, two kinds of wallet
 
@@ -76,7 +76,7 @@ The `send()` method takes a list of outputs and makes one `createAction()` call 
 | Fields in the output | Script it becomes |
 | --- | --- |
 | `to` only | <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">P2PKH</Hint> to the address of the public key in `to` |
-| `data` only | An <Hint tip="A script that stores data in a transaction and can never be spent">OP_RETURN</Hint> output with 0 <Hint tip="The smallest unit of BSV: 1 BSV is 100,000,000 satoshis">satoshis</Hint> |
+| `data` only | An <Hint tip="A script that stores data in a transaction and can never be spent">OP_RETURN</Hint> output with 0 <Hint tip="The smallest unit of BitcoinSV (BSV): 1 BSV is 100,000,000 satoshis">satoshis</Hint> |
 | `to` and `data` | A <Hint tip="A script that stores data fields and locks them to a public key, used for tokens">PushDrop</Hint> token for the key in `to`, kept in the `tokens` <Hint tip="A named group of outputs that a wallet tracks together">basket</Hint> |
 
 </BlueTable>
@@ -131,7 +131,7 @@ The `createWallet()` options set the values the methods fall back on: the networ
 
 ## Related articles
 
-To learn more about how wallets and packages fit together in BSV, review these articles:
+To learn more about how wallets and packages fit together on the BSV blockchain, review these articles:
 
-- [How the BSV stack fits together](/concepts/architecture/)
+- [How the BSV blockchain stack fits together](/concepts/architecture/)
 - [BRC-100 Wallet Interface](/concepts/wallet-model/)

@@ -1,12 +1,12 @@
 ---
 title: "Coding with agents"
-description: "Set up an AI coding agent to build BSV apps the way these docs describe, with the BSV docs server, the bsv-dev skill and @bsv/mcp, on testnet."
+description: "Set up an AI coding agent to build BSV blockchain apps the way these docs describe, with the BSV blockchain docs server, the bsv-dev skill and @bsv/mcp, on testnet."
 sidebarTitle: "Coding with agents"
 ---
 
 import AgentToolkit from '/snippets/AgentToolkit.jsx';
 
-Set up an AI coding agent, such as [Claude Code](https://code.claude.com/docs/en/overview), Cursor, Windsurf or VS Code, so it builds BSV apps the way these docs describe. It takes three pieces: the BSV docs server gives the agent these pages, the `bsv-dev` skill gives it the decisions, and `@bsv/mcp` gives it tools. In Claude Code, one plugin installs all three. Use it when an agent writes your BSV code. At the end, the agent reads the docs, builds on testnet, keeps keys out of the code and checks its work against the BSV guardrails.
+Set up an AI coding agent, such as [Claude Code](https://code.claude.com/docs/en/overview), Cursor, Windsurf or VS Code, so it builds BSV blockchain apps the way these docs describe. It takes three pieces: the BSV blockchain docs server gives the agent these pages, the `bsv-dev` skill gives it the decisions, and `@bsv/mcp` gives it tools. In Claude Code, one plugin installs all three. Use it when an agent writes your code for the BSV blockchain. At the end, the agent reads the docs, builds on testnet, keeps keys out of the code and checks its work against the BSV blockchain guardrails.
 
 ## How it works
 
@@ -15,8 +15,8 @@ Each piece gives the agent something different:
 <AgentToolkit />
 
 <Visibility for="agents">
-- BSV docs server, `bsv-docs`: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides.
-- `bsv-dev` skill: gives the decisions, as a playbook the agent loads for BSV work: who holds the keys, wallet login on a computer or a phone, payments and payment channels, BSV Broadcaster (formerly Arcade) and when a payment is final, testnet to Mainnet, the guardrail review. Use it for building the way these docs do.
+- BSV blockchain docs server, `bsv-docs`: gives search and full pages of these docs, as Markdown. Use it for answers and code that follow these guides.
+- `bsv-dev` skill: gives the decisions, as a playbook the agent loads for BSV blockchain work: who holds the keys, wallet login on a computer or a phone, payments and payment channels, BSV Broadcaster (formerly Arcade) and when a payment is final, testnet to Mainnet, the guardrail review. Use it for building the way these docs do.
 - `@bsv/mcp`, `bsv-mcp`: gives tools that act and read live data: broadcast and status on BSV Broadcaster, a guardrail check of a project, BRCs and versions, plus dated facts. Use it for actions and live values, on testnet unless you configure Mainnet.
 </Visibility>
 
@@ -45,7 +45,7 @@ The `bsv-dev` plugin holds the skill and both MCP servers, `bsv-docs` and `bsv-m
 claude plugin marketplace add bsv-blockchain/bsv-ai-toolkit && claude plugin install bsv-dev@bsv
 ```
 
-With the plugin, do not also add the servers with `claude mcp add`, or Claude Code starts a second copy of `bsv-mcp`. If you added them before, remove them first, as [Install the BSV agent skill](/build-with-ai/skill/) shows.
+With the plugin, do not also add the servers with `claude mcp add`, or Claude Code starts a second copy of `bsv-mcp`. If you added them before, remove them first, as [Install the BSV blockchain agent skill](/build-with-ai/skill/) shows.
 
 ### Set up without the plugin
 
@@ -63,7 +63,7 @@ npx skills add bsv-blockchain/bsv-ai-toolkit
 ```
 
 <CardGroup cols={2}>
-  <Card title="Install the BSV agent skill" href="/build-with-ai/skill/">
+  <Card title="Install the BSV blockchain agent skill" href="/build-with-ai/skill/">
     Install the skill or the Claude Code plugin, and see what the skill decides and what stays yours.
   </Card>
   <Card title="Connect your AI tool with MCP" href="/build-with-ai/mcp/">
@@ -73,7 +73,7 @@ npx skills add bsv-blockchain/bsv-ai-toolkit
 
 ## Skills library
 
-The official skill is `bsv-dev`, maintained by the BSV Association in [bsv-blockchain/bsv-ai-toolkit](https://github.com/bsv-blockchain/bsv-ai-toolkit).
+The official skill is `bsv-dev`, maintained by BSV Association in [bsv-blockchain/bsv-ai-toolkit](https://github.com/bsv-blockchain/bsv-ai-toolkit).
 
 Skills from other authors are listed in [`community-skills.yaml`](https://github.com/bsv-blockchain/bsv-ai-toolkit/blob/main/community-skills.yaml) in the same repository. Each one is added by pull request, with every link pinned to the commit that was reviewed. The list is empty today.
 

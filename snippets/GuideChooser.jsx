@@ -18,7 +18,7 @@ const options = [
     goal: 'Know who sends each request',
     detail: 'Identify users by their wallet',
     title: 'Authenticate users with their wallet',
-    text: 'Use the identity key of a BSV wallet to know which user sends each request to your Express API, with mutual authentication handled by middleware.',
+    text: 'Use the identity key of a BSV blockchain wallet to know which user sends each request to your Express API, with mutual authentication handled by middleware.',
     href: '/guides/identity-auth/',
   },
   {
@@ -45,8 +45,8 @@ const options = [
   {
     goal: 'Check a digital product passport',
     detail: 'Offline, with a test passport',
-    title: 'Digital product passports on BSV',
-    text: 'Learn how a digital product passport maps onto BSV, check a test passport offline and read its verification report.',
+    title: 'Digital product passports on the BSV blockchain',
+    text: 'Learn how a digital product passport maps onto the BSV blockchain, check a test passport offline and read its verification report.',
     href: '/guides/digital-product-passports/',
   },
 ];

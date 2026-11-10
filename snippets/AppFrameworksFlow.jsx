@@ -2,7 +2,7 @@
 // The server sits outside the user's machine: it never reaches the wallet.
 // Edit the text below; the layout does not need to change.
 // Wrap a term in ** ** to show it in bold.
-// Source: the guide "Integrate BSV with web frameworks".
+// Source: the guide "Integrate the BSV blockchain with web frameworks".
 
 const wallet = { who: 'BSV Desktop', text: 'Holds the **keys** and signs. Shows a **Spending Request** before it spends.', chip: 'localhost' };
 const browser = { who: 'Browser app', text: 'Asks the wallet for the **identity key** and for payments.', chip: 'WalletClient' };

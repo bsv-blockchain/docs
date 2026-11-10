@@ -1,12 +1,12 @@
 ---
 title: SDKs overview
-description: Choose a BSV SDK by language, with TypeScript, Go and Python available and Rust in development, then pick the TypeScript package that fits what you are building.
+description: Choose a BSV blockchain SDK by language, with TypeScript, Go and Python available and Rust in development, then pick the TypeScript package that fits what you are building.
 ---
 
 import SdkChooser from '/snippets/SdkChooser.jsx';
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Use the BSV SDKs to create keys and transactions, or to call a user's wallet, from your own code in TypeScript, Go or Python. A Rust SDK is in development. The samples in the chooser create a key and print a testnet address, so you can run them without funds. If you have not sent a payment yet, start with [Send a payment from a web app](/get-started/quick-start-browser/).
+Use the BSV blockchain SDKs to create keys and transactions, or to call a user's wallet, from your own code in TypeScript, Go or Python. A Rust SDK is in development. The samples in the chooser create a key and print a testnet address, so you can run them without funds. If you have not sent a payment yet, start with [Send a payment from a web app](/get-started/quick-start-browser/).
 
 ## Choose your SDK
 
@@ -175,10 +175,10 @@ console.log(await wallet.getBalance())
 
 </Accordion>
 
-The `storageUrl` above is BSV's testnet storage server. The public Wallet Infra endpoints, such as `store-us-1.bsvb.tech`, `store-eu-1.bsvb.tech` and `store-ap-1.bsvb.tech`, store Mainnet wallets, so on testnet use that server or your own deployment.
+The `storageUrl` above is a testnet storage server for the BSV blockchain. The public Wallet Infra endpoints, such as `store-us-1.bsvb.tech`, `store-eu-1.bsvb.tech` and `store-ap-1.bsvb.tech`, store Mainnet wallets, so on testnet use that server or your own deployment.
 
 <Callout type="warning">
-BSV recommends keeping wallet storage local when you can, with `Setup.createWalletSQLite` from `@bsv/wallet-toolbox`.
+Keep wallet storage local when you can, with `Setup.createWalletSQLite` from `@bsv/wallet-toolbox`.
 </Callout>
 
 </Tab>
@@ -257,7 +257,7 @@ Some pieces are shared services you run or connect to, not packages you install:
 | [Overlay Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/overlay-server/) | Topic managers and lookup services for an overlay network |
 | [UHRP Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/uhrp-server-cloud-bucket/) | Production file storage on Google Cloud, addressed by content with <Hint tip="Universal Hash Resolution Protocol">UHRP</Hint> |
 | [Wallet Abstraction Backend (WAB)](/wallet-dev/infrastructure/) | Multi-factor user authentication and key recovery, with SMS, ID verification and one-time codes |
-| [Chaintracks Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/chaintracks-server/) | <Hint tip="The reference implementation for managing BSV block headers">Chaintracks</Hint> keeps the block header chain and validates Merkle roots over REST |
+| [Chaintracks Server](https://bsv-blockchain.github.io/ts-stack/infrastructure/chaintracks-server/) | <Hint tip="The reference implementation for managing the block headers of the BSV blockchain">Chaintracks</Hint> keeps the block header chain and validates Merkle roots over REST |
 
 </BlueTable>
 
@@ -278,7 +278,7 @@ For work beyond the starting points above, add the package built for it:
 
 ## Related articles
 
-To learn more about the SDKs in BSV, review these articles:
+To learn more about the SDKs on the BSV blockchain, review these articles:
 
 - [Send a payment from a web app](/get-started/quick-start-browser/)
 - [Send a payment from a server](/get-started/quick-start-server/)

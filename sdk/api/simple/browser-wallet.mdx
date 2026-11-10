@@ -72,7 +72,7 @@ These methods come from `WalletCore`, the base class of both wallet objects. The
 | `getAddress(): string` | Returns the <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">P2PKH</Hint> address of the identity key, always in the Mainnet format, even on testnet. |
 | `getStatus(): WalletStatus` | Returns `identityKey` (typed `string \| null`), `network` and `isConnected`, which is always `true`. `network` is the option of `createWallet()`, `main` by default, not the network of the user's wallet. To read that, call `getClient().getNetwork({})`. |
 | `getWalletInfo(): WalletInfo` | Returns the same values as `getStatus()`, plus `address`. |
-| `getBalance(basket?: string): Promise<BalanceResult>` | Returns the balance in <Hint tip="The smallest unit of BSV: 1 BSV is 100,000,000 satoshis">satoshis</Hint>. Without `basket`, both satoshi fields hold the wallet balance and both output counts are `0`. With `basket`, it reads every output and throws when the basket holds more than 100,000 outputs or changes during the read. |
+| `getBalance(basket?: string): Promise<BalanceResult>` | Returns the balance in <Hint tip="The smallest unit of BitcoinSV (BSV): 1 BSV is 100,000,000 satoshis">satoshis</Hint>. Without `basket`, both satoshi fields hold the wallet balance and both output counts are `0`. With `basket`, it reads every output and throws when the basket holds more than 100,000 outputs or changes during the read. |
 | `derivePublicKey(protocolID, keyID, counterparty?, forSelf?): Promise<string>` | Returns a derived public key in hex. `counterparty` defaults to `anyone` and `forSelf` to `false`. |
 | `derivePaymentKey(counterparty: string, invoiceNumber?: string): Promise<string>` | Returns the key a payment to `counterparty` goes to, with the <Hint tip="BSV Request for Comments 29, payments to a key derived for each payment">BRC-29</Hint> protocol. `invoiceNumber` defaults to 8 random bytes in base64. |
 
@@ -201,8 +201,8 @@ The overlay module adds these methods, which publish to <Hint tip="Services that
 
 ## Related articles
 
-To learn more about apps that use the user's wallet in BSV, review these articles:
+To learn more about apps that use the user's wallet on the BSV blockchain, review these articles:
 
-- [How BSV networks differ](/concepts/networks/)
+- [How BSV blockchain networks differ](/concepts/networks/)
 - [BRC-100 wallet interface](/concepts/wallet-model/)
 - [Store data and files](/guides/data-storage/)

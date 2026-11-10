@@ -1,10 +1,10 @@
-// The three networks an app developer meets, in "How BSV networks differ": three boxes of the same size, side by side.
+// The three networks an app developer meets, in "How BSV blockchain networks differ": three boxes of the same size, side by side.
 // Content only: edit the texts here. Keep each item short. Sources: the BSV Desktop page (BSV Desktop 3.3.1) and the wallet-toolbox docs.
 
 const networks = [
   {
     name: 'Mainnet',
-    what: 'The live BSV network',
+    what: 'The live BSV blockchain',
     points: [
       'Coins are real BSV with a market value',
       'A payment cannot be undone',
@@ -25,7 +25,7 @@ const networks = [
     what: 'The test network for Teranode',
     points: [
       'Test coins of its own, separate from testnet',
-      'Runs on Teranode, the new BSV node software',
+      'Runs on Teranode, the new BSV blockchain node software',
       'Use it only to test against Teranode on purpose',
     ],
   },

@@ -30,7 +30,7 @@ Three packages have a page of their own:
     Send and receive messages and payments between identities. Stable.
   </Card>
   <Card title="Charge for HTTP requests with @bsv/402-pay" href="/sdk/packages/402-pay/">
-    Require a BSV micropayment before a route answers, using the HTTP 402 status code. Beta.
+    Require a BitcoinSV (BSV) micropayment before a route answers, using the HTTP 402 status code. Beta.
   </Card>
   <Card title="Run an overlay with @bsv/overlay-express" href="/sdk/packages/overlay-express/">
     Host an overlay service that admits transactions and answers lookups, on an Express server. Stable.
@@ -108,10 +108,10 @@ To build transactions or connect your app to a wallet, pick from:
 
 | Package | Version | Status | What it does |
 | --- | --- | --- | --- |
-| [`create-bsv-app`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/create-bsv-app) | 1.2.0 | Stable | Generates a BSV app with a React, Express or full-stack starter, copies a complete example or adds wallet support to an existing project. See [Start a project from a template](/get-started/project-starter/). |
+| [`create-bsv-app`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/create-bsv-app) | 1.2.0 | Stable | Generates a BSV blockchain app with a React, Express or full-stack starter, copies a complete example or adds wallet support to an existing project. See [Start a project from a template](/get-started/project-starter/). |
 | [`@bsv/fund-wallet`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/fund-wallet) | 1.5.5 | Stable | Funds a Metanet wallet with BSV, on testnet or Mainnet, chosen with the `--chain` option. |
 | [`@bsv/amountinator`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/amountinator) | 2.1.9 | Stable | Converts between satoshis, BSV and fiat currencies with live exchange rates, and formats amounts for a wallet interface. |
-| [`@bsv/teranode-listener`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/network/ts-p2p) | 1.1.9 | Stable | Subscribes to the peer-to-peer topics of Teranode, the next generation BSV node, over libp2p, with support for private networks. |
+| [`@bsv/teranode-listener`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/network/ts-p2p) | 1.1.9 | Stable | Subscribes to the peer-to-peer topics of Teranode, the next generation BSV blockchain node, over libp2p, with support for private networks. |
 | [`@bsv/air-gap`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/helpers/air-gap) | 0.1.3 | Experimental | Sends bytes between two devices through a sequence of QR codes, in one direction only. It implements <Hint tip="BSV Request for Comments 141, the optical air-gap wire protocol">BRC-141</Hint>, an experimental protocol. |
 | [`@bsv/chirp`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/network/chirp) | 0.1.6 | Experimental | The reference implementation of <Hint tip="BSV Request for Comments 167, the Chunked, Hashed, Interleaved Resolution Protocol">BRC-167</Hint>, which publishes large files in hashed chunks and downloads them progressively on top of <Hint tip="Universal Hash Resolution Protocol (BRC-26): file storage where a file is found by the hash of its content">UHRP</Hint>. |
 | [`@bsv/lch`](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/content/lch) | 0.3.0 | Experimental | Implements <Hint tip="BSV Request for Comments 170, the Licensed Content Header protocol">BRC-170</Hint>, the Licensed Content Header, for encrypted content that buyers pay to open. |
@@ -120,9 +120,9 @@ To build transactions or connect your app to a wallet, pick from:
 
 ## Related articles
 
-To learn more about the TypeScript packages in BSV, review these articles:
+To learn more about the TypeScript packages on the BSV blockchain, review these articles:
 
 - [SDKs overview](/sdk/)
 - [Use the TypeScript SDK](/sdk/typescript/)
 - [Build apps with @bsv/simple](/sdk/simple/)
-- [How the BSV stack fits together](/concepts/architecture/)
+- [How the BSV blockchain stack fits together](/concepts/architecture/)

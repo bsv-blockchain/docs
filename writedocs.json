@@ -112,16 +112,16 @@
         "icon": "book-open",
         "dropdowns": [
           {
-            "dropdown": "How BSV works",
+            "dropdown": "How the BSV blockchain works",
             "icon": "blocks",
             "pages": [
               {
-                "group": "About BSV",
+                "group": "About the BSV blockchain",
                 "pages": [
                   "learn/what-is-bsv",
                   "learn/index",
                   {
-                    "group": "BSV wiki",
+                    "group": "BSV blockchain wiki",
                     "page": "learn/wiki/index",
                     "pages": [
                       "learn/wiki/blockchain",
@@ -169,7 +169,7 @@
               },
               {
                 "product": "BSV Theory",
-                "description": "The theory behind BSV's design (95 pages).",
+                "description": "The theory behind the BSV blockchain's design (95 pages).",
                 "pages": [
                   "learn/academy/bsv-theory/abstract",
                   "learn/academy/bsv-theory/abstract/cooperation-in-the-network"

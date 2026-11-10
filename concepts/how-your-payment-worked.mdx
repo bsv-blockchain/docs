@@ -6,7 +6,7 @@ sidebarTitle: "How your transaction worked"
 
 import PaymentSequence from '/snippets/PaymentSequence.jsx';
 
-Understand what happened behind each call of your first BSV transaction, from [Send a payment from a web app](/get-started/quick-start-browser/) and [Verify your payment on the explorer](/get-started/verify/). Read it before you add transactions to your own app. The same model applies to every transaction your app makes, since your code asks and the wallet builds and signs. Knowing it tells you what your app decides, what the wallet decides, and where each number on the explorer comes from.
+Understand what happened behind each call of your first transaction on the BSV blockchain, from [Send a payment from a web app](/get-started/quick-start-browser/) and [Verify your payment on the explorer](/get-started/verify/). Read it before you add transactions to your own app. The same model applies to every transaction your app makes, since your code asks and the wallet builds and signs. Knowing it tells you what your app decides, what the wallet decides, and where each number on the explorer comes from.
 
 ## The app asks, the wallet signs
 
@@ -25,13 +25,13 @@ To see every method of the interface, read [BRC-100 Wallet Interface](/concepts/
 - `description` is the text the **Spending Request** shows, "Pay my own address".
 - The output has `satoshis`, 1,000, and a `lockingScript`, the <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> that `new P2PKH().lock(address)` built from your address. It says that only the key behind that address can spend the 1,000 satoshis.
 
-A satoshi is the smallest unit of BSV, and 100,000,000 satoshis make 1 BSV.
+A satoshi is the smallest unit of BitcoinSV (BSV), and 100,000,000 satoshis make 1 BSV.
 
 The app describes only what it wants to create. Which coins pay for it, the fee and the signature are the wallet's choices, and `createAction` returns the transaction ID once the wallet has funded, signed and processed the transaction.
 
 ## Your balance is a set of UTXOs
 
-A BSV wallet does not keep one balance number. It keeps <Hint tip="Unspent transaction output">UTXOs</Hint>, outputs of earlier transactions that nobody has spent yet, and the balance is their sum. A transaction spends whole UTXOs as its inputs and creates new outputs:
+A BSV blockchain wallet does not keep one balance number. It keeps <Hint tip="Unspent transaction output">UTXOs</Hint>, outputs of earlier transactions that nobody has spent yet, and the balance is their sum. A transaction spends whole UTXOs as its inputs and creates new outputs:
 
 - **Inputs:** the UTXOs the wallet chose, which must add up to the amount plus the fee.
 - **Outputs:** the payment to the address, and the change, the rest, which goes back to the wallet.
@@ -66,7 +66,7 @@ After you approved, BSV Desktop signed the transaction and sent it to the networ
 
 ## Related articles
 
-To learn more about building transactions on BSV, review these articles:
+To learn more about building transactions on the BSV blockchain, review these articles:
 
 - [Start a project from a template](/get-started/project-starter/)
 - [BRC-100 Wallet Interface](/concepts/wallet-model/)

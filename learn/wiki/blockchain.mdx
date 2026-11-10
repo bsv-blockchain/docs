@@ -5,7 +5,7 @@ description: "How a block is built, how blocks link into a chain, and how proof 
 
 import ChainMiner from '/snippets/ChainMiner.jsx';
 
-A BSV block is a header plus a list of transactions, and each header names the header before it. Miners add blocks by finding a header whose hash is below a target, a rule called <Hint tip="The work a miner does to find a block header whose hash is below the target">proof of work</Hint>. [How transactions and fees work](/concepts/transactions/) covers the transactions inside a block. On this page you can mine blocks in an interactive chain and run two short scripts that hash a block header and check a Merkle path.
+A block on the BSV blockchain is a header plus a list of transactions, and each header names the header before it. Miners add blocks by finding a header whose hash is below a target, a rule called <Hint tip="The work a miner does to find a block header whose hash is below the target">proof of work</Hint>. [How transactions and fees work](/concepts/transactions/) covers the transactions inside a block. On this page you can mine blocks in an interactive chain and run two short scripts that hash a block header and check a Merkle path.
 
 The examples run with Node.js after `npm install @bsv/sdk` and were written against `@bsv/sdk` 4.0.1.
 
@@ -131,7 +131,7 @@ The first transaction in every block is the coinbase transaction, and the miner 
 
 ### The block subsidy
 
-A block pays its miner the block subsidy plus the fees of the transactions it includes. The subsidy started at 50 BSV, which is 5,000,000,000 <Hint tip="The smallest unit of BSV, 100,000,000 satoshis make 1 BSV">satoshis</Hint>, and halves every 210,000 blocks, about every four years. It reaches zero after 33 halvings, around the year 2140. A miner can only spend coinbase outputs after 100 more blocks have been added.
+A block pays its miner the block subsidy plus the fees of the transactions it includes. The subsidy started at 50 BSV, which is 5,000,000,000 <Hint tip="The smallest unit of BitcoinSV (BSV), 100,000,000 satoshis make 1 BSV">satoshis</Hint>, and halves every 210,000 blocks, about every four years. It reaches zero after 33 halvings, around the year 2140. A miner can only spend coinbase outputs after 100 more blocks have been added.
 
 ## When blocks compete
 
@@ -141,7 +141,7 @@ A transaction with one block on top of it can still be reversed if that block lo
 
 ## Related articles
 
-To learn more about blocks in BSV, review these articles:
+To learn more about blocks on the BSV blockchain, review these articles:
 
 - [Bitcoin transactions](/learn/wiki/bitcoin-transactions/)
 - [Cryptography](/learn/wiki/cryptography/)

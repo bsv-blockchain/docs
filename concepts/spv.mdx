@@ -6,7 +6,7 @@ description: "The binary format that sends a transaction together with the proof
 import BeefMerkleTree from '/snippets/BeefMerkleTree.jsx';
 import BeefAnatomy from '/snippets/BeefAnatomy.jsx';
 
-<Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint> is the binary format BSV uses to send a transaction together with the proof that the outputs it spends exist in the chain. An app or wallet that receives a BEEF checks that proof against block headers it already has, instead of asking a node about the transaction. This check is called <Hint tip="Simplified Payment Verification (BRC-67)">SPV</Hint>.
+<Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint> is the binary format the BSV blockchain uses to send a transaction together with the proof that the outputs it spends exist in the chain. An app or wallet that receives a BEEF checks that proof against block headers it already has, instead of asking a node about the transaction. This check is called <Hint tip="Simplified Payment Verification (BRC-67)">SPV</Hint>.
 
 ## How an app verifies a transaction without a node
 
@@ -36,7 +36,7 @@ An app that receives a BEEF runs three checks, in this order:
     The app asks a <Hint tip="The part of the SDK that checks a Merkle root against the block headers of a network">chain tracker</Hint> whether each root belongs to the block at the height in its BUMP. If one does not, the BEEF is rejected and nothing else is checked.
   </Step>
   <Step title="Check the transactions without a proof">
-    For each of these, the app confirms that its inputs spend outputs of transactions it has already verified, that every script evaluates to true, and that the <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> in cover the satoshis out plus the fee.
+    For each of these, the app confirms that its inputs spend outputs of transactions it has already verified, that every script evaluates to true, and that the <Hint tip="The smallest unit of BitcoinSV (BSV). 100,000,000 satoshis make 1 BSV">satoshis</Hint> in cover the satoshis out plus the fee.
   </Step>
 </Steps>
 
@@ -74,7 +74,7 @@ A BEEF whose oldest transactions have no Merkle path has nothing to anchor to, a
 
 ## BEEF forms and where each one is used
 
-Three forms of BEEF are in use. They share the same Merkle paths and transactions and differ in the prefix and in what they allow, and each BSV interface picks one of them.
+Three forms of BEEF are in use. They share the same Merkle paths and transactions and differ in the prefix and in what they allow, and each interface picks one of them.
 
 ### The three forms
 
@@ -164,7 +164,7 @@ It prints the start of each form:
 
 ## Related articles
 
-To learn more about verifying transactions in BSV, review these articles:
+To learn more about verifying transactions on the BSV blockchain, review these articles:
 
 - [Transactions](/concepts/transactions/)
 - [BRC-100 Wallet Interface](/concepts/wallet-model/)

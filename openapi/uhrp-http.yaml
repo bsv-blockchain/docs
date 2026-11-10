@@ -10,7 +10,7 @@ info:
 
     ## Protocol background (BRC-26)
 
-    UHRP is a content-addressed storage protocol built on BSV overlay networks.
+    UHRP is a content-addressed storage protocol built on BSV blockchain overlay networks.
     A content host creates a UTXO-based advertisement token on the `tm_uhrp`
     topic (BRC-87 name; legacy: `UHRP`) that records:
       - SHA-256 hash of the file

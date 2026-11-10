@@ -1,12 +1,12 @@
 ---
 title: "Start from the tipping sample"
-description: "Run the BSV Association's tipping sample on testnet: each user's wallet holds the keys, and a relay with no key passes tips to BSV Broadcaster."
+description: "Run BSV Association's tipping sample on testnet: each user's wallet holds the keys, and a relay with no key passes tips to BSV Broadcaster."
 sidebarTitle: "Tipping sample"
 ---
 
 import TippingFlow from '/snippets/TippingFlow.jsx';
 
-The tipping sample is the BSV Association's reference app for a user-side <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet: each user's wallet holds the keys, and a small relay with no key passes each tip to BSV Broadcaster (formerly Arcade). Use it when you want a working app for your agent to copy or adapt, one that already passes the BSV guardrails. At the end, the sample runs on your machine on testnet, and a tip has gone from one wallet to another.
+The tipping sample is BSV Association's reference app for a user-side <Hint tip="The standard interface between an app and a wallet">BRC-100</Hint> wallet: each user's wallet holds the keys, and a small relay with no key passes each tip to BSV Broadcaster (formerly Arcade). Use it when you want a working app for your agent to copy or adapt, one that already passes the BSV blockchain guardrails. At the end, the sample runs on your machine on testnet, and a tip has gone from one wallet to another.
 
 ## Before you begin
 
@@ -85,7 +85,7 @@ Install the sample, then tip from one wallet to the other:
     The first wallet that claims this page becomes the creator. To choose the creator yourself, set `CREATOR_IDENTITY_KEY` in `.env` to the identity key of the creator's wallet. The page collects tips only while it is open, so keep it open.
   </Step>
   <Step title="Send a tip">
-    In the browser profile of the tipper, open `http://localhost:5173/` and click **Connect wallet**. Enter an amount of at least 546 <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint>, click **Tip**, check the summary and click **Send tip**.
+    In the browser profile of the tipper, open `http://localhost:5173/` and click **Connect wallet**. Enter an amount of at least 546 <Hint tip="The smallest unit of BitcoinSV (BSV). 100,000,000 satoshis make 1 BSV">satoshis</Hint>, click **Tip**, check the summary and click **Send tip**.
 
     The page asks the wallet for the payment. The wallet adds the network fee, and it can ask you to approve the payment. A sent payment cannot be undone, so check the amount before you approve.
   </Step>
@@ -119,7 +119,7 @@ Shape A means that the user's own wallet holds the keys, and shape B means a ser
 
 ## Ask your agent to adapt it
 
-With the [BSV agent skill](/build-with-ai/skill/) installed, point your agent at the sample, for example:
+With the [BSV blockchain agent skill](/build-with-ai/skill/) installed, point your agent at the sample, for example:
 
 ```text
 Read samples/tipping-shape-a in bsv-blockchain/bsv-ai-toolkit, then add the same tipping flow to my React app on BSV, on testnet.
@@ -135,6 +135,6 @@ The skill tells the agent to keep the same defaults as the sample: testnet, the 
 
 With the sample running, give your agent the tools it uses, or read how the relay broadcasts:
 
-- [Install the BSV agent skill](/build-with-ai/skill/)
+- [Install the BSV blockchain agent skill](/build-with-ai/skill/)
 - [Connect your AI tool with MCP](/build-with-ai/mcp/)
 - [Broadcast transactions with BSV Broadcaster](/guides/services/broadcasting/)

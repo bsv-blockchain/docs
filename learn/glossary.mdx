@@ -1,12 +1,12 @@
 ---
-title: "BSV glossary"
-description: "Look up a BSV term in one line, with a link to the page that explains it."
+title: "BSV blockchain glossary"
+description: "Look up a BSV blockchain term in one line, with a link to the page that explains it."
 sidebarTitle: "Glossary"
 ---
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Look up a BSV term you meet while building on BSV, in one line. When a page explains the term in depth, the term links to it.
+Look up a term you meet while building on the BSV blockchain, in one line. When a page explains the term in depth, the term links to it.
 
 <BlueTable nowrapFirst>
 
@@ -16,16 +16,17 @@ Look up a BSV term you meet while building on BSV, in one line. When a page expl
 | [AtomicBEEF](/concepts/spv/) | BEEF for a single transaction (BRC-95). |
 | basket | A named group of outputs in a wallet, so an app can list them later. |
 | [BEEF](/concepts/spv/) | Background Evaluation Extended Format (BRC-62): a transaction with the proof a host needs to verify it, without running a node. |
-| BRC | BSV Request for Comments: a numbered BSV standard, such as BRC-100. |
+| BRC | BSV Request for Comments: a numbered standard for the BSV blockchain, such as BRC-100. |
 | BRC-29 | The payment protocol between a sender and a recipient: the sender derives the recipient's key with BRC-42 and sends the transaction as BEEF. |
 | BRC-42 | BSV Key Derivation Scheme: two parties derive new keys for each other from their keys and an invoice number, without sharing a private key. |
 | [BRC-100](/concepts/wallet-model/) | The standard interface between an app and a wallet. |
-| BSV | The blockchain that implements the original Bitcoin protocol, and its native coin. |
-| `@bsv/sdk` | The base package for building on BSV: hashing, keys, Script, BEEF and Merkle paths, and `WalletClient`. |
+| BSV | BitcoinSV (BSV), the native coin of the BSV blockchain. |
+| BSV blockchain | The blockchain that implements the original Bitcoin protocol. |
+| `@bsv/sdk` | The base package for building on the BSV blockchain: hashing, keys, Script, BEEF and Merkle paths, and `WalletClient`. |
 | `@bsv/simple` | A package with helpers for payments and tokens. |
 | `@bsv/wallet-toolbox` | A package for building a wallet. |
-| [BSV Broadcaster](/guides/services/broadcasting/) | The BSV Association's transaction broadcaster, formerly called Arcade. It delivers a signed transaction to the network, follows it until a miner includes it in a block and returns the Merkle path that proves it. |
-| [BSV Desktop](/wallets/bsv-desktop/) | A desktop wallet for BSV. It holds the keys, chooses the coins, signs, and asks the user to approve each payment. |
+| [BSV Broadcaster](/guides/services/broadcasting/) | BSV Association's transaction broadcaster, formerly called Arcade. It delivers a signed transaction to the network, follows it until a miner includes it in a block and returns the Merkle path that proves it. |
+| [BSV Desktop](/wallets/bsv-desktop/) | A desktop wallet for the BSV blockchain. It holds the keys, chooses the coins, signs, and asks the user to approve each payment. |
 | BUMP | BSV Unified Merkle Path (BRC-74): a compact Merkle path that proves a transaction is in a block. |
 | [certificate](/guides/identity-auth/) | A signed statement about a user, issued by a third party, like a verifiable credential. |
 | Chaintracks | A block header service. A wallet uses it to check Merkle paths against the block headers. |
@@ -35,7 +36,7 @@ Look up a BSV term you meet while building on BSV, in one line. When a page expl
 | internalize | Add a received payment to the wallet so its coins can be spent. |
 | locking script | The part of a transaction output that sets the condition to spend it. |
 | lookup service | The part of an overlay service that answers queries about what its topic managers admitted. |
-| [Mainnet](/guides/go-to-mainnet/) | The live BSV network, where coins have real value and a payment cannot be undone. |
+| [Mainnet](/guides/go-to-mainnet/) | The live BSV blockchain network, where coins have real value and a payment cannot be undone. |
 | Merkle path | The proof that a transaction is in a block, checked against the block header. |
 | [MessageBox](/guides/messaging/) | A service that delivers encrypted messages and payments between users by their identity key. A host holds each message until its recipient reads it. |
 | originator | The name of your app, passed as the second argument of `WalletClient`, that BSV Desktop shows in its windows. |
@@ -49,12 +50,12 @@ Look up a BSV term you meet while building on BSV, in one line. When a page expl
 | Spending Request | The BSV Desktop window where the user checks a payment an app asks for, then approves it with **Authorize** or refuses it with **Deny**. |
 | [SPV](/concepts/spv/) | Simplified Payment Verification: checking a transaction with its Merkle path and block headers, without running a node. |
 | STEAK | Submitted Transaction Execution AcKnowledgment: the answer of an overlay host that says which outputs each topic admitted. |
-| Teranode | The node software of the BSV network. |
-| [testnet](/get-started/quick-start-browser/) | The BSV test network, where coins are free from a faucet, for building and testing. |
+| Teranode | The node software of the BSV blockchain. |
+| [testnet](/get-started/quick-start-browser/) | The BSV blockchain test network, where coins are free from a faucet, for building and testing. |
 | topic manager | The part of an overlay service that decides which transactions are admitted. |
 | [transaction ID](/get-started/verify/) | The 64-character ID of a transaction, used to look it up. Written `txid` in code. |
 | UHRP | Universal Hash Resolution Protocol (BRC-26): file storage where a file is found by the hash of its content. |
-| UTXO | Unspent transaction output: a coin that can still be spent. BSV runs on the UTXO model. |
+| UTXO | Unspent transaction output: a coin that can still be spent. The BSV blockchain runs on the UTXO model. |
 | [wallet](/concepts/wallet-model/) | Holds the user's keys, chooses the coins and signs transactions. Apps ask it to pay, and the user approves. |
 | `WalletClient` | The `@bsv/sdk` class an app uses to talk to the user's wallet, such as BSV Desktop. |
 
@@ -62,7 +63,7 @@ Look up a BSV term you meet while building on BSV, in one line. When a page expl
 
 ## Related articles
 
-To learn more about these terms in BSV, review these articles:
+To learn more about these terms on the BSV blockchain, review these articles:
 
-- [What is BSV](/learn/what-is-bsv/)
+- [What is the BSV blockchain](/learn/what-is-bsv/)
 - [Send a payment from a web app](/get-started/quick-start-browser/)

@@ -133,7 +133,7 @@ export default function SdkChooser() {
   const href = current.external ? current.href : BASE_PATH + current.href;
 
   return (
-    <div className="sc" role="group" aria-label="Choose a BSV SDK by language">
+    <div className="sc" role="group" aria-label="Choose a BSV blockchain SDK by language">
       <style>{css}</style>
       <p className="sc-q">Which language do you use?</p>
       <div className="sc-grid">

@@ -17,7 +17,7 @@ BRC-100 defines 28 methods, each with a request and a result type and a call cod
 
 ### Types and limits
 
-A value means the same to every wallet because the types are defined. A `SatoshiValue` is a number of <Hint tip="The smallest unit of BSV: 100,000,000 satoshis make 1 BSV">satoshis</Hint> from 1 to 2.1 × 10^15, a `Byte` is an integer from 0 to 255, and string limits count UTF-8 bytes, not characters.
+A value means the same to every wallet because the types are defined. A `SatoshiValue` is a number of <Hint tip="The smallest unit of BitcoinSV (BSV): 100,000,000 satoshis make 1 BSV">satoshis</Hint> from 1 to 2.1 × 10^15, a `Byte` is an integer from 0 to 255, and string limits count UTF-8 bytes, not characters.
 
 ### Names
 
@@ -68,7 +68,7 @@ BRC-100 points to these standards instead of repeating them. They define the key
 | BRC | Used for |
 |-----|----------|
 | [BRC-2](https://bsv.brc.dev/wallet/0002) | Encryption and decryption with <Hint tip="AES with a 256-bit key in Galois/Counter Mode, an encryption that also detects tampering">AES-256-GCM</Hint>, using keys derived between the two parties. |
-| [BRC-3](https://bsv.brc.dev/wallet/0003) | Digital signatures with <Hint tip="Elliptic Curve Digital Signature Algorithm, the signature scheme BSV uses">ECDSA</Hint>, private to one counterparty or verifiable by anyone. |
+| [BRC-3](https://bsv.brc.dev/wallet/0003) | Digital signatures with <Hint tip="Elliptic Curve Digital Signature Algorithm, the signature scheme the BSV blockchain uses">ECDSA</Hint>, private to one counterparty or verifiable by anyone. |
 | [BRC-29](https://bsv.brc.dev/payments/0029) | Payments to a derived key, and how a wallet internalizes a received payment. |
 | [BRC-42](https://bsv.brc.dev/key-derivation/0042) | Key derivation between two parties, the BSV Key Derivation Scheme. |
 | [BRC-43](https://bsv.brc.dev/key-derivation/0043) | Security levels, protocol IDs, key IDs and counterparties, which decide who may use which key. |
@@ -95,7 +95,7 @@ Each wallet chooses its own interface, storage, services and the way apps reach 
 
 ## Related articles
 
-To learn more about BRC-100 in BSV, review these articles:
+To learn more about BRC-100 on the BSV blockchain, review these articles:
 
 - [BRC-100 wallet interface](/concepts/wallet-model/)
 - [Wallet API reference](/reference/wallet-api/)

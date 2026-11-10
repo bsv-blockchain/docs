@@ -27,7 +27,7 @@ html:root[data-theme="dark"] {
   background: linear-gradient(180deg, #2D2D31 0%, rgba(45, 45, 49, 0) 100%);
 }
 
-/* Cards: opt in with <div className="cards-interactive"> around a CardGroup (What is BSV, How BSV works).
+/* Cards: opt in with <div className="cards-interactive"> around a CardGroup (What is the BSV blockchain, How the BSV blockchain works).
    Center the last two cards of a 3 column group of 5. */
 @media (min-width: 768px) {
   .cards-interactive .wd-card-group[style*="--wd-cols: 3"] { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; }
