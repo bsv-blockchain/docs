@@ -1,18 +1,30 @@
-/* Same logo and size as bsvassociation.org's header (BSV-A-logo-blue.svg, 303x26, shown about 225px wide). */
+/* The BSV blockchain wordmark, the same file and height (15px) as the bsvblockchain.com header. */
 .wd-logo-light,
 .wd-logo-dark {
-  height: 19px !important;
+  height: 15px !important;
   width: auto !important;
+}
+
+/* Brand colours in place of the Writedocs slate greys: muted text is Soft Black (Cotton on
+   dark) at an opacity, as on bsvblockchain.com. Cards and buttons have an 8px radius. */
+html:root {
+  --wd-text-muted: rgba(45, 45, 49, 0.72);
+}
+html:root[data-theme="dark"] {
+  --wd-text-muted: rgba(244, 242, 240, 0.7);
+}
+.wd-card {
+  border-radius: 8px !important;
 }
 
 .bsv-hero {
   padding: 24px;
-  border-radius: 12px;
-  background: linear-gradient(180deg, #ECF5FF 0%, #ffffff 100%);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #F4F2F0 0%, #FFFFFF 100%);
 }
 
 [data-theme="dark"] .bsv-hero {
-  background: linear-gradient(180deg, #1a1333 0%, #0b1120 100%);
+  background: linear-gradient(180deg, #2D2D31 0%, rgba(45, 45, 49, 0) 100%);
 }
 
 /* Cards: opt in with <div className="cards-interactive"> around a CardGroup (What is BSV, How BSV works).
