@@ -35,6 +35,13 @@
   },
   "contextMenu": true,
   "mcp": true,
+  "scripts": {
+    "body": [
+      {
+        "content": "(function(){var home='https://bsvblockchain.com/';function point(){document.querySelectorAll('a.wd-topbar-brand,a.wd-footer-brand').forEach(function(a){a.href=home;a.setAttribute('data-astro-reload','');});}point();if(!window.__bsvLogoHome){window.__bsvLogoHome=true;document.addEventListener('astro:page-load',point);}})();"
+      }
+    ]
+  },
   "navigation": {
     "tabs": [
       {
