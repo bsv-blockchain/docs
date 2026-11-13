@@ -9,19 +9,19 @@ Use this reference to check what `@bsv/sdk` needs from the JavaScript environmen
 
 ## What the SDK needs
 
-`@bsv/sdk` has no runtime dependencies and does not use the Node.js `Buffer`. It asks the runtime for three things:
+`@bsv/sdk` has no runtime dependencies, and its runtime code does not use the Node.js `Buffer`. Its TypeScript declarations do use the `Buffer` type, so a TypeScript project needs `@types/node` and `"types": ["node"]` in `tsconfig.json`, even when it targets a browser, as [Install the SDK in Node or React](/sdk/typescript/setup/#troubleshooting) explains. The SDK asks the runtime for three things:
 
 <BlueTable>
 
 | Need | What the SDK uses | Used for |
 | --- | --- | --- |
-| A module loader | An ES module build (`dist/esm`), a CommonJS build (`dist/cjs`) and a UMD bundle (`dist/umd/bundle.js`) | Loading the package in any of the environments below |
-| Secure random numbers | `crypto.getRandomValues` of the global object, `self` or `window`, or else `randomBytes` from `node:crypto` | Generating keys, such as `PrivateKey.fromRandom()`, and the random values used in encryption, such as ECIES |
+| A module loader | An ES module build (`dist/esm`), a CommonJS build (`dist/cjs`) and a <Hint tip="Universal Module Definition, a single file that a page loads with a script tag and that defines a global variable">UMD</Hint> bundle (`dist/umd/bundle.js`) | Loading the package in any of the environments below |
+| Secure random numbers | `crypto.getRandomValues` of the global object, `self` or `window`, or else `randomBytes` from `node:crypto` | Generating keys, such as `PrivateKey.fromRandom()`, and the random values used in encryption, such as <Hint tip="Elliptic Curve Integrated Encryption Scheme, which encrypts a message to a public key">ECIES</Hint> |
 | HTTP requests | The global `fetch`, or else the `node:https` module when the code runs as CommonJS | Broadcasting transactions and calling services such as WhatsOnChain |
 
 </BlueTable>
 
-Building, signing and verifying a transaction need neither randomness nor HTTP.
+Building and signing a transaction need neither randomness nor HTTP, but the defaults of two `Transaction` methods make HTTP calls. With no argument, `fee()` fetches the current fee rate and `verify()` checks block headers through a Mainnet chain tracker. On a runtime without HTTP, pass a fixed rate such as `fee(new SatoshisPerKilobyte(1))`, and call `verify('scripts only')`, which skips the block header check, or pass a chain tracker of your own. See [SDK default values](/sdk/defaults/).
 
 ## Environments
 
@@ -46,7 +46,7 @@ To reach the user's wallet from these environments, `WalletClient` tries its sub
     The error is `No secure random number generator is available in this environment.`. The runtime has no `crypto.getRandomValues` and no `node:crypto`, so `PrivateKey.fromRandom()` and any other call that needs randomness throw this error. In React Native, install a polyfill for `crypto.getRandomValues` and import it before `@bsv/sdk`. In other runtimes, check that the global `crypto` object is not removed or replaced.
   </Accordion>
   <Accordion title={<>Broadcast returns code 500 "Internal Server Error" before reaching the server</>}>
-    The ARC, Teranode and WhatsOnChain broadcasters return `{ status: 'error', code: '500', description: 'Internal Server Error' }` when its HTTP request throws before it reaches the server. One cause is a runtime with no `fetch` that loads the SDK as an ES module, where the `node:https` fallback is not available. Provide a global `fetch`, or pass an HTTP client of your own to the broadcaster. The same result can also come from the server itself, so check the network log first.
+    The <Hint tip="The service that receives your transaction and passes it to miners">ARC</Hint>, `Teranode` and `WhatsOnChain` broadcaster classes return `{ status: 'error', code: '500', description: 'Internal Server Error' }` when its HTTP request throws before it reaches the server. One cause is a runtime with no `fetch` that loads the SDK as an ES module, where the `node:https` fallback is not available. Provide a global `fetch`, or pass an HTTP client of your own to the broadcaster. The same result can also come from the server itself, so check the network log first.
   </Accordion>
 </AccordionGroup>
 
