@@ -18,11 +18,12 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import yaml from 'js-yaml';
 
 const REPO = 'bsv-blockchain/teranode';
 const SITE = 'https://bsv-blockchain.github.io/teranode/';
-const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
+const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = 'nodes/teranode';
 const IMG_DIR = 'images/teranode';
 const TAB = 'Node Software';
@@ -121,7 +122,7 @@ function findSubtree(nav, labels) {
 }
 
 // Returns writedocs nav entries, and fills `pages` (source path -> page info).
-function selectNav(items, section, pages) {
+function selectNav(items, section, pages, docsDir) {
   const out = [];
   for (const item of items) {
     if (typeof item === 'string') continue; // bare paths without a label are not used in this nav
@@ -130,11 +131,16 @@ function selectNav(items, section, pages) {
     const value = item[name];
     if (typeof value === 'string') {
       if (/^https?:/.test(value)) continue;
+      // MkDocs only warns about a nav entry whose file is missing, so skip it here too.
+      if (!fs.existsSync(path.join(docsDir, value))) {
+        console.warn(`Skipped nav entry "${name}": docs/${value} does not exist`);
+        continue;
+      }
       const slug = `${OUT_DIR}/${kebabPath(value.replace(/\.md$/, ''))}`;
       pages.set(value, { src: value, slug, navLabel: name });
       out.push(slug);
     } else {
-      const children = selectNav(value, section, pages);
+      const children = selectNav(value, section, pages, docsDir);
       if (children.length) out.push({ group: section.rename?.[name] ?? name, pages: children });
     }
   }
@@ -204,7 +210,11 @@ function escapeSegment(s, ctx) {
   s = s.replace(/\]\(\s*<?([^)\s>]+)>?(\s+"[^"]*")?\s*\)/g, (_, t, title = '') => `](${ctx.rewrite(t)}${title})`);
   // Reference-style link definitions.
   s = s.replace(/^(\s*\[[^\]]+\]:\s*)(\S+)/, (_, a, t) => a + ctx.rewrite(t));
-  s = s.replace(/[{}]/g, (c) => `\\${c}`);
+  // Braces are JSX expressions in MDX. A brace the source already escaped keeps one backslash.
+  s = s.replace(/\\?([{}])/g, '\\$1');
+  // A Markdown-escaped \< is a literal angle bracket: write it as the entity
+  // without the backslash, which MDX would otherwise print in front of &lt;.
+  s = s.replace(/\\</g, '&lt;');
   s = s.replace(/<(\/?)([A-Za-z][\w-]*)([^<>]*?)(\/?)>|</g, (m, close, tag, attrs, self) => {
     if (!tag || !HTML_TAGS.has(tag.toLowerCase())) return m.replace(/^</, '&lt;');
     tag = tag.toLowerCase();
@@ -257,19 +267,21 @@ function convertBody(lines, ctx) {
     }
 
     // <pre> blocks become fenced text.
+    // The block may close on its opening line, and may wrap its text in <code>.
     if (/^\s*<pre>/.test(line)) {
-      out.push('```text');
-      let first = line.replace(/^\s*<pre>/, '');
-      const block = [];
-      if (first.trim()) block.push(first);
-      i++;
-      while (i < lines.length && !/<\/pre>/.test(lines[i])) block.push(lines[i++]);
-      if (i < lines.length) {
-        const last = lines[i].replace(/<\/pre>.*$/, '');
-        if (last.trim()) block.push(last);
-        i++;
+      const raw = [];
+      while (i < lines.length) {
+        raw.push(lines[i]);
+        if (/<\/pre>/.test(lines[i++])) break;
       }
-      out.push(...block.map(unescapeHtml), '```');
+      const block = raw
+        .join('\n')
+        .replace(/^\s*<pre>(<code[^>]*>)?(?:[ \t]*\n)?/, '')
+        .replace(/(<\/code>)?\s*<\/pre>[\s\S]*$/, '')
+        .split('\n');
+      while (block.length && !block[0].trim()) block.shift();
+      while (block.length && !block[block.length - 1].trim()) block.pop();
+      out.push('```text', ...block.map(unescapeHtml), '```');
       continue;
     }
 
@@ -435,31 +447,32 @@ function main() {
   const nav = readNav(dir);
 
   const pages = new Map();
-  const groups = SECTIONS.map((s) => ({ group: s.group, pages: selectNav(findSubtree(nav, s.from), s, pages) }));
+  const groups = SECTIONS.map((s) => ({ group: s.group, pages: selectNav(findSubtree(nav, s.from), s, pages, docsDir) }));
 
-  clearOutput();
+  // Convert everything in memory first. The old pages and images are only
+  // replaced once every page has converted, so a failed run leaves them as they were.
   const images = new Set();
   const ctx = { docsDir, pages, images, sha };
-  for (const page of pages.values()) {
-    const mdx = convertPage(page, ctx);
+  const converted = [...pages.values()].map((page) => ({ page, mdx: convertPage(page, ctx) }));
+  const found = [...images].filter((img) => {
+    if (fs.existsSync(path.join(docsDir, img))) return true;
+    console.warn(`Missing image: docs/${img}`);
+    return false;
+  });
+
+  clearOutput();
+  for (const { page, mdx } of converted) {
     const outFile = path.join(ROOT, `${page.slug}.mdx`);
     fs.mkdirSync(path.dirname(outFile), { recursive: true });
     fs.writeFileSync(outFile, mdx);
   }
-  let missing = 0;
-  for (const img of images) {
-    const from = path.join(docsDir, img);
-    if (!fs.existsSync(from)) {
-      console.warn(`Missing image: docs/${img}`);
-      missing++;
-      continue;
-    }
+  for (const img of found) {
     const to = path.join(ROOT, IMG_DIR, img);
     fs.mkdirSync(path.dirname(to), { recursive: true });
-    fs.copyFileSync(from, to);
+    fs.copyFileSync(path.join(docsDir, img), to);
   }
   updateNav(groups);
-  console.log(`Imported ${pages.size} pages and ${images.size - missing} images from ${REPO}@${sha.slice(0, 7)}.`);
+  console.log(`Imported ${pages.size} pages and ${found.length} images from ${REPO}@${sha.slice(0, 7)}.`);
 }
 
 main();
