@@ -12,7 +12,12 @@ Connect a Node.js script to [BSV Desktop](/wallets/bsv-desktop/) with `WalletCli
 
 You need:
 
-- Node.js 22 or newer, and a project with `@bsv/sdk` installed and `"type": "module"` in its `package.json`. See [Install the SDK in Node or React](/sdk/typescript/setup/).
+- Node.js 22 or newer, and a project with `"type": "module"` in its `package.json` and `@bsv/sdk` installed. See [Install the SDK in Node or React](/sdk/typescript/setup/). To install the version this page was written against, run this in the project folder:
+
+  ```bash
+  npm install @bsv/sdk@4.0.1
+  ```
+
 - BSV Desktop open and set to testnet. To set it up, follow [Set up a testnet wallet](/get-started/quick-start-browser/#set-up-a-testnet-wallet) in the Quick Start.
 
 ## How it works
@@ -45,6 +50,10 @@ If none answers, `WalletClient` tries `XDM`, a `postMessage` bridge to a parent 
 ## Connect to BSV Desktop
 
 Write a script that calls five read only wallet methods, then run it. Create `connect.mjs` in your project folder:
+
+<Callout type="warning">
+  The script prints the identity key of your wallet. The key is public, but it links your activity across apps, so do not paste the key of a wallet you use in shared logs or issues.
+</Callout>
 
 <Steps>
   <Step title="Write the script">
@@ -79,14 +88,14 @@ Write a script that calls five read only wallet methods, then run it. Create `co
     node connect.mjs
     ```
 
-    Your height and identity key differ. The key is shortened here:
+    Your height and identity key differ. The key shown is a placeholder:
 
     ```text
     Authenticated: true
     Network: testnet
     Wallet version: wallet-brc100-1.0.0
     Block height: 1768236
-    Identity key: 0210765c…0b053fc4
+    Identity key: 02aaaaaa…aaaaaaaa
     ```
   </Step>
 </Steps>
