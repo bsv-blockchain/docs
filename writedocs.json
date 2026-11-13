@@ -459,220 +459,225 @@
                   "nodes/sv-node/rpc-methods"
                 ]
               },
-              "nodes/teranode/index"
-            ]
-          },
-          {
-            "group": "Teranode how-to guides",
-            "pages": [
               {
-                "group": "Installation",
+                "group": "Run Teranode",
+                "page": "nodes/teranode/index",
                 "pages": [
-                  "nodes/teranode/howto/miners/docker/miners-how-to-installation",
-                  "nodes/teranode/howto/miners/kubernetes/miners-how-to-installation"
-                ]
-              },
-              {
-                "group": "Configuration",
-                "pages": [
-                  "nodes/teranode/howto/miners/docker/miners-how-to-configure-the-node",
-                  "nodes/teranode/howto/miners/kubernetes/miners-how-to-configure-the-node",
-                  "nodes/teranode/howto/miners/kubernetes/miners-how-to-expose-p2p",
-                  "nodes/teranode/howto/miners/miners-how-to-aerospike-tuning",
-                  "nodes/teranode/howto/miners/miners-how-to-interact-with-asset-server",
-                  "nodes/teranode/howto/miners/miners-how-to-interact-with-fsm",
-                  "nodes/teranode/howto/miners/miners-how-to-interact-with-rpc-server"
-                ]
-              },
-              {
-                "group": "Start/Stop",
-                "pages": [
-                  "nodes/teranode/howto/miners/docker/miners-how-to-stop-start-docker-teranode",
-                  "nodes/teranode/howto/miners/kubernetes/miners-how-to-stop-start-kubernetes-teranode"
-                ]
-              },
-              {
-                "group": "Updating Teranode",
-                "pages": [
-                  "nodes/teranode/howto/miners/docker/miners-updating-teranode",
-                  "nodes/teranode/howto/miners/kubernetes/miners-updating-teranode"
-                ]
-              },
-              {
-                "group": "Security Best Practices",
-                "pages": [
-                  "nodes/teranode/howto/miners/docker/miners-security-best-practices",
-                  "nodes/teranode/howto/miners/kubernetes/miners-security-best-practices"
-                ]
-              },
-              {
-                "group": "Troubleshooting",
-                "pages": [
-                  "nodes/teranode/howto/miners/docker/miners-how-to-troubleshooting",
-                  "nodes/teranode/howto/miners/kubernetes/miners-how-to-troubleshooting"
-                ]
-              },
-              {
-                "group": "Reset Teranode",
-                "pages": [
-                  "nodes/teranode/howto/miners/docker/miners-how-to-reset-teranode",
-                  "nodes/teranode/howto/miners/kubernetes/miners-how-to-reset-teranode"
-                ]
-              },
-              {
-                "group": "Sync the Node",
-                "pages": [
-                  "nodes/teranode/howto/miners/docker/miners-how-to-sync-the-node",
-                  "nodes/teranode/howto/miners/kubernetes/miners-how-to-sync-the-node"
-                ]
-              },
-              "nodes/teranode/howto/miners/miners-how-to-monitoring",
-              {
-                "group": "Additional",
-                "pages": [
-                  "nodes/teranode/howto/miners/miners-how-to-backup",
-                  "nodes/teranode/howto/miners/miners-how-to-cpu-miner",
-                  "nodes/teranode/howto/miners/miners-how-to-teranode-cli",
-                  "nodes/teranode/howto/miners/miners-managing-disk-space",
-                  "nodes/teranode/howto/miners/miners-how-to-use-listen-mode"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Teranode key topics",
-            "pages": [
-              "nodes/teranode/topics/teranode-intro",
-              "nodes/teranode/topics/architecture/teranode-overall-system-design",
-              "nodes/teranode/topics/architecture/teranode-architecture-brief",
-              "nodes/teranode/topics/architecture/teranode-microservices-overview",
-              "nodes/teranode/topics/transaction-lifecycle",
-              "nodes/teranode/topics/architecture/state-management",
-              "nodes/teranode/state-machine-diagram",
-              "nodes/teranode/topics/architecture/understanding-double-spends",
-              "nodes/teranode/topics/technology-stack",
-              {
-                "group": "Features",
-                "pages": [
-                  "nodes/teranode/topics/features/two-phase-commit",
-                  "nodes/teranode/topics/features/peer-registry-reputation",
-                  "nodes/teranode/topics/features/utxo-lock-records"
-                ]
-              },
-              "nodes/teranode/topics/dashboard",
-              "nodes/teranode/topics/tui-tools",
-              {
-                "group": "Core Services",
-                "pages": [
-                  "nodes/teranode/topics/services/alert",
-                  "nodes/teranode/topics/services/asset-server",
-                  "nodes/teranode/topics/services/block-assembly",
-                  "nodes/teranode/topics/services/block-validation",
-                  "nodes/teranode/topics/services/blockchain",
-                  "nodes/teranode/topics/services/propagation",
-                  "nodes/teranode/topics/services/subtree-validation",
-                  "nodes/teranode/topics/services/validator"
-                ]
-              },
-              {
-                "group": "Overlay Services",
-                "pages": [
-                  "nodes/teranode/topics/services/block-persister",
-                  "nodes/teranode/topics/services/p2p",
-                  "nodes/teranode/p2p-nat-traversal",
-                  "nodes/teranode/topics/services/pruner",
-                  "nodes/teranode/topics/services/legacy",
-                  "nodes/teranode/topics/services/rpc",
-                  "nodes/teranode/topics/services/utxo-persister"
-                ]
-              },
-              {
-                "group": "Stores",
-                "pages": [
-                  "nodes/teranode/topics/stores/blob",
-                  "nodes/teranode/topics/stores/utxo"
-                ]
-              },
-              {
-                "group": "Data Model",
-                "pages": [
-                  "nodes/teranode/topics/datamodel/block-data-model",
-                  "nodes/teranode/topics/datamodel/block-header-data-model",
-                  "nodes/teranode/topics/datamodel/subtree-data-model",
-                  "nodes/teranode/topics/datamodel/transaction-data-model",
-                  "nodes/teranode/topics/datamodel/utxo-data-model"
-                ]
-              },
-              {
-                "group": "Kafka",
-                "pages": [
-                  "nodes/teranode/topics/kafka/kafka"
-                ]
-              },
-              {
-                "group": "Commands",
-                "pages": [
-                  "nodes/teranode/topics/commands/seeder"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Teranode reference",
-            "pages": [
-              {
-                "group": "Network and messages",
-                "pages": [
-                  "nodes/teranode/references/glossary",
-                  "nodes/teranode/references/kafka-message-format",
-                  "nodes/teranode/references/network-consensus-rules"
-                ]
-              },
-              {
-                "group": "Configuration",
-                "pages": [
-                  "nodes/teranode/references/settings",
-                  "nodes/teranode/references/settings-reference",
-                  "nodes/teranode/references/settings/global-settings",
-                  "nodes/teranode/references/settings/policy-settings",
-                  "nodes/teranode/references/settings/kafka-settings",
                   {
-                    "group": "Service Settings",
+                    "group": "How-to guides",
                     "pages": [
-                      "nodes/teranode/references/settings/services/alert-settings",
-                      "nodes/teranode/references/settings/services/asset-settings",
-                      "nodes/teranode/references/settings/services/blockassembly-settings",
-                      "nodes/teranode/references/settings/services/blockchain-settings",
-                      "nodes/teranode/references/settings/services/blockpersister-settings",
-                      "nodes/teranode/references/settings/services/blockvalidation-settings",
-                      "nodes/teranode/references/settings/services/legacy-settings",
-                      "nodes/teranode/references/settings/services/p2p-settings",
-                      "nodes/teranode/references/settings/services/propagation-settings",
-                      "nodes/teranode/references/settings/services/pruner-settings",
-                      "nodes/teranode/references/settings/services/rpc-settings",
-                      "nodes/teranode/references/settings/services/subtreevalidation-settings",
-                      "nodes/teranode/references/settings/services/utxopersister-settings",
-                      "nodes/teranode/references/settings/services/validator-settings"
+                      {
+                        "group": "Installation",
+                        "pages": [
+                          "nodes/teranode/howto/miners/docker/miners-how-to-installation",
+                          "nodes/teranode/howto/miners/kubernetes/miners-how-to-installation"
+                        ]
+                      },
+                      {
+                        "group": "Configuration",
+                        "pages": [
+                          "nodes/teranode/howto/miners/docker/miners-how-to-configure-the-node",
+                          "nodes/teranode/howto/miners/kubernetes/miners-how-to-configure-the-node",
+                          "nodes/teranode/howto/miners/kubernetes/miners-how-to-expose-p2p",
+                          "nodes/teranode/howto/miners/miners-how-to-aerospike-tuning",
+                          "nodes/teranode/howto/miners/miners-how-to-interact-with-asset-server",
+                          "nodes/teranode/howto/miners/miners-how-to-interact-with-fsm",
+                          "nodes/teranode/howto/miners/miners-how-to-interact-with-rpc-server"
+                        ]
+                      },
+                      {
+                        "group": "Start/Stop",
+                        "pages": [
+                          "nodes/teranode/howto/miners/docker/miners-how-to-stop-start-docker-teranode",
+                          "nodes/teranode/howto/miners/kubernetes/miners-how-to-stop-start-kubernetes-teranode"
+                        ]
+                      },
+                      {
+                        "group": "Updating Teranode",
+                        "pages": [
+                          "nodes/teranode/howto/miners/docker/miners-updating-teranode",
+                          "nodes/teranode/howto/miners/kubernetes/miners-updating-teranode"
+                        ]
+                      },
+                      {
+                        "group": "Security Best Practices",
+                        "pages": [
+                          "nodes/teranode/howto/miners/docker/miners-security-best-practices",
+                          "nodes/teranode/howto/miners/kubernetes/miners-security-best-practices"
+                        ]
+                      },
+                      {
+                        "group": "Troubleshooting",
+                        "pages": [
+                          "nodes/teranode/howto/miners/docker/miners-how-to-troubleshooting",
+                          "nodes/teranode/howto/miners/kubernetes/miners-how-to-troubleshooting"
+                        ]
+                      },
+                      {
+                        "group": "Reset Teranode",
+                        "pages": [
+                          "nodes/teranode/howto/miners/docker/miners-how-to-reset-teranode",
+                          "nodes/teranode/howto/miners/kubernetes/miners-how-to-reset-teranode"
+                        ]
+                      },
+                      {
+                        "group": "Sync the Node",
+                        "pages": [
+                          "nodes/teranode/howto/miners/docker/miners-how-to-sync-the-node",
+                          "nodes/teranode/howto/miners/kubernetes/miners-how-to-sync-the-node"
+                        ]
+                      },
+                      "nodes/teranode/howto/miners/miners-how-to-monitoring",
+                      {
+                        "group": "Additional",
+                        "pages": [
+                          "nodes/teranode/howto/miners/miners-how-to-backup",
+                          "nodes/teranode/howto/miners/miners-how-to-cpu-miner",
+                          "nodes/teranode/howto/miners/miners-how-to-teranode-cli",
+                          "nodes/teranode/howto/miners/miners-managing-disk-space",
+                          "nodes/teranode/howto/miners/miners-how-to-use-listen-mode"
+                        ]
+                      }
                     ]
                   },
                   {
-                    "group": "Store Settings",
+                    "group": "Key topics",
                     "pages": [
-                      "nodes/teranode/references/settings/stores/aerospike-settings",
-                      "nodes/teranode/references/settings/stores/blob-settings",
-                      "nodes/teranode/references/settings/stores/utxo-settings"
+                      "nodes/teranode/topics/teranode-intro",
+                      "nodes/teranode/topics/architecture/teranode-overall-system-design",
+                      "nodes/teranode/topics/architecture/teranode-architecture-brief",
+                      "nodes/teranode/topics/architecture/teranode-microservices-overview",
+                      "nodes/teranode/topics/transaction-lifecycle",
+                      "nodes/teranode/topics/architecture/state-management",
+                      "nodes/teranode/state-machine-diagram",
+                      "nodes/teranode/topics/architecture/understanding-double-spends",
+                      "nodes/teranode/topics/technology-stack",
+                      {
+                        "group": "Features",
+                        "pages": [
+                          "nodes/teranode/topics/features/two-phase-commit",
+                          "nodes/teranode/topics/features/peer-registry-reputation",
+                          "nodes/teranode/topics/features/utxo-lock-records"
+                        ]
+                      },
+                      "nodes/teranode/topics/dashboard",
+                      "nodes/teranode/topics/tui-tools",
+                      {
+                        "group": "Core Services",
+                        "pages": [
+                          "nodes/teranode/topics/services/alert",
+                          "nodes/teranode/topics/services/asset-server",
+                          "nodes/teranode/topics/services/block-assembly",
+                          "nodes/teranode/topics/services/block-validation",
+                          "nodes/teranode/topics/services/blockchain",
+                          "nodes/teranode/topics/services/propagation",
+                          "nodes/teranode/topics/services/subtree-validation",
+                          "nodes/teranode/topics/services/validator"
+                        ]
+                      },
+                      {
+                        "group": "Overlay Services",
+                        "pages": [
+                          "nodes/teranode/topics/services/block-persister",
+                          "nodes/teranode/topics/services/p2p",
+                          "nodes/teranode/p2p-nat-traversal",
+                          "nodes/teranode/topics/services/pruner",
+                          "nodes/teranode/topics/services/legacy",
+                          "nodes/teranode/topics/services/rpc",
+                          "nodes/teranode/topics/services/utxo-persister"
+                        ]
+                      },
+                      {
+                        "group": "Stores",
+                        "pages": [
+                          "nodes/teranode/topics/stores/blob",
+                          "nodes/teranode/topics/stores/utxo"
+                        ]
+                      },
+                      {
+                        "group": "Data Model",
+                        "pages": [
+                          "nodes/teranode/topics/datamodel/block-data-model",
+                          "nodes/teranode/topics/datamodel/block-header-data-model",
+                          "nodes/teranode/topics/datamodel/subtree-data-model",
+                          "nodes/teranode/topics/datamodel/transaction-data-model",
+                          "nodes/teranode/topics/datamodel/utxo-data-model"
+                        ]
+                      },
+                      {
+                        "group": "Kafka",
+                        "pages": [
+                          "nodes/teranode/topics/kafka/kafka"
+                        ]
+                      },
+                      {
+                        "group": "Commands",
+                        "pages": [
+                          "nodes/teranode/topics/commands/seeder"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Reference",
+                    "pages": [
+                      {
+                        "group": "Network and messages",
+                        "pages": [
+                          "nodes/teranode/references/glossary",
+                          "nodes/teranode/references/kafka-message-format",
+                          "nodes/teranode/references/network-consensus-rules"
+                        ]
+                      },
+                      {
+                        "group": "Configuration",
+                        "pages": [
+                          "nodes/teranode/references/settings",
+                          "nodes/teranode/references/settings-reference",
+                          "nodes/teranode/references/settings/global-settings",
+                          "nodes/teranode/references/settings/policy-settings",
+                          "nodes/teranode/references/settings/kafka-settings",
+                          {
+                            "group": "Service Settings",
+                            "pages": [
+                              "nodes/teranode/references/settings/services/alert-settings",
+                              "nodes/teranode/references/settings/services/asset-settings",
+                              "nodes/teranode/references/settings/services/blockassembly-settings",
+                              "nodes/teranode/references/settings/services/blockchain-settings",
+                              "nodes/teranode/references/settings/services/blockpersister-settings",
+                              "nodes/teranode/references/settings/services/blockvalidation-settings",
+                              "nodes/teranode/references/settings/services/legacy-settings",
+                              "nodes/teranode/references/settings/services/p2p-settings",
+                              "nodes/teranode/references/settings/services/propagation-settings",
+                              "nodes/teranode/references/settings/services/pruner-settings",
+                              "nodes/teranode/references/settings/services/rpc-settings",
+                              "nodes/teranode/references/settings/services/subtreevalidation-settings",
+                              "nodes/teranode/references/settings/services/utxopersister-settings",
+                              "nodes/teranode/references/settings/services/validator-settings"
+                            ]
+                          },
+                          {
+                            "group": "Store Settings",
+                            "pages": [
+                              "nodes/teranode/references/settings/stores/aerospike-settings",
+                              "nodes/teranode/references/settings/stores/blob-settings",
+                              "nodes/teranode/references/settings/stores/utxo-settings"
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "group": "Miscellaneous",
+                        "pages": [
+                          "nodes/teranode/misc/bip-239",
+                          "nodes/teranode/references/license-information",
+                          "nodes/teranode/references/prometheus-metrics",
+                          "nodes/teranode/references/teranode-daemon-reference",
+                          "nodes/teranode/references/third-party-software-requirements"
+                        ]
+                      }
                     ]
                   }
-                ]
-              },
-              {
-                "group": "Miscellaneous",
-                "pages": [
-                  "nodes/teranode/misc/bip-239",
-                  "nodes/teranode/references/license-information",
-                  "nodes/teranode/references/prometheus-metrics",
-                  "nodes/teranode/references/teranode-daemon-reference",
-                  "nodes/teranode/references/third-party-software-requirements"
                 ]
               }
             ]
