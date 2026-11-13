@@ -127,7 +127,7 @@ After that you can remove the container and run the same command again, and the 
 
 ### Build from source
 
-The build instructions live in the repository for each release. The steps below follow `doc/build-unix.md` at [v1.2.3](https://github.com/bitcoin-sv/bitcoin-sv/blob/v1.2.3/doc/build-unix.md), the file to read at the tag you install.
+The build instructions live in the repository for each release. The steps below follow `doc/build-unix.md` at [v1.2.3](https://github.com/bitcoin-sv/bitcoin-sv/blob/v1.2.3/doc/build-unix.md), the file to read at the tag you install. To build without installing the toolchain on your own machine, use a source image instead, see [Build in a source image](#build-in-a-source-image).
 
 <Steps>
 <Step title="Check the toolchain and dependencies">
@@ -163,7 +163,74 @@ A build from the release tag reports its version as `v1.2.3-dev`.
 </Step>
 </Steps>
 
-To skip installing the toolchain, the `bitcoinsv/bitcoin-sv-src` images on Docker Hub ship the dependencies and the node source for Debian, Ubuntu and CentOS.
+#### Build in a source image
+
+For each release, the [`bitcoinsv/bitcoin-sv-src`](https://hub.docker.com/r/bitcoinsv/bitcoin-sv-src/tags) images on Docker Hub contain the release source and every tool the build needs. There is one image per Linux distribution, tagged by version and distribution. For 1.2.3 the tags are:
+
+- Debian: `1.2.3-debian-bookworm`, `1.2.3-debian-trixie`
+- Ubuntu: `1.2.3-ubuntu-jammy`, `1.2.3-ubuntu-noble`
+- CentOS: `1.2.3-centos-9`, `1.2.3-centos-10`
+
+The images are built for x86_64 (amd64) only, so the commands below pass `--platform linux/amd64`. On an Arm host, such as an Apple silicon Mac, Docker Desktop runs them under emulation with no setup, and the build is slower. Docker Engine on an Arm Linux host needs QEMU registered first, see "Install QEMU manually" in [Docker's multi-platform guide](https://docs.docker.com/build/building/multi-platform/).
+
+The build and the node both run inside the container. The binaries are x86_64 Linux programs linked against libraries from the image, such as Boost, libevent, OpenSSL's libcrypto and Berkeley DB, so they do not run on Mac or Windows, and on Linux only on the same distribution and release as the image, with those libraries installed. To run a node on Mac or Windows, use [the Docker image](#run-the-docker-image) instead.
+
+<Steps>
+<Step title="Start a shell in the image">
+On your machine, start the image for your distribution. The example uses Ubuntu noble. For another distribution, change `ubuntu-noble` to one of the tag endings above.
+
+```bash
+docker run -it --name bitcoinsv-src --platform linux/amd64 bitcoinsv/bitcoin-sv-src:1.2.3-ubuntu-noble bash
+```
+
+The prompt changes to a shell inside the container.
+</Step>
+<Step title="Build">
+Inside the container, build from the source folder in `/opt`:
+
+```bash
+cd /opt/bitcoin-sv-1.2.3
+./autogen.sh
+./configure
+make
+```
+
+`make` takes a while, and longer under emulation. When it finishes, the last lines are:
+
+```text
+make[1]: Entering directory '/opt/bitcoin-sv-1.2.3'
+make[1]: Nothing to be done for 'all-am'.
+make[1]: Leaving directory '/opt/bitcoin-sv-1.2.3'
+```
+
+`make` puts `bitcoind`, `bitcoin-cli` and `bitcoin-tx` in `src/`. Check the build:
+
+```bash
+src/bitcoind --version | head -1
+```
+
+```text
+Bitcoin SV version v1.2.3.0-g6504a3aff-dev
+```
+</Step>
+<Step title="Start on testnet">
+Inside the container, start the built `bitcoind` with the same three required parameters as the binary route:
+
+```bash
+src/bitcoind -testnet -excessiveblocksize=10GB -maxstackmemoryusageconsensus=100MB -minminingtxfee=0.00000001
+```
+
+The node runs in the foreground of that shell. From a second terminal on your machine, check it:
+
+```bash
+docker exec bitcoinsv-src /opt/bitcoin-sv-1.2.3/src/bitcoin-cli -testnet getblockcount
+```
+
+The output is the number of blocks the node has synced so far. It starts at `0` and grows while the node catches up. Stop the node with Ctrl+C in the container shell.
+</Step>
+</Steps>
+
+The container keeps the build after you exit. Start it again with `docker start -ai bitcoinsv-src`, and remove it with `docker rm bitcoinsv-src` when you no longer need it.
 
 ## Next steps
 
