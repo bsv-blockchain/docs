@@ -74,7 +74,7 @@ Run `npm run check` before you open a pull request.
 ## Navigation and configuration
 
 - A page file is not enough. A page appears in the site only if it is listed under `navigation.tabs` in `writedocs.json`, without the file extension. Add a new page there when you create it, and remove it when you delete the page
-- The tabs are Get started, Guides, Learn, SDKs, Reference, Wallets and Changelog, plus Node operators, which is hidden. Each tab has groups of pages, and the Learn tab also has dropdowns for How the BSV blockchain works and the BSV Academy
+- The tabs are Get started, Guides, Learn, SDKs, Reference, Wallets, Changelog and Node Software. Each tab has groups of pages, and the Learn tab also has dropdowns for How the BSV blockchain works and the BSV Academy
 - `redirects` in `writedocs.json` sends an old path to a new one. Add a redirect when you rename or remove a published page, and update the links that pointed to it
 - `variables` holds values shared by the site: the network, the faucet and explorer URLs, the wallet name and the Node version
 - `mcp` turns on the docs MCP server, and `contextMenu` turns on the page context menu
