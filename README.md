@@ -61,7 +61,8 @@ Run `npm run check` before you open a pull request.
 | `wallet-dev/` | Building a wallet |
 | `standards/` | BRC standards and Paymail |
 | `reference/` | Reference pages: errors, networks, script opcodes and the HTTP APIs |
-| `nodes/` | Node operator content, in a hidden tab |
+| `nodes/` | The Node Software tab: SV Node, and Teranode in `nodes/teranode/`. Everything in `nodes/teranode/` except `index.mdx` is imported, see "Teranode pages" |
+| `scripts/` | Maintenance scripts, such as the Teranode import |
 | `showcase/` | The example apps: BEEF Inspector, P2P Medical and Time Anchor |
 | `changelog/` | The changelog, one page per product |
 | `snippets/` | React components used by the pages, mostly the diagrams |
@@ -197,6 +198,14 @@ When you review a pull request, check these in order, and say which ones fail.
 
 The BSV Academy courses in `learn/academy/` come from the previous BSV Academy and are being migrated. Review them for migration problems, such as broken links and formatting, not for the writing rules above.
 
+### Teranode pages
+
+The pages in `nodes/teranode/`, apart from the hand-written `index.mdx`, and the images in `images/teranode/` are imported from the `docs/` folder of the [Teranode repository](https://github.com/bsv-blockchain/teranode). `scripts/import-teranode.mjs` converts them from MkDocs Markdown to MDX and writes the Teranode groups of the Node Software tab in `writedocs.json`. Each page names the source file and commit it came from.
+
+- Do not edit an imported page here. Change the source in the Teranode repository, then rerun `npm run import:teranode` and open a pull request with the result. The next run overwrites edits made here
+- The import takes the pages for node operators. The `SECTIONS` list at the top of the script says which parts of the Teranode nav it takes and which it leaves on the Teranode site. Links to pages it leaves out point to the Teranode site
+- Review an import for conversion problems, such as broken links, formatting and missing images, not for the writing rules above
+
 ## Where facts come from
 
 Check a technical claim against one of these before you accept it.
@@ -211,3 +220,5 @@ Check a technical claim against one of these before you accept it.
 The documentation and code samples in this repository are licensed under the Apache License 2.0. See `LICENSE`.
 
 The Chillax font in `fonts/` is not covered by that license. It keeps its own license. See `fonts/README.md`.
+
+The Teranode pages in `nodes/teranode/`, apart from `index.mdx`, and the images in `images/teranode/` are not covered by that license either. They come from the [Teranode repository](https://github.com/bsv-blockchain/teranode) and keep its license, the Open BSV License Version 6.
