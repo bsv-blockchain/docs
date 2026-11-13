@@ -6,24 +6,32 @@ sidebarTitle: "Browser wallet"
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Connect a web page to [BSV Desktop](/wallets/bsv-desktop/) with `createWallet` from `@bsv/simple/browser`, then read the wallet's identity key, network and balance. Do this first in a web app where each user approves spending in their own wallet, before you call the payment, token or data methods of `@bsv/simple`. The example is a page of its own, served by Vite, and its calls read the wallet without spending. This page was written against `@bsv/simple` 0.7.2, `@bsv/sdk` 4.0.1 and Vite 8.3.8.
+Connect a web page to [BSV Desktop](/wallets/bsv-desktop/) with `createWallet` from `@bsv/simple/browser`, then read the wallet's <Hint tip="The public key that identifies a wallet to apps and other users">identity key</Hint>, network and balance. Do this first in a web app where each user approves spending in their own wallet, before you call the payment, token or data methods of `@bsv/simple`. The example is a page of its own, served by Vite, and its calls read the wallet without spending. This page was written against `@bsv/simple` 0.7.2, `@bsv/sdk` 4.0.1 and Vite 8.3.8.
 
 ## Before you begin
 
 You need:
 
 - Node.js 22.12 or newer, which Vite 8 requires.
-- A Vite project. To create one, run `npm create vite@latest my-app -- --template vanilla --no-interactive`, then install the packages in the `my-app` folder:
+- A Vite project. To create one, run `npm create vite@latest my-app -- --template vanilla --no-interactive`. It ends with `Done. Now run:` and the next commands. Then install the packages in the `my-app` folder:
 
   ```bash
   npm install @bsv/simple @bsv/sdk
+  ```
+
+  The install ends with:
+
+  ```text
+  added 173 packages, and audited 174 packages in 1m
+
+  found 0 vulnerabilities
   ```
 
 - BSV Desktop open and set to testnet. To set it up, follow [Set up a testnet wallet](/get-started/quick-start-browser/#set-up-a-testnet-wallet) in the Quick Start.
 
 ## How it works
 
-`createWallet` creates a `WalletClient` from `@bsv/sdk` with the `'auto'` substrate, which finds the wallet running on the user's machine, and asks it for the user's identity key. It then returns a wallet object that holds the key and the `@bsv/simple` methods. The page holds no private key: every method that spends or signs goes to the wallet, which can ask the user to approve it. A payment the user approves is broadcast and cannot be reversed. To see how the package wraps `@bsv/sdk`, read [How @bsv/simple is built](/sdk/simple/architecture/). To see how the substrates and the origin work, read [Connect to a wallet with WalletClient](/sdk/typescript/wallet-client/).
+`createWallet` creates a `WalletClient` from `@bsv/sdk` with the `'auto'` <Hint tip="The transport between your code and the wallet, such as the HTTP port of BSV Desktop">substrate</Hint>, which finds the wallet running on the user's machine, and asks it for the user's identity key. It then returns a wallet object that holds the key and the `@bsv/simple` methods. The page holds no private key: every method that spends or signs goes to the wallet, which can ask the user to approve it. A payment the user approves is broadcast and cannot be reversed. To see how the package wraps `@bsv/sdk`, read [How @bsv/simple is built](/sdk/simple/architecture/). To see how the substrates and the origin work, read [Connect to a wallet with WalletClient](/sdk/typescript/wallet-client/).
 
 `createWallet` takes an optional object of defaults for the wallet object's methods. The main ones:
 
@@ -34,7 +42,7 @@ You need:
 | `network` | `'main'` | The `network` field that `getStatus()` and `getWalletInfo()` return |
 | `description` | `'BSV-Simplify transaction'` | The description of the transactions that `send()` and the inscription methods create |
 | `outputDescription` | `'BSV-Simplify output'` | The description of the outputs of those transactions |
-| `tokenBasket` | `'tokens'` | The basket where the token methods keep tokens |
+| `tokenBasket` | `'tokens'` | The <Hint tip="A named group of outputs that a wallet tracks together">basket</Hint> where the token methods keep tokens |
 | `messageBoxHost` | `'https://messagebox.babbage.systems'` | The message box server that `pay()` uses |
 
 </BlueTable>
@@ -44,6 +52,10 @@ The wallet decides the network, not the `network` default. Pass `network: 'testn
 ## Connect from a web page
 
 The first step is a page with one button that starts the connection. In the `my-app` folder:
+
+<Callout type="warning">
+  `getAddress()` returns the address of the identity key in the Mainnet format, which starts with `1`, even when the wallet is on testnet. Do not show it to users as a testnet address, and do not ask anyone to send coins to it. To receive a payment, use the payment methods of `@bsv/simple` instead.
+</Callout>
 
 <Steps>
   <Step title="Add the button">
@@ -97,15 +109,23 @@ The first step is a page with one button that starts the connection. In the `my-
     npx vite --port 5173
     ```
 
-    Vite prints the address of the page, `http://localhost:5173/`. Open it in the browser, with BSV Desktop open.
-  </Step>
-  <Step title="Connect the wallet">
-    Click **Connect wallet**. If BSV Desktop asks whether the page may use the wallet, approve it. The page then shows the five values. Your key, address and balance differ. The key and the address below are placeholders:
+    Vite prints the address of the page. Your startup time differs:
 
     ```text
-    Identity key: 02aaaaaa…aaaaaaaa
-    Status: {"isConnected":true,"identityKey":"02aaaaaa…aaaaaaaa","network":"testnet"}
-    Address: 1AAAAAAA…AAAAAAA
+    VITE v8.3.8  ready in 209 ms
+
+    ➜  Local:   http://localhost:5173/
+    ```
+
+    Open that address in the browser, with BSV Desktop open.
+  </Step>
+  <Step title="Connect the wallet">
+    Click **Connect wallet**. If BSV Desktop asks whether the page may use the wallet, approve it. The page then shows the five values. Your key, address and balance differ. `YOUR_IDENTITY_KEY` and `YOUR_ADDRESS` stand for the 66 character key and the address of your wallet:
+
+    ```text
+    Identity key: YOUR_IDENTITY_KEY
+    Status: {"isConnected":true,"identityKey":"YOUR_IDENTITY_KEY","network":"testnet"}
+    Address: YOUR_ADDRESS
     Wallet network: testnet
     Balance: {"totalSatoshis":985000,"totalOutputs":0,"spendableSatoshis":985000,"spendableOutputs":0}
     ```
@@ -113,11 +133,6 @@ The first step is a page with one button that starts the connection. In the `my-
     The `Wallet network` line comes from BSV Desktop, so the page runs on testnet.
   </Step>
 </Steps>
-
-
-<Callout type="warning">
-  `getAddress()` returns the address of the identity key in the Mainnet format, which starts with `1`, even when the wallet is on testnet. Do not show it to users as a testnet address, and do not ask anyone to send coins to it. To receive a payment, use the payment methods of `@bsv/simple` instead.
-</Callout>
 
 Each call to `createWallet` creates a new `WalletClient` and asks the wallet for the identity key again, so an app keeps one wallet object and calls `pay()` or `getBalance()` on it.
 
