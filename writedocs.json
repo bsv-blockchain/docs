@@ -444,9 +444,8 @@
         ]
       },
       {
-        "tab": "Node operators",
+        "tab": "Node Software",
         "icon": "server",
-        "hidden": true,
         "pages": [
           {
             "group": "Nodes",
