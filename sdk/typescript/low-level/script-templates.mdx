@@ -6,7 +6,7 @@ sidebarTitle: "Custom script templates"
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Write a script template that locks testnet <Hint tip="The smallest unit of BitcoinSV (BSV). 100,000,000 satoshis make 1 BSV">satoshis</Hint> to two conditions, a private key and a secret, then lock 500 satoshis with it and spend them back. A template of your own fits when the <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">`P2PKH`</Hint>, `PushDrop` and `RPuzzle` templates of `@bsv/sdk` do not cover the condition your app needs, and it plugs into `Transaction` the same way they do. The example builds on the folder of [Build a transaction from inputs and outputs](/sdk/typescript/low-level/transactions/) and runs standalone on testnet. This page was written against `@bsv/sdk` 4.0.1 and Node.js 24.
+Write a <Hint tip="A class that builds a locking script and the unlocking script that spends it">script template</Hint> that locks testnet <Hint tip="The smallest unit of BitcoinSV (BSV). 100,000,000 satoshis make 1 BSV">satoshis</Hint> to two conditions, a private key and a secret, then lock 500 satoshis with it and spend them back. A template of your own fits when the <Hint tip="Pay to Public Key Hash, the standard script that locks coins to an address">`P2PKH`</Hint>, `PushDrop` and `RPuzzle` templates of `@bsv/sdk` do not cover the condition your app needs, and it plugs into `Transaction` the same way they do. The example builds on the folder of [Build a transaction from inputs and outputs](/sdk/typescript/low-level/transactions/) and runs standalone on testnet. This page was written against `@bsv/sdk` 4.0.1 and Node.js 24.
 
 ## Before you begin
 
@@ -42,7 +42,7 @@ Start with the template itself, in the folder of the Build a transaction example
 
 <Steps>
   <Step title="Create the template">
-    Save this class as `HashKeyLock.mjs`. It builds both scripts from the `OP` codes and reuses the `P2PKH` template for the signature:
+    Save this class as `HashKeyLock.mjs`. It builds both scripts from <Hint tip="A one byte instruction in a locking or unlocking script, such as OP_DUP. Scripts run on a stack.">opcodes</Hint> and reuses the `P2PKH` template for the signature:
 
     ```javascript HashKeyLock.mjs
     import { LockingScript, UnlockingScript, OP, P2PKH, Utils } from '@bsv/sdk'
@@ -125,7 +125,11 @@ With the template ready, write `lock.mjs` in the same folder. It follows `send.m
     }
     const key = PrivateKey.fromWif(TESTNET_WIF)
     const address = key.toAddress('testnet')
-    const secretHash = Hash.sha256(Utils.toArray(SECRET, 'utf8'))
+    const secret = Utils.toArray(SECRET, 'utf8')
+    if (secret.length < 1 || secret.length > 75) {
+      throw new Error('SECRET must be 1 to 75 bytes long')
+    }
+    const secretHash = Hash.sha256(secret)
 
     const fundingTxid = process.argv[2]
     if (fundingTxid === undefined) {
@@ -170,7 +174,7 @@ With the template ready, write `lock.mjs` in the same folder. It follows `send.m
     console.log(`Explorer: https://test.whatsonchain.com/tx/${result.txid}`)
     ```
 
-    - Only the SHA-256 hash of the secret goes into the locking script of output 0, which `new HashKeyLock().lock(address, secretHash)` builds.
+    - The script checks that the secret is 1 to 75 bytes, the same limit as `unlock`, so it never locks an output that `unlock.mjs` cannot spend. Only the SHA-256 hash of the secret goes into the locking script of output 0, which `new HashKeyLock().lock(address, secretHash)` builds.
     - The input spends the first output of the funding transaction that pays your address, with the `P2PKH` template, as in `send.mjs`, and the change goes back to your address.
   </Step>
   <Step title="Run the lock script">
@@ -183,8 +187,8 @@ With the template ready, write `lock.mjs` in the same folder. It follows `send.m
     The script prints the ID of the new transaction and its explorer link. Your ID differs:
 
     ```text
-    Locked 500 satoshis in output 0 of 220b29b25317669998fb59827b5ea749a5cd741d3ea944dbb1625401f920c9a4
-    Explorer: https://test.whatsonchain.com/tx/220b29b25317669998fb59827b5ea749a5cd741d3ea944dbb1625401f920c9a4
+    Locked 500 satoshis in output 0 of 009acb3121f8305039b609e549d7085bc5fde0a1ca1e9dc5d89383f1adef0c8d
+    Explorer: https://test.whatsonchain.com/tx/009acb3121f8305039b609e549d7085bc5fde0a1ca1e9dc5d89383f1adef0c8d
     ```
 
     The explorer shows one input and two outputs: 500 satoshis in output 0 and the change. Copy the transaction ID, since `unlock.mjs` needs it.
@@ -256,8 +260,8 @@ The output now waits for a spend that brings both the key and the secret. Write 
     The script prints the output it spent, the fee and the explorer link of the spend. Your IDs differ:
 
     ```text
-    Unlocked output 0 of 220b29b25317669998fb59827b5ea749a5cd741d3ea944dbb1625401f920c9a4, fee 1 satoshis
-    Explorer: https://test.whatsonchain.com/tx/2b7b4761b0e11aa4e5cb23bc070d165939f4d48975fc88d03b8178168e146ce1
+    Unlocked output 0 of 009acb3121f8305039b609e549d7085bc5fde0a1ca1e9dc5d89383f1adef0c8d, fee 1 satoshis
+    Explorer: https://test.whatsonchain.com/tx/90bf674e248cce9f55bec40027185707aca67b93806aca0053ad44dc171d53aa
     ```
   </Step>
 </Steps>
