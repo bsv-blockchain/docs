@@ -310,11 +310,12 @@ function plainText(md) {
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[`*_]/g, '')
     .replace(/\\([{}])/g, '$1')
-    // Plain text for the description: drop tags, then any stray angle brackets
-    // and their entities, so no markup can survive into the page metadata.
+    // Plain text for the description: drop angle-bracket entities and tags,
+    // then, last, every remaining < or >, so no markup can survive into the
+    // page metadata whatever the earlier steps leave behind.
+    .replace(/&(lt|gt);/g, '')
     .replace(/<[^>]*>/g, '')
     .replace(/[<>]/g, '')
-    .replace(/&(lt|gt);/g, '')
     .replace(/\s+/g, ' ')
     .trim();
 }
