@@ -304,18 +304,29 @@ function unescapeHtml(s) {
   return s.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
 }
 
+// Repeats a replacement until the string stops changing, so removing one
+// match cannot leave behind a new one.
+function replaceAll(s, re, to) {
+  let prev;
+  do {
+    prev = s;
+    s = s.replace(re, to);
+  } while (s !== prev);
+  return s;
+}
+
+function stripMarkup(s) {
+  s = replaceAll(s, /&(lt|gt);/g, '');
+  s = replaceAll(s, /<[^<>]*>/g, '');
+  return s.replace(/[<>]/g, '');
+}
+
 function plainText(md) {
-  return md
+  return stripMarkup(md
     .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
     .replace(/\[([^\]]*)\]\([^)]*\)/g, '$1')
     .replace(/[`*_]/g, '')
-    .replace(/\\([{}])/g, '$1')
-    // Plain text for the description: drop angle-bracket entities and tags,
-    // then, last, every remaining < or >, so no markup can survive into the
-    // page metadata whatever the earlier steps leave behind.
-    .replace(/&(lt|gt);/g, '')
-    .replace(/<[^>]*>/g, '')
-    .replace(/[<>]/g, '')
+    .replace(/\\([{}])/g, '$1'))
     .replace(/\s+/g, ' ')
     .trim();
 }
