@@ -200,7 +200,7 @@ The BSV Academy courses in `learn/academy/` come from the previous BSV Academy a
 
 ### Teranode pages
 
-The pages in `nodes/teranode/`, apart from the hand-written `index.mdx`, and the images in `images/teranode/` are imported from the `docs/` folder of the [Teranode repository](https://github.com/bsv-blockchain/teranode). `scripts/import-teranode.mjs` converts them from MkDocs Markdown to MDX and writes the Teranode groups of the Node Software tab in `writedocs.json`. Each page names the source file and commit it came from.
+The pages in `nodes/teranode/`, apart from the hand-written `index.mdx`, and the images in `images/teranode/` are imported from the `docs/` folder of the [Teranode repository](https://github.com/bsv-blockchain/teranode). `scripts/import-teranode.mjs` converts them from MkDocs Markdown to MDX and writes the "Run Teranode" group, under "Nodes" in the Node Software tab of `writedocs.json`. Each page names the source file and commit it came from.
 
 - Do not edit an imported page here. Change the source in the Teranode repository, then rerun `npm run import:teranode` and open a pull request with the result. The next run overwrites edits made here
 - The import takes the pages for node operators. The `SECTIONS` list at the top of the script says which parts of the Teranode nav it takes and which it leaves on the Teranode site. Links to pages it leaves out point to the Teranode site

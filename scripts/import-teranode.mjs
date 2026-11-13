@@ -27,21 +27,23 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = 'nodes/teranode';
 const IMG_DIR = 'images/teranode';
 const TAB = 'Node Software';
-const GROUP_PREFIX = 'Teranode ';
+const NODES_GROUP = 'Nodes';
+const TERANODE_GROUP = 'Run Teranode';
+const INDEX_PAGE = 'nodes/teranode/index';
 
 // Which parts of the Teranode nav to import, as paths of nav labels.
 // The scope is node operators: the pages for people who work on the Teranode
 // code itself (contributing, protobuf, tests, Go API references) stay on the
 // Teranode site, and links to them point there.
 const SECTIONS = [
-  { group: 'Teranode how-to guides', from: ['How-To Guides', 'Miners'] },
+  { group: 'How-to guides', from: ['How-To Guides', 'Miners'] },
   {
-    group: 'Teranode key topics',
+    group: 'Key topics',
     from: ['Key Topics'],
     exclude: ['Understanding the Testing Framework', 'Functional Requirement Tests'],
   },
   {
-    group: 'Teranode reference',
+    group: 'Reference',
     from: ['Reference'],
     exclude: [
       'Project Structure',
@@ -435,8 +437,16 @@ function updateNav(groups) {
   const config = JSON.parse(fs.readFileSync(file, 'utf8'));
   const tab = config.navigation.tabs.find((t) => t.tab === TAB);
   if (!tab) throw new Error(`No "${TAB}" tab in writedocs.json`);
-  tab.pages = tab.pages.filter((p) => !(typeof p === 'object' && p.group?.startsWith(GROUP_PREFIX)));
-  tab.pages.push(...groups);
+  // The imported sections sit in the Nodes group under the Teranode overview page,
+  // the same way "Run SV Node" holds the SV Node pages.
+  const nodes = tab.pages.find((p) => typeof p === 'object' && p.group === NODES_GROUP);
+  if (!nodes) throw new Error(`No "${NODES_GROUP}" group in the "${TAB}" tab`);
+  const entry = { group: TERANODE_GROUP, page: INDEX_PAGE, pages: groups };
+  const at = nodes.pages.findIndex((p) => p === INDEX_PAGE || p.page === INDEX_PAGE);
+  if (at === -1) nodes.pages.push(entry);
+  else nodes.pages[at] = entry;
+  // Drop the top-level Teranode groups that earlier runs of this script added.
+  tab.pages = tab.pages.filter((p) => !(typeof p === 'object' && /^Teranode /.test(p.group ?? '')));
   fs.writeFileSync(file, `${JSON.stringify(config, null, 2)}\n`);
 }
 
