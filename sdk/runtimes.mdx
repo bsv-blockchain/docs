@@ -23,7 +23,9 @@ Use this reference to check what `@bsv/sdk` needs from the JavaScript environmen
 
 Building and signing a transaction need neither randomness nor HTTP, but the defaults of two `Transaction` methods make HTTP calls. With no argument, `fee()` fetches the current fee rate and `verify()` checks block headers through a Mainnet chain tracker. On a runtime without HTTP, pass a fixed rate such as `fee(new SatoshisPerKilobyte(1))`, and call `verify('scripts only')`, which skips the block header check, or pass a chain tracker of your own. See [SDK default values](/sdk/defaults/).
 
-## Environments
+## Supported environments
+
+The BSV team declares the supported runtimes of each package in the [stack facts](https://bsv-blockchain.github.io/ts-stack/reference/stack-facts/) of the TypeScript stack. For `@bsv/sdk` they are Node.js 22 or newer, browsers and the UMD bundle, and the [support policy](https://bsv-blockchain.github.io/ts-stack/about/versioning/) makes the latest published release the supported version:
 
 <BlueTable>
 
@@ -32,12 +34,17 @@ Building and signing a transaction need neither randomness nor HTTP, but the def
 | Node.js 22 or newer | `import` from `@bsv/sdk` (ES modules) or `require('@bsv/sdk')` (CommonJS) | The package declares `"node": ">=22"` in its `engines` field. See [Install the SDK in Node or React](/sdk/typescript/setup/) |
 | Browser app with a bundler, such as Vite | `import` from `@bsv/sdk` | The bundler picks the ES module build. No polyfill is needed |
 | Web page without a bundler | `<script src="bundle.js">` with the file `dist/umd/bundle.js` of the package | The bundle defines the global `bsv`, such as `bsv.PrivateKey` |
-| Web Worker | `import` from `@bsv/sdk` in a module worker | Workers expose `crypto.getRandomValues` and `fetch` on `self`, which the SDK reads |
-| React Native | `import` from `@bsv/sdk` | If the runtime has no `crypto.getRandomValues`, install a polyfill that defines it and import it before `@bsv/sdk` |
 
 </BlueTable>
 
-To reach the user's wallet from these environments, `WalletClient` tries its substrates in turn and uses the first that answers, such as the HTTP port of [BSV Desktop](/wallets/bsv-desktop/) or the React Native WebView bridge. See [Connect to a wallet with WalletClient](/sdk/typescript/wallet-client/).
+## Other environments
+
+Web Workers and React Native are not declared runtimes of `@bsv/sdk`, so test your app there before you rely on it:
+
+- In a module Web Worker, `import` from `@bsv/sdk` as in a browser app. Workers expose `crypto.getRandomValues` and `fetch` on `self`, which the SDK reads.
+- In React Native, a runtime with no `crypto.getRandomValues` needs a polyfill that defines it, imported before `@bsv/sdk`. For a wallet that runs inside a React Native app, the stack declares a separate package, `@bsv/wallet-toolbox-mobile`.
+
+To reach the user's wallet from any of these environments, `WalletClient` tries its substrates in turn and uses the first that answers, such as the HTTP port of [BSV Desktop](/wallets/bsv-desktop/) or the React Native WebView bridge. See [Connect to a wallet with WalletClient](/sdk/typescript/wallet-client/).
 
 ## Troubleshooting
 
