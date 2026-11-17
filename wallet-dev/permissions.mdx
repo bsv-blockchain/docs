@@ -5,32 +5,33 @@ description: "Permission modules let a BRC-100 wallet handle app requests for p 
 
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Register permission modules in your wallet so it can answer app requests that the standard permission checks cannot judge, such as spending a token or masking a card in a game. At the end, a test script sends four app requests through your wallet and shows which module answered each one. Add modules when your wallet must support token apps, the <Hint tip="Elliptic curve point multiplication">ECPM</Hint> key operation or a permission scheme of your own.
+Register permission modules in your wallet so it can answer app requests that the standard permission checks cannot judge, such as spending a token or masking a card in a game. At the end, a test script sends five app requests through your wallet and shows which module answered each one. Add modules when your wallet must support token apps, the <Hint tip="Elliptic curve point multiplication">ECPM</Hint> key operation or a permission scheme of your own.
 
 ## Before you begin
 
-You need Node.js 22 or newer and a wallet built with `@bsv/wallet-toolbox`. The example runs on testnet with a test wallet that holds no coins. This page was written against `@bsv/wallet-toolbox` 2.15.1, `@bsv/btms-permission-module` 1.2.4 and `@bsv/ecpm-permission-module` 0.1.4.
+You need Node.js 22 or newer and a wallet built with `@bsv/wallet-toolbox`. The example runs on testnet with a test wallet that holds no coins. This page was written against `@bsv/wallet-toolbox` 2.17.0, `@bsv/btms-permission-module` 1.2.4, `@bsv/color-permission-module` 0.2.1 and `@bsv/ecpm-permission-module` 0.1.4.
 
 ## How it works
 
 Every app request reaches your wallet through `WalletPermissionsManager`, a wrapper around the wallet. Each request carries its <Hint tip="The domain of the app that sent the request">originator</Hint>, and the manager checks the call against the name of the basket, protocol or label it uses:
 
 - A standard name goes through the four built-in permissions: protocol, basket, certificate and spending. The manager raises a callback such as `onBasketAccessRequested`, your wallet shows its approval window, and a grant can be kept as a <Hint tip="A record of the grant that the wallet keeps on chain">permission token</Hint>. A spending authorization covers an amount, counted per calendar month, and the app spends against it until the amount is used up. Then the wallet asks again.
-- A name that starts with `p ` followed by a scheme ID, such as `p btms` or `p ecpm`, goes to the module registered under that scheme ID. These names are reserved by <Hint tip="P Protocols">BRC-98</Hint>, <Hint tip="P Baskets">BRC-99</Hint> and <Hint tip="P Labels">BRC-111</Hint>, so an app cannot use them unless your wallet has a module for the scheme.
+- A name that starts with `p ` followed by a scheme ID, such as `p btms` or `p color`, goes to the module registered under that scheme ID. These names are reserved by <Hint tip="P Protocols">BRC-98</Hint>, <Hint tip="P Baskets">BRC-99</Hint> and <Hint tip="P Labels">BRC-111</Hint>, so an app cannot use them unless your wallet has a module for the scheme.
 - A `p ` name with no module registered is rejected with an error.
 
-A module receives the request in `onRequest`, decides whether to allow it, and can change the arguments. The wallet runs the call, then passes the result through the module's `onResponse`. Two modules are published on npm:
+A module receives the request in `onRequest`, decides whether to allow it, and can change the arguments. The wallet runs the call, then passes the result through the module's `onResponse`. Three modules are published on npm:
 
 <BlueTable>
 
 | Scheme ID | Package | What it handles | Approval callback |
 | --- | --- | --- | --- |
 | `btms` | `@bsv/btms-permission-module` | Listing, spending and burning tokens of the <Hint tip="Basic Token Management System">BTMS</Hint> in `p btms` baskets and labels | `promptHandler(originator, message)` |
+| `color` | `@bsv/color-permission-module` | Holding, sending and receiving <Hint tip="BRC-162 fungible tokens, handled in the wallet by the BRC-207 module">1Color</Hint> tokens in `p color` baskets, protocols and labels | `requestTokenAccess(originator, message)` |
 | `ecpm` | `@bsv/ecpm-permission-module` | Elliptic curve point multiplication through `getPublicKey`, used by protocols such as mental poker (BRC-229) | `authorize(request)` |
 
 </BlueTable>
 
-Neither module draws a window. Each one calls a function you pass in, and your wallet shows the approval window there.
+None of the modules draws a window. Each one calls a function you pass in, and your wallet shows the approval window there.
 
 ## Set up the project
 
@@ -41,10 +42,10 @@ The first step is to set up one Node.js project folder with the packages, a test
     Run this in the project folder:
 
     ```bash
-    npm install @bsv/wallet-toolbox @bsv/btms-permission-module @bsv/ecpm-permission-module @bsv/btms @bsv/wallet-toolbox-client @bsv/sdk
+    npm install @bsv/wallet-toolbox @bsv/btms-permission-module @bsv/color-permission-module @bsv/ecpm-permission-module @bsv/btms @bsv/wallet-toolbox-client @bsv/sdk
     ```
 
-    The two modules list `@bsv/btms`, `@bsv/wallet-toolbox-client` and `@bsv/sdk` as peer dependencies, so they are installed together.
+    The modules list `@bsv/btms`, `@bsv/wallet-toolbox-client` and `@bsv/sdk` as peer dependencies, so they are installed together.
   </Step>
   <Step title="Keep the keys out of git">
     Create `.gitignore` in the project folder, so the keys and the wallet file never reach a repository:
@@ -122,6 +123,7 @@ Each module goes in a new file, `permissions.mjs`, which exports the wrapped wal
     ```javascript permissions.mjs
     import { WalletPermissionsManager } from '@bsv/wallet-toolbox'
     import { createBtmsModule } from '@bsv/btms-permission-module'
+    import { createColorModule } from '@bsv/color-permission-module'
     import { createEcpmModule } from '@bsv/ecpm-permission-module'
     import { setup } from './wallet.mjs'
     import { askUser } from './prompt.mjs'
@@ -139,8 +141,30 @@ Each module goes in a new file, `permissions.mjs`, which exports the wrapped wal
     - Without `promptHandler`, the module denies every request.
     - An approval lasts 60 seconds per originator, and a spend approval covers only the exact transaction the user saw.
   </Step>
+  <Step title="Create the 1Color module">
+    Add the 1Color module under the BTMS one:
+
+    ```javascript permissions.mjs
+    const color = createColorModule({
+      wallet: setup.wallet,
+      provider: {
+        spendability: async () => ({ type: 'output-list', outputs: [] }),
+        admission: async () => ({ type: 'output-list', outputs: [] }),
+        submit: async () => { throw new Error('No 1Color overlay is set up for this wallet.') }
+      },
+      requestTokenAccess: async (originator, message) => {
+        return await askUser(originator, JSON.parse(message))
+      }
+    })
+    ```
+
+    - `provider` connects the module to the <Hint tip="A service that tracks which token outputs are valid and unspent">overlay</Hint> of each token. It answers two lookups, `spendability` and `admission`, and submits signed token transactions to the asset's topic. Your wallet decides which overlays it trusts.
+    - The provider above trusts no overlay: no token counts as spendable and every submit fails, so the module can list holdings but never spends. Before your wallet sends tokens, replace it with one that queries the overlay. The [package README](https://github.com/bsv-blockchain/ts-stack/tree/main/packages/wallet/color-permission-module) lists the queries.
+    - `message` is a JSON string with a `type` of `color_access` for a read, `color_send`, `color_signature` or `color_relinquish`. The module asks on every request and keeps no approvals, so your wallet decides how long an approval lasts.
+    - A declined request throws `ColorConsentDeclinedError`.
+  </Step>
   <Step title="Create the ECPM module">
-    Add the ECPM module under the BTMS one:
+    Add the ECPM module under the 1Color one:
 
     ```javascript permissions.mjs
     const ecpm = createEcpmModule({
@@ -190,7 +214,7 @@ Each module goes in a new file, `permissions.mjs`, which exports the wrapped wal
     - `onRequest` returns `{ args }`, the arguments the wallet runs the call with. Return them unchanged or adjusted.
     - `onResponse` receives the wallet's result and returns what the app gets.
     - Each approval covers one app and one method, so an app approved to list outputs still needs a new approval to spend them.
-    - The `approved` set keeps approvals in memory only. `dispose()` clears them, as the two published modules do.
+    - The `approved` set keeps approvals in memory only. `dispose()` clears them, as the published modules do.
     - A module can also define `handleRequest` to answer the call itself instead of passing it to the wallet. The ECPM module does this for `getPublicKey`.
   </Step>
   <Step title="Register the modules in the manager">
@@ -198,11 +222,12 @@ Each module goes in a new file, `permissions.mjs`, which exports the wrapped wal
 
     ```javascript permissions.mjs
     export const wallet = new WalletPermissionsManager(setup.wallet, 'admin.wallet.local', {
-      permissionModules: { btms, ecpm, receipts }
+      permissionModules: { btms, color, ecpm, receipts }
     })
 
     export async function closeWallet () {
       btms.dispose()
+      color.dispose()
       ecpm.dispose()
       receipts.dispose()
       await setup.activeStorage.destroy()
@@ -221,7 +246,7 @@ With the modules registered, send app requests through the wrapped wallet and se
 
 <Steps>
   <Step title="Write the check script">
-    Create `check.mjs`. It makes four requests as the app `app.example.com`, one per scheme plus one with no module:
+    Create `check.mjs`. It makes five requests as the app `app.example.com`, one per scheme plus one with no module:
 
     ```javascript check.mjs
     import { PrivateKey } from '@bsv/sdk'
@@ -243,6 +268,9 @@ With the modules registered, send app requests through the wrapped wallet and se
     await check('btms', () =>
       wallet.listOutputs({ basket: 'p btms ASSET_ID' }, app))
 
+    await check('color', () =>
+      wallet.listOutputs({ basket: 'p color assets' }, app))
+
     const point = PrivateKey.fromRandom().toPublicKey().toString()
     await check('ecpm', () =>
       wallet.getPublicKey({
@@ -258,6 +286,7 @@ With the modules registered, send app requests through the wrapped wallet and se
     ```
 
     - The second argument of each call is the originator, the app the request comes from. In a real wallet it comes from the connection to the app.
+    - `p color assets` lists every 1Color token the wallet holds.
     - `ASSET_ID` stands for a BTMS asset ID. Replace it with one your wallet holds, or keep it to see the approval flow on an empty basket.
     - The ECPM request passes a random point, as a card game passes a card. The protocol ID holds the operation, the point and the protocol name.
   </Step>
@@ -280,23 +309,29 @@ With the modules registered, send app requests through the wrapped wallet and se
     }
     btms: allowed { totalOutputs: 0, outputs: [] }
     Approval window: app.example.com asks for {
+      type: 'color_access',
+      basket: 'p color assets',
+      seekPermission: true
+    }
+    color: allowed { totalOutputs: 0, outputs: [] }
+    Approval window: app.example.com asks for {
       operation: 'apply',
       protocol: 'mental poker deal',
       counterparty: 'self'
     }
     ecpm: allowed {
-      publicKey: '0261b9508a916747fcddc6b77e23c359fb6cbb09baf71b9ee53248a77a9d1d22f7'
+      publicKey: '0396e3d0dcd5e224928fa129f385d6854a0033dd1e378ecf346a5f75aea0432800'
     }
     loyalty: rejected, Unsupported P-module scheme: p loyalty
     ```
 
-    - The test wallet is new, so the `receipts` and `btms` lists are empty.
+    - The test wallet is new, so the `receipts`, `btms` and `color` lists are empty.
     - `ecpm` returns the point multiplied by a key the wallet derives. The app gets the new point, never the key. The value changes on every run because the point is random.
     - `loyalty` is rejected because no module is registered for that scheme.
   </Step>
 </Steps>
 
-Your wallet now answers `p btms`, `p ecpm` and `p receipts` requests through its modules, and rejects any other `p ` scheme. When `askUser` returns `false`, the same script prints `rejected` for every request, with the error each module throws.
+Your wallet now answers `p btms`, `p color`, `p ecpm` and `p receipts` requests through its modules, and rejects any other `p ` scheme. When `askUser` returns `false`, the same script prints `rejected` for every request, with the error each module throws.
 
 ## Related articles
 
