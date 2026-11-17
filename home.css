@@ -57,7 +57,22 @@
   color: #ffffff;
   background: linear-gradient(115deg, #1b1ea9 0%, #1a2fd0 55%, #003fff 100%);
 }
-.bh-hero-inner { position: relative; }
+.bh-hero-inner { position: relative; z-index: 2; }
+/* The bsvblockchain.com hero video behind the band, muted and looping, with its blue and cyan
+   glows and a dark fade so the title and the buttons stay in front. The band gradient shows
+   while it loads, and the poster replaces it when the reader asks for less motion. */
+.bh-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.bh-hero-shade {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(120% 100% at 82% 4%, rgba(0, 230, 255, 0.28) 0%, rgba(0, 0, 0, 0) 58%),
+    radial-gradient(90% 80% at 8% 92%, rgba(0, 63, 255, 0.55) 0%, rgba(0, 0, 0, 0) 62%),
+    linear-gradient(90deg, rgba(27, 30, 169, 0.88) 0%, rgba(27, 30, 169, 0.6) 55%, rgba(27, 30, 169, 0.35) 100%);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bh-hero-video { display: none; }
+  .bh-hero { background: url("https://bsvblockchain.com/video/hero-montage-poster.jpg") center / cover, #1b1ea9; }
+}
 .bh-hero-text { max-width: 720px; }
 
 /* Secondary hero button: outlined, white on the brand band. */
@@ -213,11 +228,6 @@
   padding: 0.2rem 0.6rem;
   margin-bottom: 0.9rem;
 }
-
-/* Example app screenshots, edge to edge at the top of the card. */
-.bh-demo { padding-top: 0; overflow: hidden; }
-.bh-shot { display: block; width: calc(100% + 3rem); max-width: none; margin: 0 -1.5rem 1.2rem; aspect-ratio: 3 / 2; object-fit: cover; object-position: top left; border-bottom: 1px solid var(--bh-line); }
-.bh-shot-empty { display: grid; place-items: center; background: var(--bh-tint); color: var(--bh-soft); font-size: 0.8rem; }
 
 /* Explore the docs: an area card with its top pages */
 .bh-explore {
