@@ -9,6 +9,7 @@
   --bh-card: #ffffff;
   --bh-tint: #f4f2f0;
   --bh-band: #eae8e6;
+  --bh-soft-fill: #eae8e6;
   --bh-accent: #1b1ea9;
   --bh-highlight: #003fff;
   --bh-grad: linear-gradient(90deg, #1b1ea9 0%, #003fff 100%);
@@ -22,6 +23,7 @@
   --bh-card: #141928;
   --bh-tint: #1a2032;
   --bh-band: #111524;
+  --bh-soft-fill: #1a2032;
   --bh-accent: #4384ff;
   --bh-highlight: #00e6ff;
 }
@@ -47,7 +49,6 @@
   margin-bottom: 1rem;
 }
 
-/* Hero: full-width brand band, Navy falling to Blue. */
 /* Hero: full-width brand band, Navy falling to Blue. */
 .bh-hero {
   position: relative;
@@ -136,7 +137,7 @@
 }
 .bh-card h3 { font-size: 1.15rem; margin-bottom: 0.45rem; }
 .bh-card p { color: var(--bh-soft); font-size: 0.92rem; line-height: 1.6; margin: 0 0 1rem; }
-.bh-card.bh-soft { background: var(--bh-tint); }
+.bh-card.bh-soft { background: var(--bh-soft-fill); }
 .bh-go { font-weight: 600; font-size: 0.85rem; color: var(--bh-accent); }
 .bh-go span { display: inline-block; margin-left: 0.3em; transition: transform 0.2s ease; }
 .bh-card:hover .bh-go span { transform: translateX(4px); }
