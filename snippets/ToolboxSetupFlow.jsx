@@ -12,7 +12,7 @@ const path = [
 function Box({ item }) {
   return (
     <div className="flex h-full flex-col gap-1 rounded-xl border border-gray-200 p-3 dark:border-gray-700">
-      <span className="font-mono text-sm font-semibold text-[#1B1EA9] dark:text-[#8C9BFF]">{item.name}</span>
+      <span className="font-mono text-sm font-semibold text-[#1B1EA9] dark:text-[#4384FF]">{item.name}</span>
       <p className="m-0 text-xs leading-relaxed text-gray-700 dark:text-gray-300">{item.what}</p>
     </div>
   );
@@ -26,7 +26,7 @@ export default function ToolboxSetupFlow() {
           <Fragment key={item.name}>
             <li className="m-0 h-full"><Box item={item} /></li>
             {i < path.length - 1 && (
-              <li aria-hidden="true" className="m-0 flex items-center justify-center text-[#1B1EA9] dark:text-[#8C9BFF]">
+              <li aria-hidden="true" className="m-0 flex items-center justify-center text-[#1B1EA9] dark:text-[#4384FF]">
                 <span className="text-xl leading-none lg:hidden">↓</span>
                 <span className="hidden text-xl leading-none lg:inline">→</span>
               </li>

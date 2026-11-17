@@ -8,7 +8,7 @@
     "colors": {
       "primary": "#003FFF",
       "dark": {
-        "primary": "#8C9BFF"
+        "primary": "#4384ff"
       }
     },
     "logo": {
@@ -19,10 +19,14 @@
     "fonts": {
       "family": "Noto Sans",
       "heading": {
-        "family": "Chillax",
-        "source": "/fonts/Chillax-Medium.woff2",
-        "format": "woff2",
-        "weight": 500
+        "family": "Outfit",
+        "weight": 600
+      }
+    },
+    "background": {
+      "colors": {
+        "light": "#F4F2F0",
+        "dark": "#0b0f1c"
       }
     }
   },

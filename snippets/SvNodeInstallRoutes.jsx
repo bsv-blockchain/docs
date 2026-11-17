@@ -42,7 +42,7 @@ export default function SvNodeInstallRoutes() {
       >
         {routes.map((route) => (
           <li key={route.name} className="m-0 flex flex-col overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#8C9BFF] dark:text-gray-900">
+            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#4384FF] dark:text-gray-900">
               <span className="text-sm font-semibold">{route.name}</span>
             </div>
             <div className="flex-1 px-4 py-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
@@ -55,7 +55,7 @@ export default function SvNodeInstallRoutes() {
             </div>
             <a
               href={route.href}
-              className="border-t border-gray-200 px-4 py-3 text-sm font-semibold text-[#1B1EA9] no-underline hover:underline dark:border-gray-700 dark:text-[#8C9BFF]"
+              className="border-t border-gray-200 px-4 py-3 text-sm font-semibold text-[#1B1EA9] no-underline hover:underline dark:border-gray-700 dark:text-[#4384FF]"
             >
               Go to the steps →
             </a>

@@ -28,7 +28,7 @@ export default function AgentToolkit() {
       >
         {pieces.map((piece) => (
           <li key={piece.name} className="m-0 flex flex-col overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#8C9BFF] dark:text-gray-900">
+            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#4384FF] dark:text-gray-900">
               <span className="text-sm font-semibold">{piece.name}</span>
             </div>
             <dl className="m-0 flex-1 px-4 py-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
