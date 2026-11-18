@@ -8,9 +8,13 @@ mode: custom
 
 <section className="bh-hero">
   <video className="bh-hero-video" autoPlay muted loop playsInline preload="metadata" poster="https://bsvblockchain.com/video/hero-montage-poster.jpg" aria-hidden="true">
-    <source src="https://bsvblockchain.com/video/hero-montage.mp4" type="video/mp4" />
+    <source src="https://bsvblockchain.com/video/hero-montage.mp4" type="video/mp4" media="(prefers-reduced-motion: no-preference)" />
   </video>
   <div className="bh-hero-shade" aria-hidden="true"></div>
+  <button type="button" className="bh-hero-pause" aria-label="Pause the background video" aria-pressed="false">
+    <svg className="bh-ico-pause" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" /></svg>
+    <svg className="bh-ico-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" /></svg>
+  </button>
   <div className="bh-wrap bh-hero-inner">
     <div className="bh-hero-text">
       <span className="bh-eyebrow">BSV Developer Docs</span>
