@@ -10,7 +10,7 @@ const parts = [
 
 function Arrow() {
   return (
-    <li aria-hidden="true" className="m-0 flex items-center justify-center px-1 text-[#1B1EA9] dark:text-[#8C9BFF]">
+    <li aria-hidden="true" className="m-0 flex items-center justify-center px-1 text-[#1B1EA9] dark:text-[#4384FF]">
       <span className="text-xl leading-none sm:hidden">↓</span>
       <span className="hidden text-xl leading-none sm:inline">→</span>
     </li>
@@ -27,8 +27,8 @@ export default function ConformancePath() {
         {parts.map((part, i) => (
           <Fragment key={part.who}>
             <li className="m-0 flex flex-col overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-              <div className="flex items-center gap-2 bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#8C9BFF] dark:text-gray-900">
-                <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-xs font-bold text-[#1B1EA9] dark:bg-gray-900 dark:text-[#8C9BFF]">{i + 1}</span>
+              <div className="flex items-center gap-2 bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#4384FF] dark:text-gray-900">
+                <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-white text-xs font-bold text-[#1B1EA9] dark:bg-gray-900 dark:text-[#4384FF]">{i + 1}</span>
                 <span className="text-sm font-semibold">{part.who}</span>
               </div>
               <p className="m-0 flex-1 px-4 py-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">{part.what}</p>

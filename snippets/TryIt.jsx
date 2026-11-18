@@ -89,11 +89,11 @@ export default function TryIt() {
     ]);
   });
 
-  const button = 'rounded-lg bg-[#1B1EA9] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 dark:bg-[#8C9BFF] dark:text-gray-900';
+  const button = 'rounded-lg bg-[#1B1EA9] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 dark:bg-[#4384FF] dark:text-gray-900';
 
   return (
     <figure className="not-prose my-8 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-      <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#8C9BFF] dark:text-gray-900">
+      <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#4384FF] dark:text-gray-900">
         <span className="text-sm font-semibold">Try it: a testnet transaction</span>
       </div>
       <div className="space-y-4 px-4 py-4">

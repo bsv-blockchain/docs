@@ -23,10 +23,10 @@ export default function SvNodeRpcGroups() {
           <li key={group.name} className="m-0">
             <a
               href={group.href}
-              className="flex h-full flex-col rounded-xl border border-gray-200 px-4 py-3 no-underline transition hover:border-[#1B1EA9] hover:bg-[#1B1EA9]/5 dark:border-gray-700 dark:hover:border-[#8C9BFF] dark:hover:bg-[#8C9BFF]/10"
+              className="flex h-full flex-col rounded-xl border border-gray-200 px-4 py-3 no-underline transition hover:border-[#1B1EA9] hover:bg-[#1B1EA9]/5 dark:border-gray-700 dark:hover:border-[#4384FF] dark:hover:bg-[#4384FF]/10"
             >
               <span className="flex items-baseline justify-between gap-3">
-                <span className="text-sm font-semibold text-[#1B1EA9] dark:text-[#8C9BFF]">{group.name}</span>
+                <span className="text-sm font-semibold text-[#1B1EA9] dark:text-[#4384FF]">{group.name}</span>
                 <span className="text-xs text-gray-500 dark:text-gray-400">{group.count} methods</span>
               </span>
               <span className="mt-1 text-sm leading-snug text-gray-700 dark:text-gray-300">{group.text}</span>

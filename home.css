@@ -8,6 +8,8 @@
   --bh-line: rgba(45, 45, 49, 0.14);
   --bh-card: #ffffff;
   --bh-tint: #f4f2f0;
+  --bh-band: #eae8e6;
+  --bh-soft-fill: #eae8e6;
   --bh-accent: #1b1ea9;
   --bh-highlight: #003fff;
   --bh-grad: linear-gradient(90deg, #1b1ea9 0%, #003fff 100%);
@@ -17,10 +19,12 @@
 [data-theme="dark"] .bsv-home {
   --bh-ink: #f4f2f0;
   --bh-soft: rgba(244, 242, 240, 0.72);
-  --bh-line: #262a48;
-  --bh-card: #12142b;
-  --bh-tint: #181c3d;
-  --bh-accent: #8c9bff;
+  --bh-line: #1a2032;
+  --bh-card: #141928;
+  --bh-tint: #1a2032;
+  --bh-band: #111524;
+  --bh-soft-fill: #1a2032;
+  --bh-accent: #4384ff;
   --bh-highlight: #00e6ff;
 }
 
@@ -53,7 +57,39 @@
   color: #ffffff;
   background: linear-gradient(115deg, #1b1ea9 0%, #1a2fd0 55%, #003fff 100%);
 }
-.bh-hero-inner { position: relative; }
+.bh-hero-inner { position: relative; z-index: 2; }
+/* The bsvblockchain.com hero video behind the band, muted and looping, with its blue and cyan
+   glows and a dark fade so the title and the buttons stay in front. The band gradient shows
+   while it loads, and the poster replaces it when the reader asks for less motion. */
+.bh-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.bh-hero-shade {
+  position: absolute; inset: 0; z-index: 1;
+  background:
+    radial-gradient(120% 100% at 82% 4%, rgba(0, 230, 255, 0.28) 0%, rgba(0, 0, 0, 0) 58%),
+    radial-gradient(90% 80% at 8% 92%, rgba(0, 63, 255, 0.55) 0%, rgba(0, 0, 0, 0) 62%),
+    linear-gradient(90deg, rgba(27, 30, 169, 0.88) 0%, rgba(27, 30, 169, 0.6) 55%, rgba(27, 30, 169, 0.35) 100%);
+}
+/* Pause and play for the hero video (WCAG 2.2.2), in the lower right corner of the band,
+   outlined in white like the secondary hero button. */
+.bh-hero-pause {
+  position: absolute; right: 1.25rem; bottom: 1.25rem; z-index: 3;
+  width: 2.5rem; height: 2.5rem; border-radius: 50%;
+  display: grid; place-items: center; cursor: pointer;
+  color: #ffffff; background: transparent;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.bh-hero-pause:hover { background: rgba(255, 255, 255, 0.12); border-color: #ffffff; }
+.bh-hero-pause:focus-visible { outline: 2px solid #ffffff; outline-offset: 3px; }
+.bh-hero-pause svg { width: 1.1rem; height: 1.1rem; fill: currentColor; }
+.bh-hero-pause .bh-ico-play,
+.bh-hero-pause[aria-pressed="true"] .bh-ico-pause { display: none; }
+.bh-hero-pause[aria-pressed="true"] .bh-ico-play { display: block; }
+@media (prefers-reduced-motion: reduce) {
+  .bh-hero-video { display: none; }
+  .bh-hero-pause { display: none; }
+  .bh-hero { background: url("https://bsvblockchain.com/video/hero-montage-poster.jpg") center / cover, #1b1ea9; }
+}
 .bh-hero-text { max-width: 720px; }
 
 /* Secondary hero button: outlined, white on the brand band. */
@@ -133,7 +169,7 @@
 }
 .bh-card h3 { font-size: 1.15rem; margin-bottom: 0.45rem; }
 .bh-card p { color: var(--bh-soft); font-size: 0.92rem; line-height: 1.6; margin: 0 0 1rem; }
-.bh-card.bh-soft { background: var(--bh-tint); }
+.bh-card.bh-soft { background: var(--bh-soft-fill); }
 .bh-go { font-weight: 600; font-size: 0.85rem; color: var(--bh-accent); }
 .bh-go span { display: inline-block; margin-left: 0.3em; transition: transform 0.2s ease; }
 .bh-card:hover .bh-go span { transform: translateX(4px); }
@@ -167,12 +203,23 @@
 
 /* Process strip: one highlighted flow, linked once at the top. */
 /* Full-width tinted band: the section spans the viewport, so no border or card edge is needed. */
-.bh-band { margin-top: 4rem; padding: 3rem 0; background: var(--bh-tint); }
+.bh-band { margin-top: 4rem; padding: 3rem 0; background: var(--bh-band); }
 .bh-flow-top { display: flex; align-items: baseline; justify-content: space-between; gap: 1.5rem; margin-bottom: 1.4rem; }
 .bh-flow-title { margin: 0; color: var(--bh-soft); line-height: 1.6; }
 .bh-flow-steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 1.25rem; counter-reset: flow; }
-.bh-flow-steps li { position: relative; margin: 0; padding-top: 1.1rem; border-top: 2px solid transparent; border-image: var(--bh-grad) 1; counter-increment: flow; }
-.bh-flow-steps li::before { content: "0" counter(flow); display: block; font-size: 0.85rem; font-weight: 600; color: var(--bh-highlight); margin-bottom: 0.4rem; }
+/* Timeline: a numbered circle per step, joined by a line to the next one. */
+.bh-flow-steps li { position: relative; margin: 0; padding-top: 3.4rem; counter-increment: flow; }
+.bh-flow-steps li::before {
+  content: counter(flow);
+  position: absolute; top: 0; left: 0; z-index: 1;
+  width: 2.4rem; height: 2.4rem; border-radius: 50%;
+  display: grid; place-items: center;
+  font-weight: 600; font-size: 0.95rem; color: #ffffff;
+  background: var(--bh-grad);
+  box-shadow: 0 0 0 5px var(--bh-band);
+}
+.bh-flow-steps li::after { content: ""; position: absolute; top: 1.2rem; left: 2.4rem; right: -1.25rem; height: 2px; background: linear-gradient(90deg, var(--bh-highlight), var(--bh-line)); }
+.bh-flow-steps li:last-child::after { display: none; }
 .bh-flow-steps strong { display: block; font-size: 1.02rem; margin-bottom: 0.3rem; }
 .bh-flow-steps span { color: var(--bh-soft); font-size: 0.9rem; line-height: 1.55; }
 
@@ -220,6 +267,7 @@
 
 @media (max-width: 960px) {
   .bh-flow-steps { grid-template-columns: repeat(2, 1fr); }
+  .bh-flow-steps li::after { display: none; }
   .bh-grid3 { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 760px) {

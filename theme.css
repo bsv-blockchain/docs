@@ -51,3 +51,16 @@ html:root[data-theme="dark"] {
 @media (prefers-reduced-motion: reduce) {
   .cards-interactive .wd-card-group > * { transition: none; transform: none !important; }
 }
+
+/* Match bsvblockchain.com: headings in Outfit (writedocs.json) with its tighter tracking, and
+   in dark mode its night surfaces and hairlines instead of the Writedocs slate. */
+h1 { letter-spacing: -0.02em; }
+h2 { letter-spacing: -0.014em; }
+h3 { letter-spacing: -0.008em; }
+html:root[data-theme="dark"] {
+  --wd-surface: #141928;
+  --wd-border: #1a2032;
+  /* Writedocs puts white on the primary, 3.51:1 on #4384ff. Night text on it is about 5.4:1
+     (step numbers, the info banner). */
+  --wd-on-primary: #0b0f1c;
+}

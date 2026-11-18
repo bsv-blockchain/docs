@@ -6,7 +6,7 @@
 export function BrcTable({ children }) {
   return (
     <div className="my-8 overflow-hidden rounded-xl border border-gray-200 text-sm dark:border-gray-700">
-      <div className="flex gap-4 bg-[#1B1EA9] px-4 py-3 font-semibold text-white dark:bg-[#8C9BFF] dark:text-gray-900">
+      <div className="flex gap-4 bg-[#1B1EA9] px-4 py-3 font-semibold text-white dark:bg-[#4384FF] dark:text-gray-900">
         <span className="w-24 shrink-0">BRC</span>
         <span>Title</span>
       </div>
@@ -17,9 +17,9 @@ export function BrcTable({ children }) {
 
 export function BrcRow({ number, title, href, children }) {
   return (
-    <details name="brc-rows" className="group border-t border-gray-200 even:bg-[#1B1EA9]/5 dark:border-gray-700 dark:even:bg-[#8C9BFF]/10">
+    <details name="brc-rows" className="group border-t border-gray-200 even:bg-[#1B1EA9]/5 dark:border-gray-700 dark:even:bg-[#4384FF]/10">
       <summary className="flex cursor-pointer list-none items-start gap-4 px-4 py-3 marker:content-none [&::-webkit-details-marker]:hidden">
-        <span className="w-24 shrink-0 whitespace-nowrap font-semibold text-[#1B1EA9] dark:text-[#8C9BFF]">{number}</span>
+        <span className="w-24 shrink-0 whitespace-nowrap font-semibold text-[#1B1EA9] dark:text-[#4384FF]">{number}</span>
         <span className="flex-1">{title}</span>
         <svg
           className="mt-1 h-4 w-4 shrink-0 text-gray-500 transition-transform group-open:rotate-180 dark:text-gray-400"
@@ -36,7 +36,7 @@ export function BrcRow({ number, title, href, children }) {
         {children ? <div className="mb-3 leading-relaxed">{children}</div> : null}
         <a
           href={href}
-          className="font-semibold text-[#1B1EA9] underline dark:text-[#8C9BFF]"
+          className="font-semibold text-[#1B1EA9] underline dark:text-[#4384FF]"
         >
           Read the specification
         </a>
