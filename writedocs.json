@@ -39,11 +39,16 @@
   },
   "contextMenu": true,
   "mcp": true,
+  "topbar": {
+    "links": [
+      {
+        "label": "bsvblockchain.com",
+        "href": "https://bsvblockchain.com/"
+      }
+    ]
+  },
   "scripts": {
     "body": [
-      {
-        "content": "(function(){var home='https://bsvblockchain.com/';function point(){document.querySelectorAll('a.wd-topbar-brand,a.wd-footer-brand').forEach(function(a){a.href=home;a.setAttribute('data-astro-reload','');});}point();if(!window.__bsvLogoHome){window.__bsvLogoHome=true;document.addEventListener('astro:page-load',point);}})();"
-      },
       {
         "content": "(function(){function wire(){var b=document.querySelector('.bh-hero-pause');var v=document.querySelector('.bh-hero-video');if(!b||!v||b.dataset.wired)return;b.dataset.wired='1';function sync(){var p=v.paused;b.setAttribute('aria-pressed',p?'true':'false');b.setAttribute('aria-label',p?'Play the background video':'Pause the background video');}v.addEventListener('play',sync);v.addEventListener('pause',sync);b.addEventListener('click',function(){if(v.paused){v.play();}else{v.pause();}});sync();}wire();if(!window.__bsvHeroPause){window.__bsvHeroPause=true;document.addEventListener('astro:page-load',wire);}})();"
       }
@@ -165,6 +170,7 @@
           {
             "dropdown": "BSV Academy",
             "icon": "graduation-cap",
+            "hidden": true,
             "products": [
               {
                 "product": "All courses",
@@ -432,6 +438,7 @@
       {
         "tab": "Changelog",
         "icon": "history",
+        "hidden": true,
         "pages": [
           "changelog/index",
           "changelog/whats-new",
