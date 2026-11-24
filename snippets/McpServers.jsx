@@ -1,5 +1,5 @@
 // The two MCP servers in "Connect your AI tool with MCP": two boxes of the same size, side by side.
-// Content only: edit the texts here. Keep each text short and about the same length. Tested with Claude Code 2.1.286, 2026-10-19.
+// Content only: edit the texts here. Keep each text short and about the same length. Tested with Claude Code 2.1.303 and @bsv/mcp 2.0.1 (bsv-blockchain/bsv-ai-toolkit v2.0.1), 2026-10-29.
 
 const servers = [
   {
@@ -8,9 +8,9 @@ const servers = [
     use: 'Answers and code that follow these guides, starting on testnet',
   },
   {
-    name: 'Simple MCP',
-    gives: <>API notes and code generators for <code>@bsv/simple</code></>,
-    use: <>Looking up the <code>@bsv/simple</code> API. Check its code before you run it</>,
+    name: '@bsv/mcp',
+    gives: 'Tools for BSV Broadcaster, a guardrail check, BRCs and versions, with dated facts',
+    use: 'Actions and live values, on testnet by default',
   },
 ];
 
@@ -23,7 +23,7 @@ export default function McpServers() {
       >
         {servers.map((server) => (
           <li key={server.name} className="m-0 flex flex-col overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#8C9BFF] dark:text-gray-900">
+            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#4384FF] dark:text-gray-900">
               <span className="text-sm font-semibold">{server.name}</span>
             </div>
             <dl className="m-0 flex-1 px-4 py-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">

@@ -1,17 +1,17 @@
 ---
-title: "Try BSV in your browser"
-description: "Look up a BSV testnet transaction and inspect its BEEF on this page, with nothing to install and no wallet."
+title: "Try the BSV blockchain in your browser"
+description: "Look up a transaction on the BSV blockchain testnet and inspect its BEEF on this page, with nothing to install and no wallet."
 ---
 
 import TryIt from '/snippets/TryIt.jsx';
 
-Look up a BSV testnet transaction and inspect its BEEF on this page, with nothing to install and no wallet. Use it to see what a transaction holds before you set up a wallet or write any code. The tool below reads public testnet data, so it cannot spend or change anything. At the end, you have seen a transaction's block, size and outputs, its BEEF and the result of its SPV check.
+Look up a transaction on the BSV blockchain testnet and inspect its BEEF on this page, with nothing to install and no wallet. Use it to see what a transaction holds before you set up a wallet or write any code. The tool below reads public testnet data, so it cannot spend or change anything. At the end, you have seen a transaction's block, size and outputs, its BEEF and the result of its SPV check.
 
 ## How it works
 
 The tool runs in your browser. It reads the transaction from the [WhatsOnChain](https://test.whatsonchain.com/) testnet API and loads [`@bsv/sdk`](/sdk/) from a CDN on your first click. The SDK reads the <Hint tip="Background Evaluation Extended Format (BRC-62)">BEEF</Hint>, the format that carries a transaction together with the proof that it is in a block, and runs an <Hint tip="Simplified Payment Verification">SPV</Hint> check, which compares that proof with the block header on testnet.
 
-The example ID is a testnet payment of 1,000 satoshis sent from a server wallet in [Send a payment from a server](/get-started/quick-start-server/). A satoshi is the smallest unit of BSV, and 100,000,000 satoshis make 1 BSV.
+The example ID is a testnet payment of 1,000 satoshis sent from a server wallet in [Send a payment from a server](/get-started/quick-start-server/). A satoshi is the smallest unit of BitcoinSV (BSV), and 100,000,000 satoshis make 1 BSV.
 
 <TryIt />
 

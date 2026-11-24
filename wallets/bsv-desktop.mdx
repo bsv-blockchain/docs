@@ -3,7 +3,7 @@ title: "BSV Desktop"
 description: "BSV Desktop is the BRC-100 wallet for macOS, Windows and Linux that keeps your keys on your device and signs what your apps request."
 ---
 
-BSV Desktop is the BSV Association's desktop wallet for macOS, Windows and Linux. It keeps your keys and your coins on your device, and apps on the same computer ask it to sign through the <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> interface, so no private key goes in your code. You approve each payment in the wallet. These docs use it on testnet for every example, as in [Send a payment from a web app](/get-started/quick-start-browser/).
+BSV Desktop is BSV Association's desktop wallet for macOS, Windows and Linux. It keeps your keys and your coins on your device, and apps on the same computer ask it to sign through the <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> interface, so no private key goes in your code. You approve each payment in the wallet. These docs use it on testnet for every example, as in [Send a payment from a web app](/get-started/quick-start-browser/).
 
 ## Versions
 
@@ -17,7 +17,7 @@ Download BSV Desktop from [desktop.bsvb.tech](https://desktop.bsvb.tech/), which
 
 BSV Desktop works on Mainnet, Testnet, TeraTestNet and Tera Scaling. A new wallet opens on Mainnet. To change it, click the network button at the top right, or open **Settings**, then **BSV network**, and choose **Switch network**. The wallet keeps the same identity on every network, with a separate balance and history for each one.
 
-On testnet, the button at the top right reads **Testnet** and the balance shows **BSV · TEST**. Use testnet to learn and test, since its coins are free and have no value. A payment on Mainnet moves real BSV and cannot be undone.
+On testnet, the button at the top right reads **Testnet** and the balance shows **BSV · TEST**. Use testnet to learn and test, since its coins are free and have no value. A payment on Mainnet moves real BitcoinSV (BSV) and cannot be undone.
 
 ## How apps connect
 
@@ -65,7 +65,7 @@ BSV Desktop sets the fee from a rate in satoshis per kilobyte, so a larger trans
 The **Payments** screen has two tabs:
 
 - **Send** pays a name, an identity key, a payment link or a BSV address. Enter it in **Recipient**, add the **Amount** in satoshis and choose **Review payment**. The review shows the amount plus "network fee" without the fee itself, which appears in **Activity** after **Pay**, added to the amount. The wallet has no option to send the whole balance, so a payment of the full balance fails with **Insufficient funds**: send the balance minus the fee.
-- **Receive** opens on **WALLET PAYMENT**, with **Copy identity key** and **Copy payment link** for another BRC-100 wallet. While this tab is open, **Open to live payments** lets another wallet pay you directly. The **BSV ADDRESS** tab shows an address any BSV wallet or faucet can pay, with **Copy address**. A testnet address starts with `m` or `n`.
+- **Receive** opens on **WALLET PAYMENT**, with **Copy identity key** and **Copy payment link** for another BRC-100 wallet. While this tab is open, **Open to live payments** lets another wallet pay you directly. The **BSV ADDRESS** tab shows an address any BSV blockchain wallet or faucet can pay, with **Copy address**. A testnet address starts with `m` or `n`.
 
 The BSV address changes every day, by the UTC date, and the old ones keep working. While the **BSV ADDRESS** tab is open, BSV Desktop adds payments to the address on its own, and **Check for payments** checks the addresses of the last four days and every address this device has shown. For a payment to an older address, enter the day you shared it in **Recover a payment sent to an older address**.
 
@@ -79,7 +79,7 @@ The recovery phrase, twelve words for a wallet created in version 3, restores yo
 
 ## Related articles
 
-To learn more about using BSV Desktop in BSV, review these articles:
+To learn more about using BSV Desktop on the BSV blockchain, review these articles:
 
 - [Send a payment from a web app](/get-started/quick-start-browser/)
 - [Send a payment from a server](/get-started/quick-start-server/)

@@ -7,7 +7,7 @@ info:
 
     The overlay accepts tagged BEEF transactions and routes them to Topic Managers,
     answers Lookup Service queries, lists hosted managers and services, and exposes
-    admin endpoints protected by Bearer token or BSV mutual authentication.
+    admin endpoints protected by Bearer token or BSV blockchain mutual authentication.
 
     Data plane routes (/submit, /lookup, /listTopicManagers, /listLookupServiceProviders,
     /getDocumentationForTopicManager, /getDocumentationForLookupServiceProvider) are public.
@@ -35,7 +35,7 @@ tags:
   - name: gasp-sync
     description: GASP cross-node synchronization — public, conditional on enableGASPSync
   - name: admin
-    description: Administrative operations — requires Bearer token or BSV mutual auth
+    description: Administrative operations, which require a Bearer token or BSV blockchain mutual auth
   - name: health
     description: Kubernetes/load-balancer health endpoints
 
@@ -780,7 +780,7 @@ components:
       type: http
       scheme: bearer
       description: |
-        BSV mutual authentication via /.well-known/auth handshake. The resulting
+        BSV blockchain mutual authentication via /.well-known/auth handshake. The resulting
         identity key is compared against the configured adminIdentityKey.
 
   responses:
