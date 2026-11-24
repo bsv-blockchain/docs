@@ -1,13 +1,13 @@
 ---
 title: "BSV Browser"
-description: "BSV Browser is the BSV Association's mobile wallet for iOS and Android, a web browser with a self-custodial wallet inside."
+description: "BSV Browser is BSV Association's mobile wallet for iOS and Android, a web browser with a self-custodial wallet inside."
 ---
 
-**BSV Browser** is the BSV Association's wallet for the phone. It is a web browser for iOS and Android with a <Hint tip="Only you hold the keys. Nobody else can sign payments or recover the wallet for you">self-custodial</Hint> wallet inside, so a BSV web app that you open in it can ask the wallet for payments and identity through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>.
+**BSV Browser** is BSV Association's wallet for the phone. It is a web browser for iOS and Android with a <Hint tip="Only you hold the keys. Nobody else can sign payments or recover the wallet for you">self-custodial</Hint> wallet inside, so a BSV blockchain web app that you open in it can ask the wallet for payments and identity through <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint>.
 
 ## When to use BSV Browser
 
-Use BSV Browser when you want a wallet on your phone, or when you want to open a BSV web app on a phone. Use BSV Desktop when you build and test apps on your computer, as the guides in these docs do.
+Use BSV Browser when you want a wallet on your phone, or when you want to open a BSV blockchain web app on a phone. Use BSV Desktop when you build and test apps on your computer, as the guides in these docs do.
 
 | | BSV Desktop | BSV Browser |
 |---|---|---|
@@ -18,18 +18,18 @@ Download BSV Browser from the [App Store](https://apps.apple.com/app/bsv-browser
 
 ## Browser mode and Web3 mode
 
-BSV Browser starts as a normal web browser, with tabs, bookmarks and history, and no wallet. When you create or import a wallet, the browser switches to Web3 mode, and BSV web apps can request payments, identity and certificates from it. A permission sheet shows each request, and you approve or reject it.
+BSV Browser starts as a normal web browser, with tabs, bookmarks and history, and no wallet. When you create or import a wallet, the browser switches to Web3 mode, and BSV blockchain web apps can request payments, identity and certificates from it. A permission sheet shows each request, and you approve or reject it.
 
 ## Connect to a web app on your computer
 
-BSV Browser can also be the wallet for a BSV web app that you open on your computer. When the app shows a QR code to connect a phone wallet, scan it with the camera of your phone. BSV Browser opens on **Connect Wallet** and shows the address of the app, so you can check it before you approve. After that, the app sends its wallet requests to your phone, and your keys stay on the phone.
+BSV Browser can also be the wallet for a BSV blockchain web app that you open on your computer. When the app shows a QR code to connect a phone wallet, scan it with the camera of your phone. BSV Browser opens on **Connect Wallet** and shows the address of the app, so you can check it before you approve. After that, the app sends its wallet requests to your phone, and your keys stay on the phone.
 
 The connection uses <Hint tip="An encrypted connection between a web app and a phone wallet, through a relay server that cannot read the messages">Wallet Relay</Hint>. Any mobile BRC-100 wallet can implement Wallet Relay with the `@bsv/wallet-relay` package, and a web app adds it as a way to log in next to BSV Desktop.
 
 ## Where things are
 
 <Callout type="warning">
-  Creating a wallet makes a recovery phrase that anyone can use to spend your coins. Keep it offline and never share it. Check **BSV Network** in **Wallet**, **Settings** before you receive or send coins. Testnet is for learning, and Mainnet moves real BSV.
+  Creating a wallet makes a recovery phrase that anyone can use to spend your coins. Keep it offline and never share it. Check **BSV Network** in **Wallet**, **Settings** before you receive or send coins. Testnet is for learning, and Mainnet moves real BitcoinSV (BSV).
 </Callout>
 
 Open the menu with the three dots at the bottom right of the screen, then choose **Wallet**.
@@ -44,7 +44,7 @@ Open the menu with the three dots at the bottom right of the screen, then choose
 
 ## Networks
 
-In **Wallet**, **Settings**, **BSV Network** offers **Mainnet**, **Testnet** and <Hint tip="A test network for Teranode, the node software of the BSV network">**Teratest**</Hint>. Switching the network rebuilds the wallet on the chain you choose. Use testnet to learn and test, since its coins are free and have no value. A payment on Mainnet moves real BSV and cannot be undone.
+In **Wallet**, **Settings**, **BSV Network** offers **Mainnet**, **Testnet** and <Hint tip="A test network for Teranode, the node software of the BSV blockchain">**Teratest**</Hint>. Switching the network rebuilds the wallet on the chain you choose. Use testnet to learn and test, since its coins are free and have no value. A payment on Mainnet moves real BSV and cannot be undone.
 
 ## Back up your wallet
 

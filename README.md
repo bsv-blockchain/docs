@@ -1,6 +1,6 @@
 # BSV Developer Docs
 
-Developer documentation for BSV Blockchain: a Quick Start and guides for building apps with BRC-100 wallets and the TypeScript SDK. WriteChoice writes it with the BSV team, and the BSV Association reviews it.
+Developer documentation for the BSV blockchain: a Quick Start and guides for building apps with BRC-100 wallets and the TypeScript SDK. WriteChoice writes it with the BSV team, and the BSV Association reviews it.
 
 This file is for contributors and for AI agents that read the repo or review pull requests. It says how the site is built, where things are, how a page is written and what a reviewer checks. Keep it accurate when the repo changes.
 
@@ -61,7 +61,8 @@ Run `npm run check` before you open a pull request.
 | `wallet-dev/` | Building a wallet |
 | `standards/` | BRC standards and Paymail |
 | `reference/` | Reference pages: errors, networks, script opcodes and the HTTP APIs |
-| `nodes/` | Node operator content, in a hidden tab |
+| `nodes/` | The Node Software tab: SV Node, and Teranode in `nodes/teranode/`. Everything in `nodes/teranode/` except `index.mdx` is imported, see "Teranode pages" |
+| `scripts/` | Maintenance scripts, such as the Teranode import |
 | `showcase/` | The example apps: BEEF Inspector, P2P Medical and Time Anchor |
 | `changelog/` | The changelog, one page per product |
 | `snippets/` | React components used by the pages, mostly the diagrams |
@@ -74,13 +75,13 @@ Run `npm run check` before you open a pull request.
 ## Navigation and configuration
 
 - A page file is not enough. A page appears in the site only if it is listed under `navigation.tabs` in `writedocs.json`, without the file extension. Add a new page there when you create it, and remove it when you delete the page
-- The tabs are Get started, Guides, Learn, SDKs, Reference, Wallets and Changelog, plus Node operators, which is hidden. Each tab has groups of pages, and the Learn tab also has dropdowns for How BSV works and the BSV Academy
+- The tabs are Get started, Guides, Learn, SDKs, Reference, Wallets, Changelog and Node Software. Each tab has groups of pages, and the Learn tab also has dropdowns for How the BSV blockchain works and the BSV Academy
 - `redirects` in `writedocs.json` sends an old path to a new one. Add a redirect when you rename or remove a published page, and update the links that pointed to it
 - `variables` holds values shared by the site: the network, the faucet and explorer URLs, the wallet name and the Node version
 - `mcp` turns on the docs MCP server, and `contextMenu` turns on the page context menu
 - Any `.css` file in the repo loads on every page, so keep unfinished drafts out of it
 - An internal link has the form `/section/page/`, with a trailing slash. It resolves to `section/page.mdx` or to `section/page/index.mdx`
-- The site is served at `bsvblockchain.org/docs`: `basePath` in `writedocs.json` is `/docs`, and the main site passes every request under `/docs` to this build. Writedocs adds `/docs` to every link, image and asset address, so never write it yourself: `/docs/guides/payments/` comes out as `/docs/docs/guides/payments/` and `npm run broken-links` reports it. The same goes for `redirects`. An address computed in a React snippet is the exception, because Writedocs does not change it: write `/docs` into that one
+- The site is served at `bsvblockchain.com/docs`: `domain` in `writedocs.json` is `bsvblockchain.com`, `basePath` is `/docs`, and bsvblockchain.com passes every request under `/docs` to this build. Writedocs adds `/docs` to every link, image and asset address, so never write it yourself: `/docs/guides/payments/` comes out as `/docs/docs/guides/payments/` and `npm run broken-links` reports it. The same goes for `redirects`. An address computed in a React snippet is the exception, because Writedocs does not change it: write `/docs` into that one
 
 ## Anatomy of a page
 
@@ -197,6 +198,14 @@ When you review a pull request, check these in order, and say which ones fail.
 
 The BSV Academy courses in `learn/academy/` come from the previous BSV Academy and are being migrated. Review them for migration problems, such as broken links and formatting, not for the writing rules above.
 
+### Teranode pages
+
+The pages in `nodes/teranode/`, apart from the hand-written `index.mdx`, and the images in `images/teranode/` are imported from the `docs/` folder of the [Teranode repository](https://github.com/bsv-blockchain/teranode). `scripts/import-teranode.mjs` converts them from MkDocs Markdown to MDX and writes the "Run Teranode" group, under "Nodes" in the Node Software tab of `writedocs.json`. Each page names the source file and commit it came from.
+
+- Do not edit an imported page here. Change the source in the Teranode repository, then rerun `npm run import:teranode` and open a pull request with the result. The next run overwrites edits made here
+- The import takes the pages for node operators. The `SECTIONS` list at the top of the script says which parts of the Teranode nav it takes and which it leaves on the Teranode site. Links to pages it leaves out point to the Teranode site
+- Review an import for conversion problems, such as broken links, formatting and missing images, not for the writing rules above
+
 ## Where facts come from
 
 Check a technical claim against one of these before you accept it.
@@ -205,3 +214,11 @@ Check a technical claim against one of these before you accept it.
 - The ts-stack documentation at [bsv-blockchain.github.io/ts-stack](https://bsv-blockchain.github.io/ts-stack/)
 - The source and the releases in the [bsv-blockchain](https://github.com/bsv-blockchain) organization on GitHub, for products such as BSV Desktop and BSV Browser
 - npm, for the exact name and version of a package
+
+## License
+
+The documentation and code samples in this repository are licensed under the Apache License 2.0. See `LICENSE`.
+
+The Chillax font in `fonts/` is not covered by that license. It keeps its own license. See `fonts/README.md`.
+
+The Teranode pages in `nodes/teranode/`, apart from `index.mdx`, and the images in `images/teranode/` are not covered by that license either. They come from the [Teranode repository](https://github.com/bsv-blockchain/teranode) and keep its license, the Open BSV License Version 6.
