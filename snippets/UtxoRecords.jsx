@@ -20,7 +20,7 @@ export default function UtxoRecords() {
       <ul className="m-0 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2" aria-label="The two status records of a transaction">
         {records.map((record) => (
           <li key={record.name} className="m-0 flex flex-col overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#8C9BFF] dark:text-gray-900">
+            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#4384FF] dark:text-gray-900">
               <span className="font-mono text-sm font-semibold">{record.name}</span>
             </div>
             <div className="flex-1 px-4 py-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">

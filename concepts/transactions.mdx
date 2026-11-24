@@ -1,13 +1,13 @@
 ---
 title: "How transactions and fees work"
-description: "What a BSV transaction is made of, how its inputs spend earlier outputs, how its fee follows from size and rate, and how it reaches a block."
+description: "What a transaction on the BSV blockchain is made of, how its inputs spend earlier outputs, how its fee follows from size and rate, and how it reaches a block."
 sidebarTitle: "Transactions and fees"
 ---
 
 import BlueTable from '/snippets/BlueTable.jsx';
 import TransactionChain from '/snippets/TransactionChain.jsx';
 
-Read a BSV transaction part by part, see how it spends earlier outputs, and know where its fee comes from. The model is the same whether a wallet builds the transaction for your app or your code builds it with `@bsv/sdk`.
+Read a BSV blockchain transaction part by part, see how it spends earlier outputs, and know where its fee comes from. The model is the same whether a wallet builds the transaction for your app or your code builds it with `@bsv/sdk`.
 
 ## What a transaction contains
 
@@ -19,7 +19,7 @@ A transaction has four parts, serialized in this order, as [BRC-12](https://bsv.
 |------|---------------|
 | Version | A 4-byte version number |
 | Inputs | One entry per output being spent, with the source transaction ID, the output index, an <Hint tip="The part of an input that meets the condition set by the locking script of the output it spends">unlocking script</Hint> and a sequence number |
-| Outputs | One entry per new output, with an amount in <Hint tip="The smallest unit of BSV. 100,000,000 satoshis make 1 BSV">satoshis</Hint> and a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> |
+| Outputs | One entry per new output, with an amount in <Hint tip="The smallest unit of BitcoinSV (BSV). 100,000,000 satoshis make 1 BSV">satoshis</Hint> and a <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> |
 | Lock time | When not zero, the earliest time or block height at which the transaction can go in a block, if at least one input has a sequence number below `0xFFFFFFFF` |
 
 </BlueTable>
@@ -32,7 +32,7 @@ The transaction ID is the double SHA-256 hash of the whole serialized transactio
 
 ## How inputs spend outputs
 
-Ownership on BSV is a set of outputs, not an account balance. An output that nobody has spent yet is a <Hint tip="Unspent transaction output">UTXO</Hint>, and a later transaction spends it with an input that points to it:
+Ownership on the BSV blockchain is a set of outputs, not an account balance. An output that nobody has spent yet is a <Hint tip="Unspent transaction output">UTXO</Hint>, and a later transaction spends it with an input that points to it:
 
 <TransactionChain />
 
@@ -111,7 +111,7 @@ A blockchain transaction cannot be reversed, so check the outputs and the amount
 
 ## Related articles
 
-To learn more about verifying and requesting transactions in BSV, review these articles:
+To learn more about verifying and requesting transactions on the BSV blockchain, review these articles:
 
 - [BEEF (BRC-62)](/concepts/spv/)
 - [BRC-100 Wallet Interface](/concepts/wallet-model/)

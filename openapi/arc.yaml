@@ -6,7 +6,7 @@ info:
     OpenAPI 3.1 specification for the ARC (Authoritative Response Component) broadcast API
     as consumed by the `ARC` class in ts-sdk.
 
-    ARC is the BSV miner-facing broadcast service. Clients submit raw transactions or
+    ARC is the miner-facing broadcast service of the BSV blockchain. Clients submit raw transactions or
     batches and receive structured responses with `txStatus` codes. ARC also fires
     HTTP callbacks when transactions gain Merkle proofs.
 

@@ -1,4 +1,4 @@
-// Try BSV in your browser: look up a testnet transaction and inspect its BEEF, with nothing installed and no wallet.
+// Try the BSV blockchain in your browser: look up a testnet transaction and inspect its BEEF, with nothing installed and no wallet.
 // @bsv/sdk loads from a CDN on the first click (a runtime import, never at build time). Data comes from the WhatsOnChain testnet API.
 // Tested with @bsv/sdk 3.2.1 and Chrome 155, 2026-10-22; request spacing tested 2026-10-27.
 import { useState } from 'react';
@@ -89,11 +89,11 @@ export default function TryIt() {
     ]);
   });
 
-  const button = 'rounded-lg bg-[#1B1EA9] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 dark:bg-[#8C9BFF] dark:text-gray-900';
+  const button = 'rounded-lg bg-[#1B1EA9] px-4 py-2 text-sm font-semibold text-white disabled:opacity-50 dark:bg-[#4384FF] dark:text-gray-900';
 
   return (
     <figure className="not-prose my-8 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-      <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#8C9BFF] dark:text-gray-900">
+      <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#4384FF] dark:text-gray-900">
         <span className="text-sm font-semibold">Try it: a testnet transaction</span>
       </div>
       <div className="space-y-4 px-4 py-4">

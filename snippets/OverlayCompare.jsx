@@ -31,15 +31,15 @@ export default function OverlayCompare() {
         {ways.map((way) => (
           <li
             key={way.title}
-            className={`m-0 flex flex-col overflow-hidden rounded-xl border ${way.accent ? 'border-2 border-[#1B1EA9] dark:border-[#8C9BFF]' : 'border-gray-200 dark:border-gray-700'}`}
+            className={`m-0 flex flex-col overflow-hidden rounded-xl border ${way.accent ? 'border-2 border-[#1B1EA9] dark:border-[#4384FF]' : 'border-gray-200 dark:border-gray-700'}`}
           >
-            <div className={way.accent ? 'bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#8C9BFF] dark:text-gray-900' : 'bg-gray-100 px-4 py-3 text-gray-700 dark:bg-gray-800 dark:text-gray-300'}>
+            <div className={way.accent ? 'bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#4384FF] dark:text-gray-900' : 'bg-gray-100 px-4 py-3 text-gray-700 dark:bg-gray-800 dark:text-gray-300'}>
               <span className="text-sm font-semibold">{way.title}</span>
             </div>
             <ul className="m-0 flex-1 list-none space-y-2 px-4 py-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
               {way.points.map((point, i) => (
                 <li key={i} className="m-0 flex gap-2">
-                  <span aria-hidden="true" className={way.accent ? 'text-[#1B1EA9] dark:text-[#8C9BFF]' : 'text-gray-400'}>{way.accent ? '✓' : '•'}</span>
+                  <span aria-hidden="true" className={way.accent ? 'text-[#1B1EA9] dark:text-[#4384FF]' : 'text-gray-400'}>{way.accent ? '✓' : '•'}</span>
                   <span>{point}</span>
                 </li>
               ))}
