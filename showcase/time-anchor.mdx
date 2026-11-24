@@ -1,9 +1,9 @@
 ---
 title: "Time Anchor"
-description: "A desktop app that records the SHA-256 hash of a file in a BSV transaction, finds it again through an overlay service and can keep an encrypted copy with UHRP."
+description: "A desktop app that records the SHA-256 hash of a file in a transaction on the BSV blockchain, finds it again through an overlay service and can keep an encrypted copy with UHRP."
 ---
 
-Run the Time Anchor on your computer to record the SHA-256 hash of a file in a BSV transaction, find it again through an <Hint tip="A service built from topic managers and lookup services, which tracks the outputs of a topic">overlay service</Hint> and, if you want, keep an encrypted copy with <Hint tip="Universal Hash Resolution Protocol, content storage addressed by the hash of the file">UHRP</Hint>. A <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet creates the transaction, and you can later check whether a file matches what you recorded. The source code is in [bsv-blockchain-demos/desktop-integrity-app](https://github.com/bsv-blockchain-demos/desktop-integrity-app).
+Run the Time Anchor on your computer to record the SHA-256 hash of a file in a transaction on the BSV blockchain, find it again through an <Hint tip="A service built from topic managers and lookup services, which tracks the outputs of a topic">overlay service</Hint> and, if you want, keep an encrypted copy with <Hint tip="Universal Hash Resolution Protocol, content storage addressed by the hash of the file">UHRP</Hint>. A <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet creates the transaction, and you can later check whether a file matches what you recorded. The source code is in [bsv-blockchain-demos/desktop-integrity-app](https://github.com/bsv-blockchain-demos/desktop-integrity-app).
 
 ## When to use it
 
@@ -28,7 +28,7 @@ Three services take part when you save a file, and each one can succeed or fail 
 
 ### The hash transaction
 
-The app asks the wallet to create the transaction with `createAction`. The transaction has one output of 1 satoshi, the smallest unit of BSV, and 100,000,000 satoshis make 1 BSV. Its <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> is `OP_FALSE OP_RETURN` followed by the SHA-256 hash of the file. The wallet signs the transaction and pays for it, so the app never handles a private key.
+The app asks the wallet to create the transaction with `createAction`. The transaction has one output of 1 satoshi, the smallest unit of BitcoinSV (BSV), and 100,000,000 satoshis make 1 BSV. Its <Hint tip="The part of a transaction output that sets the condition to spend it">locking script</Hint> is `OP_FALSE OP_RETURN` followed by the SHA-256 hash of the file. The wallet signs the transaction and pays for it, so the app never handles a private key.
 
 ### The overlay record
 
@@ -148,7 +148,7 @@ The code is under the Open BSV License version 6, which limits its use to the BS
 
 ## Related articles
 
-To learn more about the parts the Time Anchor uses in BSV, review these articles:
+To learn more about the parts the Time Anchor uses on the BSV blockchain, review these articles:
 
 - [Store data and files](/guides/data-storage/)
 - [Track with overlays](/guides/overlays/)

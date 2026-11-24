@@ -7,12 +7,16 @@
     "dev": "writedocs dev",
     "validate": "writedocs validate",
     "broken-links": "writedocs broken-links",
-    "check": "writedocs validate && writedocs broken-links"
+    "check": "writedocs validate && writedocs broken-links",
+    "import:teranode": "node scripts/import-teranode.mjs"
   },
   "dependencies": {
     "@writedocs/generator": "0.10.13"
   },
   "engines": {
     "node": ">=22.12.0"
+  },
+  "devDependencies": {
+    "js-yaml": "^4.3.2"
   }
 }

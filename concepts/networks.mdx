@@ -1,13 +1,13 @@
 ---
-title: "How BSV networks differ"
+title: "How BSV blockchain networks differ"
 description: "Understand Mainnet, testnet and teratestnet, and why the wallet and your code must be on the same network."
-sidebarTitle: "BSV networks"
+sidebarTitle: "BSV blockchain networks"
 ---
 
 import NetworkCards from '/snippets/NetworkCards.jsx';
 import BlueTable from '/snippets/BlueTable.jsx';
 
-Choose the right BSV network for each stage of your app, and keep the wallet and your code on the same one. BSV has a live network, Mainnet, and test networks whose coins have no value. Each network keeps its own coins and history, and nothing moves from one to another.
+Choose the right network for each stage of your app, and keep the wallet and your code on the same one. The BSV blockchain has a live network, Mainnet, and test networks whose coins have no value. Each network keeps its own coins and history, and nothing moves from one to another.
 
 ## What each network is for
 
@@ -16,7 +16,7 @@ An app developer works with three networks:
 <NetworkCards />
 
 <Visibility for="agents">
-The diagram has three boxes of the same size. Mainnet is the live BSV network: coins are real BSV with a market value, a payment cannot be undone, and you use it when your app is ready for real users. Testnet is a public test network: test coins are free and have no value, the examples in these docs use it, and you use it to build and test your app. Teratestnet is the test network for Teranode: it has test coins of its own, separate from testnet, it runs on Teranode, the new BSV node software, and you use it only to test against Teranode on purpose.
+The diagram has three boxes of the same size. Mainnet is the live BSV blockchain network: coins are real BitcoinSV (BSV) with a market value, a payment cannot be undone, and you use it when your app is ready for real users. Testnet is a public test network: test coins are free and have no value, the examples in these docs use it, and you use it to build and test your app. Teratestnet is the test network for Teranode: it has test coins of its own, separate from testnet, it runs on Teranode, the new node software for the BSV blockchain, and you use it only to test against Teranode on purpose.
 </Visibility>
 
 Testnet and teratestnet each have their own <Hint tip="A site that sends free test coins to an address">faucet</Hint>. The wallet toolbox also accepts `stn` and `tstn`, scaling test networks that need endpoints you configure yourself, and `mock` for test utilities. App examples do not use them.
@@ -26,7 +26,7 @@ Testnet and teratestnet each have their own <Hint tip="A site that sends free te
 A transaction exists only on the network that accepted it. When the wallet, your code and the services it calls point at different networks, the error rarely names the network:
 
 - Coins from a testnet faucet do not show in [BSV Desktop](/wallets/bsv-desktop/) while it is on **TeraTestNet**, since the wallet keeps a separate balance on each network.
-- A proof check against the wrong network fails. `new WhatsOnChain()` with no argument checks the <Hint tip="The proof that a transaction is in a block">Merkle path</Hint> against Mainnet, so a testnet transaction throws `Invalid merkle path`, as in [Try BSV in your browser](/get-started/try-it/).
+- A proof check against the wrong network fails. `new WhatsOnChain()` with no argument checks the <Hint tip="The proof that a transaction is in a block">Merkle path</Hint> against Mainnet, so a testnet transaction throws `Invalid merkle path`, as in [Try the BSV blockchain in your browser](/get-started/try-it/).
 - An explorer for one network does not find a transaction from another. A testnet transaction shows on the testnet explorer of WhatsOnChain, not on its Mainnet explorer.
 
 ## Where each package names the network
@@ -62,7 +62,7 @@ The address format only shows how the address was encoded. `toAddress()` in `@bs
 
 ## Related articles
 
-To learn more about building on testnet in BSV, review these articles:
+To learn more about building on the BSV blockchain testnet, review these articles:
 
 - [Send a payment from a web app](/get-started/quick-start-browser/)
 - [Send a payment from a server](/get-started/quick-start-server/)

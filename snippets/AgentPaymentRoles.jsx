@@ -1,5 +1,5 @@
 // Who does what in "Send a payment with an AI agent": two boxes of the same size, side by side.
-// Content only: edit the texts here. Keep each item short. Tested with Claude Code 2.1.286 and BSV Desktop 3.1.1, 2026-10-20.
+// Content only: edit the texts here. Keep each item short. Tested with Claude Code 2.1.286 and BSV Desktop 3.1.1, 2026-10-20; BSV Broadcaster item with BSV Desktop 3.3.1, 2026-10-26.
 
 const roles = [
   {
@@ -11,6 +11,7 @@ const roles = [
       <>Writes a script that connects to BSV Desktop through <code>WalletClient</code></>,
       'Checks that the wallet is on testnet',
       'Runs the payment',
+      'Reads the payment status from BSV Broadcaster',
     ],
   },
   {
@@ -33,7 +34,7 @@ export default function AgentPaymentRoles() {
       >
         {roles.map((role) => (
           <li key={role.who} className="m-0 flex flex-col overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700">
-            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#8C9BFF] dark:text-gray-900">
+            <div className="bg-[#1B1EA9] px-4 py-3 text-white dark:bg-[#4384FF] dark:text-gray-900">
               <span className="text-sm font-semibold">{role.who}</span>
             </div>
             <div className="flex-1 px-4 py-4 text-sm leading-relaxed text-gray-700 dark:text-gray-300">
