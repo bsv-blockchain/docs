@@ -1,11 +1,11 @@
 ---
 title: "Cryptography"
-description: "The hash functions, keys and signatures that BSV transactions rely on, and what each one does in a transaction."
+description: "The hash functions, keys and signatures that transactions on the BSV blockchain rely on, and what each one does in a transaction."
 ---
 
 import HashLab from '/snippets/HashLab.jsx';
 
-BSV transactions use hash functions to fingerprint data and elliptic curve signatures to authorize spends. A hash function gives a fixed size output that cannot be reversed, and a signature lets a key holder approve a spend without revealing the private key. On this page you can hash text with the four BSV hash functions, run two short scripts that hash data and sign a message with `@bsv/sdk`, and see which function each part of a transaction uses.
+Transactions on the BSV blockchain use hash functions to fingerprint data and elliptic curve signatures to authorize spends. A hash function gives a fixed size output that cannot be reversed, and a signature lets a key holder approve a spend without revealing the private key. On this page you can hash text with the four hash functions, run two short scripts that hash data and sign a message with `@bsv/sdk`, and see which function each part of a transaction uses.
 
 The examples run with Node.js after `npm install @bsv/sdk` and were written against `@bsv/sdk` 4.0.1.
 
@@ -21,7 +21,7 @@ A hash lab. The text typed in the field is hashed live with SHA-256, HASH256 (SH
 
 ### The four functions
 
-BSV uses two hash functions and two combinations of them:
+The BSV blockchain uses two hash functions and two combinations of them:
 
 | Function | Output | Used for |
 | --- | --- | --- |
@@ -74,7 +74,7 @@ Generate keys with `PrivateKey.fromRandom()`. The SDK reduces any value it is gi
 
 ## The curve
 
-BSV public keys live on the elliptic curve <Hint tip="The elliptic curve that BSV public keys live on">secp256k1</Hint>, the same curve Bitcoin uses. The curve is `y² = x³ + 7` over a prime field. Two constants matter to a developer:
+BSV blockchain public keys live on the elliptic curve <Hint tip="The elliptic curve that BSV blockchain public keys live on">secp256k1</Hint>, the same curve Bitcoin uses. The curve is `y² = x³ + 7` over a prime field. Two constants matter to a developer:
 
 - `G`, the base point, which every public key is built from. Its compressed form is `02 79BE667E F9DCBBAC 55A06295 CE870B07 029BFCDB 2DCE28D9 59F2815B 16F81798`.
 - `n`, the order of `G` and the limit for private keys, `FFFFFFFF FFFFFFFF FFFFFFFF FFFFFFFE BAAEDCE6 AF48A03B BFD25E8C D0364141`.
@@ -87,7 +87,7 @@ A signature proves that the holder of a private key approved a message.
 
 ### Signing and verifying
 
-BSV uses the Elliptic Curve Digital Signature Algorithm, ECDSA. The signer hashes a message, signs the hash with the private key, and anyone with the public key can check that the signature matches that message.
+The BSV blockchain uses the Elliptic Curve Digital Signature Algorithm, ECDSA. The signer hashes a message, signs the hash with the private key, and anyone with the public key can check that the signature matches that message.
 
 ```javascript sign.mjs
 import { PrivateKey } from '@bsv/sdk'
@@ -114,9 +114,9 @@ A signature is two numbers, and transactions carry them in <Hint tip="Distinguis
 
 ## Related articles
 
-To learn more about cryptography in BSV, review these articles:
+To learn more about cryptography on the BSV blockchain, review these articles:
 
 - [How keys and identity work](/concepts/keys-identity/)
 - [How Script works](/concepts/script/)
 - [Bitcoin transactions](/learn/wiki/bitcoin-transactions/)
-- [BSV glossary](/learn/glossary/)
+- [BSV blockchain glossary](/learn/glossary/)

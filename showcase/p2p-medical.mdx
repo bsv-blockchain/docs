@@ -1,6 +1,6 @@
 ---
 title: "P2P Medical"
-description: "A demo where a patient encrypts a medical file in the browser and shares it with a doctor through BSV wallets, UHRP storage and an audit timeline."
+description: "A demo where a patient encrypts a medical file in the browser and shares it with a doctor through BSV blockchain wallets, UHRP storage and an audit timeline."
 ---
 
 Open the P2P Medical demo to see how a patient shares an encrypted file with a doctor. A <Hint tip="BSV Request for Comments 100, the standard interface between apps and wallets">BRC-100</Hint> wallet encrypts the file for the <Hint tip="The public key that identifies a wallet to an app. The private key never leaves the wallet">identity key</Hint> of the doctor, <Hint tip="Universal Hash Resolution Protocol, content storage addressed by the hash of the file">UHRP</Hint> stores the encrypted copy, and the app keeps an audit timeline of who shared and viewed it. The demo runs on Mainnet, where the wallet transactions and the storage cost real satoshis. It is hosted at [p2p-medical.bsvblockchain.tech](https://p2p-medical.bsvblockchain.tech), and the source code is in [bsv-blockchain-demos/p2p-medical](https://github.com/bsv-blockchain-demos/p2p-medical).
@@ -23,7 +23,7 @@ The patient selects a file and a recipient. The wallet encrypts the file with th
 
 ### Share a reference
 
-The app creates a <Hint tip="A script template that stores data fields in an output that only a key holder can spend">PushDrop</Hint> transaction that holds the metadata of the file, sends the metadata to its backend and tries to notify the doctor with <Hint tip="A BSV service that delivers messages between wallet identities">MessageBox</Hint>. The hash of the encrypted copy identifies the file and lets the doctor check it, but it does not give access to it.
+The app creates a <Hint tip="A script template that stores data fields in an output that only a key holder can spend">PushDrop</Hint> transaction that holds the metadata of the file, sends the metadata to its backend and tries to notify the doctor with <Hint tip="A BSV blockchain service that delivers messages between wallet identities">MessageBox</Hint>. The hash of the encrypted copy identifies the file and lets the doctor check it, but it does not give access to it.
 
 ### Verify and decrypt
 
@@ -88,7 +88,7 @@ The README of the project declares the MIT license.
 
 ## Related articles
 
-To learn more about the parts the P2P Medical demo uses in BSV, review these articles:
+To learn more about the parts the P2P Medical demo uses on the BSV blockchain, review these articles:
 
 - [Store data and files](/guides/data-storage/)
 - [Send messages between users](/guides/messaging/)
